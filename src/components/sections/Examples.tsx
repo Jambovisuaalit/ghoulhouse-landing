@@ -7,54 +7,64 @@ export default function Examples() {
       <div className="shell">
         <SectionHeading
           eyebrow="03 / ESIMERKIT"
-          title="Näytä tuote. Älä keksi tuloksia."
-          intro="Alla olevat materiaalit havainnollistavat GhoulHousen tuotetta. Ne ovat konseptiesimerkkejä, eivät toteutuneita asiakastuloksia."
+          title="Raaka materiaali sisään. Selkeä sisältöobjekti ulos."
+          intro="Alla oleva proof sheet havainnollistaa tuotteen logiikkaa. Se on konseptiesimerkki, ei toteutunut asiakastyö tai tulosväite."
         />
-        <div className="mt-14 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
-          <article className="concept-card min-h-[30rem] bg-ghost text-ink">
-            <div className="example-label">KONSEPTIESIMERKKI — EI ASIAKASTYÖ.</div>
-            <div className="mt-12 grid flex-1 gap-4 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
-              <div className="border border-ink/20 bg-bone p-5">
-                <p className="eyebrow">RAW / 01</p>
-                <div className="mt-16 border-t border-ink/20 pt-3 text-sm text-ink/65">
-                  Työmaakuva + faktat
+
+        <div className="proof-sheet mt-14">
+          <div className="proof-sheet-head">
+            <p className="eyebrow">PROOF SHEET / GH-001</p>
+            <span className="example-label">KONSEPTIESIMERKKI — EI ASIAKASTYÖ.</span>
+          </div>
+
+          <div className="proof-sheet-grid">
+            <article className="proof-pane proof-pane-raw">
+              <p className="eyebrow text-ink/55">RAW / SOURCE</p>
+              <p className="mt-6 max-w-sm text-sm leading-6 text-ink/60">
+                Työmaakuva, projektin faktat ja asiakkaan oma materiaali.
+              </p>
+              <span className="proof-raw-word" aria-hidden="true">RAW</span>
+              <span className="proof-file-name">IMG_2841.JPG / 01</span>
+            </article>
+
+            <article className="proof-pane proof-pane-ready">
+              <p className="eyebrow text-signal">READY / SOCIAL</p>
+
+              <div className="proof-ready-poster">
+                <div className="flex items-start justify-between gap-4">
+                  <Logo compact className="w-10" />
+                  <span className="eyebrow text-signal">01 / REFERENSSI</span>
+                </div>
+
+                <p className="proof-ready-title">
+                  Työnjälki näkyviin.
+                </p>
+
+                <div className="flex items-end justify-between gap-5 border-t border-ink/20 pt-4">
+                  <p className="max-w-xs text-xs leading-5 text-ink/60">
+                    Kuva + konteksti + copy + CTA + kanava-adaptaatio.
+                  </p>
+                  <span className="font-mono text-xs text-signal">GH / OUT</span>
                 </div>
               </div>
-              <div className="font-display text-3xl font-black text-signal" aria-hidden="true">→</div>
-              <div className="border border-signal bg-white p-5">
-                <Logo compact className="h-10 w-10" />
-                <p className="eyebrow mt-12 text-signal">READY / 02</p>
-                <p className="mt-3 font-display text-3xl font-black uppercase leading-[0.95] tracking-[-0.045em]">
-                  Valmis referenssisisältö
-                </p>
-              </div>
+            </article>
+          </div>
+
+          <div className="proof-caption-band">
+            <div>
+              <p className="eyebrow text-signal">RAW / POLISHED</p>
+              <p className="mt-3 max-w-xl text-sm leading-6 text-ink/65">
+                GhoulHouse ei tarvitse studiotuotantoa lähtöpisteeksi. Arjessa syntyvä materiaali
+                muutetaan hallituksi visuaaliseksi kokonaisuudeksi.
+              </p>
             </div>
-            <p className="mt-6 max-w-xl text-sm leading-6 text-ink/60">
-              Yksi selkeä mekanismi: asiakkaan olemassa oleva materiaali muutetaan suunnitelluksi, kirjoitetuksi ja julkaisuvalmiiksi sisällöksi.
-            </p>
-          </article>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-1">
-            <article className="concept-card bg-ink text-ghost">
-              <div className="example-label">KONSEPTIESIMERKKI — EI ASIAKASTYÖ.</div>
-              <p className="eyebrow mt-10 text-signal">RAW → FINAL</p>
-              <p className="mt-4 font-display text-4xl font-black uppercase leading-[0.9] tracking-[-0.05em]">
-                TYÖMAAKUVA<br />→<br />REFERENSSISISÄLTÖ
+            <div>
+              <p className="eyebrow text-signal">UTILITY / ART</p>
+              <p className="mt-3 max-w-xl text-sm leading-6 text-ink/65">
+                Lopputuloksen pitää näyttää suunnitellulta, mutta edelleen yrityksen oikealta työltä —
+                ei geneeriseltä mainospohjalta.
               </p>
-              <p className="mt-6 max-w-sm text-sm leading-6 text-ghost/60">
-                Sama kuva voidaan jalostaa tunnistettavaksi feed-julkaisuksi ilman erillistä kuvauspäivää.
-              </p>
-            </article>
-            <article className="concept-card bg-ghost text-ink">
-              <div className="example-label">KONSEPTIESIMERKKI — EI ASIAKASTYÖ.</div>
-              <p className="eyebrow mt-10 text-signal">BEFORE / AFTER</p>
-              <div className="mt-5 grid grid-cols-2 gap-2" aria-hidden="true">
-                <div className="aspect-[4/5] border border-ink/20 bg-bone p-3 text-xs font-bold">RAW</div>
-                <div className="aspect-[4/5] border border-signal bg-white p-3 text-xs font-bold text-signal">READY</div>
-              </div>
-              <p className="mt-5 text-sm leading-6 text-ink/60">
-                Ennen–jälkeen toimii erityisen hyvin remontti-, maalaus- ja saneeraustöissä, joissa muutos näkyy suoraan kuvassa.
-              </p>
-            </article>
+            </div>
           </div>
         </div>
       </div>
