@@ -23,9 +23,9 @@ export default function FinalCTA({ onCtaClick }: FinalCTAProps) {
 
           <div className="lg:col-span-4">
             <p className="mb-6 max-w-md text-base leading-relaxed text-white/85">
-              Lähetä yrityksen tiedot ja muutama työmaakuva. Saat kaksi
+              Lähetä yrityksen tiedot ja verkkosivu tai Instagram. Saat kaksi
               yrityskohtaista konseptiesimerkkiä siitä, miltä sisältö voisi
-              näyttää.
+              näyttää. Jos tarvitsemme työmaakuvia, pyydämme ne erikseen.
             </p>
             <Button
               variant="secondary"
