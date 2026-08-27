@@ -2,8 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
-import Button from '@/components/ui/Button';
+import { useEffect, useState } from 'react';
 import Container from '@/components/ui/Container';
 import { siteConfig } from '@/config/site';
 
@@ -21,62 +20,70 @@ const links = [
 export default function Navigation({ onCtaClick }: NavigationProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMobileMenuOpen(false);
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [mobileMenuOpen]);
+
   return (
-    <header className="sticky top-0 z-40 border-b-2 border-ink bg-ghost">
+    <header className="sticky top-0 z-40 border-b border-ink/20 bg-ghost">
       <Container>
         <nav
-          className="flex min-h-[72px] items-center justify-between gap-5"
+          className="flex min-h-[60px] items-center justify-between gap-5 md:min-h-[66px]"
           aria-label="Päänavigaatio"
         >
-          <Link href="#top" aria-label="GhoulHouse — sivun alku">
-            <span className="flex items-center gap-2.5">
-              <Image
-                src="/mark-color.svg"
-                alt=""
-                width={42}
-                height={42}
-                priority
-                className="h-9 w-9 md:h-10 md:w-10"
-              />
-              <span className="font-display text-2xl uppercase leading-none tracking-[-0.02em] text-ink md:text-[1.7rem]">
-                GhoulHouse
-              </span>
-            </span>
+          <Link
+            href="#top"
+            className="inline-flex shrink-0 items-center"
+            aria-label="GhoulHouse — sivun alku"
+          >
+            <Image
+              src="/logo-horizontal.svg"
+              alt="GhoulHouse"
+              width={420}
+              height={138}
+              priority
+              className="h-auto w-[150px] md:w-[176px]"
+            />
           </Link>
 
-          <div className="hidden items-center gap-7 md:flex">
+          <div className="hidden items-center gap-7 md:flex lg:gap-9">
             {links.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="text-sm font-bold text-ink hover:text-signal"
+                className="text-[0.72rem] font-black uppercase tracking-[0.12em] text-ink transition-colors hover:text-signal"
               >
                 {link.label}
               </a>
             ))}
-            <Button
-              variant="primary"
-              size="sm"
+            <button
+              type="button"
               onClick={onCtaClick}
-              className="whitespace-nowrap text-xs uppercase tracking-[0.06em]"
+              className="inline-flex min-h-11 items-center gap-2 text-[0.72rem] font-black uppercase tracking-[0.12em] text-signal transition-colors hover:text-ink"
             >
-              {siteConfig.cta.primary}
-            </Button>
+              <span>2 sisältöesimerkkiä</span>
+              <span aria-hidden="true">→</span>
+            </button>
           </div>
 
           <button
             type="button"
             onClick={() => setMobileMenuOpen((open) => !open)}
-            className="flex h-11 w-11 items-center justify-center border-2 border-ink bg-ghost text-ink md:hidden"
+            className="inline-flex min-h-11 items-center gap-2 text-[0.7rem] font-black uppercase tracking-[0.14em] text-ink md:hidden"
             aria-label={mobileMenuOpen ? 'Sulje valikko' : 'Avaa valikko'}
             aria-expanded={mobileMenuOpen}
             aria-controls="mobile-navigation"
           >
-            <span className="sr-only">
-              {mobileMenuOpen ? 'Sulje valikko' : 'Avaa valikko'}
-            </span>
-            <span aria-hidden="true" className="text-xl font-black">
-              {mobileMenuOpen ? '×' : '≡'}
+            <span>{mobileMenuOpen ? 'Sulje' : 'Valikko'}</span>
+            <span aria-hidden="true" className="text-base leading-none text-signal">
+              {mobileMenuOpen ? '×' : '+'}
             </span>
           </button>
         </nav>
@@ -85,32 +92,35 @@ export default function Navigation({ onCtaClick }: NavigationProps) {
       {mobileMenuOpen && (
         <div
           id="mobile-navigation"
-          className="border-t-2 border-ink bg-ghost md:hidden"
+          className="absolute inset-x-0 top-full border-y-2 border-ink bg-ghost md:hidden"
         >
-          <Container className="py-4">
-            <div className="divide-y divide-ink/20 border-y border-ink/20">
-              {links.map((link) => (
+          <Container className="py-5">
+            <div className="grid">
+              {links.map((link, index) => (
                 <a
                   key={link.href}
                   href={link.href}
-                  className="block py-4 text-base font-bold text-ink"
+                  className={`flex min-h-12 items-center justify-between border-ink/20 py-3 text-sm font-black uppercase tracking-[0.1em] text-ink ${
+                    index === 0 ? 'border-t' : ''
+                  } border-b`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  {link.label}
+                  <span>{link.label}</span>
+                  <span aria-hidden="true" className="text-signal">→</span>
                 </a>
               ))}
             </div>
-            <Button
-              variant="primary"
-              size="md"
+            <button
+              type="button"
               onClick={() => {
                 setMobileMenuOpen(false);
                 onCtaClick();
               }}
-              className="mt-4 w-full text-xs uppercase tracking-[0.07em]"
+              className="mt-5 flex min-h-14 w-full items-center justify-between bg-signal px-5 text-left text-sm font-black uppercase tracking-[0.08em] text-white"
             >
-              {siteConfig.cta.primary}
-            </Button>
+              <span>{siteConfig.cta.primary}</span>
+              <span aria-hidden="true">→</span>
+            </button>
           </Container>
         </div>
       )}
