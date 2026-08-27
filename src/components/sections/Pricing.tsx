@@ -12,7 +12,7 @@ export default function Pricing({ onCtaClick }: PricingProps) {
   return (
     <section id="pricing" className="border-y-2 border-ink bg-ghost py-16 md:py-24">
       <Container>
-        <div className="grid gap-8 lg:grid-cols-12">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-signal">
               Hinnoittelu / palvelun eteneminen
@@ -30,7 +30,7 @@ export default function Pricing({ onCtaClick }: PricingProps) {
 
           <div className="lg:col-span-7">
             <div className="border-2 border-ink bg-ghost">
-              <article className="grid gap-6 border-b-2 border-ink p-6 md:grid-cols-[180px_1fr] md:p-8">
+              <article className="grid grid-cols-1 gap-6 border-b-2 border-ink p-6 md:grid-cols-[180px_1fr] md:p-8">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.16em] text-signal">
                     {start.lifecycle}
@@ -72,7 +72,7 @@ export default function Pricing({ onCtaClick }: PricingProps) {
                 03 <span className="mx-4 text-signal">→</span> 04
               </div>
 
-              <article className="grid gap-6 bg-bone p-6 md:grid-cols-[180px_1fr] md:p-8">
+              <article className="grid grid-cols-1 gap-6 bg-bone p-6 md:grid-cols-[180px_1fr] md:p-8">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.16em] text-ink/60">
                     {managed.lifecycle}
