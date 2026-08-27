@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">Remonttityömaan konseptikuva</title>
+  <desc id="desc">Brändin mukainen graafinen kuva työtilasta ja rakenteista.</desc>
+  <rect width="1200" height="900" fill="#111111"/>
+  <rect x="58" y="58" width="1084" height="784" fill="#F7F4EF"/>
+  <rect x="94" y="94" width="1012" height="712" fill="#E6DFD5"/>
+  <path d="M94 645 366 416l174 132 188-248 378 301v205H94Z" fill="#111111"/>
+  <path d="m338 416 202 153 188-248 250 199" fill="none" stroke="#F7F4EF" stroke-width="12" stroke-linecap="square"/>
+  <rect x="148" y="142" width="198" height="24" fill="#C9282D"/>
+  <rect x="148" y="194" width="318" height="8" fill="#111111" opacity=".75"/>
+  <rect x="148" y="222" width="226" height="8" fill="#111111" opacity=".45"/>
+  <g fill="none" stroke="#C9282D" stroke-width="10">
+    <rect x="812" y="146" width="206" height="156"/>
+    <path d="M915 146v156M812 224h206"/>
+  </g>
+  <circle cx="915" cy="224" r="14" fill="#C9282D"/>
+  <text x="148" y="754" font-family="Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="4" fill="#F7F4EF">KONSEPTIESIMERKKI / EI ASIAKASTYÖ</text>
+</svg>
