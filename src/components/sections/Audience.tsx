@@ -14,14 +14,14 @@ export default function Audience() {
       <Container>
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-signal">
+            <p className="type-label mb-4 text-signal">
               Kenelle tämä on
             </p>
-            <h2 className="font-display text-[clamp(2.8rem,5vw,5.5rem)] font-black uppercase leading-[0.9] tracking-[-0.04em] text-ink">
+            <h2 className="type-section-title max-w-[14ch] text-ink">
               Kun työ on hyvää,
               <span className="block">mutta some ei pysy mukana.</span>
             </h2>
-            <p className="mt-6 max-w-md text-sm leading-relaxed text-ink/65">
+            <p className="type-editorial mt-6 max-w-md text-ink/70">
               Ensimmäinen validointiniche on Uudenmaan remontti- ja
               korjausrakentamisen yritykset. Palvelumalli soveltuu myös muille
               paikallisille palveluyrityksille, joilla syntyy vastaavaa
@@ -35,16 +35,16 @@ export default function Audience() {
                 key={signal}
                 className="grid grid-cols-[54px_1fr] gap-4 border-b border-ink/25 py-5"
               >
-                <span className="text-xs font-black text-signal">
+                <span className="type-label text-signal">
                   {String(index + 1).padStart(2, '0')}
                 </span>
-                <p className="text-base font-bold leading-relaxed text-ink">
+                <p className="type-ui text-ink">
                   {signal}
                 </p>
               </div>
             ))}
 
-            <p className="mt-5 text-xs leading-relaxed text-ink/60">
+            <p className="type-caption mt-5 text-ink/65">
               GhoulHouse ei takaa liidejä, myyntiä, seuraajakasvua tai
               tavoittavuutta. Palvelulupaus koskee sovittua sisältötoimitusta.
             </p>
