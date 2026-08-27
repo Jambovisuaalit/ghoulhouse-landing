@@ -29,7 +29,7 @@ export default function Examples() {
   return (
     <section id="examples" className="bg-bone py-16 md:py-24">
       <Container>
-        <div className="grid gap-6 border-b-2 border-ink pb-8 lg:grid-cols-12 lg:items-end">
+        <div className="grid grid-cols-1 gap-6 border-b-2 border-ink pb-8 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-8">
             <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-signal">
               Sisältöesimerkit
@@ -45,7 +45,7 @@ export default function Examples() {
           </p>
         </div>
 
-        <div className="grid border-x-2 border-b-2 border-ink md:grid-cols-3">
+        <div className="grid grid-cols-1 border-x-2 border-b-2 border-ink md:grid-cols-3">
           {examples.map((example, index) => (
             <figure
               key={example.number}
