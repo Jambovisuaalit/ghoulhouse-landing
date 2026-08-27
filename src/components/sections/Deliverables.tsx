@@ -32,7 +32,7 @@ export default function Deliverables() {
   return (
     <section id="deliverables" className="bg-ghost py-16 md:py-24">
       <Container>
-        <div className="grid gap-10 lg:grid-cols-12">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-signal">
               START / toimitussisältö
@@ -51,7 +51,7 @@ export default function Deliverables() {
             {grouped.map((item) => (
               <div
                 key={item.label}
-                className="grid gap-2 border-b border-ink/30 py-5 sm:grid-cols-[150px_1fr]"
+                className="grid grid-cols-1 gap-2 border-b border-ink/30 py-5 sm:grid-cols-[150px_1fr]"
               >
                 <span className="text-[0.65rem] font-black uppercase tracking-[0.15em] text-signal">
                   {item.label}
