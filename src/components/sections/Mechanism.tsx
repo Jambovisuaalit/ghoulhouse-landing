@@ -246,7 +246,7 @@ export default function Mechanism() {
   return (
     <section
       id="mechanism"
-      className="overflow-hidden border-y-2 border-ink bg-ink text-ghost"
+      className="border-y-2 border-ink bg-ink text-ghost"
       aria-labelledby="mechanism-title"
     >
       <Container className="py-14 md:py-20">
