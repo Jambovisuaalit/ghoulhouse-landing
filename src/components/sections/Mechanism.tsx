@@ -1,14 +1,255 @@
+'use client';
+
 import Image from 'next/image';
+import { useEffect, useRef } from 'react';
 import Container from '@/components/ui/Container';
 
+const frames = [
+  {
+    image: '/hero-renovation-clean.svg',
+    index: '01',
+    label: 'RAW',
+    caption: 'Työmaalta sellaisenaan',
+  },
+  {
+    image: '/work-detail.svg',
+    index: '02',
+    label: 'DETAIL',
+    caption: 'Osaaminen nostetaan esiin',
+  },
+  {
+    image: '/finished-space.svg',
+    index: '03',
+    label: 'CRAFT',
+    caption: 'Työvaiheesta sisältökulma',
+  },
+  {
+    image: '/hero-renovation.svg',
+    index: '04',
+    label: 'FINAL',
+    caption: 'Visuaalisesti viimeistelty',
+  },
+  {
+    image: '/finished-space.svg',
+    index: '05',
+    label: 'PUBLISH',
+    caption: 'Valmis julkaistavaksi',
+  },
+] as const;
+
+function clamp(value: number, min = 0, max = 1) {
+  return Math.min(max, Math.max(min, value));
+}
+
 export default function Mechanism() {
+  const rawSectionRef = useRef<HTMLDivElement>(null);
+  const rawStickyRef = useRef<HTMLDivElement>(null);
+  const filmSectionRef = useRef<HTMLDivElement>(null);
+  const filmStickyRef = useRef<HTMLDivElement>(null);
+  const filmViewportRef = useRef<HTMLDivElement>(null);
+  const filmTrackRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const rawSection = rawSectionRef.current;
+    const rawSticky = rawStickyRef.current;
+    const filmSection = filmSectionRef.current;
+    const filmSticky = filmStickyRef.current;
+    const filmViewport = filmViewportRef.current;
+    const filmTrack = filmTrackRef.current;
+
+    if (
+      !rawSection ||
+      !rawSticky ||
+      !filmSection ||
+      !filmSticky ||
+      !filmViewport ||
+      !filmTrack
+    ) {
+      return;
+    }
+
+    const desktopMotion = window.matchMedia(
+      '(min-width: 1024px) and (prefers-reduced-motion: no-preference)'
+    );
+
+    let animationFrame = 0;
+    let measureFrame = 0;
+
+    const resetStaticState = () => {
+      rawSection.style.removeProperty('height');
+      filmSection.style.removeProperty('height');
+      rawSticky.style.removeProperty('height');
+      rawSticky.style.removeProperty('top');
+      filmSticky.style.removeProperty('height');
+      filmSticky.style.removeProperty('top');
+      filmTrack.style.removeProperty('transform');
+
+      rawSection.style.setProperty('--raw-progress', '0.5');
+      rawSection.style.setProperty('--raw-cut', '50%');
+      rawSection.style.setProperty('--raw-left', '50%');
+      rawSection.style.setProperty('--raw-shift', '0px');
+      rawSection.style.setProperty('--final-shift', '0px');
+      rawSection.style.setProperty('--raw-opacity', '1');
+      rawSection.style.setProperty('--final-opacity', '1');
+      rawSection.style.setProperty('--raw-scale', '1.02');
+      rawSection.style.setProperty('--final-scale', '1.02');
+      filmSection.style.setProperty('--film-progress', '0');
+    };
+
+    const sectionProgress = (
+      section: HTMLElement,
+      sticky: HTMLElement
+    ) => {
+      const sectionRect = section.getBoundingClientRect();
+      const stickyTop = Number.parseFloat(sticky.style.top) || 0;
+      const travel = Math.max(
+        1,
+        section.offsetHeight - sticky.offsetHeight
+      );
+
+      return clamp((stickyTop - sectionRect.top) / travel);
+    };
+
+    const render = () => {
+      animationFrame = 0;
+
+      if (!desktopMotion.matches) {
+        resetStaticState();
+        return;
+      }
+
+      const rawProgress = sectionProgress(rawSection, rawSticky);
+      const rawCut = 100 - rawProgress * 100;
+
+      rawSection.style.setProperty(
+        '--raw-progress',
+        rawProgress.toFixed(4)
+      );
+      rawSection.style.setProperty('--raw-cut', `${rawCut.toFixed(2)}%`);
+      rawSection.style.setProperty(
+        '--raw-left',
+        `${(rawProgress * 100).toFixed(2)}%`
+      );
+      rawSection.style.setProperty(
+        '--raw-shift',
+        `${(-36 * rawProgress).toFixed(2)}px`
+      );
+      rawSection.style.setProperty(
+        '--final-shift',
+        `${(36 * (1 - rawProgress)).toFixed(2)}px`
+      );
+      rawSection.style.setProperty(
+        '--raw-opacity',
+        Math.max(0.2, 1 - rawProgress * 1.08).toFixed(3)
+      );
+      rawSection.style.setProperty(
+        '--final-opacity',
+        Math.max(0.18, rawProgress * 1.15).toFixed(3)
+      );
+      rawSection.style.setProperty(
+        '--raw-scale',
+        (1.035 - rawProgress * 0.018).toFixed(4)
+      );
+      rawSection.style.setProperty(
+        '--final-scale',
+        (1.012 + rawProgress * 0.012).toFixed(4)
+      );
+
+      const filmProgress = sectionProgress(filmSection, filmSticky);
+      const horizontalTravel = Math.max(
+        0,
+        filmTrack.scrollWidth - filmViewport.clientWidth
+      );
+
+      filmSection.style.setProperty(
+        '--film-progress',
+        filmProgress.toFixed(4)
+      );
+      filmTrack.style.transform = `translate3d(${(
+        -horizontalTravel * filmProgress
+      ).toFixed(2)}px, 0, 0)`;
+    };
+
+    const scheduleRender = () => {
+      if (animationFrame) return;
+      animationFrame = window.requestAnimationFrame(render);
+    };
+
+    const measure = () => {
+      measureFrame = 0;
+
+      if (!desktopMotion.matches) {
+        resetStaticState();
+        return;
+      }
+
+      const header =
+        document.querySelector<HTMLElement>('body > header') ??
+        document.querySelector<HTMLElement>('header');
+      const headerHeight = Math.round(
+        header?.getBoundingClientRect().height ?? 66
+      );
+      const stickyHeight = Math.max(
+        520,
+        window.innerHeight - headerHeight
+      );
+
+      rawSticky.style.top = `${headerHeight}px`;
+      rawSticky.style.height = `${stickyHeight}px`;
+      filmSticky.style.top = `${headerHeight}px`;
+      filmSticky.style.height = `${stickyHeight}px`;
+
+      const rawTravel = Math.min(
+        1500,
+        Math.max(950, stickyHeight * 1.35)
+      );
+      rawSection.style.height = `${stickyHeight + rawTravel}px`;
+
+      const horizontalTravel = Math.max(
+        0,
+        filmTrack.scrollWidth - filmViewport.clientWidth
+      );
+      const filmTravel = Math.min(
+        2800,
+        Math.max(horizontalTravel, stickyHeight * 1.2)
+      );
+      filmSection.style.height = `${stickyHeight + filmTravel}px`;
+
+      render();
+    };
+
+    const scheduleMeasure = () => {
+      if (measureFrame) return;
+      measureFrame = window.requestAnimationFrame(measure);
+    };
+
+    const resizeObserver = new ResizeObserver(scheduleMeasure);
+    resizeObserver.observe(filmViewport);
+    resizeObserver.observe(filmTrack);
+
+    measure();
+
+    window.addEventListener('scroll', scheduleRender, { passive: true });
+    window.addEventListener('resize', scheduleMeasure);
+    desktopMotion.addEventListener('change', scheduleMeasure);
+
+    return () => {
+      if (animationFrame) window.cancelAnimationFrame(animationFrame);
+      if (measureFrame) window.cancelAnimationFrame(measureFrame);
+      resizeObserver.disconnect();
+      window.removeEventListener('scroll', scheduleRender);
+      window.removeEventListener('resize', scheduleMeasure);
+      desktopMotion.removeEventListener('change', scheduleMeasure);
+    };
+  }, []);
+
   return (
     <section
       id="mechanism"
-      className="overflow-hidden border-y-2 border-ink bg-ink py-14 text-ghost md:py-20"
+      className="overflow-hidden border-y-2 border-ink bg-ink text-ghost"
       aria-labelledby="mechanism-title"
     >
-      <Container>
+      <Container className="py-14 md:py-20">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-9">
             <p className="type-label mb-4 text-signal">
@@ -28,117 +269,120 @@ export default function Mechanism() {
             Sama materiaali. Selkeämpi rajaus, rakenne ja viesti.
           </p>
         </div>
+      </Container>
 
-        <details className="group mt-9 border-y border-ghost/25 md:mt-12">
-          <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden">
-            <div className="grid grid-cols-1 lg:min-h-[500px] lg:grid-cols-[minmax(0,0.88fr)_128px_minmax(0,1.12fr)]">
-              <figure className="relative min-h-[190px] overflow-hidden border-b border-ghost/25 bg-bone lg:min-h-0 lg:border-b-0 lg:border-r">
-                <Image
-                  src="/hero-renovation-clean.svg"
-                  alt="Raaka työmaamateriaali ennen GhoulHouse-käsittelyä"
-                  fill
-                  sizes="(max-width: 1023px) 100vw, 40vw"
-                  className="object-cover grayscale contrast-125 transition-transform duration-500 group-open:scale-[1.015]"
-                />
-                <div className="absolute inset-0 bg-ink/10" aria-hidden="true" />
-
-                <figcaption className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 bg-gradient-to-t from-ink/95 via-ink/75 to-transparent px-4 pb-4 pt-14 sm:px-5 sm:pb-5">
-                  <div>
-                    <span className="type-label block text-signal">
-                      01 / RAW
-                    </span>
-                    <span className="mt-1 block text-xl font-extrabold uppercase leading-tight tracking-[-0.02em] text-ghost sm:text-2xl">
-                      Worksite material
-                    </span>
-                  </div>
-                  <span className="type-caption uppercase tracking-[0.06em] text-ghost/65">
-                    sisään
-                  </span>
-                </figcaption>
-              </figure>
-
-              <div className="relative flex min-h-[74px] items-center justify-between gap-4 overflow-hidden bg-signal px-5 text-white lg:min-h-0 lg:flex-col lg:justify-center lg:px-3 lg:py-8">
-                <Image
-                  src="/mark-white.svg"
-                  alt=""
-                  width={80}
-                  height={80}
-                  className="hidden h-11 w-11 shrink-0 transition-transform duration-500 group-open:rotate-[-4deg] group-open:scale-105 sm:block lg:h-16 lg:w-16"
-                />
-
-                <div className="type-label flex items-center gap-2 lg:flex-col lg:gap-3 lg:text-center">
-                  <span>Crop</span>
-                  <span aria-hidden="true" className="text-white/60">→</span>
-                  <span>Structure</span>
-                  <span aria-hidden="true" className="text-white/60">→</span>
-                  <span>Copy</span>
-                  <span aria-hidden="true" className="text-white/60">→</span>
-                  <span>Graphic</span>
-                </div>
-
-                <span className="type-ui hidden uppercase tracking-[0.04em] lg:block">
-                  GhoulHouse
-                </span>
-              </div>
-
-              <figure className="relative min-h-[285px] overflow-hidden bg-ghost text-ink lg:min-h-0">
-                <Image
-                  src="/finished-space.svg"
-                  alt="GhoulHouse-käsittelyn jälkeen syntyvää valmista somejulkaisua havainnollistava konseptikuva"
-                  fill
-                  sizes="(max-width: 1023px) 100vw, 48vw"
-                  className="object-cover transition-transform duration-500 group-open:scale-[1.025]"
-                />
-
-                <div className="absolute inset-x-4 bottom-12 border-2 border-ink bg-ghost/95 p-4 sm:inset-x-6 sm:bottom-14 sm:p-5 lg:inset-x-8 lg:bottom-16 lg:p-6">
-                  <div className="flex items-center justify-between gap-4">
-                    <span className="type-label text-signal">
-                      GhoulHouse / final
-                    </span>
-                    <span className="type-caption uppercase tracking-[0.06em] text-ink/65">
-                      Ready social content
-                    </span>
-                  </div>
-                  <p className="mt-3 max-w-[14ch] text-[clamp(1.9rem,5vw,3.5rem)] font-extrabold uppercase leading-[0.92] tracking-[-0.035em]">
-                    Valmis some ulos.
-                  </p>
-                  <p className="type-caption mt-3 max-w-sm text-ink/65">
-                    Rajattu, kirjoitettu ja julkaisuvalmis.
-                  </p>
-                </div>
-
-                <figcaption className="type-caption absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 bg-ink px-4 py-3 uppercase tracking-[0.06em] text-ghost sm:px-6">
-                  <span>02 / FINAL</span>
-                  <span>KONSEPTIESIMERKKI — EI ASIAKASTYÖ</span>
-                </figcaption>
-              </figure>
-            </div>
-
-            <div className="type-label flex min-h-14 items-center justify-between gap-5 border-t border-ghost/25 py-4 text-ghost/70">
-              <span>Näytä muunnoksen rakenne</span>
-              <span
-                aria-hidden="true"
-                className="text-xl leading-none text-signal transition-transform duration-300 group-open:rotate-45"
-              >
-                +
-              </span>
-            </div>
-          </summary>
-
-          <div className="border-t border-ghost/25 py-5 sm:py-6">
-            <p className="text-[clamp(1.65rem,3.6vw,3rem)] font-extrabold uppercase leading-[1] tracking-[-0.03em] text-ghost">
-              Crop <span className="text-signal">→</span> structure{' '}
-              <span className="text-signal">→</span> copy{' '}
-              <span className="text-signal">→</span> graphic treatment
-            </p>
-            <p className="type-editorial mt-3 max-w-2xl text-ghost/65">
-              GhoulHouse ei keksi työstä uutta todellisuutta. Se tekee olemassa
-              olevasta materiaalista selkeän, tunnistettavan ja julkaisuvalmiin
-              kokonaisuuden.
+      <div
+        ref={rawSectionRef}
+        className="mechanism-raw"
+        data-scroll-raw
+      >
+        <div ref={rawStickyRef} className="mechanism-raw__sticky">
+          <div className="mechanism-raw__copy mechanism-raw__copy--raw">
+            <span className="type-label text-signal">01 / RAW</span>
+            <h3>Puhelimesta.</h3>
+            <p>
+              Oikea työmaa. Oikea hetki. Materiaali sellaisena kuin se syntyy.
             </p>
           </div>
-        </details>
-      </Container>
+
+          <div
+            className="mechanism-raw__stage"
+            aria-label="RAW to FINAL -konseptitransformaatio"
+          >
+            <div className="mechanism-raw__image mechanism-raw__image--source">
+              <Image
+                src="/hero-renovation-clean.svg"
+                alt="Raaka työmaamateriaali ennen GhoulHouse-käsittelyä"
+                fill
+                sizes="(max-width: 1023px) 100vw, 58vw"
+                className="object-cover"
+              />
+              <div className="mechanism-raw__technical" aria-hidden="true">
+                <span>RAW / 01</span>
+                <span>WORKSITE MATERIAL</span>
+                <span>UNEDITED</span>
+              </div>
+            </div>
+
+            <div className="mechanism-raw__image mechanism-raw__image--final">
+              <Image
+                src="/finished-space.svg"
+                alt="GhoulHouse-käsittelyn jälkeen syntyvää valmista somejulkaisua havainnollistava konseptikuva"
+                fill
+                sizes="(max-width: 1023px) 100vw, 58vw"
+                className="object-cover"
+              />
+              <div className="mechanism-raw__final-frame" aria-hidden="true" />
+              <div className="mechanism-raw__final-copy">
+                <span className="type-label text-signal">
+                  GhoulHouse / final
+                </span>
+                <strong>Työ näyttää yhtä hyvältä kuin se on.</strong>
+                <small>KONSEPTIESIMERKKI — EI ASIAKASTYÖ</small>
+              </div>
+            </div>
+
+            <div className="mechanism-raw__divider" aria-hidden="true">
+              <span />
+            </div>
+          </div>
+
+          <div className="mechanism-raw__copy mechanism-raw__copy--final">
+            <span className="type-label text-signal">02 / FINAL</span>
+            <h3>Julkaisuun.</h3>
+            <p>
+              Rajaus, rakenne, copy ja CTA — sama työ selkeämmässä muodossa.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div
+        ref={filmSectionRef}
+        className="mechanism-film"
+        data-scroll-film
+      >
+        <div ref={filmStickyRef} className="mechanism-film__sticky">
+          <div className="mechanism-film__header">
+            <p className="type-label text-signal">Filmstrip / prosessi</p>
+            <h3>Yksi työmaa. Monta sisältökulmaa.</h3>
+          </div>
+
+          <div
+            ref={filmViewportRef}
+            className="mechanism-film__viewport"
+            tabIndex={0}
+            role="region"
+            aria-label="Sisältöprosessin filmstrip"
+          >
+            <div ref={filmTrackRef} className="mechanism-film__track">
+              {frames.map((frame) => (
+                <figure className="mechanism-film__frame" key={frame.index}>
+                  <div className="mechanism-film__perforation" aria-hidden="true" />
+                  <div className="mechanism-film__image">
+                    <Image
+                      src={frame.image}
+                      alt=""
+                      fill
+                      sizes="(max-width: 1023px) 82vw, 38vw"
+                      className="object-cover"
+                    />
+                    <span>{frame.label}</span>
+                  </div>
+                  <figcaption>
+                    <strong>{frame.index}</strong>
+                    <p>{frame.caption}</p>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
+
+          <div className="mechanism-film__progress" aria-hidden="true">
+            <span />
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
