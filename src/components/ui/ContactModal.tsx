@@ -41,7 +41,12 @@ export default function ContactModal({ onClose }: ContactModalProps) {
         dialogRef.current.querySelectorAll<HTMLElement>(
           'button:not([disabled]), input:not([disabled]):not([tabindex="-1"]), textarea:not([disabled]), summary, a[href], [tabindex]:not([tabindex="-1"])'
         )
-      ).filter((element) => !element.hasAttribute('hidden'));
+      ).filter((element) => {
+        if (element.hasAttribute('hidden')) return false;
+
+        const closedDetails = element.closest('details:not([open])');
+        return !closedDetails || element.tagName === 'SUMMARY';
+      });
 
       if (focusable.length === 0) {
         event.preventDefault();
@@ -244,8 +249,8 @@ export default function ContactModal({ onClose }: ContactModalProps) {
             </div>
 
             <p className="mt-5 max-w-lg text-xs leading-relaxed text-ink/60">
-              Emme ilmoita tässä toimitusaikaa, koska sivustolle ei ole
-              vahvistettu erillistä vastausaikalupausta.
+              Mahdollinen materiaalipyyntö ja esimerkkien eteneminen
+              vahvistetaan erikseen sähköpostitse.
             </p>
 
             <button
