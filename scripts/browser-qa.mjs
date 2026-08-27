@@ -1,9 +1,9 @@
 import { execFileSync, spawn } from 'node:child_process';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 
 const BASE_URL = process.env.QA_BASE_URL || 'http://127.0.0.1:3000';
-const CDP_PORT = 9222;
 const SCREENSHOT_DIR = process.env.QA_SCREENSHOT_DIR || 'qa-artifacts';
+const USER_DATA_DIR = `/tmp/ghoulhouse-browser-qa-${process.pid}`;
 
 const viewports = [
   { width: 320, height: 800 },
@@ -29,6 +29,26 @@ function findChrome() {
   }
 
   return result;
+}
+
+async function waitForDevToolsPort(timeoutMs = 20_000) {
+  const start = Date.now();
+  const activePortFile = `${USER_DATA_DIR}/DevToolsActivePort`;
+
+  while (Date.now() - start < timeoutMs) {
+    try {
+      const contents = await readFile(activePortFile, 'utf8');
+      const [port] = contents.trim().split(/\r?\n/);
+      const parsed = Number(port);
+      if (Number.isInteger(parsed) && parsed > 0) return parsed;
+    } catch {
+      // Chrome has not written the file yet.
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+
+  throw new Error('Timed out waiting for Chrome DevToolsActivePort.');
 }
 
 async function waitForUrl(url, timeoutMs = 20_000) {
@@ -174,13 +194,13 @@ const chrome = spawn(
   chromePath,
   [
     '--headless=new',
-    `--remote-debugging-port=${CDP_PORT}`,
+    '--remote-debugging-port=0',
     '--remote-debugging-address=127.0.0.1',
     '--no-sandbox',
     '--disable-gpu',
     '--disable-dev-shm-usage',
     '--hide-scrollbars',
-    '--user-data-dir=/tmp/ghoulhouse-browser-qa',
+    `--user-data-dir=${USER_DATA_DIR}`,
     'about:blank',
   ],
   { stdio: 'ignore' }
@@ -190,10 +210,11 @@ let client;
 
 try {
   await mkdir(SCREENSHOT_DIR, { recursive: true });
-  await waitForUrl(`http://127.0.0.1:${CDP_PORT}/json/version`);
+  const cdpPort = await waitForDevToolsPort();
+  await waitForUrl(`http://127.0.0.1:${cdpPort}/json/version`);
 
   const newPage = await fetch(
-    `http://127.0.0.1:${CDP_PORT}/json/new?${encodeURIComponent(BASE_URL)}`,
+    `http://127.0.0.1:${cdpPort}/json/new?${encodeURIComponent(BASE_URL)}`,
     { method: 'PUT' }
   ).then((response) => response.json());
 
@@ -520,4 +541,5 @@ try {
 } finally {
   client?.close();
   chrome.kill('SIGTERM');
+  await rm(USER_DATA_DIR, { recursive: true, force: true }).catch(() => {});
 }
