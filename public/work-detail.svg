@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">Remonttityön yksityiskohdan konseptikuva</title>
+  <desc id="desc">Graafinen lähikuva rakenteen, mitoituksen ja viimeistelyn yksityiskohdista.</desc>
+  <rect width="1200" height="900" fill="#111111"/>
+  <rect x="70" y="70" width="1060" height="760" fill="#F7F4EF"/>
+  <rect x="114" y="114" width="972" height="672" fill="#111111"/>
+  <path d="M114 566h972v220H114z" fill="#E6DFD5"/>
+  <path d="M176 174h358v330H176z" fill="#F7F4EF"/>
+  <path d="M218 216h274v246H218z" fill="#E6DFD5"/>
+  <path d="M218 216 492 462M492 216 218 462" stroke="#111111" stroke-width="10"/>
+  <path d="M636 164h368M636 230h244M636 296h310" stroke="#F7F4EF" stroke-width="13"/>
+  <path d="M640 420h364v114H640z" fill="#C9282D"/>
+  <path d="M680 477h284" stroke="#F7F4EF" stroke-width="10"/>
+  <path d="M176 642h828M176 700h522" stroke="#111111" stroke-width="9" opacity=".82"/>
+  <circle cx="1004" cy="700" r="44" fill="#C9282D"/>
+  <path d="m984 700 15 15 29-34" fill="none" stroke="#F7F4EF" stroke-width="9" stroke-linecap="square"/>
+</svg>

@@ -1,207 +1,370 @@
 'use client';
 
-import { useEffect, FormEvent, useState } from 'react';
+import {
+  FormEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { siteConfig } from '@/config/site';
+import { trackEvent } from '@/lib/analytics';
 
 interface ContactModalProps {
   onClose: () => void;
 }
 
+type SubmitState = 'idle' | 'submitting' | 'success' | 'error';
+
 export default function ContactModal({ onClose }: ContactModalProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [status, setStatus] = useState<SubmitState>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const hasStarted = useRef(false);
+  const firstInputRef = useRef<HTMLInputElement>(null);
+  const previousFocus = useRef<HTMLElement | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+    previousFocus.current = document.activeElement as HTMLElement | null;
+    firstInputRef.current?.focus();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
         onClose();
+        return;
+      }
+
+      if (event.key !== 'Tab' || !dialogRef.current) return;
+
+      const focusable = Array.from(
+        dialogRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), input:not([disabled]):not([tabindex="-1"]), textarea:not([disabled]), select:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'
+        )
+      ).filter((element) => !element.hasAttribute('hidden'));
+
+      if (focusable.length === 0) {
+        event.preventDefault();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
       }
     };
 
-    document.addEventListener('keydown', handleEscape);
+    document.addEventListener('keydown', handleKeyDown);
     document.body.style.overflow = 'hidden';
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'auto';
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+      previousFocus.current?.focus();
     };
   }, [onClose]);
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  const markStarted = () => {
+    if (hasStarted.current) return;
+    hasStarted.current = true;
+    trackEvent('lead_form_start');
+  };
 
-    const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData);
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setStatus('submitting');
+    setErrorMessage('');
+    setFieldErrors({});
+    trackEvent('lead_form_submit');
+
+    const formData = new FormData(event.currentTarget);
+    const data = Object.fromEntries(formData.entries());
 
     try {
-      // TODO: Replace with actual backend endpoint
-      // const response = await fetch('/api/contact', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(data),
-      // });
-      // if (!response.ok) throw new Error('Failed to submit');
+      const response = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(data),
+      });
 
-      // Temporary: log to console for verification
-      console.log('Contact form submitted:', data);
-      alert('Kiitos yhteydenotosta! Vastaamme pian.');
-      onClose();
+      const payload = (await response.json().catch(() => ({}))) as {
+        ok?: boolean;
+        code?: string;
+        errors?: Record<string, string>;
+      };
+
+      if (!response.ok || !payload.ok) {
+        if (payload.errors) setFieldErrors(payload.errors);
+
+        throw new Error(
+          payload.code === 'delivery_unavailable'
+            ? 'Lomakkeen toimituskanavaa ei ole vielä kytketty.'
+            : 'Pyyntöä ei voitu lähettää.'
+        );
+      }
+
+      setStatus('success');
+      trackEvent('lead_form_success');
     } catch (error) {
-      console.error('Form submission error:', error);
-      alert('Virhe lähetyksen aikana. Yritä uudelleen.');
-    } finally {
-      setIsSubmitting(false);
+      setStatus('error');
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : 'Pyyntöä ei voitu lähettää. Yritä uudelleen.'
+      );
+      trackEvent('lead_form_error');
     }
   };
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) {
-          onClose();
-        }
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/80 p-3 md:p-6"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
       }}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="contact-modal-title"
+      aria-hidden="false"
     >
-      <div className="bg-white rounded-lg max-w-lg w-full p-8 animate-in">
-        <div className="flex justify-between items-center mb-6">
-          <h2 id="contact-modal-title" className="text-2xl font-bold text-ink">
-            Pyydä 2 sisältöesimerkkiä
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-ink hover:text-signal transition-colors"
-            aria-label="Sulje modal"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+      <div
+        ref={dialogRef}
+        className="max-h-[94svh] w-full max-w-2xl overflow-y-auto border-2 border-ink bg-ghost shadow-2xl"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="contact-modal-title"
+        aria-describedby="contact-modal-description"
+      >
+        <div className="sticky top-0 z-10 flex items-start justify-between border-b-2 border-ink bg-ghost p-5 md:p-7">
+          <div>
+            <p className="text-[0.65rem] font-bold uppercase tracking-[0.16em] text-signal">
+              Seuraava askel
+            </p>
+            <h2
+              id="contact-modal-title"
+              className="mt-2 font-display text-3xl font-black uppercase leading-none text-ink md:text-4xl"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+              {siteConfig.cta.primary}
+            </h2>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="ml-4 flex h-11 w-11 shrink-0 items-center justify-center border-2 border-ink bg-ghost text-2xl leading-none text-ink hover:bg-ink hover:text-ghost"
+            aria-label="Sulje yhteydenottolomake"
+          >
+            ×
           </button>
         </div>
 
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="company" className="block text-sm font-medium text-ink mb-1">
-              Yritys *
-            </label>
-            <input
-              id="company"
-              name="company"
-              type="text"
-              required
-              className="w-full px-4 py-2 border border-bone rounded focus:outline-none focus:ring-2 focus:ring-signal"
-              placeholder="Esim. Renovaatiot Oy"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-ink mb-1">
-                Nimi *
-              </label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                required
-                className="w-full px-4 py-2 border border-bone rounded focus:outline-none focus:ring-2 focus:ring-signal"
-                placeholder="Etunimi Sukunimi"
-              />
-            </div>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-ink mb-1">
-                Sähköposti *
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                className="w-full px-4 py-2 border border-bone rounded focus:outline-none focus:ring-2 focus:ring-signal"
-                placeholder="nimi@yritys.fi"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-ink mb-1">
-              Puhelinnumero
-            </label>
-            <input
-              id="phone"
-              name="phone"
-              type="tel"
-              className="w-full px-4 py-2 border border-bone rounded focus:outline-none focus:ring-2 focus:ring-signal"
-              placeholder="+358 50 123 4567"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="website" className="block text-sm font-medium text-ink mb-1">
-              Yrityksen verkkosivut
-            </label>
-            <input
-              id="website"
-              name="website"
-              type="url"
-              className="w-full px-4 py-2 border border-bone rounded focus:outline-none focus:ring-2 focus:ring-signal"
-              placeholder="https://yritys.fi"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="instagram" className="block text-sm font-medium text-ink mb-1">
-              Instagram-profiili
-            </label>
-            <input
-              id="instagram"
-              name="instagram"
-              type="text"
-              className="w-full px-4 py-2 border border-bone rounded focus:outline-none focus:ring-2 focus:ring-signal"
-              placeholder="@yritys"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="message" className="block text-sm font-medium text-ink mb-1">
-              Viesti (vapaaehtoinen)
-            </label>
-            <textarea
-              id="message"
-              name="message"
-              rows={3}
-              className="w-full px-4 py-2 border border-bone rounded focus:outline-none focus:ring-2 focus:ring-signal resize-none"
-              placeholder="Kerro lyhyesti yrityksestäsi ja mitä etsit..."
-            />
-          </div>
-
-          <div className="pt-2">
+        {status === 'success' ? (
+          <div className="p-6 md:p-10" aria-live="polite">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-signal">
+              Pyyntö vastaanotettu
+            </p>
+            <h3 className="mt-3 font-display text-4xl font-black uppercase leading-none text-ink">
+              Kiitos.
+            </h3>
+            <p className="mt-5 max-w-lg text-base leading-relaxed text-ink/75">
+              Yhteydenottopyyntö on lähetetty. GhoulHouse voi käyttää antamiasi
+              tietoja tämän sisältöesimerkkipyynnön käsittelyyn.
+            </p>
             <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full btn btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+              type="button"
+              className="btn btn-secondary mt-8"
+              onClick={onClose}
             >
-              {isSubmitting ? 'Lähetetään...' : 'Lähetä pyyntö'}
+              Sulje
             </button>
           </div>
+        ) : (
+          <form
+            className="p-5 md:p-8"
+            onSubmit={handleSubmit}
+            onChange={markStarted}
+            noValidate
+          >
+            <p
+              id="contact-modal-description"
+              className="mb-7 max-w-xl text-sm leading-relaxed text-ink/65"
+            >
+              Kerro yritys ja yhteystiedot. Verkkosivu tai Instagram auttaa
+              tekemään esimerkeistä yrityskohtaisia.
+            </p>
 
-          <p className="text-xs text-ink/60 text-center mt-4">
-            Vastaamme pyyntöihin yleensä 24 tunnin sisällä.
-          </p>
-        </form>
+            <div className="sr-only" aria-hidden="true">
+              <label htmlFor="fax">Jätä tämä kenttä tyhjäksi</label>
+              <input id="fax" name="fax" type="text" tabIndex={-1} autoComplete="off" />
+            </div>
+
+            <div className="grid gap-5 sm:grid-cols-2">
+              <Field
+                id="company"
+                label="Yritys"
+                required
+                error={fieldErrors.company}
+              >
+                <input
+                  ref={firstInputRef}
+                  id="company"
+                  name="company"
+                  type="text"
+                  required
+                  maxLength={120}
+                  autoComplete="organization"
+                  className="form-control"
+                />
+              </Field>
+
+              <Field id="name" label="Nimi" required error={fieldErrors.name}>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  required
+                  maxLength={120}
+                  autoComplete="name"
+                  className="form-control"
+                />
+              </Field>
+
+              <Field
+                id="email"
+                label="Sähköposti"
+                required
+                error={fieldErrors.email}
+              >
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  maxLength={254}
+                  autoComplete="email"
+                  className="form-control"
+                />
+              </Field>
+
+              <Field id="phone" label="Puhelin" error={fieldErrors.phone}>
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  maxLength={40}
+                  autoComplete="tel"
+                  className="form-control"
+                />
+              </Field>
+
+              <Field
+                id="website"
+                label="Verkkosivu"
+                error={fieldErrors.website}
+              >
+                <input
+                  id="website"
+                  name="website"
+                  type="url"
+                  maxLength={300}
+                  inputMode="url"
+                  placeholder="https://yritys.fi"
+                  className="form-control"
+                />
+              </Field>
+
+              <Field
+                id="instagram"
+                label="Instagram"
+                error={fieldErrors.instagram}
+              >
+                <input
+                  id="instagram"
+                  name="instagram"
+                  type="text"
+                  maxLength={120}
+                  placeholder="@yritys"
+                  className="form-control"
+                />
+              </Field>
+            </div>
+
+            <Field
+              id="message"
+              label="Viesti (vapaaehtoinen)"
+              error={fieldErrors.message}
+              className="mt-5"
+            >
+              <textarea
+                id="message"
+                name="message"
+                rows={4}
+                maxLength={1200}
+                className="form-control resize-y"
+                placeholder="Mitä teette ja millaista työmaamateriaalia teiltä syntyy?"
+              />
+            </Field>
+
+            {status === 'error' && (
+              <div
+                className="mt-5 border-2 border-signal bg-white p-4 text-sm text-ink"
+                role="alert"
+              >
+                {errorMessage}
+              </div>
+            )}
+
+            <div className="mt-7 border-t border-ink/20 pt-6">
+              <button
+                type="submit"
+                disabled={status === 'submitting'}
+                className="btn btn-primary w-full uppercase tracking-[0.07em] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {status === 'submitting'
+                  ? 'LÄHETETÄÄN…'
+                  : siteConfig.cta.primary}
+              </button>
+              <p className="mt-3 text-xs leading-relaxed text-ink/55">
+                Tietoja käytetään yhteydenottopyynnön käsittelyyn.
+                Tietosuojatekstin julkaisu vaatii vielä yrityksen vahvistuksen
+                ennen production-julkaisua.
+              </p>
+            </div>
+          </form>
+        )}
       </div>
+    </div>
+  );
+}
+
+function Field({
+  id,
+  label,
+  required = false,
+  error,
+  className = '',
+  children,
+}: {
+  id: string;
+  label: string;
+  required?: boolean;
+  error?: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className={className}>
+      <label htmlFor={id} className="mb-1.5 block text-sm font-bold text-ink">
+        {label}
+        {required ? ' *' : ''}
+      </label>
+      {children}
+      {error && (
+        <p id={`${id}-error`} className="mt-1 text-xs font-bold text-signal">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">Valmiin remonttikohteen konseptikuva</title>
+  <desc id="desc">Graafinen sisätilan konseptikuva valmiista pinnasta ja tilasta.</desc>
+  <rect width="1200" height="900" fill="#111111"/>
+  <rect x="62" y="62" width="1076" height="776" fill="#F7F4EF"/>
+  <path d="M116 132h968v474H116z" fill="#E6DFD5"/>
+  <path d="M116 606h968v178H116z" fill="#111111"/>
+  <path d="M180 190h394v330H180z" fill="#111111"/>
+  <path d="M206 216h342v278H206z" fill="#F7F4EF"/>
+  <path d="M636 190h388v330H636z" fill="#F7F4EF"/>
+  <path d="M674 228h312v254H674z" fill="#111111"/>
+  <rect x="724" y="276" width="212" height="158" fill="#C9282D"/>
+  <path d="M830 276v158M724 355h212" stroke="#F7F4EF" stroke-width="9"/>
+  <path d="M180 670h544" stroke="#F7F4EF" stroke-width="13"/>
+  <path d="M180 720h362" stroke="#F7F4EF" stroke-width="8" opacity=".65"/>
+  <rect x="870" y="650" width="154" height="86" fill="#C9282D"/>
+</svg>

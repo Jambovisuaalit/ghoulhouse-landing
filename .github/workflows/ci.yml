@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches:
+      - main
+      - feat/p0-production-foundation
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Start production server
+        run: |
+          npm start > /tmp/ghoulhouse-next.log 2>&1 &
+          echo $! > /tmp/ghoulhouse-next.pid
+          for i in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:3000 > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/ghoulhouse-next.log
+          exit 1
+
+      - name: Browser QA
+        run: |
+          set +e
+          node scripts/browser-qa-ci.mjs > /tmp/browser-qa.log 2>&1
+          status=$?
+          cat /tmp/browser-qa.log
+          if [ "$status" -eq 0 ]; then
+            exit 0
+          fi
+          if grep -q 'ENOTEMPTY: directory not empty' /tmp/browser-qa.log && grep -q '"status": "PASS"' /tmp/browser-qa.log; then
+            echo 'Browser assertions passed; ignoring Chrome profile cleanup race.'
+            exit 0
+          fi
+          exit "$status"
+
+      - name: Upload browser QA artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-qa
+          path: qa-artifacts/
+          if-no-files-found: warn
+          retention-days: 7

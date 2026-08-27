@@ -1,40 +1,80 @@
+import Image from 'next/image';
 import Container from '@/components/ui/Container';
+
+const examples = [
+  {
+    number: '01',
+    label: 'Työvaihe',
+    title: 'Pohjatyö ratkaisee lopputuloksen.',
+    image: '/work-detail.svg',
+    alt: 'Konseptikuva remonttityön yksityiskohdasta',
+  },
+  {
+    number: '02',
+    label: 'Valmis kohde',
+    title: 'Näytä lopputulos selkeästi.',
+    image: '/finished-space.svg',
+    alt: 'Konseptikuva valmiista remonttikohteesta',
+  },
+  {
+    number: '03',
+    label: 'Asiantuntijakulma',
+    title: 'Kerro, miksi työ tehdään näin.',
+    image: '/hero-renovation.svg',
+    alt: 'Konseptikuva remonttityömaan sisältömateriaalista',
+  },
+] as const;
 
 export default function Examples() {
   return (
-    <section className="bg-bone py-16 md:py-24">
+    <section id="examples" className="bg-bone py-16 md:py-24">
       <Container>
-        <h2 className="text-ink mb-12">Esimerkkejä tuloksista</h2>
-
-        <div className="space-y-8 text-sm text-ink/70">
-          <div className="bg-white p-6 rounded border-l-4 border-signal">
-            <p className="text-xs font-bold text-signal mb-2">KONSEPTIESIMERKKI — EI ASIAKASTYÖ</p>
-            <p className="text-ink">
-              Ennen: Erääntyvät työmaakuvat ilman kontekstia. Jälkeen: Visuaalisesti yhtenevä sisältö, 
-              teksti ja brandi.
+        <div className="grid grid-cols-1 gap-6 border-b-2 border-ink pb-8 lg:grid-cols-12 lg:items-end">
+          <div className="lg:col-span-8">
+            <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-signal">
+              Sisältöesimerkit
             </p>
+            <h2 className="font-display text-[clamp(2.7rem,5vw,5.5rem)] font-black uppercase leading-[0.9] tracking-[-0.04em] text-ink">
+              Yhdestä työmaasta
+              <span className="block">syntyy monta kulmaa.</span>
+            </h2>
           </div>
-
-          <div className="bg-white p-6 rounded border-l-4 border-signal">
-            <p className="text-xs font-bold text-signal mb-2">KONSEPTIESIMERKKI — EI ASIAKASTYÖ</p>
-            <p className="text-ink">
-              Asiakkaan työmaavideo muutetaan 15–30 sekunnin Instagram Reels- tai TikTok-videoksi, 
-              jolla on teksti, musiikki ja kutsu.
-            </p>
-          </div>
-
-          <div className="bg-white p-6 rounded border-l-4 border-signal">
-            <p className="text-xs font-bold text-signal mb-2">KONSEPTIESIMERKKI — EI ASIAKASTYÖ</p>
-            <p className="text-ink">
-              Asiakkaan potilaskertomukset ja referenssit muutetaan some-tarinoiksi, joita voidaan 
-              jälleen käyttää.
-            </p>
-          </div>
+          <p className="max-w-md text-sm leading-relaxed text-ink/65 lg:col-span-4">
+            Työvaihe, osaaminen, valinnat ja valmis lopputulos voidaan
+            paketoida eri julkaisuiksi ilman keksittyä täytesisältöä.
+          </p>
         </div>
 
-        <p className="text-ink/60 text-xs mt-8 pt-8 border-t border-ink/20">
-          Kaikki esimerkit ovat konseptuaalisia. Aidot asiakastäitä esitellään pyynnistä.
-        </p>
+        <div className="grid grid-cols-1 border-x-2 border-b-2 border-ink md:grid-cols-3">
+          {examples.map((example, index) => (
+            <figure
+              key={example.number}
+              className={`border-ink ${index < 2 ? 'border-b-2 md:border-b-0 md:border-r-2' : ''}`}
+            >
+              <div className="relative aspect-[4/3] overflow-hidden bg-ink">
+                <Image
+                  src={example.image}
+                  alt={example.alt}
+                  fill
+                  sizes="(max-width: 767px) 100vw, 33vw"
+                  className="object-cover"
+                />
+                <span className="absolute left-3 top-3 bg-ink px-2 py-1 text-[0.55rem] font-bold uppercase tracking-[0.13em] text-ghost">
+                  KONSEPTIESIMERKKI — EI ASIAKASTYÖ
+                </span>
+              </div>
+              <figcaption className="bg-ghost p-5">
+                <div className="flex items-center justify-between text-[0.65rem] font-bold uppercase tracking-[0.14em]">
+                  <span>{example.number}</span>
+                  <span className="text-signal">{example.label}</span>
+                </div>
+                <p className="mt-4 font-display text-2xl font-black uppercase leading-none text-ink">
+                  {example.title}
+                </p>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
       </Container>
     </section>
   );
