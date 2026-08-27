@@ -37,7 +37,7 @@ export default function Founder() {
               </div>
 
               <p className="type-caption max-w-[24ch] uppercase tracking-[0.06em] text-ink/65">
-                Founder portrait / production image slot
+                Founder portrait / Hanna Nyholm
               </p>
             </div>
           </div>
