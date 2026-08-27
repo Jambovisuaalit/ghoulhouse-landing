@@ -39,3 +39,28 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Start production server
+        run: |
+          npm start > /tmp/ghoulhouse-next.log 2>&1 &
+          echo $! > /tmp/ghoulhouse-next.pid
+          for i in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:3000 > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/ghoulhouse-next.log
+          exit 1
+
+      - name: Browser QA
+        run: node scripts/browser-qa.mjs
+
+      - name: Upload browser QA artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-qa
+          path: qa-artifacts/
+          if-no-files-found: warn
+          retention-days: 7
