@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  color-scheme: light;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -10,16 +14,36 @@
 
 html {
   scroll-behavior: smooth;
+  background: #111111;
 }
 
 body {
-  background-color: #111111;
+  min-width: 320px;
+  overflow-x: hidden;
+  background-color: #f7f4ef;
   color: #111111;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   line-height: 1.6;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Typography scale */
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+section[id] {
+  scroll-margin-top: 5rem;
+}
+
+::selection {
+  background: #c9282d;
+  color: #ffffff;
+}
+
 h1 {
   font-size: clamp(2rem, 8vw, 4rem);
   font-weight: 700;
@@ -45,128 +69,123 @@ p {
   line-height: 1.7;
 }
 
-/* Buttons */
 .btn {
   display: inline-flex;
+  min-height: 44px;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   padding: 1rem 2rem;
-  font-weight: 600;
-  font-size: 1rem;
   border: 2px solid transparent;
   border-radius: 0;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  font-size: 1rem;
+  font-weight: 700;
   text-decoration: none;
+  transition:
+    background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-primary {
-  background-color: #C9282D;
-  color: white;
-  border-color: #C9282D;
+  border-color: #c9282d;
+  background-color: #c9282d;
+  color: #ffffff;
 }
 
 .btn-primary:hover {
-  background-color: #a82024;
   border-color: #a82024;
+  background-color: #a82024;
 }
 
-.btn-primary:focus {
-  outline: 2px solid #C9282D;
-  outline-offset: 2px;
+.btn-primary:active {
+  transform: translateY(1px);
 }
 
 .btn-secondary {
+  border-color: #111111;
   background-color: transparent;
   color: #111111;
-  border-color: #111111;
 }
 
 .btn-secondary:hover {
   background-color: #111111;
-  color: white;
+  color: #ffffff;
 }
 
-.btn-secondary:focus {
-  outline: 2px solid #111111;
-  outline-offset: 2px;
-}
-
-/* Links */
 a {
-  color: #C9282D;
+  color: #c9282d;
   text-decoration: none;
   transition: opacity 0.2s;
 }
 
 a:hover {
-  opacity: 0.8;
+  opacity: 0.82;
 }
 
-a:focus {
-  outline: 2px solid #C9282D;
-  outline-offset: 2px;
-}
-
-/* Focus visible for keyboard navigation */
 :focus-visible {
-  outline: 2px solid #C9282D;
-  outline-offset: 2px;
+  outline: 3px solid #c9282d;
+  outline-offset: 3px;
 }
 
-/* Reduce motion for users who prefer it */
+.skip-link {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 100;
+  transform: translateY(-200%);
+  background: #ffffff;
+  color: #111111;
+  padding: 0.75rem 1rem;
+  border: 2px solid #111111;
+  font-weight: 700;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.container-wide {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+.text-signal {
+  color: #c9282d;
+}
+
+.bg-signal {
+  background-color: #c9282d;
+}
+
+.bg-ghost {
+  background-color: #f7f4ef;
+}
+
+.bg-bone {
+  background-color: #e6dfd5;
+}
+
+@media (max-width: 640px) {
+  .container-wide {
+    padding-inline: 1rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* Utility classes */
-.container-wide {
-  width: 100%;
-  max-width: 1440px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-}
-
-@media (max-width: 640px) {
-  .container-wide {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-}
-
-.text-signal {
-  color: #C9282D;
-}
-
-.bg-signal {
-  background-color: #C9282D;
-}
-
-.bg-ghost {
-  background-color: #F7F4EF;
-}
-
-.bg-bone {
-  background-color: #E6DFD5;
-}
-
-/* Reduced motion variants */
-@media (prefers-reduced-motion: reduce) {
-  .btn {
-    transition: none;
-  }
-  
-  a {
-    transition: none;
   }
 }
