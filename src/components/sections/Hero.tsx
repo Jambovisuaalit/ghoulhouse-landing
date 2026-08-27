@@ -29,7 +29,7 @@ export default function Hero({ onCtaClick }: HeroProps) {
           <div className="py-10 md:py-14 lg:py-8">
             <h1
               id="hero-title"
-              className="max-w-[11ch] font-display text-[clamp(2.45rem,7.6vw,8.2rem)] font-black uppercase leading-[0.82] tracking-[-0.045em] text-ink"
+              className="max-w-[11ch] lg:max-w-none font-display text-[clamp(2.45rem,7.6vw,8.2rem)] font-black uppercase leading-[0.82] tracking-[-0.045em] text-ink"
             >
               <span className="block">{positioning.headline[0]}</span>
               <span className="block">{positioning.headline[1]}</span>
@@ -69,7 +69,7 @@ export default function Hero({ onCtaClick }: HeroProps) {
 
         <figure className="relative min-h-[270px] overflow-hidden border-2 border-ink bg-ink md:min-h-[360px] lg:col-span-4 lg:min-h-0">
           <Image
-            src="/hero-renovation.svg"
+            src="/hero-renovation-clean.svg"
             alt="Konseptikuva remonttityön materiaalista GhoulHouse-sisältöprosessissa"
             fill
             priority
