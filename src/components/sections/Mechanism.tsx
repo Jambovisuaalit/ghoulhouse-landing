@@ -11,12 +11,12 @@ export default function Mechanism() {
       <Container>
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-9">
-            <p className="mb-4 text-[0.65rem] font-black uppercase tracking-[0.18em] text-signal sm:text-xs">
+            <p className="type-label mb-4 text-signal">
               Signature / RAW → FINAL
             </p>
             <h2
               id="mechanism-title"
-              className="font-display text-[clamp(2.45rem,8.5vw,5rem)] font-black uppercase leading-[0.86] tracking-[-0.045em] sm:text-[clamp(3.6rem,6.2vw,6.4rem)]"
+              className="type-display max-w-[13ch] text-ghost"
             >
               Worksite material
               <span className="block text-signal">→ GhoulHouse →</span>
@@ -24,7 +24,7 @@ export default function Mechanism() {
             </h2>
           </div>
 
-          <p className="max-w-sm text-sm leading-relaxed text-ghost/60 lg:col-span-3 lg:pb-1">
+          <p className="type-editorial max-w-sm text-ghost/65 lg:col-span-3 lg:pb-1">
             Sama materiaali. Selkeämpi rajaus, rakenne ja viesti.
           </p>
         </div>
@@ -44,14 +44,14 @@ export default function Mechanism() {
 
                 <figcaption className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 bg-gradient-to-t from-ink/95 via-ink/75 to-transparent px-4 pb-4 pt-14 sm:px-5 sm:pb-5">
                   <div>
-                    <span className="block text-[0.58rem] font-black uppercase tracking-[0.16em] text-signal">
+                    <span className="type-label block text-signal">
                       01 / RAW
                     </span>
-                    <span className="mt-1 block font-display text-2xl font-black uppercase leading-none text-ghost sm:text-3xl">
+                    <span className="mt-1 block text-xl font-extrabold uppercase leading-tight tracking-[-0.02em] text-ghost sm:text-2xl">
                       Worksite material
                     </span>
                   </div>
-                  <span className="text-[0.58rem] font-bold uppercase tracking-[0.12em] text-ghost/60">
+                  <span className="type-caption uppercase tracking-[0.06em] text-ghost/65">
                     sisään
                   </span>
                 </figcaption>
@@ -66,7 +66,7 @@ export default function Mechanism() {
                   className="hidden h-11 w-11 shrink-0 transition-transform duration-500 group-open:rotate-[-4deg] group-open:scale-105 sm:block lg:h-16 lg:w-16"
                 />
 
-                <div className="flex items-center gap-2 text-[0.58rem] font-black uppercase tracking-[0.14em] lg:flex-col lg:gap-3 lg:text-center">
+                <div className="type-label flex items-center gap-2 lg:flex-col lg:gap-3 lg:text-center">
                   <span>Crop</span>
                   <span aria-hidden="true" className="text-white/60">→</span>
                   <span>Structure</span>
@@ -76,7 +76,7 @@ export default function Mechanism() {
                   <span>Graphic</span>
                 </div>
 
-                <span className="hidden font-display text-lg font-black uppercase leading-none lg:block">
+                <span className="type-ui hidden uppercase tracking-[0.04em] lg:block">
                   GhoulHouse
                 </span>
               </div>
@@ -92,29 +92,29 @@ export default function Mechanism() {
 
                 <div className="absolute inset-x-4 bottom-12 border-2 border-ink bg-ghost/95 p-4 sm:inset-x-6 sm:bottom-14 sm:p-5 lg:inset-x-8 lg:bottom-16 lg:p-6">
                   <div className="flex items-center justify-between gap-4">
-                    <span className="text-[0.56rem] font-black uppercase tracking-[0.16em] text-signal">
+                    <span className="type-label text-signal">
                       GhoulHouse / final
                     </span>
-                    <span className="text-[0.56rem] font-black uppercase tracking-[0.14em] text-ink/50">
+                    <span className="type-caption uppercase tracking-[0.06em] text-ink/55">
                       Ready social content
                     </span>
                   </div>
-                  <p className="mt-3 max-w-[14ch] font-display text-[clamp(2rem,7vw,4.6rem)] font-black uppercase leading-[0.86] tracking-[-0.035em]">
+                  <p className="mt-3 max-w-[14ch] text-[clamp(1.9rem,5vw,3.5rem)] font-extrabold uppercase leading-[0.92] tracking-[-0.035em]">
                     Valmis some ulos.
                   </p>
-                  <p className="mt-3 max-w-sm text-xs font-bold leading-relaxed text-ink/60 sm:text-sm">
+                  <p className="type-caption mt-3 max-w-sm text-ink/65">
                     Rajattu, kirjoitettu ja julkaisuvalmis.
                   </p>
                 </div>
 
-                <figcaption className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 bg-ink px-4 py-3 text-[0.52rem] font-black uppercase tracking-[0.12em] text-ghost sm:px-6 sm:text-[0.58rem]">
+                <figcaption className="type-caption absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 bg-ink px-4 py-3 uppercase tracking-[0.06em] text-ghost sm:px-6">
                   <span>02 / FINAL</span>
                   <span>KONSEPTIESIMERKKI — EI ASIAKASTYÖ</span>
                 </figcaption>
               </figure>
             </div>
 
-            <div className="flex min-h-14 items-center justify-between gap-5 border-t border-ghost/25 py-4 text-[0.62rem] font-black uppercase tracking-[0.14em] text-ghost/70">
+            <div className="type-label flex min-h-14 items-center justify-between gap-5 border-t border-ghost/25 py-4 text-ghost/70">
               <span>Näytä muunnoksen rakenne</span>
               <span
                 aria-hidden="true"
@@ -126,12 +126,12 @@ export default function Mechanism() {
           </summary>
 
           <div className="border-t border-ghost/25 py-5 sm:py-6">
-            <p className="font-display text-[clamp(1.75rem,4.4vw,4.1rem)] font-black uppercase leading-[0.95] tracking-[-0.025em] text-ghost">
+            <p className="text-[clamp(1.65rem,3.6vw,3rem)] font-extrabold uppercase leading-[1] tracking-[-0.03em] text-ghost">
               Crop <span className="text-signal">→</span> structure{' '}
               <span className="text-signal">→</span> copy{' '}
               <span className="text-signal">→</span> graphic treatment
             </p>
-            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ghost/60">
+            <p className="type-editorial mt-3 max-w-2xl text-ghost/65">
               GhoulHouse ei keksi työstä uutta todellisuutta. Se tekee olemassa
               olevasta materiaalista selkeän, tunnistettavan ja julkaisuvalmiin
               kokonaisuuden.
