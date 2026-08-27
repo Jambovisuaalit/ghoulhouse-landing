@@ -12,102 +12,76 @@ interface NavigationProps {
 export default function Navigation({ onCtaClick }: NavigationProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const closeMobileMenu = () => setMobileMenuOpen(false);
+
   return (
-    <nav className="sticky top-0 z-40 bg-white border-b border-bone">
-      <Container className="flex justify-between items-center py-4">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="text-xl font-bold text-signal">GhoulHouse</div>
+    <nav className="sticky top-0 z-40 border-b border-bone bg-white" aria-label="Päänavigaatio">
+      <Container className="flex min-h-16 items-center justify-between">
+        <Link href="/" className="flex min-h-11 items-center gap-2" aria-label="GhoulHouse etusivu">
+          <span className="text-xl font-bold text-signal">GhoulHouse</span>
         </Link>
 
-        {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-8">
-          <a href="#problem" className="text-ink hover:text-signal transition-colors">
+        <div className="hidden items-center gap-8 md:flex">
+          <a href="#problem" className="text-ink transition-colors hover:text-signal">
             Ongelma
           </a>
-          <a href="#mechanism" className="text-ink hover:text-signal transition-colors">
+          <a href="#mechanism" className="text-ink transition-colors hover:text-signal">
             Miten se toimii
           </a>
-          <a href="#pricing" className="text-ink hover:text-signal transition-colors">
+          <a href="#pricing" className="text-ink transition-colors hover:text-signal">
             Hinta
           </a>
-          <a href="#faq" className="text-ink hover:text-signal transition-colors">
+          <a href="#faq" className="text-ink transition-colors hover:text-signal">
             UKK
           </a>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={onCtaClick}
-            className="whitespace-nowrap"
-          >
-            Pyydä esimerkit
+          <Button variant="primary" size="sm" onClick={onCtaClick} className="whitespace-nowrap">
+            Pyydä 2 sisältöesimerkkiä
           </Button>
         </div>
 
-        {/* Mobile Menu Button */}
         <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 hover:bg-bone rounded transition-colors"
-          aria-label="Avaa päävalikko"
+          type="button"
+          onClick={() => setMobileMenuOpen((open) => !open)}
+          className="flex min-h-11 min-w-11 items-center justify-center border-2 border-ink bg-white md:hidden"
+          aria-label={mobileMenuOpen ? 'Sulje päävalikko' : 'Avaa päävalikko'}
           aria-expanded={mobileMenuOpen}
+          aria-controls="mobile-main-menu"
         >
-          <svg
-            className="w-6 h-6 text-ink"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
+          <span aria-hidden="true" className="text-xl font-bold text-ink">
+            {mobileMenuOpen ? '×' : '☰'}
+          </span>
         </button>
       </Container>
 
-      {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-bone bg-ghost">
-          <Container className="py-4 space-y-4">
-            <a
-              href="#problem"
-              className="block text-ink hover:text-signal transition-colors py-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Ongelma
-            </a>
-            <a
-              href="#mechanism"
-              className="block text-ink hover:text-signal transition-colors py-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Miten se toimii
-            </a>
-            <a
-              href="#pricing"
-              className="block text-ink hover:text-signal transition-colors py-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Hinta
-            </a>
-            <a
-              href="#faq"
-              className="block text-ink hover:text-signal transition-colors py-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              UKK
-            </a>
+        <div id="mobile-main-menu" className="border-t border-bone bg-ghost md:hidden">
+          <Container className="space-y-2 py-4">
+            {[
+              ['#problem', 'Ongelma'],
+              ['#mechanism', 'Miten se toimii'],
+              ['#pricing', 'Hinta'],
+              ['#faq', 'UKK'],
+            ].map(([href, label]) => (
+              <a
+                key={href}
+                href={href}
+                className="flex min-h-11 items-center py-2 text-ink transition-colors hover:text-signal"
+                onClick={closeMobileMenu}
+              >
+                {label}
+              </a>
+            ))}
+
             <Button
               variant="primary"
               size="sm"
               onClick={() => {
+                closeMobileMenu();
                 onCtaClick();
-                setMobileMenuOpen(false);
               }}
-              className="w-full"
+              className="mt-2 w-full"
             >
-              Pyydä esimerkit
+              Pyydä 2 sisältöesimerkkiä
             </Button>
           </Container>
         </div>
