@@ -51,3 +51,20 @@ src/
 ## Vercel Deployment
 
 Canonical domain: **ghoulhouse.fi**
+
+
+## SEO Launch Gate
+
+Canonical production domain: **https://ghoulhouse.fi**
+
+Indexing is intentionally disabled by default.
+
+- Local development: noindex
+- Vercel Preview deployments: noindex
+- Vercel production aliases: protected with `X-Robots-Tag: noindex`
+- `ghoulhouse.fi`: indexable only when all of the following are true:
+  1. deployment environment is Vercel Production
+  2. request host is `ghoulhouse.fi`
+  3. `SITE_INDEXABLE=true`
+
+Keep `SITE_INDEXABLE=false` or unset until final production QA is complete. After QA, set `SITE_INDEXABLE=true` only for the Vercel Production environment and redeploy.
