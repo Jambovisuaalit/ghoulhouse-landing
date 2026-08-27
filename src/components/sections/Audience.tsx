@@ -1,53 +1,39 @@
-import Container from '@/components/ui/Container';
+import SectionHeading from '@/components/ui/SectionHeading';
+
+const fit = [
+  'Pieni suomalainen paikallinen palveluyritys',
+  'Alkuvaiheessa erityisesti remontti-, rakennus- ja korjauspalvelut',
+  'Yrityksellä syntyy jatkuvasti kuvattavaa työnjälkeä',
+  'Yrittäjä tai toimitusjohtaja on lähellä myyntiä ja arjen tekemistä',
+  'Instagram tai Facebook on olemassa, mutta sisältö jää epäsäännölliseksi',
+] as const;
+
+const notFit = [
+  'Tarvitsette ensisijaisesti maksettua mainontaa tai liiditakuuta',
+  'Teillä ei synny käyttökelpoista materiaalia eikä sitä voida toimittaa',
+  'Tarvitsette päivittäistä asiakaspalvelua, myyntineuvotteluja tai rajatonta tuotantoa',
+] as const;
 
 export default function Audience() {
   return (
-    <section className="bg-ghost py-16 md:py-24">
-      <Container>
-        <h2 className="text-ink mb-8">Kelle tämä on tarkoitettu</h2>
-
-        <div className="max-w-3xl space-y-6 text-ink/80">
-          <p className="text-lg leading-relaxed">
-            GhoulHouse on suunniteltu <strong>paikallisille palveluyrityksille</strong> Suomessa.
-          </p>
-
-          <p className="text-lg leading-relaxed">
-            Erityisesti:
-          </p>
-
-          <ul className="space-y-3 text-lg">
-            <li className="flex gap-3">
-              <span className="text-signal font-bold mt-1">✓</span>
-              <span>Rakentamisen, remontoinnin ja korjauspalvelujen yritykset</span>
-            </li>
-            <li className="flex gap-3">
-              <span className="text-signal font-bold mt-1">✓</span>
-              <span>Omistajavetoinen toiminta (2–10 henkilöä)</span>
-            </li>
-            <li className="flex gap-3">
-              <span className="text-signal font-bold mt-1">✓</span>
-              <span>Laadukasta työtä ja selkeät viitteet olemassa</span>
-            </li>
-            <li className="flex gap-3">
-              <span className="text-signal font-bold mt-1">✓</span>
-              <span>Heikko tai epäjohdonmukainen some-läsnäolo</span>
-            </li>
-            <li className="flex gap-3">
-              <span className="text-signal font-bold mt-1">✓</span>
-              <span>Omistaja ei halua käyttää aikaa sisällön suunnitteluun ja jakamiseen</span>
-            </li>
-          </ul>
-
-          <div className="bg-white p-6 rounded border-l-4 border-signal mt-8">
-            <p className="text-ink font-bold mb-2">Mitä GhoulHouse EI takaa</p>
-            <p className="text-sm text-ink/70">
-              Me emme lupaa johtavan kasvua, määriteltyjä konversiota tai johtava. 
-              Me tuotamme laadukasta, johdonmukaista sisältöä. Tulokset riippuvat sinun brandiistasi, 
-              tuotteistasi ja asiakkaista.
-            </p>
+    <section id="kenelle" className="section bg-bone">
+      <div className="shell">
+        <SectionHeading
+          eyebrow="07 / KENELLE"
+          title="Hyvä firma. Hyvä työnjälki. Liian vähän näkyvää näyttöä."
+          intro="Ensimmäinen kohderyhmä on rajattu tarkoituksella. Sivun tehtävä on myös kertoa nopeasti, milloin GhoulHouse ei ole oikea ratkaisu."
+        />
+        <div className="mt-14 grid gap-6 md:grid-cols-2">
+          <div className="border border-ink/15 bg-ghost p-6 sm:p-8">
+            <p className="eyebrow text-signal">HYVÄ FIT</p>
+            <ul className="mt-6 space-y-4">{fit.map((item) => <li key={item} className="border-t border-ink/10 pt-4 font-bold leading-6">{item}</li>)}</ul>
+          </div>
+          <div className="border border-ink/15 bg-white p-6 sm:p-8">
+            <p className="eyebrow text-ink/65">EI VÄLTTÄMÄTTÄ OIKEA</p>
+            <ul className="mt-6 space-y-4">{notFit.map((item) => <li key={item} className="border-t border-ink/10 pt-4 leading-6 text-ink/70">{item}</li>)}</ul>
           </div>
         </div>
-      </Container>
+      </div>
     </section>
   );
 }

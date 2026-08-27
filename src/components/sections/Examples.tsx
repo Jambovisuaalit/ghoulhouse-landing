@@ -1,41 +1,63 @@
-import Container from '@/components/ui/Container';
+import Logo from '@/components/ui/Logo';
+import SectionHeading from '@/components/ui/SectionHeading';
 
 export default function Examples() {
   return (
-    <section className="bg-bone py-16 md:py-24">
-      <Container>
-        <h2 className="text-ink mb-12">Esimerkkejä tuloksista</h2>
-
-        <div className="space-y-8 text-sm text-ink/70">
-          <div className="bg-white p-6 rounded border-l-4 border-signal">
-            <p className="text-xs font-bold text-signal mb-2">KONSEPTIESIMERKKI — EI ASIAKASTYÖ</p>
-            <p className="text-ink">
-              Ennen: Erääntyvät työmaakuvat ilman kontekstia. Jälkeen: Visuaalisesti yhtenevä sisältö, 
-              teksti ja brandi.
+    <section id="esimerkit" className="section bg-bone">
+      <div className="shell">
+        <SectionHeading
+          eyebrow="03 / ESIMERKIT"
+          title="Näytä tuote. Älä keksi tuloksia."
+          intro="Alla olevat materiaalit havainnollistavat GhoulHousen tuotetta. Ne ovat konseptiesimerkkejä, eivät toteutuneita asiakastuloksia."
+        />
+        <div className="mt-14 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
+          <article className="concept-card min-h-[30rem] bg-ghost text-ink">
+            <div className="example-label">KONSEPTIESIMERKKI — EI ASIAKASTYÖ.</div>
+            <div className="mt-12 grid flex-1 gap-4 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
+              <div className="border border-ink/20 bg-bone p-5">
+                <p className="eyebrow">RAW / 01</p>
+                <div className="mt-16 border-t border-ink/20 pt-3 text-sm text-ink/65">
+                  Työmaakuva + faktat
+                </div>
+              </div>
+              <div className="font-display text-3xl font-black text-signal" aria-hidden="true">→</div>
+              <div className="border border-signal bg-white p-5">
+                <Logo compact className="h-10 w-10" />
+                <p className="eyebrow mt-12 text-signal">READY / 02</p>
+                <p className="mt-3 font-display text-3xl font-black uppercase leading-[0.95] tracking-[-0.045em]">
+                  Valmis referenssisisältö
+                </p>
+              </div>
+            </div>
+            <p className="mt-6 max-w-xl text-sm leading-6 text-ink/60">
+              Yksi selkeä mekanismi: asiakkaan olemassa oleva materiaali muutetaan suunnitelluksi, kirjoitetuksi ja julkaisuvalmiiksi sisällöksi.
             </p>
-          </div>
-
-          <div className="bg-white p-6 rounded border-l-4 border-signal">
-            <p className="text-xs font-bold text-signal mb-2">KONSEPTIESIMERKKI — EI ASIAKASTYÖ</p>
-            <p className="text-ink">
-              Asiakkaan työmaavideo muutetaan 15–30 sekunnin Instagram Reels- tai TikTok-videoksi, 
-              jolla on teksti, musiikki ja kutsu.
-            </p>
-          </div>
-
-          <div className="bg-white p-6 rounded border-l-4 border-signal">
-            <p className="text-xs font-bold text-signal mb-2">KONSEPTIESIMERKKI — EI ASIAKASTYÖ</p>
-            <p className="text-ink">
-              Asiakkaan potilaskertomukset ja referenssit muutetaan some-tarinoiksi, joita voidaan 
-              jälleen käyttää.
-            </p>
+          </article>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-1">
+            <article className="concept-card bg-ink text-ghost">
+              <div className="example-label">KONSEPTIESIMERKKI — EI ASIAKASTYÖ.</div>
+              <p className="eyebrow mt-10 text-signal">RAW → FINAL</p>
+              <p className="mt-4 font-display text-4xl font-black uppercase leading-[0.9] tracking-[-0.05em]">
+                TYÖMAAKUVA<br />→<br />REFERENSSISISÄLTÖ
+              </p>
+              <p className="mt-6 max-w-sm text-sm leading-6 text-ghost/60">
+                Sama kuva voidaan jalostaa tunnistettavaksi feed-julkaisuksi ilman erillistä kuvauspäivää.
+              </p>
+            </article>
+            <article className="concept-card bg-ghost text-ink">
+              <div className="example-label">KONSEPTIESIMERKKI — EI ASIAKASTYÖ.</div>
+              <p className="eyebrow mt-10 text-signal">BEFORE / AFTER</p>
+              <div className="mt-5 grid grid-cols-2 gap-2" aria-hidden="true">
+                <div className="aspect-[4/5] border border-ink/20 bg-bone p-3 text-xs font-bold">RAW</div>
+                <div className="aspect-[4/5] border border-signal bg-white p-3 text-xs font-bold text-signal">READY</div>
+              </div>
+              <p className="mt-5 text-sm leading-6 text-ink/60">
+                Ennen–jälkeen toimii erityisen hyvin remontti-, maalaus- ja saneeraustöissä, joissa muutos näkyy suoraan kuvassa.
+              </p>
+            </article>
           </div>
         </div>
-
-        <p className="text-ink/60 text-xs mt-8 pt-8 border-t border-ink/20">
-          Kaikki esimerkit ovat konseptuaalisia. Aidot asiakastäitä esitellään pyynnistä.
-        </p>
-      </Container>
+      </div>
     </section>
   );
 }

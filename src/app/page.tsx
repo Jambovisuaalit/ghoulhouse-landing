@@ -1,50 +1,35 @@
-'use client';
-
-import { useCallback, useState } from 'react';
-import Hero from '@/components/sections/Hero';
-import Problem from '@/components/sections/Problem';
-import Mechanism from '@/components/sections/Mechanism';
-import Examples from '@/components/sections/Examples';
-import Deliverables from '@/components/sections/Deliverables';
-import Process from '@/components/sections/Process';
-import Pricing from '@/components/sections/Pricing';
 import Audience from '@/components/sections/Audience';
-import Founder from '@/components/sections/Founder';
+import Deliverables from '@/components/sections/Deliverables';
+import Examples from '@/components/sections/Examples';
 import FAQ from '@/components/sections/FAQ';
 import FinalCTA from '@/components/sections/FinalCTA';
+import Founder from '@/components/sections/Founder';
+import Hero from '@/components/sections/Hero';
+import Mechanism from '@/components/sections/Mechanism';
+import Pricing from '@/components/sections/Pricing';
+import Problem from '@/components/sections/Problem';
+import Process from '@/components/sections/Process';
 import Footer from '@/components/layout/Footer';
 import Navigation from '@/components/layout/Navigation';
-import ContactModal from '@/components/ui/ContactModal';
 
 export default function Home() {
-  const [showContactModal, setShowContactModal] = useState(false);
-
-  const handleCTAClick = useCallback(() => {
-    setShowContactModal(true);
-  }, []);
-
-  const handleCloseModal = useCallback(() => {
-    setShowContactModal(false);
-  }, []);
-
   return (
     <>
-      <Navigation onCtaClick={handleCTAClick} />
-      <main className="min-h-screen bg-white">
-        <Hero onCtaClick={handleCTAClick} />
+      <Navigation />
+      <main>
+        <Hero />
         <Problem />
         <Mechanism />
         <Examples />
         <Deliverables />
         <Process />
-        <Pricing onCtaClick={handleCTAClick} />
+        <Pricing />
         <Audience />
         <Founder />
         <FAQ />
-        <FinalCTA onCtaClick={handleCTAClick} />
+        <FinalCTA />
       </main>
       <Footer />
-      {showContactModal && <ContactModal onClose={handleCloseModal} />}
     </>
   );
 }

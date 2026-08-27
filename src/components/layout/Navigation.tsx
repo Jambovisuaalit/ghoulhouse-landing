@@ -1,117 +1,96 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
-import Button from '@/components/ui/Button';
-import Container from '@/components/ui/Container';
+import { useEffect, useRef, useState } from 'react';
+import Logo from '@/components/ui/Logo';
+import { siteConfig } from '@/lib/site';
 
-interface NavigationProps {
-  onCtaClick: () => void;
-}
+const links = [
+  { href: '#mekanismi', label: 'Mekanismi' },
+  { href: '#sisalto', label: 'Sisältö' },
+  { href: '#hinta', label: 'Hinta' },
+  { href: '#ukk', label: 'UKK' },
+] as const;
 
-export default function Navigation({ onCtaClick }: NavigationProps) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+export default function Navigation() {
+  const [open, setOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const firstLinkRef = useRef<HTMLAnchorElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    firstLinkRef.current?.focus();
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+        menuButtonRef.current?.focus();
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [open]);
+
+  function closeMenu() {
+    setOpen(false);
+  }
 
   return (
-    <nav className="sticky top-0 z-40 bg-white border-b border-bone">
-      <Container className="flex justify-between items-center py-4">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="text-xl font-bold text-signal">GhoulHouse</div>
-        </Link>
+    <header className="site-header">
+      <div className="shell flex min-h-[72px] items-center justify-between gap-6">
+        <a href="#top" aria-label="GhoulHouse — etusivun alku" className="shrink-0">
+          <Logo />
+        </a>
 
-        {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-8">
-          <a href="#problem" className="text-ink hover:text-signal transition-colors">
-            Ongelma
+        <nav aria-label="Päänavigaatio" className="hidden items-center gap-7 md:flex">
+          {links.map((link) => (
+            <a key={link.href} href={link.href} className="nav-link">
+              {link.label}
+            </a>
+          ))}
+          <a href={siteConfig.contactAnchor} className="btn-primary btn-small">
+            {siteConfig.primaryCta}
           </a>
-          <a href="#mechanism" className="text-ink hover:text-signal transition-colors">
-            Miten se toimii
-          </a>
-          <a href="#pricing" className="text-ink hover:text-signal transition-colors">
-            Hinta
-          </a>
-          <a href="#faq" className="text-ink hover:text-signal transition-colors">
-            UKK
-          </a>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={onCtaClick}
-            className="whitespace-nowrap"
-          >
-            Pyydä esimerkit
-          </Button>
-        </div>
+        </nav>
 
-        {/* Mobile Menu Button */}
         <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 hover:bg-bone rounded transition-colors"
-          aria-label="Avaa päävalikko"
-          aria-expanded={mobileMenuOpen}
+          ref={menuButtonRef}
+          type="button"
+          className="menu-button md:hidden"
+          aria-expanded={open}
+          aria-controls="mobile-menu"
+          aria-label={open ? 'Sulje valikko' : 'Avaa valikko'}
+          onClick={() => setOpen((value) => !value)}
         >
-          <svg
-            className="w-6 h-6 text-ink"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
+          <span />
+          <span />
         </button>
-      </Container>
+      </div>
 
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden border-t border-bone bg-ghost">
-          <Container className="py-4 space-y-4">
-            <a
-              href="#problem"
-              className="block text-ink hover:text-signal transition-colors py-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Ongelma
+      {open ? (
+        <nav id="mobile-menu" aria-label="Mobiilinavigaatio" className="mobile-menu md:hidden">
+          <div className="shell flex flex-col py-6">
+            {links.map((link, index) => (
+              <a
+                key={link.href}
+                ref={index === 0 ? firstLinkRef : undefined}
+                href={link.href}
+                className="mobile-nav-link"
+                onClick={closeMenu}
+              >
+                {link.label}
+              </a>
+            ))}
+            <a href={siteConfig.contactAnchor} className="btn-primary mt-6 w-full" onClick={closeMenu}>
+              {siteConfig.primaryCta}
             </a>
-            <a
-              href="#mechanism"
-              className="block text-ink hover:text-signal transition-colors py-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Miten se toimii
-            </a>
-            <a
-              href="#pricing"
-              className="block text-ink hover:text-signal transition-colors py-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Hinta
-            </a>
-            <a
-              href="#faq"
-              className="block text-ink hover:text-signal transition-colors py-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              UKK
-            </a>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => {
-                onCtaClick();
-                setMobileMenuOpen(false);
-              }}
-              className="w-full"
-            >
-              Pyydä esimerkit
-            </Button>
-          </Container>
-        </div>
-      )}
-    </nav>
+          </div>
+        </nav>
+      ) : null}
+    </header>
   );
 }

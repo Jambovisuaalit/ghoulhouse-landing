@@ -1,64 +1,61 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import { siteConfig } from '@/lib/site';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#111111',
+};
 
 export const metadata: Metadata = {
-  title: 'GhoulHouse | Työmaakuvat sisään. Valmis SOME ulos.',
-  description: 'GhoulHouse muuttaa työmaakuvasi valmiiksi some-sisällöksi. Suomalaisten palveluyrityksia varten.',
-  metadataBase: new URL('https://ghoulhouse.fi'),
-  alternates: {
-    canonical: 'https://ghoulhouse.fi',
-  },
+  metadataBase: new URL(siteConfig.url),
+  title: siteConfig.title,
+  description: siteConfig.description,
+  alternates: { canonical: '/' },
   openGraph: {
-    title: 'GhoulHouse | Työmaakuvat sisään. Valmis SOME ulos.',
-    description: 'Teette hyvää työtä. Me pidämme huolen, että asiakkaat myös näkevät sen.',
-    url: 'https://ghoulhouse.fi',
     type: 'website',
-    images: [
-      {
-        url: '/og-image.jpg',
-        width: 1200,
-        height: 630,
-      },
-    ],
+    locale: siteConfig.locale,
+    siteName: siteConfig.name,
+    url: '/',
+    title: siteConfig.title,
+    description: siteConfig.description,
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'GhoulHouse | Työmaakuvat sisään. Valmis SOME ulos.',
-    description: 'Teette hyvää työtä. Me pidämme huolen, että asiakkaat myös näkevät sen.',
-    images: ['/og-image.jpg'],
+    title: siteConfig.title,
+    description: siteConfig.description,
   },
-  robots: {
-    index: true,
-    follow: true,
+  icons: {
+    icon: [{ url: '/brand/ghoulhouse-micro-primary.svg', type: 'image/svg+xml' }],
   },
+  robots: { index: true, follow: true },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: siteConfig.legalName,
+  url: siteConfig.url,
+  founder: { '@type': 'Person', name: siteConfig.founder },
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Helsinki',
+    addressCountry: 'FI',
+  },
+  logo: `${siteConfig.url}/brand/ghoulhouse-lockup-horizontal-primary.svg`,
+};
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="fi">
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#111111" />
+      <body>
+        {children}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'LocalBusiness',
-              name: 'GhoulHouse Oy',
-              url: 'https://ghoulhouse.fi',
-              areaServed: 'FI',
-              serviceType: 'Social Media Management',
-              description: 'Productized social media content creation for Finnish local service businesses',
-            }),
-          }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
-      </head>
-      <body>{children}</body>
+      </body>
     </html>
   );
 }

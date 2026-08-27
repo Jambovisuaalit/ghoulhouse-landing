@@ -1,32 +1,20 @@
-import Button from '@/components/ui/Button';
-import Container from '@/components/ui/Container';
+import LeadForm from '@/components/ui/LeadForm';
 
-interface FinalCTAProps {
-  onCtaClick: () => void;
-}
-
-export default function FinalCTA({ onCtaClick }: FinalCTAProps) {
+export default function FinalCTA() {
   return (
-    <section className="bg-signal py-16 md:py-24">
-      <Container>
-        <div className="max-w-2xl">
-          <h2 className="text-white mb-6">Valmis aloittamaan?</h2>
-          <p className="text-white/90 text-lg mb-8 leading-relaxed">
-            Lähetä lyhyt pyyntö. Me lähemme 2 kustomoitua sisältöesimerkkiä yrityksestäsi—ilman maksuvelvoitetta.
+    <section id="demo" className="section bg-signal text-white">
+      <div className="shell grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+        <header>
+          <p className="eyebrow text-white">10 / DEMO</p>
+          <h2 className="display-title mt-6 text-white">Pyydä 2 sisältöesimerkkiä omasta materiaalistanne.</h2>
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-white">
+            Ensimmäinen askel ei ole pitkä myyntipalaveri. Lähetä yrityksen tiedot, niin voimme arvioida, millainen demo olisi teille relevantti.
           </p>
-          <Button
-            variant="primary"
-            size="lg"
-            onClick={onCtaClick}
-            className="bg-white text-signal border-white hover:bg-ghost"
-          >
-            Pyydä 2 sisältöesimerkkiä
-          </Button>
-          <p className="text-white/80 text-sm mt-4">
-            Vastaamme yleensä 24 tunnin sisällä.
-          </p>
+        </header>
+        <div className="bg-ghost p-5 text-ink sm:p-8 lg:p-10">
+          <LeadForm />
         </div>
-      </Container>
+      </div>
     </section>
   );
 }

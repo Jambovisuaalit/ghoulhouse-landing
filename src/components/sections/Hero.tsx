@@ -1,39 +1,44 @@
-import Button from '@/components/ui/Button';
-import Container from '@/components/ui/Container';
+import Logo from '@/components/ui/Logo';
+import { siteConfig } from '@/lib/site';
 
-interface HeroProps {
-  onCtaClick: () => void;
-}
-
-export default function Hero({ onCtaClick }: HeroProps) {
+export default function Hero() {
   return (
-    <section className="bg-white pt-20 pb-16 md:pt-32 md:pb-24">
-      <Container>
-        <div className="max-w-3xl">
-          <h1 className="text-ink mb-6">
-            Työmaakuvat sisään.
-            <br />
-            <span className="text-signal">Valmis SOME ulos.</span>
+    <section id="top" className="hero-section">
+      <div className="shell relative z-10 grid min-h-[calc(100svh-72px)] content-between gap-14 py-10 sm:py-14 lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)] lg:items-end lg:gap-10 lg:py-16">
+        <div className="max-w-5xl self-center">
+          <p className="eyebrow mb-7 text-signal">GHOULHOUSE · HELSINKI</p>
+          <h1 className="hero-title">
+            TYÖMAAKUVAT<br />
+            SISÄÄN.<br />
+            <span>VALMIS SOME ULOS.</span>
           </h1>
-
-          <p className="text-xl text-ink/80 mb-8 leading-relaxed max-w-2xl">
+          <p className="mt-7 max-w-2xl text-lg leading-7 text-ghost/72 sm:text-xl sm:leading-8">
             Teette hyvää työtä. Me pidämme huolen, että asiakkaat myös näkevät sen.
           </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 items-start mb-12">
-            <Button variant="primary" size="lg" onClick={onCtaClick}>
-              Pyydä 2 sisältöesimerkkiä
-            </Button>
-            <div className="text-lg font-bold text-signal">
-              490 €<span className="text-ink/60 font-normal text-base"> + alv / kk</span>
-            </div>
+          <div className="mt-8 flex flex-wrap items-center gap-4">
+            <a href={siteConfig.contactAnchor} className="btn-primary">
+              {siteConfig.primaryCta}
+            </a>
+            <p className="price-chip"><strong>490 € + ALV</strong><span>/ 30 päivää · jaksot 1–3</span></p>
           </div>
-
-          <p className="text-sm text-ink/60">
-            Ensimmäisen 3 kuukauden alennushinnoilla. Sisältöä tuotettavaksi riittävä määrä työmaakuvia.
-          </p>
         </div>
-      </Container>
+
+        <aside className="hero-proof" aria-label="Palvelun yhteenveto">
+          <div className="flex items-center justify-between border-b border-ink/15 pb-4">
+            <p className="eyebrow text-ink">PALVELU / START</p>
+            <Logo compact />
+          </div>
+          <dl className="mt-5 grid grid-cols-2 gap-x-4 gap-y-6 text-ink">
+            <div><dt>OUTPUT</dt><dd>12 sisältöä</dd></div>
+            <div><dt>KANAVAT</dt><dd>IG + Facebook</dd></div>
+            <div><dt>JAKSO</dt><dd>30 päivää</dd></div>
+            <div><dt>REVISIO</dt><dd>1 kierros</dd></div>
+          </dl>
+          <p className="mt-8 border-t border-ink/15 pt-4 text-sm leading-6 text-ink/65">
+            Asiakas toimittaa kuvat, faktat ja hyväksynnät. GhoulHouse suunnittelee, viimeistelee ja julkaisee.
+          </p>
+        </aside>
+      </div>
     </section>
   );
 }

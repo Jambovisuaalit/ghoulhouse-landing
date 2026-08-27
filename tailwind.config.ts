@@ -1,11 +1,7 @@
 import type { Config } from 'tailwindcss';
 
 const config: Config = {
-  content: [
-    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
-  ],
+  content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
   theme: {
     extend: {
       colors: {
@@ -15,10 +11,11 @@ const config: Config = {
         bone: '#E6DFD5',
       },
       fontFamily: {
-        sans: ['system-ui', 'sans-serif'],
+        display: ['Arial Narrow', 'Arial', 'Helvetica Neue', 'sans-serif'],
+        sans: ['Arial', 'Helvetica Neue', 'Helvetica', 'sans-serif'],
       },
-      spacing: {
-        'safe': 'max(1rem, env(safe-area-inset-bottom))',
+      maxWidth: {
+        content: '1440px',
       },
     },
   },
