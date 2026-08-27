@@ -24,10 +24,10 @@ export default function Problem() {
       <Container>
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
           <div className="lg:col-span-6">
-            <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-signal">
+            <p className="type-label mb-4 text-signal">
               Ongelma / tunnistaminen
             </p>
-            <h2 className="font-display text-[clamp(2.8rem,5.4vw,6rem)] font-black uppercase leading-[0.9] tracking-[-0.04em] text-ink">
+            <h2 className="type-section-title max-w-[14ch] text-ink">
               Hyvä työ ei auta,
               <span className="block">jos kukaan ei näe sitä.</span>
             </h2>
@@ -39,12 +39,12 @@ export default function Problem() {
                 key={item.number}
                 className="grid grid-cols-[52px_1fr] gap-4 border-b border-ink/30 py-6"
               >
-                <span className="text-xs font-black tracking-[0.12em] text-signal">
+                <span className="type-label text-signal">
                   {item.number}
                 </span>
                 <div>
-                  <h3 className="text-xl font-black text-ink">{item.title}</h3>
-                  <p className="mt-2 max-w-lg text-sm leading-relaxed text-ink/70">
+                  <h3 className="text-lg font-extrabold leading-tight tracking-[-0.02em] text-ink sm:text-xl">{item.title}</h3>
+                  <p className="mt-2 max-w-[58ch] text-[0.95rem] leading-[1.55] text-ink/70">
                     {item.body}
                   </p>
                 </div>
