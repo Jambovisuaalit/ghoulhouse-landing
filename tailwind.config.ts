@@ -5,6 +5,7 @@ const config: Config = {
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/config/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
@@ -15,10 +16,11 @@ const config: Config = {
         bone: '#E6DFD5',
       },
       fontFamily: {
-        sans: ['system-ui', 'sans-serif'],
+        sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        display: ['Arial Narrow', 'Helvetica Neue Condensed', 'Impact', 'sans-serif'],
       },
       spacing: {
-        'safe': 'max(1rem, env(safe-area-inset-bottom))',
+        safe: 'max(1rem, env(safe-area-inset-bottom))',
       },
     },
   },
