@@ -1,6 +1,14 @@
 import type { Metadata, Viewport } from 'next';
+import { Anton } from 'next/font/google';
 import { siteConfig } from '@/config/site';
 import './globals.css';
+
+const anton = Anton({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-display',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'GhoulHouse — Työmaakuvat sisään. Valmis some ulos.',
@@ -67,7 +75,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fi">
-      <body>
+      <body className={anton.variable}>
         {children}
         <script
           id="ghoulhouse-structured-data"
