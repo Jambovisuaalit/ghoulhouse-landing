@@ -10,9 +10,9 @@ export default function FinalCTA({ onCtaClick }: FinalCTAProps) {
     <section className="bg-signal py-16 md:py-24">
       <Container>
         <div className="max-w-2xl">
-          <h2 className="text-white mb-6">Valmis aloittamaan?</h2>
+          <h2 className="text-white mb-6">Haluatko nähdä, miltä sisältö voisi näyttää?</h2>
           <p className="text-white/90 text-lg mb-8 leading-relaxed">
-            Lähetä lyhyt pyyntö. Me lähemme 2 kustomoitua sisältöesimerkkiä yrityksestäsi—ilman maksuvelvoitetta.
+            Lähetä lyhyt pyyntö. Saat kaksi yrityskohtaista konseptiesimerkkiä ilman maksuvelvoitetta.
           </p>
           <Button
             variant="primary"
@@ -20,11 +20,8 @@ export default function FinalCTA({ onCtaClick }: FinalCTAProps) {
             onClick={onCtaClick}
             className="bg-white text-signal border-white hover:bg-ghost"
           >
-            Pyydä 2 sisältöesimerkkiä
+            PYYDÄ 2 SISÄLTÖESIMERKKIÄ
           </Button>
-          <p className="text-white/80 text-sm mt-4">
-            Vastaamme yleensä 24 tunnin sisällä.
-          </p>
         </div>
       </Container>
     </section>
