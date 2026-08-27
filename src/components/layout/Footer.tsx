@@ -46,7 +46,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="type-caption mt-12 flex flex-col gap-3 border-t border-ghost/20 pt-6 text-ghost/50 sm:flex-row sm:items-center sm:justify-between">
+        <div className="type-caption mt-12 flex flex-col gap-3 border-t border-ghost/20 pt-6 text-ghost/65 sm:flex-row sm:items-center sm:justify-between">
           <p>© 2026 {siteConfig.company.legalName}</p>
           <a href="#top" className="font-bold uppercase tracking-[0.12em] text-ghost/70">
             Takaisin ylös ↑
