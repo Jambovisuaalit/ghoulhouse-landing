@@ -12,17 +12,17 @@ export default function FinalCTA({ onCtaClick }: FinalCTAProps) {
       <Container>
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-8">
-            <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-white/70">
+            <p className="type-label mb-4 text-white/75">
               Seuraava askel
             </p>
-            <h2 className="font-display text-[clamp(3.5rem,8vw,9rem)] font-black uppercase leading-[0.8] tracking-[-0.045em]">
+            <h2 className="type-display max-w-[9ch] text-white">
               Näytä meille
               <span className="block">työsi.</span>
             </h2>
           </div>
 
           <div className="lg:col-span-4">
-            <p className="mb-6 max-w-md text-base leading-relaxed text-white/85">
+            <p className="type-editorial mb-6 max-w-md text-white/90">
               Lähetä yrityksen tiedot ja verkkosivu tai Instagram. Saat kaksi
               yrityskohtaista konseptiesimerkkiä siitä, miltä sisältö voisi
               näyttää. Jos tarvitsemme työmaakuvia, pyydämme ne erikseen.
@@ -35,7 +35,7 @@ export default function FinalCTA({ onCtaClick }: FinalCTAProps) {
             >
               {siteConfig.cta.primary}
             </Button>
-            <p className="mt-4 text-xs font-bold uppercase tracking-[0.12em] text-white/70">
+            <p className="type-caption mt-4 uppercase tracking-[0.06em] text-white/75">
               Ei sitoutumista · konseptiesimerkki ei ole asiakastyö
             </p>
           </div>
