@@ -36,26 +36,26 @@ export default function Pricing({ onCtaClick }: PricingProps) {
       <Container>
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-4">
-            <p className="mb-4 text-[0.65rem] font-black uppercase tracking-[0.18em] text-signal sm:text-xs">
+            <p className="type-label mb-4 text-signal">
               Hinnoittelu / asiakkuuden eteneminen
             </p>
             <h2
               id="pricing-title"
-              className="font-display text-[clamp(2.8rem,6vw,5.5rem)] font-black uppercase leading-[0.88] tracking-[-0.04em] text-ink"
+              className="type-section-title max-w-[12ch] text-ink"
             >
               Yksi asiakkuus.
               <span className="block">Kaksi vaihetta.</span>
             </h2>
-            <p className="mt-6 max-w-md text-sm leading-relaxed text-ink/70 sm:text-base">
+            <p className="type-editorial mt-6 max-w-md text-ink/70">
               Asiakkuus alkaa START-vaiheesta ja jatkuu palvelujaksosta 4
               MANAGED-vaiheeseen. Näitä ei valita rinnakkaisina paketteina.
             </p>
 
             <div className="mt-8 hidden border-l-4 border-signal pl-4 lg:block">
-              <p className="text-[0.62rem] font-black uppercase tracking-[0.14em] text-ink/50">
+              <p className="type-label text-ink/55">
                 Lifecycle
               </p>
-              <p className="mt-2 font-display text-3xl font-black uppercase leading-none text-ink">
+              <p className="mt-2 text-2xl font-extrabold uppercase leading-none tracking-[-0.025em] text-ink">
                 01–03
                 <span className="mx-2 text-signal">→</span>
                 04+
@@ -67,17 +67,17 @@ export default function Pricing({ onCtaClick }: PricingProps) {
             <div className="border-y-2 border-ink">
               <article className="grid grid-cols-1 gap-6 py-7 sm:py-8 md:grid-cols-[190px_1fr] md:gap-8">
                 <div>
-                  <p className="text-[0.62rem] font-black uppercase tracking-[0.16em] text-signal">
+                  <p className="type-label text-signal">
                     {start.lifecycle}
                   </p>
-                  <h3 className="mt-2 font-display text-5xl font-black uppercase leading-none text-ink">
+                  <h3 className="mt-2 text-3xl font-extrabold uppercase leading-none tracking-[-0.03em] text-ink sm:text-4xl">
                     {start.name}
                   </h3>
                   <div className="mt-5 border-l-4 border-signal pl-4">
-                    <p className="font-display text-4xl font-black leading-none text-ink">
+                    <p className="type-price text-ink">
                       {start.price} €
                     </p>
-                    <p className="mt-1 text-[0.62rem] font-black uppercase tracking-[0.13em] text-ink/55">
+                    <p className="type-label mt-1 text-ink/60">
                       {start.vatLabel} / {start.period}
                     </p>
                   </div>
@@ -90,10 +90,10 @@ export default function Pricing({ onCtaClick }: PricingProps) {
                         key={label}
                         className="grid grid-cols-[92px_1fr] gap-3 border-b border-ink/20 py-3 sm:grid-cols-1 sm:gap-1 sm:px-4 sm:first:pl-0 sm:[&:nth-child(odd)]:border-r"
                       >
-                        <span className="text-[0.56rem] font-black uppercase tracking-[0.14em] text-signal">
+                        <span className="type-label text-signal">
                           {label}
                         </span>
-                        <span className="text-sm font-bold leading-relaxed text-ink">
+                        <span className="type-ui text-ink">
                           {value}
                         </span>
                       </div>
@@ -104,7 +104,7 @@ export default function Pricing({ onCtaClick }: PricingProps) {
                     variant="primary"
                     size="lg"
                     onClick={onCtaClick}
-                    className="mt-6 w-full justify-between text-left text-sm uppercase tracking-[0.08em] sm:w-auto sm:min-w-[300px]"
+                    className="mt-6 w-full justify-between text-left sm:w-auto sm:min-w-[300px]"
                   >
                     <span>{siteConfig.cta.primary}</span>
                     <span aria-hidden="true">→</span>
@@ -113,12 +113,12 @@ export default function Pricing({ onCtaClick }: PricingProps) {
               </article>
 
               <div className="grid min-h-16 grid-cols-[1fr_auto_1fr] items-center border-y-2 border-ink bg-ink px-4 text-ghost sm:px-6">
-                <span className="text-[0.58rem] font-black uppercase tracking-[0.14em] text-ghost/55">
+                <span className="type-label text-ghost/60">
                   Jakso 03
                 </span>
                 <div className="flex items-center gap-3 px-3 sm:gap-5 sm:px-6">
                   <span className="h-px w-5 bg-ghost/35 sm:w-12" aria-hidden="true" />
-                  <span className="font-display text-2xl font-black uppercase text-signal">
+                  <span className="text-2xl font-extrabold text-signal">
                     →
                   </span>
                   <span className="h-px w-5 bg-ghost/35 sm:w-12" aria-hidden="true" />
@@ -130,31 +130,31 @@ export default function Pricing({ onCtaClick }: PricingProps) {
 
               <article className="grid grid-cols-1 gap-6 bg-bone py-7 sm:py-8 md:grid-cols-[190px_1fr] md:gap-8">
                 <div>
-                  <p className="text-[0.62rem] font-black uppercase tracking-[0.16em] text-ink/55">
+                  <p className="type-label text-ink/60">
                     {managed.lifecycle}
                   </p>
-                  <h3 className="mt-2 font-display text-5xl font-black uppercase leading-none text-ink">
+                  <h3 className="mt-2 text-3xl font-extrabold uppercase leading-none tracking-[-0.03em] text-ink sm:text-4xl">
                     {managed.name}
                   </h3>
                   <div className="mt-5 border-l-4 border-ink pl-4">
-                    <p className="font-display text-4xl font-black leading-none text-ink">
+                    <p className="type-price text-ink">
                       {managed.price} €
                     </p>
-                    <p className="mt-1 text-[0.62rem] font-black uppercase tracking-[0.13em] text-ink/55">
+                    <p className="type-label mt-1 text-ink/60">
                       {managed.vatLabel} / {managed.period}
                     </p>
                   </div>
                 </div>
 
                 <div>
-                  <p className="mb-4 text-[0.62rem] font-black uppercase tracking-[0.14em] text-signal">
+                  <p className="type-label mb-4 text-signal">
                     START +
                   </p>
                   <ul className="grid grid-cols-1 border-t border-ink/25 sm:grid-cols-2">
                     {managedSummary.map((item) => (
                       <li
                         key={item}
-                        className="flex gap-3 border-b border-ink/20 py-3 text-sm font-bold leading-relaxed text-ink sm:px-4 sm:first:pl-0 sm:[&:nth-child(odd)]:border-r"
+                        className="type-ui flex gap-3 border-b border-ink/20 py-3 text-ink sm:px-4 sm:first:pl-0 sm:[&:nth-child(odd)]:border-r"
                       >
                         <span
                           aria-hidden="true"
@@ -170,14 +170,14 @@ export default function Pricing({ onCtaClick }: PricingProps) {
               </article>
             </div>
 
-            <div className="mt-5 flex flex-col gap-3 text-xs leading-relaxed text-ink/55 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
+            <div className="type-caption mt-5 flex flex-col gap-3 text-ink/60 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
               <p className="max-w-xl">
                 Tarkemmat rajaukset, sopimuslogiikka ja palvelun sisältö on
                 avattu UKK:ssa.
               </p>
               <a
                 href="#faq"
-                className="shrink-0 font-black uppercase tracking-[0.12em] text-ink"
+                className="type-label shrink-0 text-ink"
               >
                 Katso UKK →
               </a>
