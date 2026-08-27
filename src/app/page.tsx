@@ -15,6 +15,7 @@ import FinalCTA from '@/components/sections/FinalCTA';
 import Footer from '@/components/layout/Footer';
 import Navigation from '@/components/layout/Navigation';
 import ContactModal from '@/components/ui/ContactModal';
+import FunnelAnalytics from '@/components/analytics/FunnelAnalytics';
 import { trackEvent } from '@/lib/analytics';
 
 export default function Home() {
@@ -32,6 +33,7 @@ export default function Home() {
 
   return (
     <>
+      <FunnelAnalytics />
       <Navigation onCtaClick={handleCTAClick} />
       <main className="min-h-screen bg-ghost">
         <Hero onCtaClick={handleCTAClick} />
