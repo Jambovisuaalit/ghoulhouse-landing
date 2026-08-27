@@ -151,7 +151,7 @@ export default function Pricing({ onCtaClick }: PricingProps) {
                     START +
                   </p>
                   <ul className="grid grid-cols-1 border-t border-ink/25 sm:grid-cols-2">
-                    {managedSummary.map((item, index) => (
+                    {managedSummary.map((item) => (
                       <li
                         key={item}
                         className="flex gap-3 border-b border-ink/20 py-3 text-sm font-bold leading-relaxed text-ink sm:px-4 sm:first:pl-0 sm:[&:nth-child(odd)]:border-r"
