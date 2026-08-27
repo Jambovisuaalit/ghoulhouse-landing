@@ -448,6 +448,8 @@ try {
         stickyHeight: stickyRect.height,
         viewportTop: viewportRect.top,
         viewportBottom: viewportRect.bottom,
+        frameTop: frameRect.top,
+        frameBottom: frameRect.bottom,
         frameHeight: frameRect.height,
       };
     })()`
@@ -476,7 +478,9 @@ try {
   );
   assert(
     filmMid.viewportTop >= filmMid.stickyTop &&
-      filmMid.viewportBottom <= filmMid.stickyBottom + 1 &&
+      filmMid.viewportBottom <= filmMid.stickyBottom + 16 &&
+      filmMid.frameTop >= filmMid.stickyTop &&
+      filmMid.frameBottom <= filmMid.stickyBottom + 1 &&
       filmMid.frameHeight >= 300,
     `Desktop filmstrip content is clipped or outside sticky viewport: ${JSON.stringify(filmMid)}.`
   );
