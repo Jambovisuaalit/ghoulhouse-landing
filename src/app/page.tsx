@@ -25,24 +25,29 @@ export default function Home() {
 
   return (
     <>
-      <Navigation onCtaClick={handleCTAClick} />
-      <main className="min-h-screen bg-white">
-        <Hero onCtaClick={handleCTAClick} />
-        <Problem />
-        <Mechanism />
-        <Examples />
-        <Deliverables />
-        <Process />
-        <Pricing />
-        <Audience />
-        <Founder />
-        <FAQ />
-        <FinalCTA onCtaClick={handleCTAClick} />
-      </main>
-      <Footer />
-      {showContactModal && (
-        <ContactModal onClose={() => setShowContactModal(false)} />
-      )}
+      <a href="#main-content" className="skip-link">
+        Siirry pääsisältöön
+      </a>
+
+      <div aria-hidden={showContactModal ? true : undefined}>
+        <Navigation onCtaClick={handleCTAClick} />
+        <main id="main-content" className="min-h-screen bg-white">
+          <Hero onCtaClick={handleCTAClick} />
+          <Problem />
+          <Mechanism />
+          <Examples />
+          <Deliverables />
+          <Process />
+          <Pricing />
+          <Audience />
+          <Founder />
+          <FAQ />
+          <FinalCTA onCtaClick={handleCTAClick} />
+        </main>
+        <Footer />
+      </div>
+
+      {showContactModal && <ContactModal onClose={() => setShowContactModal(false)} />}
     </>
   );
 }
