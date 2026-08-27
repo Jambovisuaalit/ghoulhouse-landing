@@ -1,152 +1,108 @@
 import Button from '@/components/ui/Button';
 import Container from '@/components/ui/Container';
+import { siteConfig } from '@/config/site';
 
 interface PricingProps {
-  onCtaClick?: () => void;
+  onCtaClick: () => void;
 }
 
 export default function Pricing({ onCtaClick }: PricingProps) {
+  const { start, managed } = siteConfig.offer;
+
   return (
-    <section id="pricing" className="bg-white py-16 md:py-24">
+    <section id="pricing" className="border-y-2 border-ink bg-ghost py-16 md:py-24">
       <Container>
-        <h2 className="text-ink mb-12">Hinta</h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl">
-          {/* START Plan */}
-          <div className="border-2 border-bone p-8 rounded">
-            <h3 className="text-2xl font-bold text-ink mb-2">START</h3>
-            <p className="text-ink/60 text-sm mb-6">Ensimmäiset 3 kuukautta</p>
-
-            <div className="mb-6">
-              <p className="text-sm text-ink/70 mb-2">per kuukausi</p>
-              <p className="text-4xl font-bold text-signal">
-                490 €
-              </p>
-              <p className="text-sm text-ink/70">+ alv</p>
-            </div>
-
-            <ul className="space-y-3 mb-8 text-sm">
-              <li className="flex gap-3">
-                <span className="text-signal font-bold mt-0.5">✓</span>
-                <span className="text-ink/80">~12 sisältönpalasta / kk</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-signal font-bold mt-0.5">✓</span>
-                <span className="text-ink/80">Instagram + Facebook</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-signal font-bold mt-0.5">✓</span>
-                <span className="text-ink/80">Sisällön suunnittelu</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-signal font-bold mt-0.5">✓</span>
-                <span className="text-ink/80">Kuvan käsittely & grafiikka</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-signal font-bold mt-0.5">✓</span>
-                <span className="text-ink/80">Kopiointi ja CTA:t</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-signal font-bold mt-0.5">✓</span>
-                <span className="text-ink/80">Ajoitus ja julkaisu</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-signal font-bold mt-0.5">✓</span>
-                <span className="text-ink/80">Tuloskertomukset</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-signal font-bold mt-0.5">✓</span>
-                <span className="text-ink/80">1 muokkauskierros</span>
-              </li>
-            </ul>
-
-            <Button
-              variant="secondary"
-              className="w-full"
-              onClick={onCtaClick}
-            >
-              Aloita
-            </Button>
+        <div className="grid gap-8 lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-signal">
+              Hinnoittelu / palvelun eteneminen
+            </p>
+            <h2 className="font-display text-[clamp(2.8rem,5vw,5.5rem)] font-black uppercase leading-[0.9] tracking-[-0.04em] text-ink">
+              Yksi palvelu.
+              <span className="block">Kaksi vaihetta.</span>
+            </h2>
+            <p className="mt-6 max-w-md text-base leading-relaxed text-ink/70">
+              Uusi asiakkuus alkaa START-jaksosta. Neljännestä palvelujaksosta
+              eteenpäin palvelu jatkuu MANAGED-mallilla. Kyse ei ole kahdesta
+              rinnakkaisesta tilauspaketista.
+            </p>
           </div>
 
-          {/* MANAGED Plan */}
-          <div className="border-2 border-signal p-8 rounded bg-ghost/30">
-            <h3 className="text-2xl font-bold text-ink mb-2">MANAGED</h3>
-            <p className="text-ink/60 text-sm mb-6">4. kuukauden alusta</p>
+          <div className="lg:col-span-7">
+            <div className="border-2 border-ink bg-ghost">
+              <article className="grid gap-6 border-b-2 border-ink p-6 md:grid-cols-[180px_1fr] md:p-8">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-signal">
+                    {start.lifecycle}
+                  </p>
+                  <h3 className="mt-2 font-display text-4xl font-black uppercase text-ink">
+                    {start.name}
+                  </h3>
+                  <p className="mt-4 font-display text-4xl font-black leading-none text-signal">
+                    {start.price} €
+                  </p>
+                  <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-ink/60">
+                    {start.vatLabel} / {start.period}
+                  </p>
+                </div>
 
-            <div className="mb-6">
-              <p className="text-sm text-ink/70 mb-2">per kuukausi</p>
-              <p className="text-4xl font-bold text-signal">
-                790 €
-              </p>
-              <p className="text-sm text-ink/70">+ alv</p>
+                <div>
+                  <ul className="grid gap-x-6 gap-y-2 text-sm text-ink/80 sm:grid-cols-2">
+                    {start.includes.map((item) => (
+                      <li key={item} className="border-t border-ink/15 pt-2">
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    onClick={onCtaClick}
+                    className="mt-7 w-full uppercase tracking-[0.07em] sm:w-auto"
+                  >
+                    {siteConfig.cta.primary}
+                  </Button>
+                </div>
+              </article>
+
+              <div
+                className="flex items-center justify-center bg-ink py-3 text-sm font-black uppercase tracking-[0.18em] text-ghost"
+                aria-hidden="true"
+              >
+                03 <span className="mx-4 text-signal">→</span> 04
+              </div>
+
+              <article className="grid gap-6 bg-bone p-6 md:grid-cols-[180px_1fr] md:p-8">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-ink/60">
+                    {managed.lifecycle}
+                  </p>
+                  <h3 className="mt-2 font-display text-4xl font-black uppercase text-ink">
+                    {managed.name}
+                  </h3>
+                  <p className="mt-4 font-display text-4xl font-black leading-none text-ink">
+                    {managed.price} €
+                  </p>
+                  <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-ink/60">
+                    {managed.vatLabel} / {managed.period}
+                  </p>
+                </div>
+
+                <ul className="grid gap-x-6 gap-y-2 text-sm text-ink/80 sm:grid-cols-2">
+                  {managed.includes.map((item) => (
+                    <li key={item} className="border-t border-ink/20 pt-2">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </article>
             </div>
 
-            <ul className="space-y-3 mb-8 text-sm">
-              <li className="flex gap-3">
-                <span className="text-signal font-bold mt-0.5">✓</span>
-                <span className="text-ink/80">Kaikki STARTissa</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-signal font-bold mt-0.5">✓</span>
-                <span className="text-ink/80">Jatkuva optimointi</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-signal font-bold mt-0.5">✓</span>
-                <span className="text-ink/80">Aiheanalyysi & CTA-testaus</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-signal font-bold mt-0.5">✓</span>
-                <span className="text-ink/80">Julkaisurytmin optimointi</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-signal font-bold mt-0.5">✓</span>
-                <span className="text-ink/80">Sisällönpankin ylläpito</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-signal font-bold mt-0.5">✓</span>
-                <span className="text-ink/80">Viikottain tilannekatsaus</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-signal font-bold mt-0.5">✓</span>
-                <span className="text-ink/80">Rajallinen yhteisövaltaus</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-signal font-bold mt-0.5">✓</span>
-                <span className="text-ink/80">Kuukausittain kehityssuositus</span>
-              </li>
-            </ul>
-
-            <Button
-              variant="primary"
-              className="w-full"
-              onClick={onCtaClick}
-            >
-              Pyydä esimerkit
-            </Button>
+            <p className="mt-4 text-xs leading-relaxed text-ink/60">
+              Palvelu ei sisällä tuloslupausta liideistä, myynnistä,
+              seuraajamäärästä tai tavoittavuudesta.
+            </p>
           </div>
-        </div>
-
-        <div className="max-w-3xl mt-12 pt-8 border-t border-bone">
-          <h3 className="font-bold text-ink mb-4">Yleistä hinnoittelusta</h3>
-          <ul className="space-y-3 text-sm text-ink/70">
-            <li className="flex gap-2">
-              <span>•</span>
-              <span>Ei kiinteisiä sopimuksia. Voit perua milloin tahansa.</span>
-            </li>
-            <li className="flex gap-2">
-              <span>•</span>
-              <span>Ei mainoskustannuksia — tämä on orgaaninen sisällöntoiminta.</span>
-            </li>
-            <li className="flex gap-2">
-              <span>•</span>
-              <span>Tarvitsemme riittävän määrän työmaakuvia tai videota kuukaudessa.</span>
-            </li>
-            <li className="flex gap-2">
-              <span>•</span>
-              <span>Hinnat ovat ilmoitettu ilman alv:ta. Alv lisätään loppuun.</span>
-            </li>
-          </ul>
         </div>
       </Container>
     </section>
