@@ -33,7 +33,7 @@ export default function Hero({ onCtaClick }: HeroProps) {
               </span>
             </h1>
 
-            <p className="mt-6 max-w-2xl text-[1.03rem] leading-[1.5] text-ink/78 sm:mt-8 sm:text-xl lg:max-w-xl lg:text-[1.35rem]">
+            <p className="mt-6 max-w-2xl text-[1.03rem] leading-[1.5] text-ink/80 sm:mt-8 sm:text-xl lg:max-w-xl lg:text-[1.35rem]">
               <strong className="font-black text-ink">
                 {positioning.supporting[0]}
               </strong>{' '}
