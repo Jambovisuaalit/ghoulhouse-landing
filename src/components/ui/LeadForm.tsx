@@ -7,6 +7,7 @@ type Status = 'idle' | 'submitting' | 'success' | 'error';
 export default function LeadForm() {
   const [status, setStatus] = useState<Status>('idle');
   const [message, setMessage] = useState('');
+  const [startedAt] = useState(() => String(Date.now()));
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -76,7 +77,7 @@ export default function LeadForm() {
         <span>Jätä tyhjäksi</span>
         <input name="companyWebsite" tabIndex={-1} autoComplete="off" />
       </label>
-      <input type="hidden" name="startedAt" value={Date.now()} />
+      <input type="hidden" name="startedAt" value={startedAt} />
 
       <button className="btn-primary mt-6 w-full sm:w-auto" type="submit" disabled={status === 'submitting'}>
         {status === 'submitting' ? 'LÄHETETÄÄN…' : 'PYYDÄ 2 SISÄLTÖESIMERKKIÄ'}

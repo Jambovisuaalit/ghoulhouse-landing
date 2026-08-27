@@ -12,7 +12,7 @@ export default function Hero() {
             SISÄÄN.<br />
             <span>VALMIS SOME ULOS.</span>
           </h1>
-          <p className="mt-7 max-w-2xl text-lg leading-7 text-ghost/72 sm:text-xl sm:leading-8">
+          <p className="mt-7 max-w-2xl text-lg leading-7 text-ghost/70 sm:text-xl sm:leading-8">
             Teette hyvää työtä. Me pidämme huolen, että asiakkaat myös näkevät sen.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-4">
