@@ -1,117 +1,114 @@
 'use client';
 
-import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
 import Button from '@/components/ui/Button';
 import Container from '@/components/ui/Container';
+import { siteConfig } from '@/config/site';
 
 interface NavigationProps {
   onCtaClick: () => void;
 }
 
+const links = [
+  { href: '#deliverables', label: 'Palvelu' },
+  { href: '#mechanism', label: 'Näin toimii' },
+  { href: '#pricing', label: 'Hinta' },
+  { href: '#faq', label: 'UKK' },
+] as const;
+
 export default function Navigation({ onCtaClick }: NavigationProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="sticky top-0 z-40 bg-white border-b border-bone">
-      <Container className="flex justify-between items-center py-4">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="text-xl font-bold text-signal">GhoulHouse</div>
-        </Link>
-
-        {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-8">
-          <a href="#problem" className="text-ink hover:text-signal transition-colors">
-            Ongelma
-          </a>
-          <a href="#mechanism" className="text-ink hover:text-signal transition-colors">
-            Miten se toimii
-          </a>
-          <a href="#pricing" className="text-ink hover:text-signal transition-colors">
-            Hinta
-          </a>
-          <a href="#faq" className="text-ink hover:text-signal transition-colors">
-            UKK
-          </a>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={onCtaClick}
-            className="whitespace-nowrap"
-          >
-            Pyydä esimerkit
-          </Button>
-        </div>
-
-        {/* Mobile Menu Button */}
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 hover:bg-bone rounded transition-colors"
-          aria-label="Avaa päävalikko"
-          aria-expanded={mobileMenuOpen}
+    <header className="sticky top-0 z-40 border-b-2 border-ink bg-ghost">
+      <Container>
+        <nav
+          className="flex min-h-[72px] items-center justify-between gap-5"
+          aria-label="Päänavigaatio"
         >
-          <svg
-            className="w-6 h-6 text-ink"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16M4 18h16"
+          <Link href="#top" aria-label="GhoulHouse — sivun alku">
+            <Image
+              src="/logo-horizontal.svg"
+              alt="GhoulHouse"
+              width={1400}
+              height={460}
+              priority
+              className="h-auto w-[150px] md:w-[172px]"
             />
-          </svg>
-        </button>
-      </Container>
+          </Link>
 
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden border-t border-bone bg-ghost">
-          <Container className="py-4 space-y-4">
-            <a
-              href="#problem"
-              className="block text-ink hover:text-signal transition-colors py-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Ongelma
-            </a>
-            <a
-              href="#mechanism"
-              className="block text-ink hover:text-signal transition-colors py-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Miten se toimii
-            </a>
-            <a
-              href="#pricing"
-              className="block text-ink hover:text-signal transition-colors py-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Hinta
-            </a>
-            <a
-              href="#faq"
-              className="block text-ink hover:text-signal transition-colors py-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              UKK
-            </a>
+          <div className="hidden items-center gap-7 md:flex">
+            {links.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="text-sm font-bold text-ink hover:text-signal"
+              >
+                {link.label}
+              </a>
+            ))}
             <Button
               variant="primary"
               size="sm"
-              onClick={() => {
-                onCtaClick();
-                setMobileMenuOpen(false);
-              }}
-              className="w-full"
+              onClick={onCtaClick}
+              className="whitespace-nowrap text-xs uppercase tracking-[0.06em]"
             >
-              Pyydä esimerkit
+              {siteConfig.cta.primary}
+            </Button>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen((open) => !open)}
+            className="flex h-11 w-11 items-center justify-center border-2 border-ink bg-ghost text-ink md:hidden"
+            aria-label={mobileMenuOpen ? 'Sulje valikko' : 'Avaa valikko'}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation"
+          >
+            <span className="sr-only">
+              {mobileMenuOpen ? 'Sulje valikko' : 'Avaa valikko'}
+            </span>
+            <span aria-hidden="true" className="text-xl font-black">
+              {mobileMenuOpen ? '×' : '≡'}
+            </span>
+          </button>
+        </nav>
+      </Container>
+
+      {mobileMenuOpen && (
+        <div
+          id="mobile-navigation"
+          className="border-t-2 border-ink bg-ghost md:hidden"
+        >
+          <Container className="py-4">
+            <div className="divide-y divide-ink/20 border-y border-ink/20">
+              {links.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="block py-4 text-base font-bold text-ink"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+            <Button
+              variant="primary"
+              size="md"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onCtaClick();
+              }}
+              className="mt-4 w-full text-xs uppercase tracking-[0.07em]"
+            >
+              {siteConfig.cta.primary}
             </Button>
           </Container>
         </div>
       )}
-    </nav>
+    </header>
   );
 }
