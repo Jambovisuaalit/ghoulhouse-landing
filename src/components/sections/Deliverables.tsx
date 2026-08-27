@@ -70,9 +70,9 @@ export default function Deliverables() {
                 {productionRows.map((item, index) => (
                   <div
                     key={item.label}
-                    className={`min-h-[112px] border-ink/25 p-5 ${
-                      index < productionRows.length - 2 ? 'border-b' : ''
-                    } ${index % 2 === 0 ? 'sm:border-r' : ''}`}
+                    className={`min-h-[112px] border-b border-ink/25 p-5 ${
+                      index % 2 === 0 ? 'sm:border-r' : ''
+                    }`}
                   >
                     <p className="type-label text-signal">{item.label}</p>
                     <p className="type-ui mt-3 max-w-[30ch] text-ink">
