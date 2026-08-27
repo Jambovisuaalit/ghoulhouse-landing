@@ -17,7 +17,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
-        display: ['Arial Narrow', 'Helvetica Neue Condensed', 'Impact', 'sans-serif'],
+        display: ['var(--font-display)', 'Impact', 'sans-serif'],
       },
       spacing: {
         safe: 'max(1rem, env(safe-area-inset-bottom))',
