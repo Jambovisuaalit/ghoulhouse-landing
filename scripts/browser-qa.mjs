@@ -220,7 +220,7 @@ try {
       width: viewport.width,
       height: viewport.height,
       deviceScaleFactor: 1,
-      mobile: viewport.width < 768,
+      mobile: false,
     });
 
     await client.send('Emulation.setEmulatedMedia', {
@@ -276,6 +276,10 @@ try {
       })()`
     );
 
+    assert(
+      metrics.viewport.width === viewport.width,
+      `${viewport.width}px: browser reported unexpected CSS viewport width ${metrics.viewport.width}px.`
+    );
     assert(metrics.h1Count === 1, `${viewport.width}px: expected exactly one H1.`);
     assert(
       metrics.h1Text.includes('TYÖMAAKUVAT SISÄÄN.') &&
@@ -346,7 +350,7 @@ try {
     width: 390,
     height: 844,
     deviceScaleFactor: 1,
-    mobile: true,
+    mobile: false,
   });
   await client.send('Emulation.setEmulatedMedia', {
     media: '',
