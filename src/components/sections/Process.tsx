@@ -27,10 +27,10 @@ export default function Process() {
       <Container>
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-signal">
+            <p className="type-label mb-4 text-signal">
               Prosessi
             </p>
-            <h2 className="font-display text-[clamp(2.8rem,5vw,5.5rem)] font-black uppercase leading-[0.9] tracking-[-0.04em]">
+            <h2 className="type-section-title text-ghost">
               Kolme askelta.
             </h2>
           </div>
@@ -41,15 +41,15 @@ export default function Process() {
                 key={step.number}
                 className="grid gap-4 border-b border-ghost/25 py-6 sm:grid-cols-[60px_110px_1fr]"
               >
-                <span className="text-xs font-black tracking-[0.14em] text-signal">
+                <span className="type-label text-signal">
                   {step.number}
                 </span>
-                <span className="text-xs font-black uppercase tracking-[0.14em] text-ghost/55">
+                <span className="type-label text-ghost/60">
                   {step.owner}
                 </span>
                 <div>
-                  <h3 className="text-xl font-black text-ghost">{step.title}</h3>
-                  <p className="mt-2 max-w-xl text-sm leading-relaxed text-ghost/65">
+                  <h3 className="text-lg font-extrabold leading-tight tracking-[-0.02em] text-ghost sm:text-xl">{step.title}</h3>
+                  <p className="mt-2 max-w-[58ch] text-[0.95rem] leading-[1.55] text-ghost/70">
                     {step.body}
                   </p>
                 </div>
