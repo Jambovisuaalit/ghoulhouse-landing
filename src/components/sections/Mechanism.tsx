@@ -345,7 +345,7 @@ export default function Mechanism() {
         <div ref={filmStickyRef} className="mechanism-film__sticky">
           <div className="mechanism-film__header">
             <p className="type-label text-signal">Filmstrip / prosessi</p>
-            <h3>Yksi työmaa. Monta sisältökulmaa.</h3>
+            <h3>Yksi työmaa. Monta kulmaa.</h3>
           </div>
 
           <div
