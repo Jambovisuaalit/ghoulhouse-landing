@@ -15,11 +15,14 @@ import FinalCTA from '@/components/sections/FinalCTA';
 import Footer from '@/components/layout/Footer';
 import Navigation from '@/components/layout/Navigation';
 import ContactModal from '@/components/ui/ContactModal';
+import { trackEvent } from '@/lib/analytics';
 
 export default function Home() {
   const [showContactModal, setShowContactModal] = useState(false);
 
   const handleCTAClick = useCallback(() => {
+    trackEvent('primary_cta_click');
+    trackEvent('lead_form_open');
     setShowContactModal(true);
   }, []);
 
@@ -30,7 +33,7 @@ export default function Home() {
   return (
     <>
       <Navigation onCtaClick={handleCTAClick} />
-      <main className="min-h-screen bg-white">
+      <main className="min-h-screen bg-ghost">
         <Hero onCtaClick={handleCTAClick} />
         <Problem />
         <Mechanism />
