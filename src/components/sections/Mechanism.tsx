@@ -24,7 +24,7 @@ export default function Mechanism() {
             </h2>
           </div>
 
-          <p className="max-w-sm text-sm leading-relaxed text-ghost/65 lg:col-span-3 lg:pb-1">
+          <p className="max-w-sm text-sm leading-relaxed text-ghost/60 lg:col-span-3 lg:pb-1">
             Sama materiaali. Selkeämpi rajaus, rakenne ja viesti.
           </p>
         </div>
@@ -63,7 +63,7 @@ export default function Mechanism() {
                   alt=""
                   width={80}
                   height={80}
-                  className="h-11 w-11 shrink-0 transition-transform duration-500 group-open:rotate-[-4deg] group-open:scale-105 lg:h-16 lg:w-16"
+                  className="hidden h-11 w-11 shrink-0 transition-transform duration-500 group-open:rotate-[-4deg] group-open:scale-105 sm:block lg:h-16 lg:w-16"
                 />
 
                 <div className="flex items-center gap-2 text-[0.58rem] font-black uppercase tracking-[0.14em] lg:flex-col lg:gap-3 lg:text-center">
@@ -102,7 +102,7 @@ export default function Mechanism() {
                   <p className="mt-3 max-w-[14ch] font-display text-[clamp(2rem,7vw,4.6rem)] font-black uppercase leading-[0.86] tracking-[-0.035em]">
                     Valmis some ulos.
                   </p>
-                  <p className="mt-3 max-w-sm text-xs font-bold leading-relaxed text-ink/65 sm:text-sm">
+                  <p className="mt-3 max-w-sm text-xs font-bold leading-relaxed text-ink/60 sm:text-sm">
                     Rajattu, kirjoitettu ja julkaisuvalmis.
                   </p>
                 </div>
