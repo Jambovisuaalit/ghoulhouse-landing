@@ -54,7 +54,7 @@ jobs:
           exit 1
 
       - name: Browser QA
-        run: node scripts/browser-qa.mjs
+        run: node scripts/browser-qa-ci.mjs
 
       - name: Upload browser QA artifacts
         if: always()
