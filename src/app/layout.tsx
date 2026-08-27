@@ -97,7 +97,8 @@ const structuredData = {
       name: siteConfig.company.legalName,
       alternateName: siteConfig.company.brand,
       url: SITE_URL,
-      logo: productionUrl('/mark-color.svg'),
+      logo: productionUrl('/icon'),
+      image: productionUrl('/opengraph-image'),
       founder: {
         '@id': founderId,
       },
