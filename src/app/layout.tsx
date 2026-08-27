@@ -1,6 +1,12 @@
 import type { Metadata, Viewport } from 'next';
+import { headers } from 'next/headers';
 import { Anton } from 'next/font/google';
 import { siteConfig } from '@/config/site';
+import {
+  SITE_URL,
+  productionUrl,
+  shouldIndexRequest,
+} from '@/lib/seo';
 import './globals.css';
 
 const anton = Anton({
@@ -10,34 +16,80 @@ const anton = Anton({
   display: 'swap',
 });
 
-export const metadata: Metadata = {
-  title: 'GhoulHouse — Työmaakuvat sisään. Valmis some ulos.',
-  description:
-    'GhoulHouse tekee työmaamateriaalista 12 valmista Instagram- ja Facebook-sisältöä 30 päiväksi. START 490 € + ALV.',
-  metadataBase: new URL(siteConfig.company.domain),
-  alternates: {
-    canonical: '/',
-  },
-  openGraph: {
-    title: 'GhoulHouse — Työmaakuvat sisään. Valmis some ulos.',
-    description:
-      'Teette hyvää työtä. Me pidämme huolen, että asiakkaat myös näkevät sen.',
-    url: '/',
-    siteName: 'GhoulHouse',
-    locale: 'fi_FI',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary',
-    title: 'GhoulHouse — Työmaakuvat sisään. Valmis some ulos.',
-    description:
-      'Teette hyvää työtä. Me pidämme huolen, että asiakkaat myös näkevät sen.',
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
+const title = 'GhoulHouse — Työmaakuvat sisään. Valmis some ulos.';
+const description =
+  'GhoulHouse tekee työmaamateriaalista 12 valmista Instagram- ja Facebook-sisältöä 30 päiväksi. START 490 € + ALV.';
+const socialDescription =
+  'Teette hyvää työtä. Me pidämme huolen, että asiakkaat myös näkevät sen.';
+
+export async function generateMetadata(): Promise<Metadata> {
+  const requestHeaders = await headers();
+  const requestHost =
+    requestHeaders.get('x-forwarded-host') || requestHeaders.get('host');
+  const indexable = shouldIndexRequest(requestHost);
+
+  return {
+    title,
+    description,
+    metadataBase: new URL(SITE_URL),
+    alternates: {
+      canonical: '/',
+    },
+    icons: {
+      icon: [
+        {
+          url: '/mark-color.svg',
+          type: 'image/svg+xml',
+        },
+      ],
+      shortcut: '/mark-color.svg',
+    },
+    openGraph: {
+      title,
+      description: socialDescription,
+      url: '/',
+      siteName: 'GhoulHouse',
+      locale: 'fi_FI',
+      type: 'website',
+      images: [
+        {
+          url: '/opengraph-image',
+          width: 1200,
+          height: 630,
+          alt: 'GhoulHouse — Työmaakuvat sisään. Valmis some ulos.',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description: socialDescription,
+      images: ['/opengraph-image'],
+    },
+    robots: indexable
+      ? {
+          index: true,
+          follow: true,
+          googleBot: {
+            index: true,
+            follow: true,
+            'max-image-preview': 'large',
+            'max-snippet': -1,
+            'max-video-preview': -1,
+          },
+        }
+      : {
+          index: false,
+          follow: false,
+          nocache: true,
+          googleBot: {
+            index: false,
+            follow: false,
+            noimageindex: true,
+          },
+        },
+  };
+}
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -46,26 +98,55 @@ export const viewport: Viewport = {
   colorScheme: 'light',
 };
 
+const organizationId = `${SITE_URL}/#organization`;
+const founderId = `${SITE_URL}/#founder`;
+const websiteId = `${SITE_URL}/#website`;
+
 const structuredData = {
   '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: siteConfig.company.legalName,
-  url: siteConfig.company.domain,
-  founder: {
-    '@type': 'Person',
-    name: siteConfig.company.founder,
-  },
-  address: {
-    '@type': 'PostalAddress',
-    addressLocality: 'Helsinki',
-    addressCountry: 'FI',
-  },
-  areaServed: {
-    '@type': 'Country',
-    name: 'Finland',
-  },
-  description:
-    'Tuotteistettu sosiaalisen median sisältö- ja hallintapalvelu suomalaisille paikallisille palveluyrityksille.',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': organizationId,
+      name: siteConfig.company.legalName,
+      alternateName: siteConfig.company.brand,
+      url: SITE_URL,
+      logo: productionUrl('/mark-color.svg'),
+      founder: {
+        '@id': founderId,
+      },
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Helsinki',
+        addressCountry: 'FI',
+      },
+      areaServed: {
+        '@type': 'Country',
+        name: 'Finland',
+      },
+      description:
+        'Tuotteistettu sosiaalisen median sisältö- ja hallintapalvelu suomalaisille paikallisille palveluyrityksille.',
+    },
+    {
+      '@type': 'Person',
+      '@id': founderId,
+      name: siteConfig.company.founder,
+      jobTitle: 'Founder',
+      worksFor: {
+        '@id': organizationId,
+      },
+    },
+    {
+      '@type': 'WebSite',
+      '@id': websiteId,
+      url: SITE_URL,
+      name: siteConfig.company.brand,
+      publisher: {
+        '@id': organizationId,
+      },
+      inLanguage: 'fi-FI',
+    },
+  ],
 };
 
 export default function RootLayout({
