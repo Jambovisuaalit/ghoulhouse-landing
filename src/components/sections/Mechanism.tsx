@@ -16,7 +16,7 @@ export default function Mechanism() {
             </p>
             <h2
               id="mechanism-title"
-              className="font-display text-[clamp(2.8rem,6vw,6.5rem)] font-black uppercase leading-[0.88] tracking-[-0.04em]"
+              className="font-display text-[clamp(1.75rem,6vw,6.5rem)] font-black uppercase leading-[0.88] tracking-[-0.04em] sm:text-[clamp(2.8rem,6vw,6.5rem)]"
             >
               Työmaamateriaali
               <span className="block text-signal">→ GhoulHouse →</span>
