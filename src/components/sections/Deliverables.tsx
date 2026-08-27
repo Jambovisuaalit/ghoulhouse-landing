@@ -7,29 +7,43 @@ export default function Deliverables() {
       <div className="shell">
         <SectionHeading
           eyebrow="04 / TOIMITUS"
-          title="12 alkuperäistä sisältöä. Yksi selkeä kuukausiprosessi."
-          intro="Paketti on rajattu tarkoituksella. Mitä vähemmän epäselvyyttä toimituksessa on, sitä helpompi palvelu on ostaa, hyväksyä ja tuottaa hyvin."
+          title="12 sisältöä. Yksi tuotantomanifesti."
+          intro="Palvelun arvo ei synny ominaisuuslistasta vaan siitä, että vastuut, output ja rytmi ovat ostajalle selkeitä."
         />
-        <div className="mt-14 grid gap-8 lg:grid-cols-[1.25fr_0.75fr]">
-          <div className="border border-ink/15 bg-white">
-            <p className="eyebrow border-b border-ink/15 p-5 text-signal">GHOULHOUSE HOITAA</p>
-            <ul className="grid sm:grid-cols-2">
+
+        <div className="mt-14 grid gap-10 lg:grid-cols-[1.25fr_0.75fr] lg:items-start">
+          <div className="output-manifest">
+            <div className="flex items-center justify-between gap-4 border-b border-ink/20 py-4">
+              <p className="eyebrow text-ink">GHOULHOUSE / OUTPUT</p>
+              <span className="font-mono text-xs text-signal">10 ITEMS</span>
+            </div>
+
+            <ul>
               {deliverables.map((item, index) => (
-                <li key={item} className="flex min-h-24 gap-4 border-b border-ink/10 p-5 sm:border-r sm:odd:border-r sm:even:border-r-0">
-                  <span className="font-mono text-xs text-signal">{String(index + 1).padStart(2, '0')}</span>
-                  <span className="font-bold leading-6 text-ink">{item}</span>
+                <li key={item} className="output-row">
+                  <span className="output-row-index">{String(index + 1).padStart(2, '0')}</span>
+                  <strong>{item}</strong>
                 </li>
               ))}
             </ul>
           </div>
-          <aside className="border border-ink/15 bg-ink p-6 text-ghost lg:p-8">
-            <p className="eyebrow text-bone">ASIAKAS TOIMITTAA</p>
-            <ul className="mt-8 space-y-5">
-              {customerResponsibilities.map((item) => (
-                <li key={item} className="border-t border-ghost/15 pt-4 text-base leading-6 text-ghost/75">{item}</li>
+
+          <aside className="client-band">
+            <p className="eyebrow text-signal">CLIENT / INPUT</p>
+            <h3 className="mt-5 max-w-[10ch] font-display text-4xl font-black uppercase leading-[0.9] tracking-[-0.05em]">
+              Te toimitatte faktat. Me teemme niistä sisällön.
+            </h3>
+
+            <ul className="mt-8">
+              {customerResponsibilities.map((item, index) => (
+                <li key={item} className="grid grid-cols-[34px_1fr] gap-3 text-sm leading-6 text-ghost/75">
+                  <span className="font-mono text-xs text-signal">{String(index + 1).padStart(2, '0')}</span>
+                  <span>{item}</span>
+                </li>
               ))}
             </ul>
-            <p className="mt-10 text-sm leading-6 text-ghost/50">
+
+            <p className="mt-8 border-t border-ghost/15 pt-5 text-sm leading-6 text-ghost/50">
               Vaativa asiakaspalvelu, reklamaatiot, myyntineuvottelut ja tarjoukset jäävät asiakkaan vastuulle.
             </p>
           </aside>
