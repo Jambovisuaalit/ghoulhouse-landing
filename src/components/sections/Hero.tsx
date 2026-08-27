@@ -23,13 +23,13 @@ export default function Hero({ onCtaClick }: HeroProps) {
               {siteConfig.company.brand}
             </span>
             <span className="h-px w-10 bg-ink" aria-hidden="true" />
-            <span>Somepalvelu paikallisille palveluyrityksille</span>
+            <span className="hidden sm:inline">Somepalvelu paikallisille palveluyrityksille</span>
           </div>
 
           <div className="py-10 md:py-14 lg:py-8">
             <h1
               id="hero-title"
-              className="max-w-[11ch] font-display text-[clamp(3.4rem,7.6vw,8.2rem)] font-black uppercase leading-[0.82] tracking-[-0.045em] text-ink"
+              className="max-w-[11ch] font-display text-[clamp(2.45rem,7.6vw,8.2rem)] font-black uppercase leading-[0.82] tracking-[-0.045em] text-ink"
             >
               <span className="block">{positioning.headline[0]}</span>
               <span className="block">{positioning.headline[1]}</span>
