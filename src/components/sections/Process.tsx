@@ -16,7 +16,7 @@ export default function Process() {
             <li key={step.number} className="grid gap-5 border-b border-ghost/15 py-7 sm:grid-cols-[90px_1fr] lg:grid-cols-[120px_0.8fr_1.2fr] lg:items-start lg:py-9">
               <span className="font-mono text-sm text-signal">{step.number}</span>
               <h3 className="font-display text-3xl font-black uppercase tracking-[-0.04em]">{step.title}</h3>
-              <p className="max-w-2xl text-base leading-7 text-ghost/65">{step.body}</p>
+              <p className="max-w-2xl text-base leading-7 text-ghost/65 sm:col-start-2 lg:col-start-auto">{step.body}</p>
             </li>
           ))}
         </ol>
