@@ -17,6 +17,7 @@ function leadAsText(lead: LeadInput) {
     `Yritys: ${lead.company}`,
     `Nimi: ${lead.name}`,
     `Sähköposti: ${lead.email}`,
+    `Verkkosivu / Instagram: ${lead.profile}`,
     `Puhelin: ${lead.phone || '-'}`,
     `Verkkosivu: ${lead.website || '-'}`,
     `Instagram: ${lead.instagram || '-'}`,
