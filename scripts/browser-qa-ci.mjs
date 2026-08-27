@@ -319,6 +319,128 @@ try {
     });
   }
 
+  // Desktop scroll-effect regression: progress must track actual geometry.
+  await client.send('Emulation.setDeviceMetricsOverride', {
+    width: 1440,
+    height: 900,
+    deviceScaleFactor: 1,
+    mobile: false,
+  });
+  await client.send('Emulation.setEmulatedMedia', {
+    media: '',
+    features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }],
+  });
+  await client.send('Page.navigate', { url: BASE_URL });
+  await waitForDocument(client);
+
+  const rawTarget = await evaluate(
+    client,
+    `(() => {
+      document.documentElement.style.scrollBehavior = 'auto';
+      const section = document.querySelector('[data-scroll-raw]');
+      const sticky = section?.querySelector('.mechanism-raw__sticky');
+      if (!section || !sticky) return null;
+      const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0;
+      const sectionTop = section.getBoundingClientRect().top + scrollY;
+      const travel = Math.max(1, section.offsetHeight - sticky.offsetHeight);
+      const target = sectionTop - stickyTop + travel * 0.5;
+      window.scrollTo(0, target);
+      return { target, travel };
+    })()`
+  );
+  assert(rawTarget, 'Desktop RAW scroll geometry is missing.');
+  await sleep(180);
+
+  const rawMid = await evaluate(
+    client,
+    `(() => {
+      const section = document.querySelector('[data-scroll-raw]');
+      const finalImage = section?.querySelector('.mechanism-raw__image--final');
+      const divider = section?.querySelector('.mechanism-raw__divider');
+      if (!section || !finalImage || !divider) return null;
+      return {
+        progress: parseFloat(getComputedStyle(section).getPropertyValue('--raw-progress')) || 0,
+        clipPath: getComputedStyle(finalImage).clipPath,
+        dividerLeft: getComputedStyle(divider).left,
+      };
+    })()`
+  );
+  assert(rawMid, 'Desktop RAW midpoint metrics are missing.');
+  assert(
+    rawMid.progress > 0.35 && rawMid.progress < 0.65,
+    `Desktop RAW progress should be near 0.5, got ${rawMid.progress}.`
+  );
+  assert(
+    rawMid.clipPath && rawMid.clipPath !== 'none',
+    'Desktop RAW final image is not being clipped by scroll progress.'
+  );
+
+  const rawShot = await client.send('Page.captureScreenshot', {
+    format: 'png',
+    captureBeyondViewport: false,
+  });
+  await writeFile(
+    `${SCREENSHOT_DIR}/scroll-raw-mid-1440x900.png`,
+    Buffer.from(rawShot.data, 'base64')
+  );
+
+  const filmTarget = await evaluate(
+    client,
+    `(() => {
+      const section = document.querySelector('[data-scroll-film]');
+      const sticky = section?.querySelector('.mechanism-film__sticky');
+      if (!section || !sticky) return null;
+      const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0;
+      const sectionTop = section.getBoundingClientRect().top + scrollY;
+      const travel = Math.max(1, section.offsetHeight - sticky.offsetHeight);
+      const target = sectionTop - stickyTop + travel * 0.5;
+      window.scrollTo(0, target);
+      return { target, travel };
+    })()`
+  );
+  assert(filmTarget, 'Desktop filmstrip scroll geometry is missing.');
+  await sleep(180);
+
+  const filmMid = await evaluate(
+    client,
+    `(() => {
+      const section = document.querySelector('[data-scroll-film]');
+      const viewport = section?.querySelector('.mechanism-film__viewport');
+      const track = section?.querySelector('.mechanism-film__track');
+      if (!section || !viewport || !track) return null;
+      const matrix = new DOMMatrixReadOnly(getComputedStyle(track).transform);
+      const horizontalTravel = Math.max(0, track.scrollWidth - viewport.clientWidth);
+      return {
+        progress: parseFloat(getComputedStyle(section).getPropertyValue('--film-progress')) || 0,
+        translateX: matrix.m41,
+        horizontalTravel,
+      };
+    })()`
+  );
+  assert(filmMid, 'Desktop filmstrip midpoint metrics are missing.');
+  assert(
+    filmMid.horizontalTravel > 200,
+    `Desktop filmstrip has insufficient horizontal travel: ${filmMid.horizontalTravel}px.`
+  );
+  assert(
+    filmMid.progress > 0.35 && filmMid.progress < 0.65,
+    `Desktop filmstrip progress should be near 0.5, got ${filmMid.progress}.`
+  );
+  assert(
+    Math.abs(filmMid.translateX) > filmMid.horizontalTravel * 0.3 &&
+      Math.abs(filmMid.translateX) < filmMid.horizontalTravel * 0.7,
+    `Desktop filmstrip translateX is out of sync: ${filmMid.translateX}px of ${filmMid.horizontalTravel}px.`
+  );
+
+  const filmShot = await client.send('Page.captureScreenshot', {
+    format: 'png',
+    captureBeyondViewport: false,
+  });
+  await writeFile(
+    `${SCREENSHOT_DIR}/scroll-film-mid-1440x900.png`,
+    Buffer.from(filmShot.data, 'base64')
+  );
+
   await client.send('Emulation.setDeviceMetricsOverride', {
     width: 390,
     height: 844,
@@ -375,10 +497,10 @@ try {
 
   await writeFile(
     `${SCREENSHOT_DIR}/results.json`,
-    JSON.stringify({ chromePath, results, reducedMotion, dialog }, null, 2)
+    JSON.stringify({ chromePath, results, scrollEffects: { rawMid, filmMid }, reducedMotion, dialog }, null, 2)
   );
 
-  console.log(JSON.stringify({ chromePath, results, reducedMotion, dialog }, null, 2));
+  console.log(JSON.stringify({ chromePath, results, scrollEffects: { rawMid, filmMid }, reducedMotion, dialog }, null, 2));
 } finally {
   client?.close();
   if (chrome.exitCode === null) chrome.kill('SIGTERM');
