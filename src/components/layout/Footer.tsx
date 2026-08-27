@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <footer className="border-t-2 border-signal bg-ink text-ghost">
       <Container className="py-12 md:py-16">
-        <div className="grid gap-10 md:grid-cols-12">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-12">
           <div className="md:col-span-6">
             <Image
               src="/logo-horizontal-white.svg"
