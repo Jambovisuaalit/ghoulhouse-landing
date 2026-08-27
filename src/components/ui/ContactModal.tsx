@@ -1,13 +1,14 @@
 'use client';
 
-import { useEffect } from 'react';
-import clsx from 'clsx';
+import { useEffect, FormEvent, useState } from 'react';
 
 interface ContactModalProps {
   onClose: () => void;
 }
 
 export default function ContactModal({ onClose }: ContactModalProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -23,6 +24,34 @@ export default function ContactModal({ onClose }: ContactModalProps) {
       document.body.style.overflow = 'auto';
     };
   }, [onClose]);
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData);
+
+    try {
+      // TODO: Replace with actual backend endpoint
+      // const response = await fetch('/api/contact', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify(data),
+      // });
+      // if (!response.ok) throw new Error('Failed to submit');
+
+      // Temporary: log to console for verification
+      console.log('Contact form submitted:', data);
+      alert('Kiitos yhteydenotosta! Vastaamme pian.');
+      onClose();
+    } catch (error) {
+      console.error('Form submission error:', error);
+      alert('Virhe lähetyksen aikana. Yritä uudelleen.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div
@@ -62,13 +91,14 @@ export default function ContactModal({ onClose }: ContactModalProps) {
           </button>
         </div>
 
-        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <label htmlFor="company" className="block text-sm font-medium text-ink mb-1">
               Yritys *
             </label>
             <input
               id="company"
+              name="company"
               type="text"
               required
               className="w-full px-4 py-2 border border-bone rounded focus:outline-none focus:ring-2 focus:ring-signal"
@@ -83,6 +113,7 @@ export default function ContactModal({ onClose }: ContactModalProps) {
               </label>
               <input
                 id="name"
+                name="name"
                 type="text"
                 required
                 className="w-full px-4 py-2 border border-bone rounded focus:outline-none focus:ring-2 focus:ring-signal"
@@ -95,6 +126,7 @@ export default function ContactModal({ onClose }: ContactModalProps) {
               </label>
               <input
                 id="email"
+                name="email"
                 type="email"
                 required
                 className="w-full px-4 py-2 border border-bone rounded focus:outline-none focus:ring-2 focus:ring-signal"
@@ -109,6 +141,7 @@ export default function ContactModal({ onClose }: ContactModalProps) {
             </label>
             <input
               id="phone"
+              name="phone"
               type="tel"
               className="w-full px-4 py-2 border border-bone rounded focus:outline-none focus:ring-2 focus:ring-signal"
               placeholder="+358 50 123 4567"
@@ -121,6 +154,7 @@ export default function ContactModal({ onClose }: ContactModalProps) {
             </label>
             <input
               id="website"
+              name="website"
               type="url"
               className="w-full px-4 py-2 border border-bone rounded focus:outline-none focus:ring-2 focus:ring-signal"
               placeholder="https://yritys.fi"
@@ -133,6 +167,7 @@ export default function ContactModal({ onClose }: ContactModalProps) {
             </label>
             <input
               id="instagram"
+              name="instagram"
               type="text"
               className="w-full px-4 py-2 border border-bone rounded focus:outline-none focus:ring-2 focus:ring-signal"
               placeholder="@yritys"
@@ -145,6 +180,7 @@ export default function ContactModal({ onClose }: ContactModalProps) {
             </label>
             <textarea
               id="message"
+              name="message"
               rows={3}
               className="w-full px-4 py-2 border border-bone rounded focus:outline-none focus:ring-2 focus:ring-signal resize-none"
               placeholder="Kerro lyhyesti yrityksestäsi ja mitä etsit..."
@@ -154,9 +190,10 @@ export default function ContactModal({ onClose }: ContactModalProps) {
           <div className="pt-2">
             <button
               type="submit"
-              className="w-full btn btn-primary"
+              disabled={isSubmitting}
+              className="w-full btn btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Lähetä pyyntö
+              {isSubmitting ? 'Lähetetään...' : 'Lähetä pyyntö'}
             </button>
           </div>
 

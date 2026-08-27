@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import Hero from '@/components/sections/Hero';
 import Problem from '@/components/sections/Problem';
 import Mechanism from '@/components/sections/Mechanism';
@@ -19,9 +19,13 @@ import ContactModal from '@/components/ui/ContactModal';
 export default function Home() {
   const [showContactModal, setShowContactModal] = useState(false);
 
-  const handleCTAClick = () => {
+  const handleCTAClick = useCallback(() => {
     setShowContactModal(true);
-  };
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setShowContactModal(false);
+  }, []);
 
   return (
     <>
@@ -33,16 +37,14 @@ export default function Home() {
         <Examples />
         <Deliverables />
         <Process />
-        <Pricing />
+        <Pricing onCtaClick={handleCTAClick} />
         <Audience />
         <Founder />
         <FAQ />
         <FinalCTA onCtaClick={handleCTAClick} />
       </main>
       <Footer />
-      {showContactModal && (
-        <ContactModal onClose={() => setShowContactModal(false)} />
-      )}
+      {showContactModal && <ContactModal onClose={handleCloseModal} />}
     </>
   );
 }

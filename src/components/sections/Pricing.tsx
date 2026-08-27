@@ -20,7 +20,7 @@ export default function Pricing({ onCtaClick }: PricingProps) {
             <div className="mb-6">
               <p className="text-sm text-ink/70 mb-2">per kuukausi</p>
               <p className="text-4xl font-bold text-signal">
-                490€
+                490 €
               </p>
               <p className="text-sm text-ink/70">+ alv</p>
             </div>
@@ -72,12 +72,12 @@ export default function Pricing({ onCtaClick }: PricingProps) {
           {/* MANAGED Plan */}
           <div className="border-2 border-signal p-8 rounded bg-ghost/30">
             <h3 className="text-2xl font-bold text-ink mb-2">MANAGED</h3>
-            <p className="text-ink/60 text-sm mb-6">Kuukauden jälkeen 4</p>
+            <p className="text-ink/60 text-sm mb-6">4. kuukauden alusta</p>
 
             <div className="mb-6">
               <p className="text-sm text-ink/70 mb-2">per kuukausi</p>
               <p className="text-4xl font-bold text-signal">
-                790€
+                790 €
               </p>
               <p className="text-sm text-ink/70">+ alv</p>
             </div>
@@ -132,7 +132,7 @@ export default function Pricing({ onCtaClick }: PricingProps) {
           <ul className="space-y-3 text-sm text-ink/70">
             <li className="flex gap-2">
               <span>•</span>
-              <span>Ei kiinteistä sopimuksia. Voit perua milloin tahansa.</span>
+              <span>Ei kiinteisiä sopimuksia. Voit perua milloin tahansa.</span>
             </li>
             <li className="flex gap-2">
               <span>•</span>

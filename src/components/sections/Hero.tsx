@@ -25,7 +25,7 @@ export default function Hero({ onCtaClick }: HeroProps) {
               Pyydä 2 sisältöesimerkkiä
             </Button>
             <div className="text-lg font-bold text-signal">
-              490€<span className="text-ink/60 font-normal text-base"> + alv / kk</span>
+              490 €<span className="text-ink/60 font-normal text-base"> + alv / kk</span>
             </div>
           </div>
 

@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: 'GhoulHouse | Työmaakuvat sisään. Valmis SOME ulos.',
   description: 'GhoulHouse muuttaa työmaakuvasi valmiiksi some-sisällöksi. Suomalaisten palveluyrityksia varten.',
   metadataBase: new URL('https://ghoulhouse.fi'),
+  alternates: {
+    canonical: 'https://ghoulhouse.fi',
+  },
   openGraph: {
     title: 'GhoulHouse | Työmaakuvat sisään. Valmis SOME ulos.',
     description: 'Teette hyvää työtä. Me pidämme huolen, että asiakkaat myös näkevät sen.',
@@ -28,7 +31,6 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
-  canonical: 'https://ghoulhouse.fi',
 };
 
 export default function RootLayout({
@@ -41,6 +43,20 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#111111" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'LocalBusiness',
+              name: 'GhoulHouse Oy',
+              url: 'https://ghoulhouse.fi',
+              areaServed: 'FI',
+              serviceType: 'Social Media Management',
+              description: 'Productized social media content creation for Finnish local service businesses',
+            }),
+          }}
+        />
       </head>
       <body>{children}</body>
     </html>
