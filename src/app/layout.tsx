@@ -1,36 +1,63 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
+import { siteConfig } from '@/config/site';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'GhoulHouse | Työmaakuvat sisään. Valmis SOME ulos.',
-  description: 'GhoulHouse muuttaa työmaakuvasi valmiiksi some-sisällöksi. Suomalaisten palveluyrityksia varten.',
-  metadataBase: new URL('https://ghoulhouse.fi'),
+  title: 'GhoulHouse — Työmaakuvat sisään. Valmis some ulos.',
+  description:
+    'GhoulHouse tekee työmaamateriaalista 12 valmista Instagram- ja Facebook-sisältöä 30 päiväksi. START 490 € + ALV.',
+  metadataBase: new URL(siteConfig.company.domain),
   alternates: {
-    canonical: 'https://ghoulhouse.fi',
+    canonical: '/',
   },
   openGraph: {
-    title: 'GhoulHouse | Työmaakuvat sisään. Valmis SOME ulos.',
-    description: 'Teette hyvää työtä. Me pidämme huolen, että asiakkaat myös näkevät sen.',
-    url: 'https://ghoulhouse.fi',
+    title: 'GhoulHouse — Työmaakuvat sisään. Valmis some ulos.',
+    description:
+      'Teette hyvää työtä. Me pidämme huolen, että asiakkaat myös näkevät sen.',
+    url: '/',
+    siteName: 'GhoulHouse',
+    locale: 'fi_FI',
     type: 'website',
-    images: [
-      {
-        url: '/og-image.jpg',
-        width: 1200,
-        height: 630,
-      },
-    ],
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'GhoulHouse | Työmaakuvat sisään. Valmis SOME ulos.',
-    description: 'Teette hyvää työtä. Me pidämme huolen, että asiakkaat myös näkevät sen.',
-    images: ['/og-image.jpg'],
+    card: 'summary',
+    title: 'GhoulHouse — Työmaakuvat sisään. Valmis some ulos.',
+    description:
+      'Teette hyvää työtä. Me pidämme huolen, että asiakkaat myös näkevät sen.',
   },
   robots: {
     index: true,
     follow: true,
   },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#111111',
+  colorScheme: 'light',
+};
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: siteConfig.company.legalName,
+  url: siteConfig.company.domain,
+  founder: {
+    '@type': 'Person',
+    name: siteConfig.company.founder,
+  },
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Helsinki',
+    addressCountry: 'FI',
+  },
+  areaServed: {
+    '@type': 'Country',
+    name: 'Finland',
+  },
+  description:
+    'Tuotteistettu sosiaalisen median sisältö- ja hallintapalvelu suomalaisille paikallisille palveluyrityksille.',
 };
 
 export default function RootLayout({
@@ -40,25 +67,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fi">
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#111111" />
+      <body>
+        {children}
         <script
+          id="ghoulhouse-structured-data"
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'LocalBusiness',
-              name: 'GhoulHouse Oy',
-              url: 'https://ghoulhouse.fi',
-              areaServed: 'FI',
-              serviceType: 'Social Media Management',
-              description: 'Productized social media content creation for Finnish local service businesses',
-            }),
-          }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
-      </head>
-      <body>{children}</body>
+      </body>
     </html>
   );
 }
