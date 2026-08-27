@@ -89,7 +89,7 @@ export default function Examples() {
               <div className="absolute right-5 top-5 text-[0.55rem] font-black uppercase tracking-[0.14em] text-ink/50">
                 Finished execution
               </div>
-              <div className="mt-12 grid h-[calc(100%-3rem)] grid-rows-[1fr_auto] border-2 border-ink bg-ghost">
+              <div className="mt-12 grid min-h-[300px] grid-rows-[1fr_auto] border-2 border-ink bg-ghost sm:min-h-[360px]">
                 <div className="relative min-h-[220px] overflow-hidden">
                   <Image
                     src="/work-detail.svg"
