@@ -1,13 +1,15 @@
 {
   "name": "ghoulhouse-landing",
   "version": "1.0.0",
+  "private": true,
   "description": "Official GhoulHouse Oy website",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint src --max-warnings=0",
     "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm run lint && npm run build",
     "format": "prettier --write \"src/**/*.{ts,tsx,json,md}\""
   },
   "dependencies": {
