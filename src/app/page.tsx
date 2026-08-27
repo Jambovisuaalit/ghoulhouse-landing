@@ -8,7 +8,6 @@ import Examples from '@/components/sections/Examples';
 import Deliverables from '@/components/sections/Deliverables';
 import Process from '@/components/sections/Process';
 import Pricing from '@/components/sections/Pricing';
-import Audience from '@/components/sections/Audience';
 import Founder from '@/components/sections/Founder';
 import FAQ from '@/components/sections/FAQ';
 import FinalCTA from '@/components/sections/FinalCTA';
@@ -43,7 +42,6 @@ export default function Home() {
         <Deliverables />
         <Process />
         <Pricing onCtaClick={handleCTAClick} />
-        <Audience />
         <Founder />
         <FAQ />
         <FinalCTA onCtaClick={handleCTAClick} />
