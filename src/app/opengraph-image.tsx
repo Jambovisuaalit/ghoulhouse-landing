@@ -39,7 +39,6 @@ export default function OpenGraphImage() {
           background: '#111111',
           color: '#F7F4EF',
           padding: '56px 64px',
-          fontFamily: 'Arial, Helvetica, sans-serif',
         }}
       >
         <div
@@ -68,7 +67,7 @@ export default function OpenGraphImage() {
             style={{
               fontSize: 78,
               lineHeight: 0.94,
-              fontWeight: 900,
+              fontWeight: 700,
               letterSpacing: '-0.045em',
               textTransform: 'uppercase',
               maxWidth: 930,
@@ -80,7 +79,7 @@ export default function OpenGraphImage() {
             style={{
               fontSize: 78,
               lineHeight: 0.94,
-              fontWeight: 900,
+              fontWeight: 700,
               letterSpacing: '-0.045em',
               textTransform: 'uppercase',
               color: '#C9282D',
@@ -115,7 +114,7 @@ export default function OpenGraphImage() {
             style={{
               display: 'flex',
               fontSize: 30,
-              fontWeight: 900,
+              fontWeight: 700,
               color: '#F7F4EF',
             }}
           >
