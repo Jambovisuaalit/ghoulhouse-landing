@@ -29,10 +29,10 @@ export default function Hero({ onCtaClick }: HeroProps) {
           <div className="py-10 md:py-14 lg:py-8">
             <h1
               id="hero-title"
-              className="max-w-[11ch] lg:max-w-none font-display text-[clamp(2.45rem,7.6vw,8.2rem)] font-black uppercase leading-[0.82] tracking-[-0.045em] text-ink"
+              className="w-full font-display text-[clamp(2.35rem,6.9vw,7.4rem)] font-black uppercase leading-[0.96] tracking-[-0.035em] text-ink"
             >
               <span className="block">{positioning.headline[0]}</span>
-              <span className="block">{positioning.headline[1]}</span>
+              <span className="mt-[0.08em] block">{positioning.headline[1]}</span>
             </h1>
 
             <p className="mt-8 max-w-xl text-lg leading-relaxed text-ink/80 md:text-xl">
