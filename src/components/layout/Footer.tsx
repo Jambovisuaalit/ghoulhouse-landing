@@ -1,102 +1,56 @@
-import Link from 'next/link';
+import Image from 'next/image';
 import Container from '@/components/ui/Container';
+import { siteConfig } from '@/config/site';
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
-
   return (
-    <footer className="bg-ink text-ghost border-t border-signal">
-      <Container className="py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          {/* Company Info */}
-          <div>
-            <h3 className="text-lg font-bold text-signal mb-4">GhoulHouse</h3>
-            <p className="text-ghost/80 text-sm leading-relaxed">
-              Muutamme työmaakuvasi valmiiksi some-sisällöksi.
+    <footer className="border-t-2 border-signal bg-ink text-ghost">
+      <Container className="py-12 md:py-16">
+        <div className="grid gap-10 md:grid-cols-12">
+          <div className="md:col-span-6">
+            <Image
+              src="/logo-horizontal-white.svg"
+              alt="GhoulHouse"
+              width={1400}
+              height={460}
+              className="h-auto w-[220px] md:w-[280px]"
+            />
+            <p className="mt-6 max-w-md text-sm leading-relaxed text-ghost/70">
+              Tuotteistettu sosiaalisen median sisältö- ja hallintapalvelu
+              suomalaisille paikallisille palveluyrityksille.
             </p>
           </div>
 
-          {/* Links */}
-          <div>
-            <h4 className="font-bold text-ghost mb-4">Pika­linkit</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a href="#problem" className="text-ghost/70 hover:text-signal transition-colors">
-                  Ongelma
-                </a>
-              </li>
-              <li>
-                <a href="#mechanism" className="text-ghost/70 hover:text-signal transition-colors">
-                  Miten se toimii
-                </a>
-              </li>
-              <li>
-                <a href="#pricing" className="text-ghost/70 hover:text-signal transition-colors">
-                  Hinta
-                </a>
-              </li>
-              <li>
-                <a href="#faq" className="text-ghost/70 hover:text-signal transition-colors">
-                  UKK
-                </a>
-              </li>
+          <div className="md:col-span-3">
+            <p className="mb-4 text-xs font-bold uppercase tracking-[0.16em] text-signal">
+              Sivusto
+            </p>
+            <ul className="space-y-3 text-sm text-ghost/75">
+              <li><a href="#mechanism">Näin toimii</a></li>
+              <li><a href="#deliverables">Mitä saat</a></li>
+              <li><a href="#pricing">Hinta</a></li>
+              <li><a href="#faq">UKK</a></li>
             </ul>
           </div>
 
-          {/* Contact */}
-          <div>
-            <h4 className="font-bold text-ghost mb-4">Yhteystiedot</h4>
-            <ul className="space-y-2 text-sm">
-              <li className="text-ghost/70">
-                <a href="mailto:hei@ghoulhouse.fi" className="hover:text-signal transition-colors">
-                  hei@ghoulhouse.fi
-                </a>
-              </li>
-              <li className="text-ghost/70">Helsinki, Suomi</li>
-            </ul>
-          </div>
-
-          {/* Social */}
-          <div>
-            <h4 className="font-bold text-ghost mb-4">Seuraa meitä</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a
-                  href="https://instagram.com/ghoulhousefinland"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-ghost/70 hover:text-signal transition-colors"
-                >
-                  Instagram
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://linkedin.com/company/ghoulhouse"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-ghost/70 hover:text-signal transition-colors"
-                >
-                  LinkedIn
-                </a>
-              </li>
-            </ul>
+          <div className="md:col-span-3">
+            <p className="mb-4 text-xs font-bold uppercase tracking-[0.16em] text-signal">
+              Yritys
+            </p>
+            <div className="space-y-2 text-sm text-ghost/75">
+              <p>{siteConfig.company.legalName}</p>
+              <p>{siteConfig.company.founder} · Founder</p>
+              <p>{siteConfig.company.location}</p>
+              <p>ghoulhouse.fi</p>
+            </div>
           </div>
         </div>
 
-        {/* Bottom Section */}
-        <div className="border-t border-ghost/20 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
-          <p className="text-ghost/60">
-            © {currentYear} GhoulHouse Oy. Kaikki oikeudet pidätetään.
-          </p>
-          <div className="flex gap-6 text-ghost/60">
-            <a href="/privacy" className="hover:text-signal transition-colors">
-              Tietosuoja
-            </a>
-            <a href="/terms" className="hover:text-signal transition-colors">
-              Käyttöehdot
-            </a>
-          </div>
+        <div className="mt-12 flex flex-col gap-3 border-t border-ghost/20 pt-6 text-xs text-ghost/50 sm:flex-row sm:items-center sm:justify-between">
+          <p>© 2026 {siteConfig.company.legalName}</p>
+          <a href="#top" className="font-bold uppercase tracking-[0.12em] text-ghost/70">
+            Takaisin ylös ↑
+          </a>
         </div>
       </Container>
     </footer>
