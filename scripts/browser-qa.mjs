@@ -272,6 +272,27 @@ try {
           priceRect: rect(price),
           ctaText: cta?.textContent?.replace(/\\s+/g, ' ').trim() || '',
           priceText: price?.textContent?.replace(/\\s+/g, ' ').trim() || '',
+          overflowing: [...document.querySelectorAll('body *')]
+            .map((element) => {
+              const value = element.getBoundingClientRect();
+              return {
+                tag: element.tagName,
+                className: typeof element.className === 'string' ? element.className : '',
+                text: (element.textContent || '').replace(/\\s+/g, ' ').trim().slice(0, 90),
+                left: Math.round(value.left),
+                right: Math.round(value.right),
+                width: Math.round(value.width),
+                scrollWidth: element.scrollWidth,
+                clientWidth: element.clientWidth,
+              };
+            })
+            .filter(
+              (item) =>
+                item.left < -1 ||
+                item.right > innerWidth + 1 ||
+                item.scrollWidth > item.clientWidth + 1
+            )
+            .slice(0, 12),
         };
       })()`
     );
@@ -301,7 +322,7 @@ try {
     );
     assert(
       metrics.scrollWidth <= metrics.viewport.width + 1,
-      `${viewport.width}px: horizontal overflow ${metrics.scrollWidth}px > ${metrics.viewport.width}px.`
+      `${viewport.width}px: horizontal overflow ${metrics.scrollWidth}px > ${metrics.viewport.width}px. Offenders: ${JSON.stringify(metrics.overflowing)}`
     );
 
     for (const [name, rect] of [
