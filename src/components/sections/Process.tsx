@@ -1,68 +1,30 @@
 import Container from '@/components/ui/Container';
 
+const steps = [
+  ['1', 'Materiaalit', 'Lähetätte nykyiset työmaa- ja referenssikuvat sekä tarvittavat perustiedot.'],
+  ['2', 'Kickoff + ensimmäinen batch', 'Sovimme suunnan ja teemme ensimmäiset sisällöt hyväksyttäväksi.'],
+  ['3', 'Hyväksyntä + julkaisu', 'Yksi koottu korjauskierros, jonka jälkeen sisällöt ajastetaan ja julkaistaan.'],
+];
+
 export default function Process() {
   return (
-    <section id="process" className="bg-ghost py-16 md:py-24">
+    <section id="process" className="bg-ghost py-16 md:py-24" aria-labelledby="process-title">
       <Container>
-        <h2 className="text-ink mb-12">Prosessi</h2>
+        <h2 id="process-title" className="mb-10 text-ink">
+          Aloitus ilman raskasta projektia
+        </h2>
 
-        <div className="max-w-3xl space-y-8">
-          <div className="flex gap-6">
-            <div className="flex-shrink-0">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-signal text-white font-bold">
-                1
+        <ol className="grid gap-5 md:grid-cols-3">
+          {steps.map(([number, title, description]) => (
+            <li key={number} className="border-2 border-ink bg-white p-6">
+              <div className="mb-6 flex h-11 w-11 items-center justify-center bg-signal font-bold text-white">
+                {number}
               </div>
-            </div>
-            <div>
-              <h3 className="font-bold text-ink mb-2">Materialâ’¨ä lähetetään</h3>
-              <p className="text-ink/70">
-                Lähetät kuvia, videoita ja asiakastarinoita WhatsAppissa tai sähköpostitse.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex gap-6">
-            <div className="flex-shrink-0">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-signal text-white font-bold">
-                2
-              </div>
-            </div>
-            <div>
-              <h3 className="font-bold text-ink mb-2">GhoulHouse tuottaa</h3>
-              <p className="text-ink/70">
-                Käsittelemme, muokkaamme ja luomme valmiit Instagram- ja Facebook-postit.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex gap-6">
-            <div className="flex-shrink-0">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-signal text-white font-bold">
-                3
-              </div>
-            </div>
-            <div>
-              <h3 className="font-bold text-ink mb-2">Hyväksyntä</h3>
-              <p className="text-ink/70">
-                Tarkistit postit. Voit palauttaa muokkauspyyntöjä — yksi kierros mukaan lukien.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex gap-6">
-            <div className="flex-shrink-0">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-signal text-white font-bold">
-                4
-              </div>
-            </div>
-            <div>
-              <h3 className="font-bold text-ink mb-2">Julkaisu ja optimointi</h3>
-              <p className="text-ink/70">
-                Me ajastamme ja julkaisemme sopiviin aikoihin. Seuraamme tuloksia ja optimoimme tarvittaessa.
-              </p>
-            </div>
-          </div>
-        </div>
+              <h3 className="mb-2 font-bold text-ink">{title}</h3>
+              <p className="text-sm leading-relaxed text-ink/70">{description}</p>
+            </li>
+          ))}
+        </ol>
       </Container>
     </section>
   );
