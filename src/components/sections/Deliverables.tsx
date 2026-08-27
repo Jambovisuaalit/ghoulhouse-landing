@@ -34,14 +34,14 @@ export default function Deliverables() {
       <Container>
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-signal">
+            <p className="type-label mb-4 text-signal">
               START / toimitussisältö
             </p>
-            <h2 className="font-display text-[clamp(1.9rem,5vw,5.5rem)] font-black uppercase leading-[0.9] tracking-[-0.04em] text-ink sm:text-[clamp(2.8rem,5vw,5.5rem)]">
+            <h2 className="type-section-title max-w-[12ch] text-ink">
               Yksi selkeä
               <span className="block">tuotantopaketti.</span>
             </h2>
-            <p className="mt-6 max-w-md text-sm leading-relaxed text-ink/65">
+            <p className="type-editorial mt-6 max-w-md text-ink/70">
               Palvelu on rajattu tarkoituksella. Sisältö, kanavat, toimitus ja
               korjauskierros ovat määritelty etukäteen.
             </p>
@@ -53,16 +53,16 @@ export default function Deliverables() {
                 key={item.label}
                 className="grid grid-cols-1 gap-2 border-b border-ink/30 py-5 sm:grid-cols-[150px_1fr]"
               >
-                <span className="text-[0.65rem] font-black uppercase tracking-[0.15em] text-signal">
+                <span className="type-label text-signal">
                   {item.label}
                 </span>
-                <p className="text-base font-bold leading-relaxed text-ink">
+                <p className="type-ui text-ink">
                   {item.value}
                 </p>
               </div>
             ))}
 
-            <p className="mt-5 text-xs leading-relaxed text-ink/55">
+            <p className="type-caption mt-5 text-ink/60">
               START-hinta {siteConfig.offer.start.price} € {siteConfig.offer.start.vatLabel} /{' '}
               {siteConfig.offer.start.period}. Palvelujaksot 1–3.
             </p>
