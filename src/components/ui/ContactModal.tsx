@@ -1,168 +1,156 @@
 'use client';
 
-import { useEffect } from 'react';
-import clsx from 'clsx';
+import { useEffect, useRef } from 'react';
+import type { FormEvent, KeyboardEvent as ReactKeyboardEvent } from 'react';
 
 interface ContactModalProps {
   onClose: () => void;
 }
 
+const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? 'hanna.n-96@hotmail.com';
+
 export default function ContactModal({ onClose }: ContactModalProps) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const firstFieldRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    firstFieldRef.current?.focus();
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
         onClose();
       }
     };
 
     document.addEventListener('keydown', handleEscape);
-    document.body.style.overflow = 'hidden';
 
     return () => {
+      document.body.style.overflow = previousOverflow;
       document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'auto';
     };
   }, [onClose]);
 
+  const handleFocusTrap = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== 'Tab' || !dialogRef.current) return;
+
+    const focusable = Array.from(
+      dialogRef.current.querySelectorAll<HTMLElement>(
+        'button, a[href], input, textarea, select, [tabindex]:not([tabindex="-1"])'
+      )
+    ).filter((element) => !element.hasAttribute('disabled'));
+
+    if (focusable.length === 0) return;
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const form = new FormData(event.currentTarget);
+    const name = String(form.get('name') ?? '');
+    const company = String(form.get('company') ?? '');
+    const contact = String(form.get('contact') ?? '');
+    const note = String(form.get('note') ?? '');
+
+    const subject = encodeURIComponent(`2 sisältöesimerkkiä — ${company || name}`);
+    const body = encodeURIComponent(
+      `Nimi: ${name}\nYritys: ${company}\nPuhelin / sähköposti: ${contact}\n\nLisätieto:\n${note}`
+    );
+
+    window.location.href = `mailto:${contactEmail}?subject=${subject}&body=${body}`;
+  };
+
   return (
-    <div
-      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) {
-          onClose();
-        }
-      }}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="contact-modal-title"
-    >
-      <div className="bg-white rounded-lg max-w-lg w-full p-8 animate-in">
-        <div className="flex justify-between items-center mb-6">
-          <h2 id="contact-modal-title" className="text-2xl font-bold text-ink">
-            Pyydä 2 sisältöesimerkkiä
-          </h2>
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/80 sm:items-center sm:p-6">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="contact-modal-title"
+        aria-describedby="contact-modal-description"
+        className="max-h-[92dvh] w-full overflow-y-auto bg-ghost p-6 shadow-2xl sm:max-w-xl sm:p-8"
+        onKeyDown={handleFocusTrap}
+      >
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-sm font-black uppercase tracking-[0.15em] text-signal">
+              Maksuton demo
+            </p>
+            <h2 id="contact-modal-title" className="mt-2 text-3xl text-ink">
+              Pyydä 2 sisältöesimerkkiä
+            </h2>
+          </div>
           <button
+            type="button"
+            className="min-h-11 min-w-11 border-2 border-ink bg-transparent text-2xl leading-none text-ink"
             onClick={onClose}
-            className="text-ink hover:text-signal transition-colors"
-            aria-label="Sulje modal"
+            aria-label="Sulje yhteydenottolomake"
           >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            ×
           </button>
         </div>
 
-        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-          <div>
-            <label htmlFor="company" className="block text-sm font-medium text-ink mb-1">
-              Yritys *
-            </label>
+        <p id="contact-modal-description" className="mt-4 text-ink/75">
+          Lähetä perustiedot. Teemme kaksi konseptiesimerkkiä yrityksesi nykyisestä
+          materiaalista ennen varsinaista tarjousta.
+        </p>
+
+        <form className="mt-6 grid gap-4" onSubmit={handleSubmit}>
+          <label className="grid gap-2 font-semibold text-ink">
+            Nimi
             <input
-              id="company"
-              type="text"
+              ref={firstFieldRef}
+              name="name"
               required
-              className="w-full px-4 py-2 border border-bone rounded focus:outline-none focus:ring-2 focus:ring-signal"
-              placeholder="Esim. Renovaatiot Oy"
+              autoComplete="name"
+              className="min-h-12 border-2 border-ink bg-white px-3 text-base font-normal"
             />
-          </div>
+          </label>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-ink mb-1">
-                Nimi *
-              </label>
-              <input
-                id="name"
-                type="text"
-                required
-                className="w-full px-4 py-2 border border-bone rounded focus:outline-none focus:ring-2 focus:ring-signal"
-                placeholder="Etunimi Sukunimi"
-              />
-            </div>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-ink mb-1">
-                Sähköposti *
-              </label>
-              <input
-                id="email"
-                type="email"
-                required
-                className="w-full px-4 py-2 border border-bone rounded focus:outline-none focus:ring-2 focus:ring-signal"
-                placeholder="nimi@yritys.fi"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-ink mb-1">
-              Puhelinnumero
-            </label>
+          <label className="grid gap-2 font-semibold text-ink">
+            Yritys
             <input
-              id="phone"
-              type="tel"
-              className="w-full px-4 py-2 border border-bone rounded focus:outline-none focus:ring-2 focus:ring-signal"
-              placeholder="+358 50 123 4567"
+              name="company"
+              required
+              autoComplete="organization"
+              className="min-h-12 border-2 border-ink bg-white px-3 text-base font-normal"
             />
-          </div>
+          </label>
 
-          <div>
-            <label htmlFor="website" className="block text-sm font-medium text-ink mb-1">
-              Yrityksen verkkosivut
-            </label>
+          <label className="grid gap-2 font-semibold text-ink">
+            Puhelin tai sähköposti
             <input
-              id="website"
-              type="url"
-              className="w-full px-4 py-2 border border-bone rounded focus:outline-none focus:ring-2 focus:ring-signal"
-              placeholder="https://yritys.fi"
+              name="contact"
+              required
+              autoComplete="email"
+              className="min-h-12 border-2 border-ink bg-white px-3 text-base font-normal"
             />
-          </div>
+          </label>
 
-          <div>
-            <label htmlFor="instagram" className="block text-sm font-medium text-ink mb-1">
-              Instagram-profiili
-            </label>
-            <input
-              id="instagram"
-              type="text"
-              className="w-full px-4 py-2 border border-bone rounded focus:outline-none focus:ring-2 focus:ring-signal"
-              placeholder="@yritys"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="message" className="block text-sm font-medium text-ink mb-1">
-              Viesti (vapaaehtoinen)
-            </label>
+          <label className="grid gap-2 font-semibold text-ink">
+            Mitä palvelua haluatte näyttää?
             <textarea
-              id="message"
+              name="note"
               rows={3}
-              className="w-full px-4 py-2 border border-bone rounded focus:outline-none focus:ring-2 focus:ring-signal resize-none"
-              placeholder="Kerro lyhyesti yrityksestäsi ja mitä etsit..."
+              className="border-2 border-ink bg-white px-3 py-3 text-base font-normal"
             />
-          </div>
+          </label>
 
-          <div className="pt-2">
-            <button
-              type="submit"
-              className="w-full btn btn-primary"
-            >
-              Lähetä pyyntö
-            </button>
-          </div>
-
-          <p className="text-xs text-ink/60 text-center mt-4">
-            Vastaamme pyyntöihin yleensä 24 tunnin sisällä.
-          </p>
+          <button type="submit" className="btn btn-primary mt-2 w-full">
+            Lähetä demopyyntö
+          </button>
         </form>
       </div>
     </div>
