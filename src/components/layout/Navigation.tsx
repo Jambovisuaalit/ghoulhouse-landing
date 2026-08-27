@@ -17,7 +17,18 @@ export default function Navigation() {
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
+    const desktopQuery = window.matchMedia('(min-width: 768px)');
+    const closeAtDesktop = (event: MediaQueryListEvent) => {
+      if (event.matches) setOpen(false);
+    };
+
+    desktopQuery.addEventListener('change', closeAtDesktop);
+    return () => desktopQuery.removeEventListener('change', closeAtDesktop);
+  }, []);
+
+  useEffect(() => {
     if (!open) return;
+
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     firstLinkRef.current?.focus();
@@ -26,8 +37,27 @@ export default function Navigation() {
       if (event.key === 'Escape') {
         setOpen(false);
         menuButtonRef.current?.focus();
+        return;
+      }
+
+      if (event.key !== 'Tab') return;
+
+      const menu = document.getElementById('mobile-menu');
+      const focusable = menu?.querySelectorAll<HTMLElement>('a[href], button:not([disabled])');
+      if (!focusable?.length) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
       }
     };
+
     document.addEventListener('keydown', onKeyDown);
     return () => {
       document.body.style.overflow = previousOverflow;
