@@ -1,72 +1,96 @@
 import Container from '@/components/ui/Container';
 import { siteConfig } from '@/config/site';
 
-const grouped = [
-  {
-    label: 'OUTPUT',
-    value: '12 alkuperäistä sisältöä / 30 päivää',
-  },
+const productionRows = [
   {
     label: 'KANAVAT',
     value: 'Instagram + Facebook',
   },
   {
     label: 'TUOTANTO',
-    value: 'Suunnittelu · kevyt kuvankäsittely · grafiikka · copy · CTA:t',
+    value: 'Suunnittelu · kuvankäsittely · grafiikka · copy · CTA:t',
   },
   {
-    label: 'TOIMITUS',
-    value: 'Ajastus · julkaisu · yksi koottu korjauskierros',
+    label: 'JULKAISU',
+    value: 'Ajastus ja julkaisu',
+  },
+  {
+    label: 'KORJAUS',
+    value: '1 koottu korjauskierros',
+  },
+  {
+    label: 'RAPORTTI',
+    value: 'Kuukausittainen tulosyhteenveto',
   },
   {
     label: 'YHTEISTYÖ',
-    value: 'Onboarding · materiaaliohjeistus · WhatsApp-viestintä',
-  },
-  {
-    label: 'SEURANTA',
-    value: 'Kuukausittainen tulosyhteenveto',
+    value: 'Onboarding · materiaaliohjeistus · WhatsApp',
   },
 ] as const;
 
 export default function Deliverables() {
   return (
-    <section id="deliverables" className="bg-ghost py-16 md:py-24">
+    <section id="deliverables" className="bg-ghost py-14 md:py-20">
       <Container>
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
-          <div className="lg:col-span-5">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
+          <div className="lg:col-span-4">
             <p className="type-label mb-4 text-signal">
               START / toimitussisältö
             </p>
-            <h2 className="type-section-title max-w-[12ch] text-ink">
-              Yksi selkeä
-              <span className="block">tuotantopaketti.</span>
+            <h2 className="type-section-title max-w-[11ch] text-ink">
+              Mitä 30 päivässä syntyy.
             </h2>
-            <p className="type-editorial mt-6 max-w-md text-ink/70">
-              Palvelu on rajattu tarkoituksella. Sisältö, kanavat, toimitus ja
-              korjauskierros ovat määritelty etukäteen.
+            <p className="type-editorial mt-6 max-w-sm text-ink/70">
+              Palvelun rajaus näkyy ennen aloitusta. Ei avointa
+              palveluvalikkoa, vaan yksi selkeä tuotantorytmi.
             </p>
           </div>
 
-          <div className="border-t-2 border-ink lg:col-span-7">
-            {grouped.map((item) => (
-              <div
-                key={item.label}
-                className="grid grid-cols-1 gap-2 border-b border-ink/30 py-5 sm:grid-cols-[150px_1fr]"
-              >
-                <span className="type-label text-signal">
-                  {item.label}
-                </span>
-                <p className="type-ui text-ink">
-                  {item.value}
+          <div className="border-y-2 border-ink lg:col-span-8">
+            <div className="grid grid-cols-1 md:grid-cols-[0.82fr_1.18fr]">
+              <div className="flex min-h-[230px] flex-col justify-between border-b-2 border-ink bg-ink p-5 text-ghost sm:p-6 md:min-h-[360px] md:border-b-0 md:border-r-2">
+                <p className="type-label text-signal">OUTPUT / 30 PÄIVÄÄ</p>
+
+                <div>
+                  <p className="text-[clamp(5rem,12vw,9rem)] font-extrabold leading-[0.78] tracking-[-0.06em]">
+                    12
+                  </p>
+                  <p className="mt-4 max-w-[15ch] text-xl font-extrabold uppercase leading-[0.95] tracking-[-0.025em] sm:text-2xl">
+                    alkuperäistä sisältöä
+                  </p>
+                </div>
+
+                <p className="type-caption max-w-xs text-ghost/65">
+                  Yksi ydinsisältö sovitetaan sovituille kanaville. Ei 24
+                  erillistä alkuperäispostausta.
                 </p>
               </div>
-            ))}
 
-            <p className="type-caption mt-5 text-ink/60">
-              START-hinta {siteConfig.offer.start.price} € {siteConfig.offer.start.vatLabel} /{' '}
-              {siteConfig.offer.start.period}. Palvelujaksot 1–3.
-            </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2">
+                {productionRows.map((item, index) => (
+                  <div
+                    key={item.label}
+                    className={`min-h-[112px] border-ink/25 p-5 ${
+                      index < productionRows.length - 2 ? 'border-b' : ''
+                    } ${index % 2 === 0 ? 'sm:border-r' : ''}`}
+                  >
+                    <p className="type-label text-signal">{item.label}</p>
+                    <p className="type-ui mt-3 max-w-[30ch] text-ink">
+                      {item.value}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
+        </div>
+
+        <div className="type-caption mt-5 flex flex-col gap-2 border-t border-ink/20 pt-4 text-ink/65 sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            START · {siteConfig.offer.start.price} € {siteConfig.offer.start.vatLabel} /{' '}
+            {siteConfig.offer.start.period}
+          </p>
+          <p>Palvelujaksot 1–3</p>
         </div>
       </Container>
     </section>
