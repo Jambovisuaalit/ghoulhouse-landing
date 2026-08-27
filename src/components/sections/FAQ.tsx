@@ -1,57 +1,55 @@
+'use client';
+
+import { useState } from 'react';
 import Container from '@/components/ui/Container';
 
 interface FAQItem {
-  id: string;
   question: string;
   answer: string;
 }
 
 const faqItems: FAQItem[] = [
   {
-    id: 'materials',
     question: 'Mitä materiaaleja minun on lähetettävä?',
-    answer: 'Työmaakuvia, videoita ja asiakastarinoita. Mitä tahansa, jonka kuvaa työmaallasi. Ei tarvitse olla ammattimaista — tarpeeksi hyvä puhelinkamera, ja me käsittelemme loput.',
+    answer:
+      'Työmaakuvat, lyhyt kuvaus kohteesta ja olennaiset faktat riittävät alkuun. Puhelimella otettu materiaali käy, kun työvaihe tai valmis lopputulos näkyy selkeästi.',
   },
   {
-    id: 'posts-per-platform',
-    question: 'Onko tämä 12 postia per some-alusta?',
-    answer: 'Kyllä. ~12 alkuperäistä sisältönpalasta kuukaudessa, joista jokainen on Instagram- ja Facebook-versio. Joten kokonaisuudessaan ~24 julkaisua kuukaudessa kahden alustan yli.',
+    question: 'Onko palvelussa 24 erillistä alkuperäispostausta?',
+    answer:
+      'Ei. Palveluun kuuluu 12 alkuperäistä ydinsisältöä 30 päivän palvelujaksolle. Sisällöt sovitetaan Instagramiin ja Facebookiin, mutta kyse ei ole 24 erillisestä alkuperäissisällöstä.',
   },
   {
-    id: 'ads-included',
-    question: 'Sisältyvätkö mainokset?',
-    answer: 'Ei. GhoulHouse on orgaaninen sisällöntoiminta. Me emme hallinnoi mainoksia tai mainoslaskuja. Jos haluat maksettuja mainoksia, se on erillinen palvelu.',
+    question: 'Sisältyvätkö maksetut mainokset?',
+    answer:
+      'Ei. Paketti keskittyy orgaaniseen sisällöntuotantoon, ajastukseen ja julkaisuun Instagramissa ja Facebookissa.',
   },
   {
-    id: 'photoshoots',
     question: 'Sisältyykö valokuvaus?',
-    answer: 'Ei. Me työskenntelemme aineiston kanssa, jonka sinulla on jo — työmaakuvat, puhelimen videot ja asiakastarinat. Jos tarvitset valokuvaajaa, neuvomme, mutta se on erillinen palvelu.',
+    answer:
+      'Ei. Palvelu perustuu asiakkaan toimittamaan materiaaliin. Kuvauspäivät ja erillinen videotuotanto eivät sisälly tähän palveluun.',
   },
   {
-    id: 'revisions',
     question: 'Kuinka muokkauksia käsitellään?',
-    answer: 'Kun toimme sisällön hyväksyttäväksi, voit antaa palautetta. Yksi kierros muokkauksista sisältyy. Tarpeen jälkeen lisämuokkauksista voidaan neuvotella.',
+    answer:
+      'Yksi koottu muokkauskierros sisältyy palvelujaksoon. Mahdollisista lisämuutoksista sovitaan erikseen.',
   },
   {
-    id: 'contract-terms',
-    question: 'Onko sopimuksessa kiinteisiä ehtoja?',
-    answer: 'Ei. Voit peruuttaa milloin tahansa ilman sakkoja. Me luotamme siihen, että tulokset puhuvat puolestaan.',
+    question: 'Kuinka pitkä palvelujakso on?',
+    answer:
+      'Yksi palvelujakso on 30 päivää. Seuraavan jakson voi irtisanoa sovittujen ehtojen mukaisesti.',
   },
   {
-    id: 'month-4-onwards',
-    question: 'Mitä tapahtuu neljännen kuukauden jälkeen?',
-    answer: 'Hinnat nousevat alennustasolta normaalihintoihin. START (490 €) muuttuu MANAGED (790 €), joka sisältää valinnaisen optimoinnin, analytiikan ja yhteistyötukea.',
+    question: 'Mitä tapahtuu palvelujaksosta 4 alkaen?',
+    answer:
+      'START maksaa 490 € + ALV / 30 päivää palvelujaksoilla 1–3. Palvelujaksosta 4 alkaen MANAGED maksaa 790 € + ALV / 30 päivää.',
   },
   {
-    id: 'cancellation',
-    question: 'Voiko perua milloin tahansa?',
-    answer: 'Kyllä. Voit perua ilman sanomista tai sakkoja. Luotamme siihen, että palvelun laatu tekee sen tarpeettomaksi.',
+    question: 'Lupaako GhoulHouse tietyn määrän liidejä tai myyntiä?',
+    answer:
+      'Ei. GhoulHouse sitoutuu sovittuun sisältötoimitukseen, ei tiettyyn liidi-, myynti-, seuraaja- tai tavoittavuustulokseen.',
   },
 ];
-
-'use client';
-
-import { useState } from 'react';
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -63,7 +61,7 @@ export default function FAQ() {
 
         <div className="max-w-2xl space-y-4">
           {faqItems.map((item, index) => (
-            <div key={item.id} className="border border-bone rounded overflow-hidden">
+            <div key={item.question} className="border border-bone rounded overflow-hidden">
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
                 className="w-full text-left px-6 py-4 bg-white hover:bg-bone/50 transition-colors flex justify-between items-center"
@@ -77,6 +75,7 @@ export default function FAQ() {
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden="true"
                 >
                   <path
                     strokeLinecap="round"
