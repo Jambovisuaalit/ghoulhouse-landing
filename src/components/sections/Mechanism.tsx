@@ -95,7 +95,7 @@ export default function Mechanism() {
                     <span className="type-label text-signal">
                       GhoulHouse / final
                     </span>
-                    <span className="type-caption uppercase tracking-[0.06em] text-ink/55">
+                    <span className="type-caption uppercase tracking-[0.06em] text-ink/65">
                       Ready social content
                     </span>
                   </div>
