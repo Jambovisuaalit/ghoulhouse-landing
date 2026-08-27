@@ -58,7 +58,7 @@ export default function Navigation({ onCtaClick }: NavigationProps) {
               <a
                 key={link.href}
                 href={link.href}
-                className="text-[0.72rem] font-black uppercase tracking-[0.12em] text-ink transition-colors hover:text-signal"
+                className="type-label text-ink transition-colors hover:text-signal"
               >
                 {link.label}
               </a>
@@ -66,7 +66,7 @@ export default function Navigation({ onCtaClick }: NavigationProps) {
             <button
               type="button"
               onClick={onCtaClick}
-              className="inline-flex min-h-11 items-center gap-2 text-[0.72rem] font-black uppercase tracking-[0.12em] text-signal transition-colors hover:text-ink"
+              className="type-cta inline-flex min-h-11 items-center gap-2 text-signal transition-colors hover:text-ink"
             >
               <span>2 sisältöesimerkkiä</span>
               <span aria-hidden="true">→</span>
@@ -76,7 +76,7 @@ export default function Navigation({ onCtaClick }: NavigationProps) {
           <button
             type="button"
             onClick={() => setMobileMenuOpen((open) => !open)}
-            className="inline-flex min-h-11 items-center gap-2 text-[0.7rem] font-black uppercase tracking-[0.14em] text-ink md:hidden"
+            className="type-label inline-flex min-h-11 items-center gap-2 text-ink md:hidden"
             aria-label={mobileMenuOpen ? 'Sulje valikko' : 'Avaa valikko'}
             aria-expanded={mobileMenuOpen}
             aria-controls="mobile-navigation"
@@ -100,7 +100,7 @@ export default function Navigation({ onCtaClick }: NavigationProps) {
                 <a
                   key={link.href}
                   href={link.href}
-                  className={`flex min-h-12 items-center justify-between border-ink/20 py-3 text-sm font-black uppercase tracking-[0.1em] text-ink ${
+                  className={`type-ui flex min-h-12 items-center justify-between border-ink/20 py-3 uppercase tracking-[0.08em] text-ink ${
                     index === 0 ? 'border-t' : ''
                   } border-b`}
                   onClick={() => setMobileMenuOpen(false)}
@@ -116,7 +116,7 @@ export default function Navigation({ onCtaClick }: NavigationProps) {
                 setMobileMenuOpen(false);
                 onCtaClick();
               }}
-              className="mt-5 flex min-h-14 w-full items-center justify-between bg-signal px-5 text-left text-sm font-black uppercase tracking-[0.08em] text-white"
+              className="type-cta mt-5 flex min-h-14 w-full items-center justify-between bg-signal px-5 text-left text-white"
             >
               <span>{siteConfig.cta.primary}</span>
               <span aria-hidden="true">→</span>
