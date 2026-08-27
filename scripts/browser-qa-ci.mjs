@@ -355,13 +355,23 @@ try {
     client,
     `(() => {
       const section = document.querySelector('[data-scroll-raw]');
+      const sticky = section?.querySelector('.mechanism-raw__sticky');
+      const stage = section?.querySelector('.mechanism-raw__stage');
       const finalImage = section?.querySelector('.mechanism-raw__image--final');
       const divider = section?.querySelector('.mechanism-raw__divider');
-      if (!section || !finalImage || !divider) return null;
+      if (!section || !sticky || !stage || !finalImage || !divider) return null;
+      const stickyRect = sticky.getBoundingClientRect();
+      const stageRect = stage.getBoundingClientRect();
       return {
         progress: parseFloat(getComputedStyle(section).getPropertyValue('--raw-progress')) || 0,
         clipPath: getComputedStyle(finalImage).clipPath,
         dividerLeft: getComputedStyle(divider).left,
+        stickyTop: stickyRect.top,
+        stickyBottom: stickyRect.bottom,
+        stickyHeight: stickyRect.height,
+        stageTop: stageRect.top,
+        stageBottom: stageRect.bottom,
+        stageHeight: stageRect.height,
       };
     })()`
   );
@@ -373,6 +383,20 @@ try {
   assert(
     rawMid.clipPath && rawMid.clipPath !== 'none',
     'Desktop RAW final image is not being clipped by scroll progress.'
+  );
+  assert(
+    rawMid.stickyTop >= 55 && rawMid.stickyTop <= 80,
+    `Desktop RAW sticky stage is not pinned below the header: top ${rawMid.stickyTop}px.`
+  );
+  assert(
+    rawMid.stickyBottom >= 860 && rawMid.stickyBottom <= 905,
+    `Desktop RAW sticky stage does not fill the usable viewport: bottom ${rawMid.stickyBottom}px.`
+  );
+  assert(
+    rawMid.stageHeight >= 400 &&
+      rawMid.stageTop >= rawMid.stickyTop &&
+      rawMid.stageBottom <= rawMid.stickyBottom + 1,
+    `Desktop RAW visual stage is clipped or outside sticky viewport: ${JSON.stringify(rawMid)}.`
   );
 
   const rawShot = await client.send('Page.captureScreenshot', {
@@ -405,15 +429,26 @@ try {
     client,
     `(() => {
       const section = document.querySelector('[data-scroll-film]');
+      const sticky = section?.querySelector('.mechanism-film__sticky');
       const viewport = section?.querySelector('.mechanism-film__viewport');
       const track = section?.querySelector('.mechanism-film__track');
-      if (!section || !viewport || !track) return null;
+      const frame = section?.querySelector('.mechanism-film__frame');
+      if (!section || !sticky || !viewport || !track || !frame) return null;
       const matrix = new DOMMatrixReadOnly(getComputedStyle(track).transform);
       const horizontalTravel = Math.max(0, track.scrollWidth - viewport.clientWidth);
+      const stickyRect = sticky.getBoundingClientRect();
+      const viewportRect = viewport.getBoundingClientRect();
+      const frameRect = frame.getBoundingClientRect();
       return {
         progress: parseFloat(getComputedStyle(section).getPropertyValue('--film-progress')) || 0,
         translateX: matrix.m41,
         horizontalTravel,
+        stickyTop: stickyRect.top,
+        stickyBottom: stickyRect.bottom,
+        stickyHeight: stickyRect.height,
+        viewportTop: viewportRect.top,
+        viewportBottom: viewportRect.bottom,
+        frameHeight: frameRect.height,
       };
     })()`
   );
@@ -430,6 +465,20 @@ try {
     Math.abs(filmMid.translateX) > filmMid.horizontalTravel * 0.3 &&
       Math.abs(filmMid.translateX) < filmMid.horizontalTravel * 0.7,
     `Desktop filmstrip translateX is out of sync: ${filmMid.translateX}px of ${filmMid.horizontalTravel}px.`
+  );
+  assert(
+    filmMid.stickyTop >= 55 && filmMid.stickyTop <= 80,
+    `Desktop filmstrip sticky stage is not pinned below the header: top ${filmMid.stickyTop}px.`
+  );
+  assert(
+    filmMid.stickyBottom >= 860 && filmMid.stickyBottom <= 905,
+    `Desktop filmstrip sticky stage does not fill the usable viewport: bottom ${filmMid.stickyBottom}px.`
+  );
+  assert(
+    filmMid.viewportTop >= filmMid.stickyTop &&
+      filmMid.viewportBottom <= filmMid.stickyBottom + 1 &&
+      filmMid.frameHeight >= 300,
+    `Desktop filmstrip content is clipped or outside sticky viewport: ${JSON.stringify(filmMid)}.`
   );
 
   const filmShot = await client.send('Page.captureScreenshot', {
