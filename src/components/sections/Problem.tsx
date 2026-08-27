@@ -22,7 +22,7 @@ export default function Problem() {
   return (
     <section id="problem" className="bg-ghost py-16 md:py-24">
       <Container>
-        <div className="grid gap-10 lg:grid-cols-12">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
           <div className="lg:col-span-6">
             <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-signal">
               Ongelma / tunnistaminen
