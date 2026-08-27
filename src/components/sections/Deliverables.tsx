@@ -37,7 +37,7 @@ export default function Deliverables() {
             <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-signal">
               START / toimitussisältö
             </p>
-            <h2 className="font-display text-[clamp(2.8rem,5vw,5.5rem)] font-black uppercase leading-[0.9] tracking-[-0.04em] text-ink">
+            <h2 className="font-display text-[clamp(1.9rem,5vw,5.5rem)] font-black uppercase leading-[0.9] tracking-[-0.04em] text-ink sm:text-[clamp(2.8rem,5vw,5.5rem)]">
               Yksi selkeä
               <span className="block">tuotantopaketti.</span>
             </h2>
