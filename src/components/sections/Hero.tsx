@@ -13,24 +13,24 @@ export default function Hero({ onCtaClick }: HeroProps) {
           <h1 className="text-ink mb-6">
             Työmaakuvat sisään.
             <br />
-            <span className="text-signal">Valmis SOME ulos.</span>
+            <span className="text-signal">Valmis some ulos.</span>
           </h1>
 
           <p className="text-xl text-ink/80 mb-8 leading-relaxed max-w-2xl">
-            Teette hyvää työtä. Me pidämme huolen, että asiakkaat myös näkevät sen.
+            Teette hyvää työtä. GhoulHouse muuttaa työmaakuvat julkaistavaksi Instagram- ja Facebook-sisällöksi.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 items-start mb-12">
             <Button variant="primary" size="lg" onClick={onCtaClick}>
-              Pyydä 2 sisältöesimerkkiä
+              PYYDÄ 2 SISÄLTÖESIMERKKIÄ
             </Button>
             <div className="text-lg font-bold text-signal">
-              490 €<span className="text-ink/60 font-normal text-base"> + alv / kk</span>
+              490 €<span className="text-ink/60 font-normal text-base"> + ALV / 30 päivää</span>
             </div>
           </div>
 
           <p className="text-sm text-ink/60">
-            Ensimmäisen 3 kuukauden alennushinnoilla. Sisältöä tuotettavaksi riittävä määrä työmaakuvia.
+            START · palvelujaksot 1–3 · 12 alkuperäistä sisältöä Instagramiin ja Facebookiin sovitettuna.
           </p>
         </div>
       </Container>
