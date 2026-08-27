@@ -101,3 +101,14 @@ Verify at minimum:
 `320 / 375 / 390 / 430 / 768 / 1024 / 1280 / 1440 / 1920 px`
 
 Check horizontal overflow, header/menu, hero, mechanism cards, examples, pricing, FAQ, form and footer.
+
+
+## Art direction
+
+The production visual system is intentionally editorial rather than template-driven:
+
+- Ink/Ghost/Bone form the large compositional fields; Signal Red is reserved for high-information accents and conversion.
+- Preserve the RAW → GHOULHOUSE → READY cinematic mechanism.
+- Prefer editorial ledgers, proof sheets, registers and asymmetric composition over repeated card grids.
+- Avoid decorative gradients, glass effects, excessive rounding and generic SaaS patterns.
+- Mobile keeps the hierarchy and tension but removes offsets that impair reading or interaction.
