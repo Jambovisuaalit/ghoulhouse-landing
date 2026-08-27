@@ -21,17 +21,39 @@ export default function Audience() {
         <SectionHeading
           eyebrow="07 / KENELLE"
           title="Hyvä firma. Hyvä työnjälki. Liian vähän näkyvää näyttöä."
-          intro="Ensimmäinen kohderyhmä on rajattu tarkoituksella. Sivun tehtävä on myös kertoa nopeasti, milloin GhoulHouse ei ole oikea ratkaisu."
+          intro="Kohderyhmä on rajattu tarkoituksella. Hyvä sivu kvalifioi yhtä paljon kuin se houkuttelee."
         />
-        <div className="mt-14 grid gap-6 md:grid-cols-2">
-          <div className="border border-ink/15 bg-ghost p-6 sm:p-8">
-            <p className="eyebrow text-signal">HYVÄ FIT</p>
-            <ul className="mt-6 space-y-4">{fit.map((item) => <li key={item} className="border-t border-ink/10 pt-4 font-bold leading-6">{item}</li>)}</ul>
+
+        <div className="mt-14 grid gap-12 lg:grid-cols-[1.2fr_0.8fr]">
+          <div className="fit-ledger">
+            <div className="flex items-center justify-between gap-4 border-b border-ink/20 py-4">
+              <p className="eyebrow text-signal">GOOD FIT / 01</p>
+              <span className="font-mono text-xs text-ink/40">QUALIFICATION</span>
+            </div>
+
+            {fit.map((item, index) => (
+              <div key={item} className="fit-row">
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                <strong>{item}</strong>
+              </div>
+            ))}
           </div>
-          <div className="border border-ink/15 bg-white p-6 sm:p-8">
-            <p className="eyebrow text-ink/65">EI VÄLTTÄMÄTTÄ OIKEA</p>
-            <ul className="mt-6 space-y-4">{notFit.map((item) => <li key={item} className="border-t border-ink/10 pt-4 leading-6 text-ink/70">{item}</li>)}</ul>
-          </div>
+
+          <aside className="not-fit-note">
+            <p className="eyebrow text-ink">NOT FIT / 02</p>
+            <h3 className="mt-5 font-display text-4xl font-black uppercase leading-[0.9] tracking-[-0.05em]">
+              Kaikkea ei tarvitse myydä kaikille.
+            </h3>
+
+            <div className="mt-8 space-y-5">
+              {notFit.map((item, index) => (
+                <div key={item} className="fit-row">
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                  <p className="text-ink/65">{item}</p>
+                </div>
+              ))}
+            </div>
+          </aside>
         </div>
       </div>
     </section>
