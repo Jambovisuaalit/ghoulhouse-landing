@@ -6,7 +6,7 @@ const conceptLabel = 'KONSEPTIESIMERKKI — EI ASIAKASTYÖ';
 function ConceptBadge({ inverse = false }: { inverse?: boolean }) {
   return (
     <span
-      className={`inline-flex w-fit px-2 py-1 text-[0.52rem] font-black uppercase tracking-[0.13em] ${
+      className={`type-label inline-flex w-fit px-2 py-1 ${
         inverse ? 'bg-ghost text-ink' : 'bg-ink text-ghost'
       }`}
     >
@@ -21,22 +21,22 @@ export default function Examples() {
       <Container>
         <div className="grid grid-cols-1 gap-6 border-b-2 border-ink pb-8 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-8">
-            <p className="mb-4 text-[0.65rem] font-black uppercase tracking-[0.18em] text-signal sm:text-xs">
+            <p className="type-label mb-4 text-signal">
               Proof of craft / sisältöesimerkit
             </p>
-            <h2 className="font-display text-[clamp(2.55rem,7vw,5.8rem)] font-black uppercase leading-[0.88] tracking-[-0.045em] text-ink">
+            <h2 className="type-section-title max-w-[15ch] text-ink">
               Ei vain kuva.
               <span className="block">Kulma, rakenne, toteutus.</span>
             </h2>
           </div>
 
           <div className="lg:col-span-4">
-            <p className="max-w-md text-sm leading-relaxed text-ink/70">
+            <p className="type-editorial max-w-md text-ink/70">
               Sama työmaamateriaali voidaan muuttaa eri tarkoituksiin ilman
               keksittyä täytesisältöä. Alla näkyy mitä GhoulHouse tekee
               materiaalin ja valmiin julkaisun välissä.
             </p>
-            <p className="mt-4 text-[0.62rem] font-black uppercase tracking-[0.14em] text-ink/50">
+            <p className="type-caption mt-4 uppercase tracking-[0.06em] text-ink/55">
               Source → content angle → finished execution
             </p>
           </div>
@@ -54,26 +54,26 @@ export default function Examples() {
               />
               <div className="absolute inset-x-0 top-0 flex items-center justify-between gap-4 p-4 sm:p-5">
                 <ConceptBadge />
-                <span className="bg-ghost px-2 py-1 text-[0.55rem] font-black uppercase tracking-[0.14em] text-ink">
+                <span className="bg-ghost px-2 py-1 type-label text-ink">
                   01 / SOURCE
                 </span>
               </div>
               <div className="absolute inset-x-0 bottom-0 bg-ink/95 p-4 text-ghost sm:p-5">
-                <p className="text-[0.58rem] font-black uppercase tracking-[0.16em] text-signal">
+                <p className="type-label text-signal">
                   Work phase
                 </p>
-                <p className="mt-2 font-display text-3xl font-black uppercase leading-none sm:text-4xl">
+                <p className="mt-2 font-sans text-2xl font-extrabold uppercase leading-[0.95] tracking-[-0.025em] sm:text-3xl">
                   Työvaihe näyttää osaamisen.
                 </p>
               </div>
             </div>
 
             <div className="flex min-h-[150px] flex-col justify-between border-y-2 border-ink bg-signal p-5 text-white lg:min-h-0 lg:border-x-2 lg:border-y-0">
-              <span className="text-[0.58rem] font-black uppercase tracking-[0.16em] text-white/70">
+              <span className="type-label text-white/70">
                 Content angle
               </span>
               <div>
-                <p className="font-display text-3xl font-black uppercase leading-[0.92]">
+                <p className="font-sans text-2xl font-extrabold uppercase leading-[0.98] tracking-[-0.025em]">
                   Miksi tämä vaihe ratkaisee lopputuloksen?
                 </p>
                 <p className="mt-4 text-xs font-bold uppercase leading-relaxed tracking-[0.1em] text-white/75">
@@ -86,7 +86,7 @@ export default function Examples() {
             </div>
 
             <div className="relative min-h-[360px] overflow-hidden bg-ghost p-5 text-ink sm:min-h-[440px] sm:p-7 lg:min-h-0">
-              <div className="absolute right-5 top-5 text-[0.55rem] font-black uppercase tracking-[0.14em] text-ink/50">
+              <div className="absolute right-5 top-5 type-label text-ink/50">
                 Finished execution
               </div>
               <div className="mt-12 grid min-h-[300px] grid-rows-[1fr_auto] border-2 border-ink bg-ghost sm:min-h-[360px]">
@@ -98,15 +98,15 @@ export default function Examples() {
                     sizes="(max-width: 1023px) 100vw, 45vw"
                     className="object-cover"
                   />
-                  <span className="absolute left-3 top-3 bg-signal px-2 py-1 text-[0.55rem] font-black uppercase tracking-[0.14em] text-white">
+                  <span className="absolute left-3 top-3 bg-signal px-2 py-1 type-label text-white">
                     Pohjatyö / 01
                   </span>
                 </div>
                 <div className="border-t-2 border-ink p-4 sm:p-5">
-                  <p className="font-display text-[clamp(2rem,5vw,4.2rem)] font-black uppercase leading-[0.88] tracking-[-0.035em]">
+                  <p className="font-sans text-[clamp(1.8rem,4vw,3rem)] font-extrabold uppercase leading-[0.94] tracking-[-0.03em]">
                     Se mitä ei valmiissa pinnassa näe, ratkaisee lopputuloksen.
                   </p>
-                  <p className="mt-4 max-w-xl text-sm font-bold leading-relaxed text-ink/60">
+                  <p className="mt-4 max-w-xl text-[0.95rem] font-semibold leading-[1.55] text-ink/60">
                     Sisältö tekee näkymättömästä ammattitaidosta ymmärrettävää.
                   </p>
                 </div>
@@ -119,14 +119,14 @@ export default function Examples() {
               <div className="grid grid-cols-[112px_1fr] sm:grid-cols-[150px_1fr]">
                 <div className="flex flex-col justify-between bg-ink p-4 text-ghost sm:p-5">
                   <div>
-                    <span className="text-[0.58rem] font-black uppercase tracking-[0.16em] text-signal">
+                    <span className="type-label text-signal">
                       02
                     </span>
-                    <p className="mt-2 font-display text-2xl font-black uppercase leading-none">
+                    <p className="mt-2 font-sans text-xl font-extrabold uppercase leading-tight tracking-[-0.02em]">
                       Finished project
                     </p>
                   </div>
-                  <span className="mt-8 text-[0.52rem] font-black uppercase leading-relaxed tracking-[0.12em] text-ghost/50">
+                  <span className="mt-8 type-caption uppercase tracking-[0.05em] text-ghost/50">
                     Source → proof
                   </span>
                 </div>
@@ -140,10 +140,10 @@ export default function Examples() {
                     className="object-cover"
                   />
                   <div className="absolute inset-x-4 bottom-4 border-2 border-ink bg-ghost p-4">
-                    <p className="text-[0.55rem] font-black uppercase tracking-[0.14em] text-signal">
+                    <p className="type-label text-signal">
                       Content angle
                     </p>
-                    <p className="mt-2 font-display text-3xl font-black uppercase leading-[0.9]">
+                    <p className="mt-2 font-sans text-2xl font-extrabold uppercase leading-[0.96] tracking-[-0.025em]">
                       Lopputulos ensin. Faktat heti perään.
                     </p>
                   </div>
@@ -151,7 +151,7 @@ export default function Examples() {
               </div>
               <div className="flex flex-col gap-4 border-t-2 border-ink p-5 sm:flex-row sm:items-end sm:justify-between">
                 <ConceptBadge />
-                <p className="max-w-sm text-sm font-bold leading-relaxed text-ink/70">
+                <p className="max-w-sm text-[0.95rem] font-semibold leading-[1.55] text-ink/70">
                   Valmis kohde toimii referenssinä, kun kuva, työn rajaus ja
                   selkeä viesti muodostavat yhden julkaisun.
                 </p>
@@ -168,22 +168,22 @@ export default function Examples() {
                     sizes="(max-width: 639px) 100vw, 28vw"
                     className="object-cover grayscale"
                   />
-                  <span className="absolute left-3 top-3 bg-ink px-2 py-1 text-[0.55rem] font-black uppercase tracking-[0.14em] text-ghost">
+                  <span className="absolute left-3 top-3 bg-ink px-2 py-1 type-label text-ghost">
                     03 / SOURCE
                   </span>
                 </div>
 
                 <div className="flex flex-col justify-between p-5 sm:p-6">
                   <div>
-                    <p className="text-[0.58rem] font-black uppercase tracking-[0.16em] text-signal">
+                    <p className="type-label text-signal">
                       Expertise / content angle
                     </p>
-                    <p className="mt-3 font-display text-[clamp(2.2rem,5vw,4rem)] font-black uppercase leading-[0.88] tracking-[-0.035em]">
+                    <p className="mt-3 font-sans text-[clamp(1.9rem,4vw,3.1rem)] font-extrabold uppercase leading-[0.94] tracking-[-0.03em]">
                       Näytä mitä ammattilainen huomaa.
                     </p>
                   </div>
                   <div className="mt-8 border-l-4 border-signal pl-4">
-                    <p className="text-sm font-bold leading-relaxed text-ink/70">
+                    <p className="text-[0.95rem] font-semibold leading-[1.55] text-ink/70">
                       “Miksi tämä tehdään näin?” muuttaa tavallisen työmaakuvan
                       asiantuntijasisällöksi.
                     </p>
@@ -200,10 +200,10 @@ export default function Examples() {
             <div className="bg-ink p-5 text-ghost sm:p-7">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <span className="text-[0.58rem] font-black uppercase tracking-[0.16em] text-signal">
+                  <span className="type-label text-signal">
                     04 / Before / after
                   </span>
-                  <h3 className="mt-3 font-display text-[clamp(2.5rem,6vw,5rem)] font-black uppercase leading-[0.88] tracking-[-0.04em]">
+                  <h3 className="mt-3 font-sans text-[clamp(2rem,4vw,3.5rem)] font-extrabold uppercase leading-[0.94] tracking-[-0.035em]">
                     Muutos näkyviin yhdellä silmäyksellä.
                   </h3>
                 </div>
@@ -229,7 +229,7 @@ export default function Examples() {
                   sizes="(max-width: 1023px) 50vw, 30vw"
                   className="object-cover grayscale contrast-125"
                 />
-                <figcaption className="absolute inset-x-0 bottom-0 bg-ink/95 p-3 text-[0.58rem] font-black uppercase tracking-[0.16em] text-ghost">
+                <figcaption className="absolute inset-x-0 bottom-0 bg-ink/95 p-3 type-label text-ghost">
                   Before / source
                 </figcaption>
               </figure>
@@ -242,7 +242,7 @@ export default function Examples() {
                   sizes="(max-width: 1023px) 50vw, 30vw"
                   className="object-cover"
                 />
-                <figcaption className="absolute inset-x-0 bottom-0 bg-signal p-3 text-[0.58rem] font-black uppercase tracking-[0.16em] text-white">
+                <figcaption className="absolute inset-x-0 bottom-0 bg-signal p-3 type-label text-white">
                   After / execution
                 </figcaption>
               </figure>
@@ -251,10 +251,10 @@ export default function Examples() {
 
           <article className="grid grid-cols-1 bg-ghost lg:grid-cols-12">
             <div className="border-b-2 border-ink p-5 sm:p-7 lg:col-span-4 lg:border-b-0 lg:border-r-2">
-              <p className="text-[0.58rem] font-black uppercase tracking-[0.16em] text-signal">
+              <p className="type-label text-signal">
                 05 / Service / CTA
               </p>
-              <h3 className="mt-3 font-display text-[clamp(2.4rem,5vw,4.7rem)] font-black uppercase leading-[0.88] tracking-[-0.04em] text-ink">
+              <h3 className="mt-3 font-sans text-[clamp(2rem,4vw,3.5rem)] font-extrabold uppercase leading-[0.94] tracking-[-0.035em] text-ink">
                 Hyvä sisältö kertoo myös mitä tehdä seuraavaksi.
               </h3>
               <p className="mt-5 max-w-md text-sm leading-relaxed text-ink/70">
@@ -273,20 +273,20 @@ export default function Examples() {
                     sizes="(max-width: 767px) 100vw, 42vw"
                     className="object-cover"
                   />
-                  <span className="absolute left-3 top-3 bg-ink px-2 py-1 text-[0.55rem] font-black uppercase tracking-[0.14em] text-ghost">
+                  <span className="absolute left-3 top-3 bg-ink px-2 py-1 type-label text-ghost">
                     Source
                   </span>
                 </div>
 
                 <div className="flex flex-col justify-between bg-signal p-5 text-white sm:p-6">
                   <div>
-                    <p className="text-[0.55rem] font-black uppercase tracking-[0.14em] text-white/70">
+                    <p className="type-label text-white/70">
                       Finished execution
                     </p>
-                    <p className="mt-3 font-display text-[clamp(2.4rem,6vw,4.8rem)] font-black uppercase leading-[0.86] tracking-[-0.04em]">
+                    <p className="mt-3 font-sans text-[clamp(2rem,4.5vw,3.4rem)] font-extrabold uppercase leading-[0.92] tracking-[-0.035em]">
                       Remontti mielessä?
                     </p>
-                    <p className="mt-4 max-w-xs text-sm font-bold leading-relaxed text-white/80">
+                    <p className="mt-4 max-w-xs text-[0.95rem] font-semibold leading-[1.55] text-white/80">
                       Näytä palvelu. Tee hyöty selväksi. Anna asiakkaalle
                       seuraava askel.
                     </p>
