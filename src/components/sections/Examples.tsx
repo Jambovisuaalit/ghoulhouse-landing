@@ -36,7 +36,7 @@ export default function Examples() {
               keksittyä täytesisältöä. Alla näkyy mitä GhoulHouse tekee
               materiaalin ja valmiin julkaisun välissä.
             </p>
-            <p className="type-caption mt-4 uppercase tracking-[0.06em] text-ink/55">
+            <p className="type-caption mt-4 uppercase tracking-[0.06em] text-ink/65">
               Source → content angle → finished execution
             </p>
           </div>
@@ -86,7 +86,7 @@ export default function Examples() {
             </div>
 
             <div className="relative min-h-[360px] overflow-hidden bg-ghost p-5 text-ink sm:min-h-[440px] sm:p-7 lg:min-h-0">
-              <div className="absolute right-5 top-5 type-label text-ink/50">
+              <div className="absolute right-5 top-5 type-label text-ink/65">
                 Finished execution
               </div>
               <div className="mt-12 grid min-h-[300px] grid-rows-[1fr_auto] border-2 border-ink bg-ghost sm:min-h-[360px]">
@@ -126,7 +126,7 @@ export default function Examples() {
                       Finished project
                     </p>
                   </div>
-                  <span className="mt-8 type-caption uppercase tracking-[0.05em] text-ghost/50">
+                  <span className="mt-8 type-caption uppercase tracking-[0.05em] text-ghost/65">
                     Source → proof
                   </span>
                 </div>
