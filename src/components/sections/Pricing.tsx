@@ -52,7 +52,7 @@ export default function Pricing({ onCtaClick }: PricingProps) {
             </p>
 
             <div className="mt-8 hidden border-l-4 border-signal pl-4 lg:block">
-              <p className="type-label text-ink/55">
+              <p className="type-label text-ink/65">
                 Lifecycle
               </p>
               <p className="mt-2 text-2xl font-extrabold uppercase leading-none tracking-[-0.025em] text-ink">
@@ -123,7 +123,7 @@ export default function Pricing({ onCtaClick }: PricingProps) {
                   </span>
                   <span className="h-px w-5 bg-ghost/35 sm:w-12" aria-hidden="true" />
                 </div>
-                <span className="text-right text-[0.58rem] font-black uppercase tracking-[0.14em] text-ghost/55">
+                <span className="text-right text-[0.58rem] font-black uppercase tracking-[0.14em] text-ghost/65">
                   Jakso 04+
                 </span>
               </div>
