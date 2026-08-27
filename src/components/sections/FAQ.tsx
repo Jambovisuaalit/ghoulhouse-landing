@@ -1,98 +1,86 @@
 import Container from '@/components/ui/Container';
 
-interface FAQItem {
-  id: string;
-  question: string;
-  answer: string;
-}
-
-const faqItems: FAQItem[] = [
+const faqItems = [
   {
-    id: 'materials',
-    question: 'Mitä materiaaleja minun on lähetettävä?',
-    answer: 'Työmaakuvia, videoita ja asiakastarinoita. Mitä tahansa, jonka kuvaa työmaallasi. Ei tarvitse olla ammattimaista — tarpeeksi hyvä puhelinkamera, ja me käsittelemme loput.',
+    question: 'Mitä materiaalia meidän pitää toimittaa?',
+    answer:
+      'Työmaakuvat, lyhyt kuvaus kohteesta ja olennaiset faktat riittävät alkuun. Puhelimella otettu aito materiaali sopii hyvin, kun työvaihe tai valmis lopputulos näkyy selkeästi.',
   },
   {
-    id: 'posts-per-platform',
-    question: 'Onko tämä 12 postia per some-alusta?',
-    answer: 'Kyllä. ~12 alkuperäistä sisältönpalasta kuukaudessa, joista jokainen on Instagram- ja Facebook-versio. Joten kokonaisuudessaan ~24 julkaisua kuukaudessa kahden alustan yli.',
+    question: 'Tarkoittaako 12 sisältöä 24 alkuperäistä postausta?',
+    answer:
+      'Ei. Palveluun kuuluu 12 alkuperäistä ydinsisältöä / 30 päivää. Ne sovitetaan Instagramiin ja Facebookiin. Kyse ei ole 24 erillisestä alkuperäissisällöstä.',
   },
   {
-    id: 'ads-included',
-    question: 'Sisältyvätkö mainokset?',
-    answer: 'Ei. GhoulHouse on orgaaninen sisällöntoiminta. Me emme hallinnoi mainoksia tai mainoslaskuja. Jos haluat maksettuja mainoksia, se on erillinen palvelu.',
+    question: 'Sisältyykö maksettu mainonta?',
+    answer:
+      'Ei. START- ja MANAGED-palvelut keskittyvät orgaaniseen sisältöön ja sen julkaisemiseen. Maksettu mainonta ei sisälly tähän palveluun.',
   },
   {
-    id: 'photoshoots',
-    question: 'Sisältyykö valokuvaus?',
-    answer: 'Ei. Me työskenntelemme aineiston kanssa, jonka sinulla on jo — työmaakuvat, puhelimen videot ja asiakastarinat. Jos tarvitset valokuvaajaa, neuvomme, mutta se on erillinen palvelu.',
+    question: 'Sisältyykö kuvauspäivä tai jatkuva videotuotanto?',
+    answer:
+      'Ei tähän palveluun. GhoulHouse työskentelee ensisijaisesti asiakkaan toimittaman materiaalin kanssa. Erilliset kuvauspäivät tai laajempi videotuotanto eivät kuulu peruspalveluun.',
   },
   {
-    id: 'revisions',
-    question: 'Kuinka muokkauksia käsitellään?',
-    answer: 'Kun toimme sisällön hyväksyttäväksi, voit antaa palautetta. Yksi kierros muokkauksista sisältyy. Tarpeen jälkeen lisämuokkauksista voidaan neuvotella.',
+    question: 'Kuinka korjaukset hoidetaan?',
+    answer:
+      'Palveluun kuuluu yksi koottu korjauskierros. Asiakas tarkistaa faktat ja sävyn ennen julkaisua.',
   },
   {
-    id: 'contract-terms',
-    question: 'Onko sopimuksessa kiinteisiä ehtoja?',
-    answer: 'Ei. Voit peruuttaa milloin tahansa ilman sakkoja. Me luotamme siihen, että tulokset puhuvat puolestaan.',
+    question: 'Kuinka pitkä sopimus on?',
+    answer:
+      'Palvelu toimii 30 päivän jaksoissa ja on kuukausittain irtisanottava sovittujen ehtojen mukaisesti.',
   },
   {
-    id: 'month-4-onwards',
-    question: 'Mitä tapahtuu neljännen kuukauden jälkeen?',
-    answer: 'Hinnat nousevat alennustasolta normaalihintoihin. START (490 €) muuttuu MANAGED (790 €), joka sisältää valinnaisen optimoinnin, analytiikan ja yhteistyötukea.',
+    question: 'Mitä tapahtuu palvelujaksosta 4 alkaen?',
+    answer:
+      'Asiakkuus alkaa START-mallilla palvelujaksoiksi 1–3 hintaan 490 € + ALV / 30 päivää. Palvelujaksosta 4 alkaen palvelu jatkuu MANAGED-mallilla hintaan 790 € + ALV / 30 päivää. Kyse on asiakkuuden etenemisestä, ei kahdesta rinnakkaisesta aloituspaketista.',
   },
   {
-    id: 'cancellation',
-    question: 'Voiko perua milloin tahansa?',
-    answer: 'Kyllä. Voit perua ilman sanomista tai sakkoja. Luotamme siihen, että palvelun laatu tekee sen tarpeettomaksi.',
+    question: 'Lupaako GhoulHouse liidejä tai myyntiä?',
+    answer:
+      'Ei. GhoulHouse sitoutuu sovittuun sisältötoimitukseen, ei tiettyyn liidi-, myynti-, seuraaja- tai tavoittavuustulokseen.',
   },
-];
-
-'use client';
-
-import { useState } from 'react';
+] as const;
 
 export default function FAQ() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-
   return (
     <section id="faq" className="bg-ghost py-16 md:py-24">
       <Container>
-        <h2 className="text-ink mb-12">Usein kysytyt kysymykset</h2>
+        <div className="grid gap-10 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-signal">
+              UKK
+            </p>
+            <h2 className="font-display text-[clamp(2.8rem,5vw,5.5rem)] font-black uppercase leading-[0.9] tracking-[-0.04em] text-ink">
+              Selkeät vastaukset.
+            </h2>
+          </div>
 
-        <div className="max-w-2xl space-y-4">
-          {faqItems.map((item, index) => (
-            <div key={item.id} className="border border-bone rounded overflow-hidden">
-              <button
-                onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full text-left px-6 py-4 bg-white hover:bg-bone/50 transition-colors flex justify-between items-center"
-                aria-expanded={openIndex === index}
+          <div className="border-t-2 border-ink lg:col-span-8">
+            {faqItems.map((item, index) => (
+              <details
+                key={item.question}
+                className="group border-b border-ink/25"
               >
-                <span className="font-bold text-ink">{item.question}</span>
-                <svg
-                  className={`w-5 h-5 text-signal transition-transform ${
-                    openIndex === index ? 'rotate-180' : ''
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 14l-7 7m0 0l-7-7m7 7V3"
-                  />
-                </svg>
-              </button>
-              {openIndex === index && (
-                <div className="px-6 py-4 bg-ghost/50 border-t border-bone text-ink/80">
+                <summary className="grid cursor-pointer list-none grid-cols-[52px_1fr_auto] gap-4 py-5 text-left">
+                  <span className="text-xs font-black text-signal">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <span className="font-bold text-ink">{item.question}</span>
+                  <span
+                    aria-hidden="true"
+                    className="text-xl font-black text-ink transition-transform group-open:rotate-45"
+                  >
+                    +
+                  </span>
+                </summary>
+                <p className="max-w-2xl pb-6 pl-[68px] text-sm leading-relaxed text-ink/65">
                   {item.answer}
-                </div>
-              )}
-            </div>
-          ))}
+                </p>
+              </details>
+            ))}
+          </div>
         </div>
       </Container>
     </section>
