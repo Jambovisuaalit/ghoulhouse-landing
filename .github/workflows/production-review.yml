@@ -1,6 +1,9 @@
 name: Production review
 
 on:
+  push:
+    branches:
+      - audit/p0-production-readiness-2026-08-27
   pull_request:
     branches:
       - main
