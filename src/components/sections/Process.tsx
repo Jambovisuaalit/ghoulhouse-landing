@@ -1,67 +1,61 @@
 import Container from '@/components/ui/Container';
 
+const steps = [
+  {
+    number: '01',
+    owner: 'SINÄ',
+    title: 'Lähetät materiaalin ja faktat.',
+    body: 'Työmaakuvat, lyhyt kuvaus kohteesta ja olennaiset yksityiskohdat riittävät alkuun.',
+  },
+  {
+    number: '02',
+    owner: 'GHOULHOUSE',
+    title: 'Rakennamme sisältöbatchin.',
+    body: 'Suunnittelemme sisältökulmat, käsittelemme kuvat, kirjoitamme copyt ja rakennamme julkaisuvalmiit versiot.',
+  },
+  {
+    number: '03',
+    owner: 'YHDESSÄ',
+    title: 'Hyväksyt. Me julkaisemme.',
+    body: 'Tarkistat faktat. Yhden kootun korjauskierroksen jälkeen sisällöt ajastetaan ja julkaistaan.',
+  },
+] as const;
+
 export default function Process() {
   return (
-    <section id="process" className="bg-ghost py-16 md:py-24">
+    <section id="process" className="bg-ink py-16 text-ghost md:py-24">
       <Container>
-        <h2 className="text-ink mb-12">Prosessi</h2>
-
-        <div className="max-w-3xl space-y-8">
-          <div className="flex gap-6">
-            <div className="flex-shrink-0">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-signal text-white font-bold">
-                1
-              </div>
-            </div>
-            <div>
-              <h3 className="font-bold text-ink mb-2">Materialâ’¨ä lähetetään</h3>
-              <p className="text-ink/70">
-                Lähetät kuvia, videoita ja asiakastarinoita WhatsAppissa tai sähköpostitse.
-              </p>
-            </div>
+        <div className="grid gap-10 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-signal">
+              Prosessi
+            </p>
+            <h2 className="font-display text-[clamp(2.8rem,5vw,5.5rem)] font-black uppercase leading-[0.9] tracking-[-0.04em]">
+              Kolme askelta.
+            </h2>
           </div>
 
-          <div className="flex gap-6">
-            <div className="flex-shrink-0">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-signal text-white font-bold">
-                2
-              </div>
-            </div>
-            <div>
-              <h3 className="font-bold text-ink mb-2">GhoulHouse tuottaa</h3>
-              <p className="text-ink/70">
-                Käsittelemme, muokkaamme ja luomme valmiit Instagram- ja Facebook-postit.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex gap-6">
-            <div className="flex-shrink-0">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-signal text-white font-bold">
-                3
-              </div>
-            </div>
-            <div>
-              <h3 className="font-bold text-ink mb-2">Hyväksyntä</h3>
-              <p className="text-ink/70">
-                Tarkistit postit. Voit palauttaa muokkauspyyntöjä — yksi kierros mukaan lukien.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex gap-6">
-            <div className="flex-shrink-0">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-signal text-white font-bold">
-                4
-              </div>
-            </div>
-            <div>
-              <h3 className="font-bold text-ink mb-2">Julkaisu ja optimointi</h3>
-              <p className="text-ink/70">
-                Me ajastamme ja julkaisemme sopiviin aikoihin. Seuraamme tuloksia ja optimoimme tarvittaessa.
-              </p>
-            </div>
-          </div>
+          <ol className="border-t border-ghost/35 lg:col-span-8">
+            {steps.map((step) => (
+              <li
+                key={step.number}
+                className="grid gap-4 border-b border-ghost/25 py-6 sm:grid-cols-[60px_110px_1fr]"
+              >
+                <span className="text-xs font-black tracking-[0.14em] text-signal">
+                  {step.number}
+                </span>
+                <span className="text-xs font-black uppercase tracking-[0.14em] text-ghost/55">
+                  {step.owner}
+                </span>
+                <div>
+                  <h3 className="text-xl font-black text-ghost">{step.title}</h3>
+                  <p className="mt-2 max-w-xl text-sm leading-relaxed text-ghost/65">
+                    {step.body}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ol>
         </div>
       </Container>
     </section>
