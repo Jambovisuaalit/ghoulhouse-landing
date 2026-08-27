@@ -10,7 +10,7 @@ export default function FinalCTA({ onCtaClick }: FinalCTAProps) {
   return (
     <section className="overflow-hidden bg-signal py-16 text-white md:py-24">
       <Container>
-        <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-8">
             <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-white/70">
               Seuraava askel
