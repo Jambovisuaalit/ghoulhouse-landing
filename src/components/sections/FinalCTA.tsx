@@ -1,5 +1,6 @@
 import Button from '@/components/ui/Button';
 import Container from '@/components/ui/Container';
+import { siteConfig } from '@/config/site';
 
 interface FinalCTAProps {
   onCtaClick: () => void;
@@ -7,24 +8,37 @@ interface FinalCTAProps {
 
 export default function FinalCTA({ onCtaClick }: FinalCTAProps) {
   return (
-    <section className="bg-signal py-16 md:py-24">
+    <section className="overflow-hidden bg-signal py-16 text-white md:py-24">
       <Container>
-        <div className="max-w-2xl">
-          <h2 className="text-white mb-6">Valmis aloittamaan?</h2>
-          <p className="text-white/90 text-lg mb-8 leading-relaxed">
-            Lähetä lyhyt pyyntö. Me lähemme 2 kustomoitua sisältöesimerkkiä yrityksestäsi—ilman maksuvelvoitetta.
-          </p>
-          <Button
-            variant="primary"
-            size="lg"
-            onClick={onCtaClick}
-            className="bg-white text-signal border-white hover:bg-ghost"
-          >
-            Pyydä 2 sisältöesimerkkiä
-          </Button>
-          <p className="text-white/80 text-sm mt-4">
-            Vastaamme yleensä 24 tunnin sisällä.
-          </p>
+        <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
+          <div className="lg:col-span-8">
+            <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-white/70">
+              Seuraava askel
+            </p>
+            <h2 className="font-display text-[clamp(3.5rem,8vw,9rem)] font-black uppercase leading-[0.8] tracking-[-0.045em]">
+              Näytä meille
+              <span className="block">työsi.</span>
+            </h2>
+          </div>
+
+          <div className="lg:col-span-4">
+            <p className="mb-6 max-w-md text-base leading-relaxed text-white/85">
+              Lähetä yrityksen tiedot ja muutama työmaakuva. Saat kaksi
+              yrityskohtaista konseptiesimerkkiä siitä, miltä sisältö voisi
+              näyttää.
+            </p>
+            <Button
+              variant="secondary"
+              size="lg"
+              onClick={onCtaClick}
+              className="w-full border-white bg-white text-ink hover:border-ink md:w-auto"
+            >
+              {siteConfig.cta.primary}
+            </Button>
+            <p className="mt-4 text-xs font-bold uppercase tracking-[0.12em] text-white/70">
+              Ei sitoutumista · konseptiesimerkki ei ole asiakastyö
+            </p>
+          </div>
         </div>
       </Container>
     </section>
