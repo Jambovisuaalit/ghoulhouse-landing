@@ -33,7 +33,7 @@ export default function Mechanism() {
         <div className="mt-12 grid border-2 border-ghost/35 lg:grid-cols-[1fr_0.55fr_1fr]">
           <figure className="relative min-h-[340px] border-b border-ghost/35 lg:border-b-0 lg:border-r">
             <Image
-              src="/hero-renovation.svg"
+              src="/hero-renovation-clean.svg"
               alt="Raakamateriaalia havainnollistava konseptikuva"
               fill
               sizes="(max-width: 1023px) 100vw, 38vw"
