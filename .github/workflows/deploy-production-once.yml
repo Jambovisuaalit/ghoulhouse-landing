@@ -1,0 +1,83 @@
+name: Deploy GhoulHouse production once
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/deploy-production-once.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ghoulhouse-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    env:
+      VERCEL_ORG_ID: team_zwsvoePoiBeskRuyl2Iar883
+      VERCEL_PROJECT_ID: prj_Xf2QTX7hkMQhdhGdcyQyMTv78weK
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+    steps:
+      - name: Checkout validated main
+        uses: actions/checkout@v4
+
+      - name: Verify Vercel credentials
+        shell: bash
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "::error::VERCEL_TOKEN secret is not available to this repository."
+            exit 1
+          fi
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Re-run production validation
+        run: |
+          npm audit --omit=dev --audit-level=high
+          npm run typecheck
+          npm run lint
+          npm run build
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull production project settings
+        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+
+      - name: Build for Vercel production
+        run: vercel build --prod --token="$VERCEL_TOKEN"
+
+      - name: Deploy prebuilt output to production
+        id: deploy
+        shell: bash
+        run: |
+          url="$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN")"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Production deployment: $url"
+
+      - name: Verify deployed homepage
+        shell: bash
+        run: |
+          url="${{ steps.deploy.outputs.url }}"
+          for i in {1..20}; do
+            html="$(curl --fail --silent --show-error "$url" || true)"
+            if printf '%s' "$html" | grep -q "TYÖMAAKUVAT SISÄÄN" && \
+               printf '%s' "$html" | grep -q "490"; then
+              echo "GhoulHouse production smoke check passed."
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "::error::Deployment did not return the validated GhoulHouse P0 homepage."
+          exit 1
