@@ -29,14 +29,19 @@ export default function Navigation({ onCtaClick }: NavigationProps) {
           aria-label="Päänavigaatio"
         >
           <Link href="#top" aria-label="GhoulHouse — sivun alku">
-            <Image
-              src="/logo-horizontal.svg"
-              alt="GhoulHouse"
-              width={1400}
-              height={460}
-              priority
-              className="h-auto w-[150px] md:w-[172px]"
-            />
+            <span className="flex items-center gap-2.5">
+              <Image
+                src="/mark-color.svg"
+                alt=""
+                width={42}
+                height={42}
+                priority
+                className="h-9 w-9 md:h-10 md:w-10"
+              />
+              <span className="font-display text-2xl uppercase leading-none tracking-[-0.02em] text-ink md:text-[1.7rem]">
+                GhoulHouse
+              </span>
+            </span>
           </Link>
 
           <div className="hidden items-center gap-7 md:flex">
