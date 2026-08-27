@@ -9,7 +9,7 @@ export default function Mechanism() {
       aria-labelledby="mechanism-title"
     >
       <Container>
-        <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-8">
             <p className="mb-5 text-xs font-bold uppercase tracking-[0.18em] text-signal">
               Signature / RAW → FINAL
