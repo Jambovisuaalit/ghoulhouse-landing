@@ -8,34 +8,37 @@ interface FinalCTAProps {
 
 export default function FinalCTA({ onCtaClick }: FinalCTAProps) {
   return (
-    <section className="overflow-hidden bg-signal py-16 text-white md:py-24">
+    <section className="overflow-hidden border-t-2 border-signal bg-ink py-16 text-ghost md:py-20">
       <Container>
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-end">
-          <div className="lg:col-span-8">
-            <p className="type-label mb-4 text-white/75">
+        <div className="grid grid-cols-1 gap-9 lg:grid-cols-12 lg:items-end">
+          <div className="lg:col-span-7">
+            <p className="type-label mb-4 text-signal">
               Seuraava askel
             </p>
-            <h2 className="type-display max-w-[9ch] text-white">
+            <h2 className="type-display max-w-[9ch] text-ghost">
               Näytä meille
               <span className="block">työsi.</span>
             </h2>
           </div>
 
-          <div className="lg:col-span-4">
-            <p className="type-editorial mb-6 max-w-md text-white/90">
+          <div className="border-t border-ghost/25 pt-6 lg:col-span-4 lg:col-start-9">
+            <p className="type-editorial mb-6 max-w-md text-ghost/75">
               Lähetä yrityksen tiedot ja verkkosivu tai Instagram. Saat kaksi
               yrityskohtaista konseptiesimerkkiä siitä, miltä sisältö voisi
-              näyttää. Jos tarvitsemme työmaakuvia, pyydämme ne erikseen.
+              näyttää. Työmaakuvia pyydämme vain tarvittaessa.
             </p>
+
             <Button
-              variant="secondary"
+              variant="primary"
               size="lg"
               onClick={onCtaClick}
-              className="w-full border-white bg-white text-ink hover:border-ink md:w-auto"
+              className="w-full justify-between text-left md:w-auto md:min-w-[310px]"
             >
-              {siteConfig.cta.primary}
+              <span>{siteConfig.cta.primary}</span>
+              <span aria-hidden="true">→</span>
             </Button>
-            <p className="type-caption mt-4 uppercase tracking-[0.06em] text-white/75">
+
+            <p className="type-caption mt-4 uppercase tracking-[0.06em] text-ghost/65">
               Ei sitoutumista · konseptiesimerkki ei ole asiakastyö
             </p>
           </div>
