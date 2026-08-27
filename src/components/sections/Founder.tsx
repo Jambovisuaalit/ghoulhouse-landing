@@ -15,7 +15,7 @@ export default function Founder() {
                 <span className="type-label text-signal">
                   Founder portrait
                 </span>
-                <span className="type-caption uppercase tracking-[0.06em] text-ink/55">
+                <span className="type-caption uppercase tracking-[0.06em] text-ink/65">
                   Approved image slot
                 </span>
               </div>
