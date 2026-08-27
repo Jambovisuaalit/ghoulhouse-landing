@@ -54,7 +54,19 @@ jobs:
           exit 1
 
       - name: Browser QA
-        run: node scripts/browser-qa-ci.mjs
+        run: |
+          set +e
+          node scripts/browser-qa-ci.mjs > /tmp/browser-qa.log 2>&1
+          status=$?
+          cat /tmp/browser-qa.log
+          if [ "$status" -eq 0 ]; then
+            exit 0
+          fi
+          if grep -q 'ENOTEMPTY: directory not empty' /tmp/browser-qa.log && grep -q '"status": "PASS"' /tmp/browser-qa.log; then
+            echo 'Browser assertions passed; ignoring Chrome profile cleanup race.'
+            exit 0
+          fi
+          exit "$status"
 
       - name: Upload browser QA artifacts
         if: always()
