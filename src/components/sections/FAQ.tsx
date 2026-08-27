@@ -49,10 +49,10 @@ export default function FAQ() {
       <Container>
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-signal">
+            <p className="type-label mb-4 text-signal">
               UKK
             </p>
-            <h2 className="font-display text-[clamp(2.8rem,5vw,5.5rem)] font-black uppercase leading-[0.9] tracking-[-0.04em] text-ink">
+            <h2 className="type-section-title max-w-[10ch] text-ink">
               Selkeät vastaukset.
             </h2>
           </div>
@@ -64,10 +64,10 @@ export default function FAQ() {
                 className="group border-b border-ink/25"
               >
                 <summary className="grid cursor-pointer list-none grid-cols-[52px_1fr_auto] gap-4 py-5 text-left">
-                  <span className="text-xs font-black text-signal">
+                  <span className="type-label text-signal">
                     {String(index + 1).padStart(2, '0')}
                   </span>
-                  <span className="font-bold text-ink">{item.question}</span>
+                  <span className="type-ui text-ink">{item.question}</span>
                   <span
                     aria-hidden="true"
                     className="text-xl font-black text-ink transition-transform group-open:rotate-45"
@@ -75,7 +75,7 @@ export default function FAQ() {
                     +
                   </span>
                 </summary>
-                <p className="max-w-2xl pb-6 pl-[68px] text-sm leading-relaxed text-ink/65">
+                <p className="max-w-[62ch] pb-6 pl-[68px] text-[0.95rem] leading-[1.6] text-ink/70">
                   {item.answer}
                 </p>
               </details>
