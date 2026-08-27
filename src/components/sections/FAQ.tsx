@@ -34,7 +34,7 @@ const faqItems = [
   {
     question: 'Mitä tapahtuu palvelujaksosta 4 alkaen?',
     answer:
-      'Asiakkuus alkaa START-mallilla palvelujaksoiksi 1–3 hintaan 490 € + ALV / 30 päivää. Palvelujaksosta 4 alkaen palvelu jatkuu MANAGED-mallilla hintaan 790 € + ALV / 30 päivää. Kyse on asiakkuuden etenemisestä, ei kahdesta rinnakkaisesta aloituspaketista.',
+      'Asiakkuus alkaa START-mallilla palvelujaksoiksi 1–3 hintaan 490 € + ALV / 30 päivää. Palvelujaksosta 4 alkaen sama asiakkuus jatkuu MANAGED-mallilla hintaan 790 € + ALV / 30 päivää. MANAGED sisältää START-palvelun lisäksi jatkuvan optimoinnin: parhaiden aiheiden, formaattien, CTA:iden ja julkaisurytmin analyysin sekä sisältöpankin hallinnan, lyhyen viikkotilanteen, rajatun community managementin ja yhden konkreettisen kehityssuosituksen kuukaudessa. Kyse ei ole kahdesta rinnakkaisesta aloituspaketista.',
   },
   {
     question: 'Lupaako GhoulHouse liidejä tai myyntiä?',
