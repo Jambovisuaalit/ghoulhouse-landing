@@ -6,7 +6,7 @@ export default function Founder() {
   return (
     <section className="border-y-2 border-ink bg-ghost py-16 md:py-24">
       <Container>
-        <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-center">
           <div className="relative min-h-[300px] overflow-hidden border-2 border-ink bg-bone lg:col-span-5">
             <Image
               src="/mark-color.svg"
