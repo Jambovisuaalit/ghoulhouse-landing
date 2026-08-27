@@ -1,11 +1,11 @@
 import type { Metadata, Viewport } from 'next';
-import { headers } from 'next/headers';
 import { Anton } from 'next/font/google';
 import { siteConfig } from '@/config/site';
 import {
   SITE_URL,
+  isIndexingApproved,
+  isProductionDeployment,
   productionUrl,
-  shouldIndexRequest,
 } from '@/lib/seo';
 import './globals.css';
 
@@ -22,74 +22,60 @@ const description =
 const socialDescription =
   'Teette hyvää työtä. Me pidämme huolen, että asiakkaat myös näkevät sen.';
 
-export async function generateMetadata(): Promise<Metadata> {
-  const requestHeaders = await headers();
-  const requestHost =
-    requestHeaders.get('x-forwarded-host') || requestHeaders.get('host');
-  const indexable = shouldIndexRequest(requestHost);
+const indexable = isProductionDeployment() && isIndexingApproved();
 
-  return {
+export const metadata: Metadata = {
+  title,
+  description,
+  metadataBase: new URL(SITE_URL),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
     title,
-    description,
-    metadataBase: new URL(SITE_URL),
-    alternates: {
-      canonical: '/',
-    },
-    icons: {
-      icon: [
-        {
-          url: '/mark-color.svg',
-          type: 'image/svg+xml',
-        },
-      ],
-      shortcut: '/mark-color.svg',
-    },
-    openGraph: {
-      title,
-      description: socialDescription,
-      url: '/',
-      siteName: 'GhoulHouse',
-      locale: 'fi_FI',
-      type: 'website',
-      images: [
-        {
-          url: '/opengraph-image',
-          width: 1200,
-          height: 630,
-          alt: 'GhoulHouse — Työmaakuvat sisään. Valmis some ulos.',
-        },
-      ],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description: socialDescription,
-      images: ['/opengraph-image'],
-    },
-    robots: indexable
-      ? {
+    description: socialDescription,
+    url: '/',
+    siteName: 'GhoulHouse',
+    locale: 'fi_FI',
+    type: 'website',
+    images: [
+      {
+        url: '/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'GhoulHouse — Työmaakuvat sisään. Valmis some ulos.',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title,
+    description: socialDescription,
+    images: ['/opengraph-image'],
+  },
+  robots: indexable
+    ? {
+        index: true,
+        follow: true,
+        googleBot: {
           index: true,
           follow: true,
-          googleBot: {
-            index: true,
-            follow: true,
-            'max-image-preview': 'large',
-            'max-snippet': -1,
-            'max-video-preview': -1,
-          },
-        }
-      : {
+          'max-image-preview': 'large',
+          'max-snippet': -1,
+          'max-video-preview': -1,
+        },
+      }
+    : {
+        index: false,
+        follow: false,
+        nocache: true,
+        googleBot: {
           index: false,
           follow: false,
-          nocache: true,
-          googleBot: {
-            index: false,
-            follow: false,
-            noimageindex: true,
-          },
+          noimageindex: true,
         },
-  };
-}
+      },
+};
 
 export const viewport: Viewport = {
   width: 'device-width',
