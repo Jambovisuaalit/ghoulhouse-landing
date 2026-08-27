@@ -430,10 +430,11 @@ try {
     `(() => {
       const section = document.querySelector('[data-scroll-film]');
       const sticky = section?.querySelector('.mechanism-film__sticky');
+      const heading = section?.querySelector('.mechanism-film__header h3');
       const viewport = section?.querySelector('.mechanism-film__viewport');
       const track = section?.querySelector('.mechanism-film__track');
       const frame = section?.querySelector('.mechanism-film__frame');
-      if (!section || !sticky || !viewport || !track || !frame) return null;
+      if (!section || !sticky || !heading || !viewport || !track || !frame) return null;
       const matrix = new DOMMatrixReadOnly(getComputedStyle(track).transform);
       const horizontalTravel = Math.max(0, track.scrollWidth - viewport.clientWidth);
       const stickyRect = sticky.getBoundingClientRect();
@@ -451,6 +452,8 @@ try {
         frameTop: frameRect.top,
         frameBottom: frameRect.bottom,
         frameHeight: frameRect.height,
+        headingClientWidth: heading.clientWidth,
+        headingScrollWidth: heading.scrollWidth,
       };
     })()`
   );
@@ -483,6 +486,10 @@ try {
       filmMid.frameBottom <= filmMid.stickyBottom + 1 &&
       filmMid.frameHeight >= 300,
     `Desktop filmstrip content is clipped or outside sticky viewport: ${JSON.stringify(filmMid)}.`
+  );
+  assert(
+    filmMid.headingScrollWidth <= filmMid.headingClientWidth + 1,
+    `Desktop filmstrip heading overflows its box: ${filmMid.headingScrollWidth}px > ${filmMid.headingClientWidth}px.`
   );
 
   const filmShot = await client.send('Page.captureScreenshot', {
