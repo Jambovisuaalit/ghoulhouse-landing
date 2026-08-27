@@ -195,12 +195,12 @@ export default function ContactModal({ onClose }: ContactModalProps) {
       >
         <div className="sticky top-0 z-10 flex items-start justify-between border-b-2 border-ink bg-ghost px-4 py-4 sm:p-6">
           <div className="pr-4">
-            <p className="text-[0.6rem] font-black uppercase tracking-[0.16em] text-signal">
+            <p className="type-label text-signal">
               2 yrityskohtaista sisältöesimerkkiä
             </p>
             <h2
               id="contact-modal-title"
-              className="mt-2 font-display text-[clamp(2rem,7vw,3.2rem)] font-black uppercase leading-[0.92] tracking-[-0.03em] text-ink"
+              className="mt-2 text-[clamp(1.9rem,6vw,2.8rem)] font-extrabold uppercase leading-[0.95] tracking-[-0.035em] text-ink"
             >
               {siteConfig.cta.primary}
             </h2>
@@ -218,37 +218,37 @@ export default function ContactModal({ onClose }: ContactModalProps) {
 
         {status === 'success' ? (
           <div className="p-5 sm:p-8" aria-live="polite">
-            <p className="text-[0.62rem] font-black uppercase tracking-[0.16em] text-signal">
+            <p className="type-label text-signal">
               Pyyntö vastaanotettu
             </p>
-            <h3 className="mt-3 font-display text-4xl font-black uppercase leading-none text-ink sm:text-5xl">
+            <h3 className="mt-3 text-3xl font-extrabold uppercase leading-[0.95] tracking-[-0.03em] text-ink sm:text-4xl">
               Seuraavaksi.
             </h3>
 
             <div className="mt-6 border-y-2 border-ink">
               <div className="grid grid-cols-[42px_1fr] gap-3 border-b border-ink/20 py-4">
-                <span className="text-xs font-black text-signal">01</span>
-                <p className="text-sm font-bold leading-relaxed text-ink">
+                <span className="type-label text-signal">01</span>
+                <p className="type-ui text-ink">
                   Käymme läpi antamasi verkkosivun tai Instagram-profiilin.
                 </p>
               </div>
               <div className="grid grid-cols-[42px_1fr] gap-3 border-b border-ink/20 py-4">
-                <span className="text-xs font-black text-signal">02</span>
-                <p className="text-sm font-bold leading-relaxed text-ink">
+                <span className="type-label text-signal">02</span>
+                <p className="type-ui text-ink">
                   Jos esimerkkien tekemiseen tarvitaan työmaakuvia, pyydämme ne
                   erikseen antamaasi sähköpostiin.
                 </p>
               </div>
               <div className="grid grid-cols-[42px_1fr] gap-3 py-4">
-                <span className="text-xs font-black text-signal">03</span>
-                <p className="text-sm font-bold leading-relaxed text-ink">
+                <span className="type-label text-signal">03</span>
+                <p className="type-ui text-ink">
                   Saat kaksi yrityskohtaista konseptiesimerkkiä siitä, miltä
                   GhoulHouse-sisältö voisi näyttää.
                 </p>
               </div>
             </div>
 
-            <p className="mt-5 max-w-lg text-xs leading-relaxed text-ink/60">
+            <p className="type-caption mt-5 max-w-lg text-ink/65">
               Mahdollinen materiaalipyyntö ja esimerkkien eteneminen
               vahvistetaan erikseen sähköpostitse.
             </p>
@@ -273,13 +273,13 @@ export default function ContactModal({ onClose }: ContactModalProps) {
               id="contact-modal-description"
               className="border-b border-ink/20 pb-5"
             >
-              <p className="max-w-xl text-sm leading-relaxed text-ink/70">
+              <p className="type-editorial max-w-xl text-ink/70">
                 Anna neljä perustietoa. Verkkosivu tai Instagram toimii
                 ensimmäisenä lähdemateriaalina — työmaakuvia ei tarvitse
                 lähettää tässä vaiheessa.
               </p>
 
-              <div className="mt-4 grid grid-cols-1 gap-2 text-[0.58rem] font-black uppercase tracking-[0.12em] text-ink/50 sm:grid-cols-3">
+              <div className="type-caption mt-4 grid grid-cols-1 gap-2 uppercase tracking-[0.05em] text-ink/60 sm:grid-cols-3">
                 <span>01 · Lähetä tiedot</span>
                 <span>02 · Katsomme yrityksen</span>
                 <span>03 · Pyydämme kuvat tarvittaessa</span>
@@ -301,7 +301,7 @@ export default function ContactModal({ onClose }: ContactModalProps) {
               disabled={status === 'submitting'}
               className="mt-6"
             >
-              <legend className="mb-4 text-[0.62rem] font-black uppercase tracking-[0.16em] text-signal">
+              <legend className="type-label mb-4 text-signal">
                 Tarvitsemme nämä
               </legend>
 
@@ -409,9 +409,9 @@ export default function ContactModal({ onClose }: ContactModalProps) {
               </div>
 
               <details className="group mt-5 border-y border-ink/20">
-                <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 py-3 text-sm font-bold text-ink [&::-webkit-details-marker]:hidden">
+                <summary className="type-ui flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 py-3 text-ink [&::-webkit-details-marker]:hidden">
                   <span>Puhelin tai viesti</span>
-                  <span className="text-xs font-black uppercase tracking-[0.12em] text-ink/45">
+                  <span className="type-label text-ink/55">
                     valinnainen
                   </span>
                 </summary>
@@ -465,7 +465,7 @@ export default function ContactModal({ onClose }: ContactModalProps) {
 
             {status === 'error' && errorMessage && (
               <div
-                className="mt-5 border-2 border-signal bg-white p-4 text-sm font-bold text-ink"
+                className="type-ui mt-5 border-2 border-signal bg-white p-4 text-ink"
                 role="alert"
                 aria-live="assertive"
               >
@@ -492,7 +492,7 @@ export default function ContactModal({ onClose }: ContactModalProps) {
                 </span>
               </button>
 
-              <div className="mt-4 grid gap-2 text-xs leading-relaxed text-ink/55 sm:grid-cols-[1fr_auto] sm:items-start sm:gap-6">
+              <div className="type-caption mt-4 grid gap-2 text-ink/60 sm:grid-cols-[1fr_auto] sm:items-start sm:gap-6">
                 <p>
                   Antamiasi tietoja käytetään sisältöesimerkkipyynnön
                   käsittelyyn ja siihen liittyvään yhteydenottoon.
@@ -526,7 +526,7 @@ function Field({
 }) {
   return (
     <div>
-      <label htmlFor={id} className="mb-1.5 block text-sm font-bold text-ink">
+      <label htmlFor={id} className="type-ui mb-1.5 block text-ink">
         {label}
         {required ? ' *' : ''}
       </label>
@@ -536,7 +536,7 @@ function Field({
       {hint && (
         <p
           id={`${id}-hint`}
-          className="mt-1.5 text-[0.7rem] leading-relaxed text-ink/50"
+          className="type-caption mt-1.5 text-ink/60"
         >
           {hint}
         </p>
@@ -545,7 +545,7 @@ function Field({
       {error && (
         <p
           id={`${id}-error`}
-          className="mt-1.5 text-xs font-bold text-signal"
+          className="type-caption mt-1.5 font-bold text-signal"
         >
           {error}
         </p>
