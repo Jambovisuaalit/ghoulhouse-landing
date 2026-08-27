@@ -411,7 +411,7 @@ export default function ContactModal({ onClose }: ContactModalProps) {
               <details className="group mt-5 border-y border-ink/20">
                 <summary className="type-ui flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 py-3 text-ink [&::-webkit-details-marker]:hidden">
                   <span>Puhelin tai viesti</span>
-                  <span className="type-label text-ink/55">
+                  <span className="type-label text-ink/65">
                     valinnainen
                   </span>
                 </summary>
