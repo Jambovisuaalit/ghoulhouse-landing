@@ -22,20 +22,48 @@ export default function ContactModal({ onClose }: ContactModalProps) {
   const hasStarted = useRef(false);
   const firstInputRef = useRef<HTMLInputElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     previousFocus.current = document.activeElement as HTMLElement | null;
     firstInputRef.current?.focus();
 
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+        return;
+      }
+
+      if (event.key !== 'Tab' || !dialogRef.current) return;
+
+      const focusable = Array.from(
+        dialogRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), input:not([disabled]):not([tabindex="-1"]), textarea:not([disabled]), select:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'
+        )
+      ).filter((element) => !element.hasAttribute('hidden'));
+
+      if (focusable.length === 0) {
+        event.preventDefault();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
 
-    document.addEventListener('keydown', handleEscape);
+    document.addEventListener('keydown', handleKeyDown);
     document.body.style.overflow = 'hidden';
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = '';
       previousFocus.current?.focus();
     };
@@ -99,12 +127,16 @@ export default function ContactModal({ onClose }: ContactModalProps) {
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="contact-modal-title"
-      aria-describedby="contact-modal-description"
+      aria-hidden="false"
     >
-      <div className="max-h-[94svh] w-full max-w-2xl overflow-y-auto border-2 border-ink bg-ghost shadow-2xl">
+      <div
+        ref={dialogRef}
+        className="max-h-[94svh] w-full max-w-2xl overflow-y-auto border-2 border-ink bg-ghost shadow-2xl"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="contact-modal-title"
+        aria-describedby="contact-modal-description"
+      >
         <div className="sticky top-0 z-10 flex items-start justify-between border-b-2 border-ink bg-ghost p-5 md:p-7">
           <div>
             <p className="text-[0.65rem] font-bold uppercase tracking-[0.16em] text-signal">
