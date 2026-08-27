@@ -864,7 +864,7 @@ button { color: inherit; }
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   .mechanism-track {
     min-height: auto;
   }
@@ -882,7 +882,9 @@ button { color: inherit; }
   .mechanism-frame:nth-child(2) {
     transform: none;
   }
+}
 
+@media (max-width: 767px) {
   .display-title {
     font-size: clamp(2.55rem, 12vw, 4rem);
   }
