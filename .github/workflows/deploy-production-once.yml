@@ -91,6 +91,11 @@ jobs:
             sleep 3
           done
 
+          if printf '%s' "$html" | grep -Eqi '790[[:space:]]*€|MANAGED|Palvelujaksosta 4'; then
+            echo "::error::Preview contains obsolete 490→790 pricing lifecycle."
+            exit 1
+          fi
+
           api_response="$(vercel curl /api/leads \
             --deployment "$url" \
             --token="$VERCEL_TOKEN" \
@@ -132,7 +137,12 @@ jobs:
             html="$(vercel curl / --deployment "$url" --token="$VERCEL_TOKEN" 2>/dev/null || true)"
             if printf '%s' "$html" | grep -q "TYÖMAAKUVAT SISÄÄN" && \
                printf '%s' "$html" | grep -q "490" && \
+               printf '%s' "$html" | grep -q "SOME 12" && \
                printf '%s' "$html" | grep -q "KONSEPTIESIMERKKI — EI ASIAKASTYÖ"; then
+              if printf '%s' "$html" | grep -Eqi '790[[:space:]]*€|MANAGED|Palvelujaksosta 4'; then
+                echo "::error::Production candidate contains obsolete 490→790 pricing lifecycle."
+                exit 1
+              fi
               exit 0
             fi
             sleep 3
@@ -167,6 +177,12 @@ jobs:
           printf '%s' "$html" | grep -q "TYÖMAAKUVAT SISÄÄN"
           printf '%s' "$html" | grep -q "Yksi työmaa. Monta kulmaa."
           printf '%s' "$html" | grep -q "KONSEPTIESIMERKKI — EI ASIAKASTYÖ"
+          printf '%s' "$html" | grep -q "SOME 12"
+
+          if printf '%s' "$html" | grep -Eqi '790[[:space:]]*€|MANAGED|Palvelujaksosta 4'; then
+            echo "::error::Canonical homepage contains obsolete 490→790 pricing lifecycle."
+            exit 1
+          fi
 
           printf '%s' "$headers" | grep -qi '^content-security-policy-report-only:'
           printf '%s' "$headers" | grep -qi '^cross-origin-opener-policy: same-origin'
