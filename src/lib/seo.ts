@@ -1,6 +1,9 @@
 import { siteConfig } from '@/config/site';
-export const SITE_URL = 'https://ghoulhouse.fi';
-export const SITE_HOST = 'ghoulhouse.fi';
+
+export const SITE_URL = siteConfig.company.domain;
+export const SITE_HOST = new URL(SITE_URL).hostname;
+
+const MANAGED_HOSTS = new Set(['ghoulhouse.fi', 'www.ghoulhouse.fi']);
 
 function normalizeHost(value: string | null | undefined) {
   return (value || '')
@@ -25,8 +28,12 @@ export function isCanonicalHost(value: string | null | undefined) {
   return normalizeHost(value) === SITE_HOST;
 }
 
-export function isWwwHost(value: string | null | undefined) {
-  return normalizeHost(value) === `www.${SITE_HOST}`;
+export function shouldRedirectToCanonical(
+  value: string | null | undefined
+) {
+  const host = normalizeHost(value);
+
+  return MANAGED_HOSTS.has(host) && host !== SITE_HOST;
 }
 
 export function shouldIndexRequest(value: string | null | undefined) {
