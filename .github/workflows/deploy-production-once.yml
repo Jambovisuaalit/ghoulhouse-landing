@@ -91,8 +91,11 @@ jobs:
             sleep 3
           done
 
-          if printf '%s' "$html" | grep -Eqi '790[[:space:]]*€|MANAGED|Palvelujaksosta 4'; then
-            echo "::error::Preview contains obsolete 490→790 pricing lifecycle."
+          printf '%s' "$html" | grep -q 'data-offer-name="SOME 12"'
+          printf '%s' "$html" | grep -q 'data-offer-price="490"'
+
+          if printf '%s' "$html" | grep -Eqi 'MANAGED|Palvelujaksosta 4'; then
+            echo "::error::Preview contains obsolete pricing lifecycle."
             exit 1
           fi
 
@@ -158,11 +161,11 @@ jobs:
           for i in {1..20}; do
             html="$(vercel curl / --deployment "$url" --token="$VERCEL_TOKEN" 2>/dev/null || true)"
             if printf '%s' "$html" | grep -q "TYÖMAAKUVAT SISÄÄN" && \
-               printf '%s' "$html" | grep -q "490" && \
-               printf '%s' "$html" | grep -q "SOME 12" && \
+               printf '%s' "$html" | grep -q 'data-offer-name="SOME 12"' && \
+               printf '%s' "$html" | grep -q 'data-offer-price="490"' && \
                printf '%s' "$html" | grep -q "KONSEPTIESIMERKKI — EI ASIAKASTYÖ"; then
-              if printf '%s' "$html" | grep -Eqi '790[[:space:]]*€|MANAGED|Palvelujaksosta 4'; then
-                echo "::error::Production candidate contains obsolete 490→790 pricing lifecycle."
+              if printf '%s' "$html" | grep -Eqi 'MANAGED|Palvelujaksosta 4'; then
+                echo "::error::Production candidate contains obsolete pricing lifecycle."
                 exit 1
               fi
               exit 0
@@ -199,10 +202,11 @@ jobs:
           printf '%s' "$html" | grep -q "TYÖMAAKUVAT SISÄÄN"
           printf '%s' "$html" | grep -q "Yksi työmaa. Monta kulmaa."
           printf '%s' "$html" | grep -q "KONSEPTIESIMERKKI — EI ASIAKASTYÖ"
-          printf '%s' "$html" | grep -q "SOME 12"
+          printf '%s' "$html" | grep -q 'data-offer-name="SOME 12"'
+          printf '%s' "$html" | grep -q 'data-offer-price="490"'
 
-          if printf '%s' "$html" | grep -Eqi '790[[:space:]]*€|MANAGED|Palvelujaksosta 4'; then
-            echo "::error::Canonical homepage contains obsolete 490→790 pricing lifecycle."
+          if printf '%s' "$html" | grep -Eqi 'MANAGED|Palvelujaksosta 4'; then
+            echo "::error::Canonical homepage contains obsolete pricing lifecycle."
             exit 1
           fi
 
