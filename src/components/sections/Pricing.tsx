@@ -56,7 +56,12 @@ export default function Pricing() {
           </div>
 
           <div className="lg:col-span-8">
-            <article className="border-y-2 border-ink">
+            <article
+              className="border-y-2 border-ink"
+              data-offer-card
+              data-offer-name={start.name}
+              data-offer-price={start.price}
+            >
               <div className="grid grid-cols-1 gap-6 py-7 sm:py-8 md:grid-cols-[190px_1fr] md:gap-8">
                 <div>
                   <p className="type-label text-signal">{start.lifecycle}</p>
