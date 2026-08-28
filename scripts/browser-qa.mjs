@@ -263,6 +263,7 @@ try {
         };
         const hero = document.querySelector('#top');
         const h1 = document.querySelector('h1');
+        const offerCard = document.querySelector('[data-offer-card]');
         const heroButtons = [...(hero?.querySelectorAll('button') || [])].filter(visible);
         const cta = heroButtons.find((element) => element.textContent?.includes('PYYDÄ 2 SISÄLTÖESIMERKKIÄ'));
         const price = [...(hero?.querySelectorAll('p') || [])].find(
@@ -287,6 +288,8 @@ try {
           h1Text: h1?.textContent?.replace(/\\s+/g, ' ').trim() || '',
           heroText: hero?.textContent?.replace(/\\s+/g, ' ').trim() || '',
           bodyText: document.body.innerText.replace(/\\s+/g, ' ').trim(),
+          offerName: offerCard?.getAttribute('data-offer-name') || '',
+          offerPrice: offerCard?.getAttribute('data-offer-price') || '',
           viewport: { width: innerWidth, height: innerHeight },
           scrollWidth: document.documentElement.scrollWidth,
           h1Rect: rect(h1),
@@ -343,8 +346,12 @@ try {
       `${viewport.width}px: SOME 12 price missing from hero.`
     );
     assert(
-      metrics.bodyText.includes('SOME 12'),
-      `${viewport.width}px: SOME 12 offer label missing from rendered page.`
+      metrics.offerName === 'SOME 12',
+      `${viewport.width}px: pricing card offer name must be SOME 12, got "${metrics.offerName}".`
+    );
+    assert(
+      metrics.offerPrice === '490',
+      `${viewport.width}px: pricing card offer price must be 490, got "${metrics.offerPrice}".`
     );
     assert(
       !metrics.bodyText.includes('790 €') &&
