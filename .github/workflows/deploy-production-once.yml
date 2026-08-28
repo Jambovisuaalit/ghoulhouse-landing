@@ -1,6 +1,7 @@
 name: Deploy GhoulHouse production once
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
