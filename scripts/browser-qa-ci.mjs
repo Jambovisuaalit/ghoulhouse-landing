@@ -303,6 +303,7 @@ try {
         const price = [...(hero?.querySelectorAll('*') || [])].find(
           (el) => visible(el) && el.children.length === 0 && el.textContent?.includes('490 €')
         );
+        const offerCard = document.querySelector('[data-offer-card]');
         const rect = (el) => {
           if (!el) return null;
           const r = el.getBoundingClientRect();
@@ -314,6 +315,9 @@ try {
           heroText: hero?.textContent?.replace(/\\s+/g, ' ').trim() || '',
           ctaText: cta?.textContent?.replace(/\\s+/g, ' ').trim() || '',
           priceText: price?.textContent?.replace(/\\s+/g, ' ').trim() || '',
+          offerName: offerCard?.getAttribute('data-offer-name') || '',
+          offerPrice: offerCard?.getAttribute('data-offer-price') || '',
+          bodyText: document.body.innerText.replace(/\\s+/g, ' ').trim(),
           brandText: brand?.textContent?.replace(/\\s+/g, ' ').trim() || '',
           brandRect: rect(brand),
           h1Rect: rect(h1),
@@ -338,7 +342,21 @@ try {
     );
     assert(metrics.brandText.toUpperCase() === 'GHOULHOUSE', `${viewport.width}px: full GhoulHouse wordmark is missing.`);
     assert(metrics.ctaText.includes('PYYDÄ 2 SISÄLTÖESIMERKKIÄ'), `${viewport.width}px: CTA missing.`);
-    assert(metrics.priceText.includes('490 €'), `${viewport.width}px: START price missing.`);
+    assert(metrics.priceText.includes('490 €'), `${viewport.width}px: SOME 12 price missing.`);
+    assert(
+      metrics.offerName === 'SOME 12',
+      `${viewport.width}px: pricing card offer name must be SOME 12, got "${metrics.offerName}".`
+    );
+    assert(
+      metrics.offerPrice === '490',
+      `${viewport.width}px: pricing card offer price must be 490, got "${metrics.offerPrice}".`
+    );
+    assert(
+      !metrics.bodyText.includes('790 €') &&
+        !metrics.bodyText.includes('MANAGED') &&
+        !metrics.bodyText.toLowerCase().includes('palvelujaksosta 4'),
+      `${viewport.width}px: obsolete 490→790 pricing lifecycle reappeared in rendered page.`
+    );
     assert(
       metrics.scrollWidth <= metrics.innerWidth + 1,
       `${viewport.width}px: horizontal overflow ${metrics.scrollWidth}px > ${metrics.innerWidth}px.`
