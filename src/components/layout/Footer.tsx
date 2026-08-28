@@ -8,13 +8,18 @@ export default function Footer() {
       <Container className="py-12 md:py-16">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-12">
           <div className="md:col-span-6">
-            <Image
-              src="/logo-horizontal-white.svg"
-              alt="GhoulHouse"
-              width={420}
-              height={138}
-              className="h-auto w-[190px] sm:w-[220px]"
-            />
+            <div className="inline-flex items-center gap-3" aria-label="GhoulHouse">
+              <Image
+                src="/mark-white.svg"
+                alt=""
+                width={112}
+                height={112}
+                className="h-12 w-12 shrink-0 sm:h-14 sm:w-14"
+              />
+              <span className="font-display text-[2rem] uppercase leading-none tracking-[-0.025em] text-ghost sm:text-[2.35rem]">
+                GhoulHouse
+              </span>
+            </div>
             <p className="type-caption mt-6 max-w-md text-ghost/70">
               Tuotteistettu sosiaalisen median sisältö- ja hallintapalvelu
               suomalaisille paikallisille palveluyrityksille.
