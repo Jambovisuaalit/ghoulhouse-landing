@@ -1,0 +1,263 @@
+name: Release 00504d0 provenance lock
+
+on:
+  push:
+    branches:
+      - ops/release-00504d0
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ghoulhouse-release-00504d0
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      RELEASE_SHA: 00504d06ab5c87a27a73ac2d9493414095ee39a3
+      VERCEL_ORG_ID: team_zwsvoePoiBeskRuyl2Iar883
+      VERCEL_PROJECT_ID: prj_LDmPUItb4oGQlzU2ZZAgyjs7rfLw
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      CANONICAL_URL: https://ghoulhouse.fi
+      WWW_URL: https://www.ghoulhouse.fi
+
+    steps:
+      - name: Verify credentials before any mutation
+        shell: bash
+        run: |
+          test -n "$VERCEL_TOKEN" || { echo "::error::VERCEL_TOKEN is missing"; exit 1; }
+
+      - name: Checkout exact validated release source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.RELEASE_SHA }}
+          fetch-depth: 1
+
+      - name: Verify immutable release provenance
+        shell: bash
+        run: |
+          test "$(git rev-parse HEAD)" = "$RELEASE_SHA"
+          echo "Validated release source: $RELEASE_SHA"
+
+      - name: Setup Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Re-run CI gates
+        run: |
+          npm audit --omit=dev --audit-level=high
+          npm run typecheck
+          npm run lint
+          npm run build
+
+      - name: Start production server for local browser QA
+        shell: bash
+        run: |
+          npm start > /tmp/ghoulhouse-next.log 2>&1 &
+          echo $! > /tmp/ghoulhouse-next.pid
+          for i in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:3000 > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/ghoulhouse-next.log
+          exit 1
+
+      - name: 9 viewport + scroll regression QA
+        run: node scripts/browser-qa-ci.mjs
+
+      - name: Upload browser QA artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-00504d0-browser-qa
+          path: qa-artifacts/
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Link exact target project
+        run: vercel pull --yes --environment=preview --token="$VERCEL_TOKEN"
+
+      - name: Disconnect legacy Git source
+        shell: bash
+        run: |
+          printf 'y\n' | vercel git disconnect --token="$VERCEL_TOKEN" || true
+
+          project_json="$(curl --fail --silent --show-error             --header "Authorization: Bearer $VERCEL_TOKEN"             "https://api.vercel.com/v9/projects/$VERCEL_PROJECT_ID?teamId=$VERCEL_ORG_ID")"
+
+          if [ "$(printf '%s' "$project_json" | jq -r 'if .link == null then "null" else (.link.org + "/" + .link.repo) end')" != "null" ]; then
+            echo "::error::Vercel project still has a Git source attached."
+            printf '%s\n' "$project_json" | jq '{id,name,link}'
+            exit 1
+          fi
+
+      - name: Enforce apex canonical domain policy
+        shell: bash
+        run: |
+          curl --fail --silent --show-error             --request PATCH             --header "Authorization: Bearer $VERCEL_TOKEN"             --header "Content-Type: application/json"             --data '{"gitBranch":null,"redirect":null,"redirectStatusCode":null}'             "https://api.vercel.com/v9/projects/$VERCEL_PROJECT_ID/domains/ghoulhouse.fi?teamId=$VERCEL_ORG_ID"             > /tmp/apex-domain.json
+
+          curl --fail --silent --show-error             --request PATCH             --header "Authorization: Bearer $VERCEL_TOKEN"             --header "Content-Type: application/json"             --data '{"gitBranch":null,"redirect":"ghoulhouse.fi","redirectStatusCode":301}'             "https://api.vercel.com/v9/projects/$VERCEL_PROJECT_ID/domains/www.ghoulhouse.fi?teamId=$VERCEL_ORG_ID"             > /tmp/www-domain.json
+
+          test "$(jq -r '.redirect // "null"' /tmp/apex-domain.json)" = "null"
+          test "$(jq -r '.redirect' /tmp/www-domain.json)" = "ghoulhouse.fi"
+          test "$(jq -r '.redirectStatusCode' /tmp/www-domain.json)" = "301"
+
+      - name: Build Preview candidate
+        run: |
+          vercel pull --yes --environment=preview --token="$VERCEL_TOKEN"
+          vercel build --token="$VERCEL_TOKEN"
+
+      - name: Deploy Preview candidate
+        id: preview
+        shell: bash
+        run: |
+          url="$(vercel deploy --prebuilt --token="$VERCEL_TOKEN")"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Preview deployment: $url"
+
+      - name: Preview smoke QA
+        shell: bash
+        run: |
+          url="${{ steps.preview.outputs.url }}"
+          for i in {1..20}; do
+            html="$(vercel curl / --deployment "$url" --token="$VERCEL_TOKEN" 2>/dev/null || true)"
+            if printf '%s' "$html" | grep -q "TYÖMAAKUVAT SISÄÄN" &&                printf '%s' "$html" | grep -q "PYYDÄ 2 SISÄLTÖESIMERKKIÄ" &&                printf '%s' "$html" | grep -q 'data-offer-name="SOME 12"' &&                printf '%s' "$html" | grep -q 'data-offer-price="490"'; then
+              break
+            fi
+            if [ "$i" -eq 20 ]; then
+              echo "::error::Preview did not return the validated release."
+              exit 1
+            fi
+            sleep 3
+          done
+
+          if printf '%s' "$html" | grep -Eqi 'MANAGED|Palvelujaksosta 4'; then
+            echo "::error::Obsolete pricing lifecycle detected."
+            exit 1
+          fi
+
+      - name: Verify Production lead delivery configuration
+        shell: bash
+        run: |
+          env_file="/tmp/ghoulhouse-production.env"
+          rm -f "$env_file"
+          vercel env pull "$env_file" --environment=production --token="$VERCEL_TOKEN"
+
+          if grep -Eq '^LEAD_DELIVERY_MODE="?resend"?$' "$env_file"; then
+            grep -Eq '^RESEND_API_KEY=.+$' "$env_file"
+            grep -Eq '^LEAD_TO_EMAIL=.+$' "$env_file"
+            grep -Eq '^LEAD_FROM_EMAIL=.+$' "$env_file"
+          elif grep -Eq '^LEAD_DELIVERY_MODE="?webhook"?$' "$env_file"; then
+            grep -Eq '^LEAD_WEBHOOK_URL="?https://.+' "$env_file"
+          else
+            echo "::error::Production lead delivery is not configured."
+            exit 1
+          fi
+          rm -f "$env_file"
+
+      - name: Build Production candidate
+        run: |
+          vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+          vercel build --prod --token="$VERCEL_TOKEN"
+
+      - name: Deploy exact release to Production
+        id: production
+        shell: bash
+        run: |
+          url="$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN")"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Production deployment: $url"
+
+      - name: Canonical routing QA
+        shell: bash
+        run: |
+          curl --silent --show-error --head "$CANONICAL_URL/" > /tmp/apex.txt
+          grep -qi '^HTTP/.* 200' /tmp/apex.txt
+          if grep -qi '^location:' /tmp/apex.txt; then
+            echo "::error::Canonical apex host redirects unexpectedly."
+            cat /tmp/apex.txt
+            exit 1
+          fi
+
+          curl --silent --show-error --head "$WWW_URL/" > /tmp/www.txt
+          grep -qi '^HTTP/.* 301' /tmp/www.txt
+          grep -qi '^location: https://ghoulhouse.fi/' /tmp/www.txt
+
+          redirect_result="$(curl --silent --show-error --location --max-redirs 1             --output /dev/null             --write-out '%{http_code} %{num_redirects} %{url_effective}'             "$WWW_URL/")"
+          test "$redirect_result" = "200 1 https://ghoulhouse.fi/"
+
+      - name: Canonical, security and content QA
+        shell: bash
+        run: |
+          html="$(curl --fail --silent --show-error "$CANONICAL_URL/")"
+          headers="$(curl --silent --show-error --head "$CANONICAL_URL/")"
+
+          printf '%s' "$html" | grep -q 'rel="canonical" href="https://ghoulhouse.fi'
+          printf '%s' "$html" | grep -q "TYÖMAAKUVAT SISÄÄN"
+          printf '%s' "$html" | grep -q "KONSEPTIESIMERKKI — EI ASIAKASTYÖ"
+          printf '%s' "$html" | grep -q 'data-offer-name="SOME 12"'
+          printf '%s' "$html" | grep -q 'data-offer-price="490"'
+          printf '%s' "$headers" | grep -qi '^content-security-policy-report-only:'
+          printf '%s' "$headers" | grep -qi '^x-content-type-options: nosniff'
+
+      - name: Lead API live QA
+        shell: bash
+        run: |
+          invalid_status="$(curl --silent --show-error             --output /tmp/lead-invalid.json             --write-out '%{http_code}'             --request POST             --header 'content-type: application/json'             --data '{}'             "$CANONICAL_URL/api/leads")"
+          test "$invalid_status" = "400"
+          grep -q '"validation_error"' /tmp/lead-invalid.json
+
+          valid_status="$(curl --silent --show-error             --output /tmp/lead-valid.json             --write-out '%{http_code}'             --request POST             --header 'content-type: application/json'             --data '{"company":"GhoulHouse Release QA","name":"Release Gate","email":"release-qa@ghoulhouse.fi","profile":"https://ghoulhouse.fi","message":"Automated production release QA. No action required."}'             "$CANONICAL_URL/api/leads")"
+
+          test "$valid_status" = "201"
+          grep -q '"ok":true' /tmp/lead-valid.json
+
+      - name: Pre-launch robots and sitemap QA
+        shell: bash
+        run: |
+          robots="$(curl --fail --silent --show-error "$CANONICAL_URL/robots.txt")"
+          sitemap="$(curl --fail --silent --show-error "$CANONICAL_URL/sitemap.xml")"
+          printf '%s' "$robots" | grep -q 'Disallow: /'
+          printf '%s' "$sitemap" | grep -q '<urlset'
+          if printf '%s' "$sitemap" | grep -q '<url>'; then
+            echo "::error::Pre-launch sitemap unexpectedly exposes indexable URLs."
+            exit 1
+          fi
+
+      - name: Analytics bootstrap QA
+        shell: bash
+        run: |
+          html="$(curl --fail --silent --show-error "$CANONICAL_URL/")"
+          printf '%s' "$html" | grep -q '/_vercel/insights/script.js' || {
+            echo "::error::Vercel Analytics bootstrap missing."
+            exit 1
+          }
+
+      - name: Production runtime error QA
+        shell: bash
+        run: |
+          vercel logs --environment production --level error --since 5m --limit 50 --token="$VERCEL_TOKEN" > /tmp/prod-errors.log || true
+          if [ -s /tmp/prod-errors.log ]; then
+            echo "::error::Production emitted runtime errors after deployment."
+            cat /tmp/prod-errors.log
+            exit 1
+          fi
+
+      - name: Release summary
+        run: |
+          echo "Validated source: $RELEASE_SHA"
+          echo "Preview: ${{ steps.preview.outputs.url }}"
+          echo "Production: ${{ steps.production.outputs.url }}"
+          echo "Canonical: $CANONICAL_URL"
+          echo "Indexing remains disabled until explicit launch gate."
