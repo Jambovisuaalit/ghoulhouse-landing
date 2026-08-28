@@ -79,41 +79,23 @@ jobs:
         shell: bash
         run: |
           curl --silent --head http://127.0.0.1:3000/ \
-            | grep -qi '^x-robots-tag: noindex, nofollow, noarchive, noimageindex'
+            | grep -qi "x-robots-tag: noindex, nofollow, noarchive, noimageindex"
 
           robots="$(curl --fail --silent http://127.0.0.1:3000/robots.txt)"
-          printf '%s\n' "$robots" | grep -q 'Disallow: /'
+          printf '%s\n' "$robots" | grep -q "Disallow: /"
 
       - name: Security headers QA
         shell: bash
         run: |
-          headers="$(curl --silent --head http://127.0.0.1:3000/ | tr -d '\r')"
+          curl --silent --head http://127.0.0.1:3000/ > /tmp/headers.txt
 
-          printf '%s\n' "$headers" | grep -qi '^content-security-policy-report-only:'
-          printf '%s\n' "$headers" | grep -qi "default-src 'self'"
-          printf '%s\n' "$headers" | grep -qi "frame-ancestors 'none'"
-          printf '%s\n' "$headers" | grep -qi '^cross-origin-opener-policy: same-origin
-      - name: Upload browser QA artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: browser-qa
-          path: qa-artifacts/
-          if-no-files-found: warn
-          retention-days: 7
+          grep -qi "content-security-policy-report-only:" /tmp/headers.txt
+          grep -qi "default-src 'self'" /tmp/headers.txt
+          grep -qi "frame-ancestors 'none'" /tmp/headers.txt
+          grep -qi "cross-origin-opener-policy: same-origin" /tmp/headers.txt
+          grep -qi "x-permitted-cross-domain-policies: none" /tmp/headers.txt
 
-          printf '%s\n' "$headers" | grep -qi '^x-permitted-cross-domain-policies: none
-      - name: Upload browser QA artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: browser-qa
-          path: qa-artifacts/
-          if-no-files-found: warn
-          retention-days: 7
-
-
-          if printf '%s\n' "$headers" | grep -qi '^content-security-policy:'; then
+          if grep -qi "^content-security-policy:" /tmp/headers.txt; then
             echo "::error::CSP enforcement must remain off until Preview validation is complete."
             exit 1
           fi
