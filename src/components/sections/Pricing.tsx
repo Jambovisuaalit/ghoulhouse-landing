@@ -29,14 +29,14 @@ export default function Pricing() {
       aria-labelledby="pricing-title"
     >
       <Container>
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
-          <div className="lg:col-span-4">
+        <div className="grid grid-cols-1 gap-8 xl:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] xl:gap-10">
+          <div className="min-w-0">
             <p className="type-label mb-4 text-signal">
               Hinnoittelu / yksi selkeä paketti
             </p>
             <h2
               id="pricing-title"
-              className="type-section-title max-w-[12ch] text-ink"
+              className="type-section-title max-w-[14ch] text-ink xl:max-w-[12ch] xl:text-[clamp(2.5rem,3.75vw,4.15rem)]"
             >
               Yksi paketti.<span className="block">Ei hinnanvaihdosta.</span>
             </h2>
@@ -46,7 +46,7 @@ export default function Pricing() {
               palvelumalliin.
             </p>
 
-            <div className="mt-8 hidden border-l-4 border-signal pl-4 lg:block">
+            <div className="mt-8 hidden border-l-4 border-signal pl-4 xl:block">
               <p className="type-label text-ink/65">Sopimus</p>
               <p className="mt-2 text-2xl font-extrabold uppercase leading-none tracking-[-0.025em] text-ink">
                 30 päivää <span className="mx-2 text-signal">·</span>{' '}
@@ -55,7 +55,7 @@ export default function Pricing() {
             </div>
           </div>
 
-          <div className="lg:col-span-8">
+          <div className="min-w-0">
             <article
               className="border-y-2 border-ink"
               data-offer-card
