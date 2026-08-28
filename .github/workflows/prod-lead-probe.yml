@@ -1,0 +1,23 @@
+name: Production lead delivery probe
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    if: github.head_ref == 'ci-verify-00504d0'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Valid lead must deliver
+        shell: bash
+        run: |
+          status="$(curl --silent --show-error             --output /tmp/lead.json             --write-out '%{http_code}'             --request POST             --header 'content-type: application/json'             --data '{"company":"GhoulHouse Release QA","name":"Release Gate","email":"release-qa@ghoulhouse.fi","profile":"https://ghoulhouse.fi","message":"Automated release QA. No action required."}'             'https://www.ghoulhouse.fi/api/leads')"
+          echo "HTTP_STATUS=$status"
+          cat /tmp/lead.json || true
+          test "$status" = "201"
+          grep -q '"ok":true' /tmp/lead.json
