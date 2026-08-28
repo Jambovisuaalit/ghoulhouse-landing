@@ -54,11 +54,6 @@ export default function Founder() {
                 </p>
               </div>
             </div>
-
-            <p className="type-caption mt-5 max-w-2xl uppercase tracking-[0.06em] text-ink/60">
-              Founder-kuvaa ei käytetä ennen kuin käytössä on oikea,
-              julkaistavaksi hyväksytty portrait.
-            </p>
           </div>
         </div>
       </Container>
