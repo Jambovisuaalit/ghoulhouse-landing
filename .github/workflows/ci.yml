@@ -57,17 +57,17 @@ jobs:
         shell: bash
         run: |
           curl --silent --head --header 'Host: ghoulhouse.fi' http://127.0.0.1:3000/ > /tmp/apex-headers.txt
-          grep -qi '^location: https://www.ghoulhouse.fi/' /tmp/apex-headers.txt
-          grep -qi '^HTTP/.* 308' /tmp/apex-headers.txt
+          grep -qi '^HTTP/.* 200' /tmp/apex-headers.txt
 
-          curl --silent --head --header 'Host: www.ghoulhouse.fi' http://127.0.0.1:3000/ > /tmp/www-headers.txt
-          grep -qi '^HTTP/.* 200' /tmp/www-headers.txt
-
-          if grep -qi '^location:' /tmp/www-headers.txt; then
-            echo "::error::Canonical www host must not redirect back to apex."
-            cat /tmp/www-headers.txt
+          if grep -qi '^location:' /tmp/apex-headers.txt; then
+            echo "::error::Canonical apex host must not redirect."
+            cat /tmp/apex-headers.txt
             exit 1
           fi
+
+          curl --silent --head --header 'Host: www.ghoulhouse.fi' http://127.0.0.1:3000/ > /tmp/www-headers.txt
+          grep -qi '^HTTP/.* 308' /tmp/www-headers.txt
+          grep -qi '^location: https://ghoulhouse.fi/' /tmp/www-headers.txt
 
       - name: Lead API QA
         shell: bash
