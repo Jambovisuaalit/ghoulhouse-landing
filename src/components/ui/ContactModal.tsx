@@ -496,6 +496,18 @@ export default function ContactModal({ onClose }: ContactModalProps) {
                 <p>
                   Antamiasi tietoja käytetään sisältöesimerkkipyynnön
                   käsittelyyn ja siihen liittyvään yhteydenottoon.
+                  {siteConfig.legal.privacyPath && (
+                    <>
+                      {' '}
+                      <a
+                        href={siteConfig.legal.privacyPath}
+                        className="font-bold text-ink underline underline-offset-2"
+                      >
+                        Tietosuojaseloste
+                      </a>
+                      .
+                    </>
+                  )}
                 </p>
                 <p className="font-bold text-ink/70">
                   Työmaakuvia pyydetään vain tarvittaessa.
