@@ -53,6 +53,46 @@ jobs:
           cat /tmp/ghoulhouse-next.log
           exit 1
 
+      - name: Lead API QA
+        shell: bash
+        run: |
+          invalid_status="$(curl --silent --output /tmp/lead-invalid.json --write-out '%{http_code}' \
+            --request POST \
+            --header 'content-type: application/json' \
+            --data '{}' \
+            http://127.0.0.1:3000/api/leads)"
+
+          test "$invalid_status" = "400"
+          grep -q '"validation_error"' /tmp/lead-invalid.json
+
+          cross_site_status="$(curl --silent --output /tmp/lead-cross-site.json --write-out '%{http_code}' \
+            --request POST \
+            --header 'content-type: application/json' \
+            --header 'sec-fetch-site: cross-site' \
+            --data '{}' \
+            http://127.0.0.1:3000/api/leads)"
+
+          test "$cross_site_status" = "403"
+          grep -q '"cross_site_request"' /tmp/lead-cross-site.json
+
+      - name: SEO safety QA
+        shell: bash
+        run: |
+          headers="$(curl --silent --head http://127.0.0.1:3000/ | tr -d '\r')"
+          printf '%s\n' "$headers" | grep -qi '^x-robots-tag: noindex, nofollow, noarchive, noimageindex
+      - name: Upload browser QA artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-qa
+          path: qa-artifacts/
+          if-no-files-found: warn
+          retention-days: 7
+
+
+          robots="$(curl --fail --silent http://127.0.0.1:3000/robots.txt)"
+          printf '%s\n' "$robots" | grep -q 'Disallow: /'
+
       - name: Browser QA
         run: node scripts/browser-qa-ci.mjs
 
