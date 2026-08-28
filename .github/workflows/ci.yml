@@ -53,6 +53,22 @@ jobs:
           cat /tmp/ghoulhouse-next.log
           exit 1
 
+      - name: Canonical domain QA
+        shell: bash
+        run: |
+          curl --silent --head --header 'Host: ghoulhouse.fi' http://127.0.0.1:3000/ > /tmp/apex-headers.txt
+          grep -qi '^location: https://www.ghoulhouse.fi/' /tmp/apex-headers.txt
+          grep -qi '^HTTP/.* 308' /tmp/apex-headers.txt
+
+          curl --silent --head --header 'Host: www.ghoulhouse.fi' http://127.0.0.1:3000/ > /tmp/www-headers.txt
+          grep -qi '^HTTP/.* 200' /tmp/www-headers.txt
+
+          if grep -qi '^location:' /tmp/www-headers.txt; then
+            echo "::error::Canonical www host must not redirect back to apex."
+            cat /tmp/www-headers.txt
+            exit 1
+          fi
+
       - name: Lead API QA
         shell: bash
         run: |
