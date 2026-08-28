@@ -67,18 +67,36 @@ jobs:
           echo "url=$url" >> "$GITHUB_OUTPUT"
           echo "Production deployment: $url"
 
-      - name: Verify deployed homepage
+      - name: Verify deployed application
         shell: bash
         run: |
           url="${{ steps.deploy.outputs.url }}"
+
           for i in {1..20}; do
             html="$(curl --fail --silent --show-error "$url" || true)"
             if printf '%s' "$html" | grep -q "TYÖMAAKUVAT SISÄÄN" && \
                printf '%s' "$html" | grep -q "490"; then
-              echo "GhoulHouse production smoke check passed."
-              exit 0
+              break
             fi
+
+            if [ "$i" -eq 20 ]; then
+              echo "::error::Deployment did not return the validated GhoulHouse homepage."
+              exit 1
+            fi
+
             sleep 3
           done
-          echo "::error::Deployment did not return the validated GhoulHouse P0 homepage."
-          exit 1
+
+          api_status="$(curl --silent --output /tmp/lead-api.json --write-out '%{http_code}' \
+            --request POST \
+            --header 'content-type: application/json' \
+            --data '{}' \
+            "$url/api/leads")"
+
+          if [ "$api_status" != "400" ] || ! grep -q '"validation_error"' /tmp/lead-api.json; then
+            echo "::error::Lead API smoke check failed with HTTP $api_status."
+            cat /tmp/lead-api.json
+            exit 1
+          fi
+
+          echo "GhoulHouse production application smoke check passed."
