@@ -35,7 +35,7 @@ export default function Deliverables() {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-4">
             <p className="type-label mb-4 text-signal">
-              START / toimitussisältö
+              SOME 12 / toimitussisältö
             </p>
             <h2 className="type-section-title max-w-[11ch] text-ink">
               Mitä 30 päivässä syntyy.
@@ -87,10 +87,10 @@ export default function Deliverables() {
 
         <div className="type-caption mt-5 flex flex-col gap-2 border-t border-ink/20 pt-4 text-ink/65 sm:flex-row sm:items-center sm:justify-between">
           <p>
-            START · {siteConfig.offer.start.price} € {siteConfig.offer.start.vatLabel} /{' '}
+            SOME 12 · {siteConfig.offer.start.price} € {siteConfig.offer.start.vatLabel} /{' '}
             {siteConfig.offer.start.period}
           </p>
-          <p>Palvelujaksot 1–3</p>
+          <p>Kuukausittain irtisanottava sovittujen ehtojen mukaisesti</p>
         </div>
       </Container>
     </section>
