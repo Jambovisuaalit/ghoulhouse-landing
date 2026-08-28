@@ -193,6 +193,20 @@ async function waitForDocument(client, timeoutMs = 15_000) {
   throw new Error('Page did not reach complete readyState.');
 }
 
+async function waitForCondition(client, expression, timeoutMs = 3_000) {
+  const start = Date.now();
+
+  while (Date.now() - start < timeoutMs) {
+    if (await evaluate(client, expression)) {
+      return Date.now() - start;
+    }
+
+    await sleep(50);
+  }
+
+  return null;
+}
+
 function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
@@ -570,7 +584,7 @@ try {
     media: '',
     features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }],
   });
-  await evaluate(
+  const ctaClicked = await evaluate(
     client,
     `(() => {
       const hero = document.querySelector('#top');
@@ -581,7 +595,14 @@ try {
       return Boolean(button);
     })()`
   );
-  await sleep(250);
+  assert(ctaClicked, 'Primary CTA button was not found in the hero.');
+
+  const dialogOpenMs = await waitForCondition(
+    client,
+    'Boolean(document.querySelector(\'[role="dialog"]\'))',
+    3_000
+  );
+  assert(dialogOpenMs !== null, 'Primary CTA did not open lead dialog.');
 
   const dialog = await evaluate(
     client,
@@ -592,10 +613,12 @@ try {
         activeName: document.activeElement?.getAttribute('name') || '',
         backgroundInert: Boolean(siteContent),
         skipLinkExists: Boolean(document.querySelector('a.skip-link[href="#main-content"]')),
+        openLatencyMs: ${dialogOpenMs},
       };
     })()`
   );
   assert(dialog.exists, 'Primary CTA did not open lead dialog.');
+  assert(dialogOpenMs <= 1_500, `Lead dialog took too long to open: ${dialogOpenMs}ms.`);
   assert(dialog.activeName === 'company', 'Lead dialog did not focus first field.');
   assert(dialog.backgroundInert, 'Background content is not inert while dialog is open.');
   assert(dialog.skipLinkExists, 'Skip link to main content is missing.');
