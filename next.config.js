@@ -1,4 +1,24 @@
 /** @type {import('next').NextConfig} */
+
+const contentSecurityPolicy = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'none'",
+  "object-src 'none'",
+  "img-src 'self' data: blob:",
+  "font-src 'self'",
+  "style-src 'self' 'unsafe-inline'",
+  "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com",
+  "connect-src 'self' https://vitals.vercel-insights.com https://va.vercel-scripts.com",
+  "upgrade-insecure-requests",
+].join('; ');
+
+const cspHeader =
+  process.env.CSP_ENFORCE === 'true'
+    ? 'Content-Security-Policy'
+    : 'Content-Security-Policy-Report-Only';
+
 const nextConfig = {
   reactStrictMode: true,
   images: {
@@ -10,6 +30,10 @@ const nextConfig = {
     {
       source: '/:path*',
       headers: [
+        {
+          key: cspHeader,
+          value: contentSecurityPolicy,
+        },
         {
           key: 'X-Content-Type-Options',
           value: 'nosniff',
@@ -25,6 +49,14 @@ const nextConfig = {
         {
           key: 'Permissions-Policy',
           value: 'camera=(), microphone=(), geolocation=()',
+        },
+        {
+          key: 'Cross-Origin-Opener-Policy',
+          value: 'same-origin',
+        },
+        {
+          key: 'X-Permitted-Cross-Domain-Policies',
+          value: 'none',
         },
       ],
     },
