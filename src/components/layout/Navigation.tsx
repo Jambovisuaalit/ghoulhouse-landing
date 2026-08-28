@@ -112,7 +112,7 @@ export default function Navigation() {
             </span>
           </Link>
 
-          <div className="hidden items-center gap-7 md:flex lg:gap-9">
+          <div className="hidden items-center gap-9 lg:flex">
             {links.map((link) => (
               <a
                 key={link.href}
@@ -132,7 +132,7 @@ export default function Navigation() {
             ref={menuButtonRef}
             type="button"
             onClick={() => setMobileMenuOpen((open) => !open)}
-            className="type-label inline-flex min-h-11 items-center gap-2 text-ink md:hidden"
+            className="type-label inline-flex min-h-11 items-center gap-2 text-ink lg:hidden"
             aria-label={mobileMenuOpen ? 'Sulje valikko' : 'Avaa valikko'}
             aria-expanded={mobileMenuOpen}
             aria-controls="mobile-navigation"
@@ -148,7 +148,7 @@ export default function Navigation() {
       {mobileMenuOpen && (
         <div
           id="mobile-navigation"
-          className="absolute inset-x-0 top-full max-h-[calc(100svh-60px)] overflow-y-auto border-y-2 border-ink bg-ghost md:hidden"
+          className="absolute inset-x-0 top-full max-h-[calc(100svh-66px)] overflow-y-auto border-y-2 border-ink bg-ghost lg:hidden"
         >
           <Container className="py-5">
             <div className="grid">
@@ -163,7 +163,9 @@ export default function Navigation() {
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <span>{link.label}</span>
-                  <span aria-hidden="true" className="text-signal">→</span>
+                  <span aria-hidden="true" className="text-signal">
+                    →
+                  </span>
                 </a>
               ))}
             </div>

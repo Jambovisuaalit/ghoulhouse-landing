@@ -304,6 +304,11 @@ try {
           (el) => visible(el) && el.children.length === 0 && el.textContent?.includes('490 €')
         );
         const offerCard = document.querySelector('[data-offer-card]');
+        const pricingTitle = document.querySelector('#pricing-title');
+        const rawSection = document.querySelector('[data-scroll-raw]');
+        const rawStage = rawSection?.querySelector('.mechanism-raw__stage');
+        const rawHeading = rawSection?.querySelector('.mechanism-raw__copy--raw h3');
+        const finalHeading = rawSection?.querySelector('.mechanism-raw__copy--final h3');
         const rect = (el) => {
           if (!el) return null;
           const r = el.getBoundingClientRect();
@@ -317,12 +322,25 @@ try {
           priceText: price?.textContent?.replace(/\\s+/g, ' ').trim() || '',
           offerName: offerCard?.getAttribute('data-offer-name') || '',
           offerPrice: offerCard?.getAttribute('data-offer-price') || '',
+          bodyFont: getComputedStyle(document.body).fontFamily,
           bodyText: document.body.innerText.replace(/\\s+/g, ' ').trim(),
           brandText: brand?.textContent?.replace(/\\s+/g, ' ').trim() || '',
           brandRect: rect(brand),
           h1Rect: rect(h1),
           ctaRect: rect(cta),
           priceRect: rect(price),
+          pricingTitleRect: rect(pricingTitle),
+          pricingTitleVisualRight: pricingTitle
+            ? pricingTitle.getBoundingClientRect().left + pricingTitle.scrollWidth
+            : null,
+          offerCardRect: rect(offerCard),
+          rawStageRect: rect(rawStage),
+          rawHeadingVisualRight: rawHeading
+            ? rawHeading.getBoundingClientRect().left + rawHeading.scrollWidth
+            : null,
+          finalHeadingVisualRight: finalHeading
+            ? finalHeading.getBoundingClientRect().left + finalHeading.scrollWidth
+            : null,
           innerWidth,
           innerHeight,
           scrollWidth: document.documentElement.scrollWidth,
@@ -332,7 +350,8 @@ try {
 
     assert(metrics.h1Count === 1, `${viewport.width}px: expected exactly one H1.`);
     assert(
-      metrics.h1Text.includes('TYÖMAAKUVAT SISÄÄN.') && metrics.h1Text.includes('VALMIS SOME ULOS.'),
+      metrics.h1Text.includes('TYÖMAAKUVAT SISÄÄN.') &&
+        metrics.h1Text.includes('VALMIS SOME ULOS.'),
       `${viewport.width}px: canonical headline missing.`
     );
     assert(
@@ -340,9 +359,25 @@ try {
         metrics.heroText.includes('Me pidämme huolen, että asiakkaat myös näkevät sen.'),
       `${viewport.width}px: canonical value proposition missing.`
     );
-    assert(metrics.brandText.toUpperCase() === 'GHOULHOUSE', `${viewport.width}px: full GhoulHouse wordmark is missing.`);
-    assert(metrics.ctaText.includes('PYYDÄ 2 SISÄLTÖESIMERKKIÄ'), `${viewport.width}px: CTA missing.`);
+    assert(
+      metrics.brandText.toUpperCase() === 'GHOULHOUSE',
+      `${viewport.width}px: full GhoulHouse wordmark is missing.`
+    );
+    assert(
+      metrics.ctaText.includes('PYYDÄ 2 SISÄLTÖESIMERKKIÄ'),
+      `${viewport.width}px: CTA missing.`
+    );
     assert(metrics.priceText.includes('490 €'), `${viewport.width}px: SOME 12 price missing.`);
+    assert(
+      !metrics.bodyFont.toLowerCase().includes('system-ui'),
+      `${viewport.width}px: generic system UI font is still active: ${metrics.bodyFont}.`
+    );
+    assert(
+      metrics.bodyText.toUpperCase().includes('TYÖMAAMATERIAALI') &&
+        metrics.bodyText.toUpperCase().includes('VALMIS JULKAISUUN.') &&
+        !metrics.bodyText.toLowerCase().includes('worksite material'),
+      `${viewport.width}px: Finnish mechanism message is missing.`
+    );
     assert(
       metrics.offerName === 'SOME 12',
       `${viewport.width}px: pricing card offer name must be SOME 12, got "${metrics.offerName}".`
@@ -362,8 +397,29 @@ try {
       `${viewport.width}px: horizontal overflow ${metrics.scrollWidth}px > ${metrics.innerWidth}px.`
     );
     assert(metrics.ctaRect?.height >= 44, `${viewport.width}px: CTA target below 44px.`);
-    assert(metrics.ctaRect?.bottom <= metrics.innerHeight, `${viewport.width}px: CTA below first viewport.`);
-    assert(metrics.priceRect?.bottom <= metrics.innerHeight, `${viewport.width}px: price below first viewport.`);
+    assert(
+      metrics.ctaRect?.bottom <= metrics.innerHeight,
+      `${viewport.width}px: CTA below first viewport.`
+    );
+    assert(
+      metrics.priceRect?.bottom <= metrics.innerHeight,
+      `${viewport.width}px: price below first viewport.`
+    );
+
+    if (viewport.width >= 1024) {
+      assert(
+        metrics.pricingTitleVisualRight <= metrics.offerCardRect?.left + 1,
+        `${viewport.width}px: pricing title overlaps offer card.`
+      );
+      assert(
+        metrics.rawHeadingVisualRight <= metrics.rawStageRect?.left + 1,
+        `${viewport.width}px: RAW heading overlaps the visual stage.`
+      );
+      assert(
+        metrics.finalHeadingVisualRight <= metrics.innerWidth + 1,
+        `${viewport.width}px: FINAL heading exits the viewport.`
+      );
+    }
 
     for (const [name, rect] of [
       ['brand lockup', metrics.brandRect],
@@ -417,7 +473,7 @@ try {
 
   const mobileMenuReady = await waitForCondition(
     client,
-    'Boolean(document.querySelector(\'#mobile-navigation\'))',
+    "Boolean(document.querySelector('#mobile-navigation'))",
     2_000
   );
   assert(mobileMenuReady !== null, 'Mobile menu did not open.');
@@ -452,10 +508,7 @@ try {
     mobileMenu.mainInert && mobileMenu.footerInert && mobileMenu.skipInert,
     `Mobile menu background is not fully inert: ${JSON.stringify(mobileMenu)}.`
   );
-  assert(
-    mobileMenu.ctaText.includes('PYYDÄ 2 SISÄLTÖESIMERKKIÄ'),
-    'Mobile menu CTA is missing.'
-  );
+  assert(mobileMenu.ctaText.includes('PYYDÄ 2 SISÄLTÖESIMERKKIÄ'), 'Mobile menu CTA is missing.');
 
   await evaluate(
     client,
@@ -486,8 +539,7 @@ try {
     }))()`
   );
   assert(
-    shiftTabTrap.insideMenu &&
-      shiftTabTrap.activeText.includes('PYYDÄ 2 SISÄLTÖESIMERKKIÄ'),
+    shiftTabTrap.insideMenu && shiftTabTrap.activeText.includes('PYYDÄ 2 SISÄLTÖESIMERKKIÄ'),
     `Shift+Tab escaped the mobile menu focus trap: ${JSON.stringify(shiftTabTrap)}.`
   );
 
@@ -537,10 +589,45 @@ try {
   assert(!mobileMenuClosed.exists, 'Escape did not close mobile menu.');
   assert(mobileMenuClosed.focusReturned, 'Escape did not restore focus to mobile menu button.');
   assert(
-    !mobileMenuClosed.mainInert &&
-      !mobileMenuClosed.footerInert &&
-      !mobileMenuClosed.skipInert,
+    !mobileMenuClosed.mainInert && !mobileMenuClosed.footerInert && !mobileMenuClosed.skipInert,
     `Mobile menu background inert state was not restored: ${JSON.stringify(mobileMenuClosed)}.`
+  );
+
+  const mobileFilmStart = await evaluate(
+    client,
+    `(() => {
+      const section = document.querySelector('[data-scroll-film]');
+      const viewport = section?.querySelector('.mechanism-film__viewport');
+      if (!section || !viewport) return null;
+      const travel = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+      viewport.scrollTo({ left: travel * 0.5, behavior: 'auto' });
+      return {
+        travel,
+        snapType: getComputedStyle(viewport).scrollSnapType,
+      };
+    })()`
+  );
+  assert(mobileFilmStart?.travel > 100, 'Mobile filmstrip has insufficient horizontal travel.');
+  assert(
+    mobileFilmStart.snapType.includes('x') && mobileFilmStart.snapType.includes('mandatory'),
+    `Mobile filmstrip scroll snap is not active: ${mobileFilmStart?.snapType}.`
+  );
+  await sleep(180);
+
+  const mobileFilm = await evaluate(
+    client,
+    `(() => {
+      const section = document.querySelector('[data-scroll-film]');
+      const viewport = section?.querySelector('.mechanism-film__viewport');
+      return {
+        progress: parseFloat(getComputedStyle(section).getPropertyValue('--film-progress')) || 0,
+        scrollLeft: viewport?.scrollLeft || 0,
+      };
+    })()`
+  );
+  assert(
+    mobileFilm.progress > 0.1 && mobileFilm.progress < 0.9,
+    `Mobile filmstrip progress did not follow horizontal scroll: ${JSON.stringify(mobileFilm)}.`
   );
 
   // Desktop scroll-effect regression: progress must track actual geometry.
@@ -556,6 +643,35 @@ try {
   });
   await client.send('Page.navigate', { url: BASE_URL });
   await waitForDocument(client);
+
+  const pacing = await evaluate(
+    client,
+    `(() => {
+      const mechanism = document.querySelector('#mechanism');
+      const examples = document.querySelector('#examples');
+      const deliverables = document.querySelector('#deliverables');
+      const totalHeight = document.documentElement.scrollHeight;
+      const absoluteTop = (el) => el ? el.getBoundingClientRect().top + scrollY : null;
+      return {
+        totalHeight,
+        mechanismHeight: mechanism?.getBoundingClientRect().height || 0,
+        examplesHeight: examples?.getBoundingClientRect().height || 0,
+        deliverablesTop: absoluteTop(deliverables),
+        combinedShare:
+          ((mechanism?.getBoundingClientRect().height || 0) +
+            (examples?.getBoundingClientRect().height || 0)) /
+          totalHeight,
+      };
+    })()`
+  );
+  assert(
+    pacing.deliverablesTop <= 900 * 2.5,
+    `Detailed service content appears too late: ${pacing.deliverablesTop}px.`
+  );
+  assert(
+    pacing.combinedShare <= 0.52,
+    `Mechanism and examples still dominate page length: ${(pacing.combinedShare * 100).toFixed(1)}%.`
+  );
 
   const sampleRawAt = async (fraction) => {
     const target = await evaluate(
@@ -836,18 +952,43 @@ try {
     .filter((entry) => entry?.command === 'event')
     .map((entry) => entry?.payload?.name);
   assert(
-    analyticsNames.includes('primary_cta_click') &&
-      analyticsNames.includes('lead_form_open'),
+    analyticsNames.includes('primary_cta_click') && analyticsNames.includes('lead_form_open'),
     `CTA analytics events were not forwarded to Vercel Analytics: ${JSON.stringify(dialog.analyticsEvents)}.`
   );
   assert(pageExceptions.length === 0, `Page exceptions: ${pageExceptions.join(' | ')}`);
 
   await writeFile(
     `${SCREENSHOT_DIR}/results.json`,
-    JSON.stringify({ chromePath, results, scrollEffects: { rawQuarter, rawThreeQuarter, filmMid }, reducedMotion, dialog }, null, 2)
+    JSON.stringify(
+      {
+        chromePath,
+        results,
+        pacing,
+        mobileFilm,
+        scrollEffects: { rawQuarter, rawThreeQuarter, filmMid },
+        reducedMotion,
+        dialog,
+      },
+      null,
+      2
+    )
   );
 
-  console.log(JSON.stringify({ chromePath, results, scrollEffects: { rawQuarter, rawThreeQuarter, filmMid }, reducedMotion, dialog }, null, 2));
+  console.log(
+    JSON.stringify(
+      {
+        chromePath,
+        results,
+        pacing,
+        mobileFilm,
+        scrollEffects: { rawQuarter, rawThreeQuarter, filmMid },
+        reducedMotion,
+        dialog,
+      },
+      null,
+      2
+    )
+  );
 } finally {
   client?.close();
 

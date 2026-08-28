@@ -1,8 +1,9 @@
 const canonicalSiteUrl = 'https://ghoulhouse.fi';
-const privacyPath =
-  process.env.NEXT_PUBLIC_PRIVACY_PATH?.trim() || null;
-const termsPath =
-  process.env.NEXT_PUBLIC_TERMS_PATH?.trim() || null;
+const privacyPath = process.env.NEXT_PUBLIC_PRIVACY_PATH?.trim() || null;
+const termsPath = process.env.NEXT_PUBLIC_TERMS_PATH?.trim() || null;
+const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || null;
+const contactPhone = process.env.NEXT_PUBLIC_CONTACT_PHONE?.trim() || null;
+const contactInstagramUrl = process.env.NEXT_PUBLIC_CONTACT_INSTAGRAM_URL?.trim() || null;
 
 export const siteConfig = {
   company: {
@@ -14,10 +15,7 @@ export const siteConfig = {
   },
   positioning: {
     headline: ['TYÖMAAKUVAT SISÄÄN.', 'VALMIS SOME ULOS.'],
-    supporting: [
-      'Teette hyvää työtä.',
-      'Me pidämme huolen, että asiakkaat myös näkevät sen.',
-    ],
+    supporting: ['Teette hyvää työtä.', 'Me pidämme huolen, että asiakkaat myös näkevät sen.'],
   },
   cta: {
     primary: 'PYYDÄ 2 SISÄLTÖESIMERKKIÄ',
@@ -46,9 +44,9 @@ export const siteConfig = {
     },
   },
   contact: {
-    email: null,
-    phone: null,
-    instagram: null,
+    email: contactEmail,
+    phone: contactPhone,
+    instagramUrl: contactInstagramUrl,
   },
   legal: {
     privacyPath,

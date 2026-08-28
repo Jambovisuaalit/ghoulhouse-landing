@@ -29,15 +29,19 @@ export default function Hero() {
           <div className="mt-8 sm:mt-10 lg:mt-12">
             <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:gap-7 lg:gap-9">
               <div className="border-l-4 border-signal pl-4">
-                <p className="type-price text-ink">{offer.start.price} € {offer.start.vatLabel}</p>
+                <p className="type-price whitespace-nowrap text-ink">
+                  {offer.start.price} € {offer.start.vatLabel}
+                </p>
                 <p className="type-label mt-1 text-ink/60">/ {offer.start.period}</p>
               </div>
-              <ContactTrigger className="btn btn-primary min-h-14 w-full justify-between px-5 text-left sm:w-auto sm:min-w-[285px] sm:px-6">
-                <span>{cta.primary}</span><span aria-hidden="true">→</span>
+              <ContactTrigger className="btn btn-primary min-h-14 w-full justify-between px-5 text-left sm:w-auto sm:min-w-[285px] sm:px-6 lg:px-4 xl:px-6">
+                <span className="whitespace-nowrap">{cta.primary}</span>
+                <span aria-hidden="true">→</span>
               </ContactTrigger>
             </div>
             <p className="type-caption mt-4 max-w-xl uppercase tracking-[0.08em] text-ink/60">
-              SOME 12 · 30 päivän palvelujakso · kuukausittain irtisanottava sovittujen ehtojen mukaisesti
+              SOME 12 · 30 päivän palvelujakso · kuukausittain irtisanottava sovittujen ehtojen
+              mukaisesti
             </p>
           </div>
         </div>
@@ -45,12 +49,30 @@ export default function Hero() {
         <figure className="lg:col-span-5 xl:col-span-4">
           <div className="grid h-[178px] grid-cols-2 overflow-hidden border-2 border-ink sm:h-[250px] lg:h-full lg:min-h-[520px] lg:grid-cols-1">
             <div className="relative overflow-hidden bg-ink">
-              <Image src="/hero-renovation-clean.svg" alt="Työmaalta syntyvää raakamateriaalia havainnollistava konseptikuva" fill priority sizes="(max-width: 1023px) 50vw, 34vw" className="object-cover grayscale contrast-125" />
-              <span className="absolute left-3 top-3 bg-ink px-2 py-1 type-label text-ghost">RAW / SISÄÄN</span>
+              <Image
+                src="/hero-renovation-clean.svg"
+                alt="Työmaalta syntyvää raakamateriaalia havainnollistava konseptikuva"
+                fill
+                priority
+                sizes="(max-width: 1023px) 50vw, 34vw"
+                className="object-cover grayscale contrast-125"
+              />
+              <span className="absolute left-3 top-3 bg-ink px-2 py-1 type-label text-ghost">
+                RAW / SISÄÄN
+              </span>
             </div>
             <div className="relative overflow-hidden border-l-4 border-signal bg-bone lg:border-l-0 lg:border-t-4">
-              <Image src="/finished-space.svg" alt="Valmista GhoulHouse-sisältöä havainnollistava konseptikuva" fill priority sizes="(max-width: 1023px) 50vw, 34vw" className="object-cover" />
-              <span className="absolute right-3 top-3 bg-signal px-2 py-1 type-label text-white">FINAL / ULOS</span>
+              <Image
+                src="/finished-space.svg"
+                alt="Valmista GhoulHouse-sisältöä havainnollistava konseptikuva"
+                fill
+                priority
+                sizes="(max-width: 1023px) 50vw, 34vw"
+                className="object-cover"
+              />
+              <span className="absolute right-3 top-3 bg-signal px-2 py-1 type-label text-white">
+                FINAL / ULOS
+              </span>
             </div>
           </div>
           <figcaption className="type-caption mt-3 flex items-center justify-between gap-4 uppercase tracking-[0.06em] text-ink/60">

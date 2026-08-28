@@ -24,9 +24,9 @@ export default function Home() {
       <main id="main-content" className="min-h-screen bg-ghost">
         <Hero />
         <Problem />
+        <Deliverables />
         <Mechanism />
         <Examples />
-        <Deliverables />
         <Process />
         <Pricing />
         <Founder />

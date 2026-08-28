@@ -34,22 +34,18 @@ export default function Deliverables() {
       <Container>
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-4">
-            <p className="type-label mb-4 text-signal">
-              SOME 12 / toimitussisältö
-            </p>
-            <h2 className="type-section-title max-w-[11ch] text-ink">
-              Mitä 30 päivässä syntyy.
-            </h2>
+            <p className="type-label mb-4 text-signal">SOME 12 / toimitussisältö</p>
+            <h2 className="type-section-title max-w-[11ch] text-ink">Mitä 30 päivässä syntyy.</h2>
             <p className="type-editorial mt-6 max-w-sm text-ink/70">
-              Palvelun rajaus näkyy ennen aloitusta. Ei avointa
-              palveluvalikkoa, vaan yksi selkeä tuotantorytmi.
+              Palvelun rajaus näkyy ennen aloitusta. Ei avointa palveluvalikkoa, vaan yksi selkeä
+              tuotantorytmi.
             </p>
           </div>
 
           <div className="border-y-2 border-ink lg:col-span-8">
             <div className="grid grid-cols-1 md:grid-cols-[0.82fr_1.18fr]">
               <div className="flex min-h-[230px] flex-col justify-between border-b-2 border-ink bg-ink p-5 text-ghost sm:p-6 md:min-h-[360px] md:border-b-0 md:border-r-2">
-                <p className="type-label text-signal">OUTPUT / 30 PÄIVÄÄ</p>
+                <p className="type-label text-signal-on-dark">OUTPUT / 30 PÄIVÄÄ</p>
 
                 <div>
                   <p className="text-[clamp(5rem,12vw,9rem)] font-extrabold leading-[0.78] tracking-[-0.06em]">
@@ -61,8 +57,8 @@ export default function Deliverables() {
                 </div>
 
                 <p className="type-caption max-w-xs text-ghost/65">
-                  Yksi ydinsisältö sovitetaan sovituille kanaville. Ei 24
-                  erillistä alkuperäispostausta.
+                  Yksi ydinsisältö sovitetaan sovituille kanaville. Ei 24 erillistä
+                  alkuperäispostausta.
                 </p>
               </div>
 
@@ -75,9 +71,7 @@ export default function Deliverables() {
                     }`}
                   >
                     <p className="type-label text-signal">{item.label}</p>
-                    <p className="type-ui mt-3 max-w-[30ch] text-ink">
-                      {item.value}
-                    </p>
+                    <p className="type-ui mt-3 max-w-[30ch] text-ink">{item.value}</p>
                   </div>
                 ))}
               </div>

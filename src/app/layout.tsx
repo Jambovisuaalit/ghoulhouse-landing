@@ -1,12 +1,7 @@
 import type { Metadata, Viewport } from 'next';
-import { Anton } from 'next/font/google';
+import { Anton, Montserrat } from 'next/font/google';
 import { siteConfig } from '@/config/site';
-import {
-  SITE_URL,
-  isIndexingApproved,
-  isProductionDeployment,
-  productionUrl,
-} from '@/lib/seo';
+import { SITE_URL, isIndexingApproved, isProductionDeployment, productionUrl } from '@/lib/seo';
 import VercelAnalytics from '@/components/analytics/VercelAnalytics';
 import './globals.css';
 
@@ -17,11 +12,16 @@ const anton = Anton({
   display: 'swap',
 });
 
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  display: 'swap',
+});
+
 const title = 'GhoulHouse — Työmaakuvat sisään. Valmis some ulos.';
 const description =
   'GhoulHouse tekee työmaamateriaalista 12 valmista Instagram- ja Facebook-sisältöä 30 päiväksi. START 490 € + ALV.';
-const socialDescription =
-  'Teette hyvää työtä. Me pidämme huolen, että asiakkaat myös näkevät sen.';
+const socialDescription = 'Teette hyvää työtä. Me pidämme huolen, että asiakkaat myös näkevät sen.';
 
 const indexable = isProductionDeployment() && isIndexingApproved();
 
@@ -137,14 +137,10 @@ const structuredData = {
   ],
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fi">
-      <body className={anton.variable}>
+      <body className={`${anton.variable} ${montserrat.variable}`}>
         {children}
         <VercelAnalytics />
         <script

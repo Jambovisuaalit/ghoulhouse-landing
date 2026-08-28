@@ -16,19 +16,14 @@ export default function Founder() {
               data-founder-image-slot
             >
               <div className="flex items-start justify-between gap-4">
-                <span className="type-label text-signal">
-                  Hanna Nyholm
-                </span>
+                <span className="type-label text-signal-on-light">Hanna Nyholm</span>
                 <span className="type-caption uppercase tracking-[0.06em] text-ink/65">
                   Founder / Helsinki
                 </span>
               </div>
 
               <div className="max-w-[18rem]">
-                <div
-                  className="mb-6 h-16 w-px bg-signal"
-                  aria-hidden="true"
-                />
+                <div className="mb-6 h-16 w-px bg-signal" aria-hidden="true" />
                 <p className="text-[clamp(2rem,6vw,3.5rem)] font-extrabold uppercase leading-[0.92] tracking-[-0.04em] text-ink">
                   Omistaja.
                   <span className="block">Tekijä.</span>
@@ -43,9 +38,7 @@ export default function Founder() {
           </div>
 
           <div className="flex flex-col justify-center lg:col-span-6 lg:col-start-7">
-            <p className="type-label text-signal">
-              Omistajavetoinen palvelu
-            </p>
+            <p className="type-label text-signal">Omistajavetoinen palvelu</p>
 
             <h2
               id="founder-title"
@@ -60,12 +53,11 @@ export default function Founder() {
 
             <div className="mt-8 max-w-2xl border-t-2 border-ink pt-6">
               <p className="type-editorial font-semibold text-ink">
-                Hanna vastaa GhoulHousen palvelun toteutuksesta ja
-                asiakasviestinnästä.
+                Hanna vastaa GhoulHousen palvelun toteutuksesta ja asiakasviestinnästä.
               </p>
               <p className="type-editorial mt-4 max-w-xl text-ink/70">
-                Keskustelet suoraan palvelusta vastaavan ihmisen kanssa.
-                Ei välikäsiä, ei erillistä asiakkuustiimiä.
+                Keskustelet suoraan palvelusta vastaavan ihmisen kanssa. Ei välikäsiä, ei erillistä
+                asiakkuustiimiä.
               </p>
             </div>
 

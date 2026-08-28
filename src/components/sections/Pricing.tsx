@@ -31,26 +31,19 @@ export default function Pricing() {
       <Container>
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-4">
-            <p className="type-label mb-4 text-signal">
-              Hinnoittelu / yksi selkeä paketti
-            </p>
-            <h2
-              id="pricing-title"
-              className="type-section-title max-w-[12ch] text-ink"
-            >
-              Yksi paketti.<span className="block">Ei hinnanvaihdosta.</span>
+            <p className="type-label mb-4 text-signal">Hinnoittelu / yksi selkeä paketti</p>
+            <h2 id="pricing-title" className="type-section-title max-w-[12ch] text-ink">
+              Yksi paketti.<span className="block">Sama hinta.</span>
             </h2>
             <p className="type-editorial mt-6 max-w-md text-ink/70">
-              Sama 490 € + ALV / 30 päivää -palvelu jatkuu niin kauan kuin
-              yhteistyö jatkuu. Ei automaattista siirtymää kalliimpaan
-              palvelumalliin.
+              Sama 490 € + ALV / 30 päivää -palvelu jatkuu niin kauan kuin yhteistyö jatkuu. Ei
+              automaattista siirtymää kalliimpaan palvelumalliin.
             </p>
 
             <div className="mt-8 hidden border-l-4 border-signal pl-4 lg:block">
               <p className="type-label text-ink/65">Sopimus</p>
               <p className="mt-2 text-2xl font-extrabold uppercase leading-none tracking-[-0.025em] text-ink">
-                30 päivää <span className="mx-2 text-signal">·</span>{' '}
-                kuukausittain irtisanottava
+                30 päivää <span className="mx-2 text-signal">·</span> kuukausittain irtisanottava
               </p>
             </div>
           </div>
@@ -116,9 +109,7 @@ export default function Pricing() {
             </article>
 
             <div className="type-caption mt-5 flex flex-col gap-3 text-ink/60 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
-              <p className="max-w-xl">
-                Tarkemmat rajaukset ja sopimuslogiikka on avattu UKK:ssa.
-              </p>
+              <p className="max-w-xl">Tarkemmat rajaukset ja sopimuslogiikka on avattu UKK:ssa.</p>
               <a href="#faq" className="type-label shrink-0 text-ink">
                 Katso UKK →
               </a>

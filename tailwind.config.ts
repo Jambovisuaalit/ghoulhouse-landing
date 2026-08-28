@@ -16,7 +16,7 @@ const config: Config = {
         bone: '#E6DFD5',
       },
       fontFamily: {
-        sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        sans: ['var(--font-sans)', 'Arial', 'sans-serif'],
         display: ['var(--font-display)', 'Impact', 'sans-serif'],
       },
       spacing: {

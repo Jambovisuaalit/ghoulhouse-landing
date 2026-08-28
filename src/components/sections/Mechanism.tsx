@@ -57,14 +57,7 @@ export default function Mechanism() {
     const filmViewport = filmViewportRef.current;
     const filmTrack = filmTrackRef.current;
 
-    if (
-      !rawSection ||
-      !rawSticky ||
-      !filmSection ||
-      !filmSticky ||
-      !filmViewport ||
-      !filmTrack
-    ) {
+    if (!rawSection || !rawSticky || !filmSection || !filmSticky || !filmViewport || !filmTrack) {
       return;
     }
 
@@ -74,6 +67,13 @@ export default function Mechanism() {
 
     let animationFrame = 0;
     let measureFrame = 0;
+
+    const renderStaticFilmProgress = () => {
+      const horizontalTravel = Math.max(0, filmViewport.scrollWidth - filmViewport.clientWidth);
+      const filmProgress = horizontalTravel ? clamp(filmViewport.scrollLeft / horizontalTravel) : 0;
+
+      filmSection.style.setProperty('--film-progress', filmProgress.toFixed(4));
+    };
 
     const resetStaticState = () => {
       rawSection.style.removeProperty('height');
@@ -93,19 +93,13 @@ export default function Mechanism() {
       rawSection.style.setProperty('--final-opacity', '1');
       rawSection.style.setProperty('--raw-scale', '1.02');
       rawSection.style.setProperty('--final-scale', '1.02');
-      filmSection.style.setProperty('--film-progress', '0');
+      renderStaticFilmProgress();
     };
 
-    const sectionProgress = (
-      section: HTMLElement,
-      sticky: HTMLElement
-    ) => {
+    const sectionProgress = (section: HTMLElement, sticky: HTMLElement) => {
       const sectionRect = section.getBoundingClientRect();
       const stickyTop = Number.parseFloat(sticky.style.top) || 0;
-      const travel = Math.max(
-        1,
-        section.offsetHeight - sticky.offsetHeight
-      );
+      const travel = Math.max(1, section.offsetHeight - sticky.offsetHeight);
 
       return clamp((stickyTop - sectionRect.top) / travel);
     };
@@ -114,30 +108,18 @@ export default function Mechanism() {
       animationFrame = 0;
 
       if (!desktopMotion.matches) {
-        resetStaticState();
+        renderStaticFilmProgress();
         return;
       }
 
       const rawProgress = sectionProgress(rawSection, rawSticky);
       const rawCut = 100 - rawProgress * 100;
 
-      rawSection.style.setProperty(
-        '--raw-progress',
-        rawProgress.toFixed(4)
-      );
+      rawSection.style.setProperty('--raw-progress', rawProgress.toFixed(4));
       rawSection.style.setProperty('--raw-cut', `${rawCut.toFixed(2)}%`);
-      rawSection.style.setProperty(
-        '--raw-left',
-        `${(rawProgress * 100).toFixed(2)}%`
-      );
-      rawSection.style.setProperty(
-        '--raw-shift',
-        `${(-36 * rawProgress).toFixed(2)}px`
-      );
-      rawSection.style.setProperty(
-        '--final-shift',
-        `${(36 * (1 - rawProgress)).toFixed(2)}px`
-      );
+      rawSection.style.setProperty('--raw-left', `${(rawProgress * 100).toFixed(2)}%`);
+      rawSection.style.setProperty('--raw-shift', `${(-36 * rawProgress).toFixed(2)}px`);
+      rawSection.style.setProperty('--final-shift', `${(36 * (1 - rawProgress)).toFixed(2)}px`);
       rawSection.style.setProperty(
         '--raw-opacity',
         Math.max(0.2, 1 - rawProgress * 1.08).toFixed(3)
@@ -146,28 +128,16 @@ export default function Mechanism() {
         '--final-opacity',
         Math.max(0.18, rawProgress * 1.15).toFixed(3)
       );
-      rawSection.style.setProperty(
-        '--raw-scale',
-        (1.035 - rawProgress * 0.018).toFixed(4)
-      );
-      rawSection.style.setProperty(
-        '--final-scale',
-        (1.012 + rawProgress * 0.012).toFixed(4)
-      );
+      rawSection.style.setProperty('--raw-scale', (1.035 - rawProgress * 0.018).toFixed(4));
+      rawSection.style.setProperty('--final-scale', (1.012 + rawProgress * 0.012).toFixed(4));
 
       const filmProgress = sectionProgress(filmSection, filmSticky);
-      const horizontalTravel = Math.max(
-        0,
-        filmTrack.scrollWidth - filmViewport.clientWidth
-      );
+      const horizontalTravel = Math.max(0, filmTrack.scrollWidth - filmViewport.clientWidth);
 
-      filmSection.style.setProperty(
-        '--film-progress',
-        filmProgress.toFixed(4)
-      );
-      filmTrack.style.transform = `translate3d(${(
-        -horizontalTravel * filmProgress
-      ).toFixed(2)}px, 0, 0)`;
+      filmSection.style.setProperty('--film-progress', filmProgress.toFixed(4));
+      filmTrack.style.transform = `translate3d(${(-horizontalTravel * filmProgress).toFixed(
+        2
+      )}px, 0, 0)`;
     };
 
     const scheduleRender = () => {
@@ -186,33 +156,19 @@ export default function Mechanism() {
       const header =
         document.querySelector<HTMLElement>('body > header') ??
         document.querySelector<HTMLElement>('header');
-      const headerHeight = Math.round(
-        header?.getBoundingClientRect().height ?? 66
-      );
-      const stickyHeight = Math.max(
-        520,
-        window.innerHeight - headerHeight
-      );
+      const headerHeight = Math.round(header?.getBoundingClientRect().height ?? 66);
+      const stickyHeight = Math.max(520, window.innerHeight - headerHeight);
 
       rawSticky.style.top = `${headerHeight}px`;
       rawSticky.style.height = `${stickyHeight}px`;
       filmSticky.style.top = `${headerHeight}px`;
       filmSticky.style.height = `${stickyHeight}px`;
 
-      const rawTravel = Math.min(
-        1500,
-        Math.max(950, stickyHeight * 1.35)
-      );
+      const rawTravel = Math.min(900, Math.max(620, stickyHeight * 0.8));
       rawSection.style.height = `${stickyHeight + rawTravel}px`;
 
-      const horizontalTravel = Math.max(
-        0,
-        filmTrack.scrollWidth - filmViewport.clientWidth
-      );
-      const filmTravel = Math.min(
-        2800,
-        Math.max(horizontalTravel, stickyHeight * 1.2)
-      );
+      const horizontalTravel = Math.max(0, filmTrack.scrollWidth - filmViewport.clientWidth);
+      const filmTravel = Math.min(1500, Math.max(horizontalTravel * 0.62, stickyHeight * 0.72));
       filmSection.style.height = `${stickyHeight + filmTravel}px`;
 
       render();
@@ -230,6 +186,7 @@ export default function Mechanism() {
     measure();
 
     window.addEventListener('scroll', scheduleRender, { passive: true });
+    filmViewport.addEventListener('scroll', scheduleRender, { passive: true });
     window.addEventListener('resize', scheduleMeasure);
     desktopMotion.addEventListener('change', scheduleMeasure);
 
@@ -238,6 +195,7 @@ export default function Mechanism() {
       if (measureFrame) window.cancelAnimationFrame(measureFrame);
       resizeObserver.disconnect();
       window.removeEventListener('scroll', scheduleRender);
+      filmViewport.removeEventListener('scroll', scheduleRender);
       window.removeEventListener('resize', scheduleMeasure);
       desktopMotion.removeEventListener('change', scheduleMeasure);
     };
@@ -252,16 +210,11 @@ export default function Mechanism() {
       <Container className="py-14 md:py-20">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-9">
-            <p className="type-label mb-4 text-signal">
-              Signature / RAW → FINAL
-            </p>
-            <h2
-              id="mechanism-title"
-              className="type-display max-w-[13ch] text-ghost"
-            >
-              Worksite material
+            <p className="type-label mb-4 text-signal-on-dark">Muutos / RAW → FINAL</p>
+            <h2 id="mechanism-title" className="type-display max-w-[13ch] text-ghost">
+              Työmaamateriaali
               <span className="block text-signal">→ GhoulHouse →</span>
-              ready social content.
+              valmis julkaisuun.
             </h2>
           </div>
 
@@ -271,24 +224,15 @@ export default function Mechanism() {
         </div>
       </Container>
 
-      <div
-        ref={rawSectionRef}
-        className="mechanism-raw"
-        data-scroll-raw
-      >
+      <div ref={rawSectionRef} className="mechanism-raw" data-scroll-raw>
         <div ref={rawStickyRef} className="mechanism-raw__sticky">
           <div className="mechanism-raw__copy mechanism-raw__copy--raw">
-            <span className="type-label text-signal">01 / RAW</span>
+            <span className="type-label text-signal-on-light">01 / RAW</span>
             <h3>Puhelimesta.</h3>
-            <p>
-              Oikea työmaa. Oikea hetki. Materiaali sellaisena kuin se syntyy.
-            </p>
+            <p>Oikea työmaa. Oikea hetki. Materiaali sellaisena kuin se syntyy.</p>
           </div>
 
-          <div
-            className="mechanism-raw__stage"
-            aria-label="RAW to FINAL -konseptitransformaatio"
-          >
+          <div className="mechanism-raw__stage" aria-label="RAW to FINAL -konseptitransformaatio">
             <div className="mechanism-raw__image mechanism-raw__image--source">
               <Image
                 src="/hero-renovation-clean.svg"
@@ -299,8 +243,8 @@ export default function Mechanism() {
               />
               <div className="mechanism-raw__technical" aria-hidden="true">
                 <span>RAW / 01</span>
-                <span>WORKSITE MATERIAL</span>
-                <span>UNEDITED</span>
+                <span>TYÖMAAMATERIAALI</span>
+                <span>KÄSITTELEMÄTÖN</span>
               </div>
             </div>
 
@@ -314,9 +258,7 @@ export default function Mechanism() {
               />
               <div className="mechanism-raw__final-frame" aria-hidden="true" />
               <div className="mechanism-raw__final-copy">
-                <span className="type-label text-signal">
-                  GhoulHouse / final
-                </span>
+                <span className="type-label text-signal-on-light">GhoulHouse / final</span>
                 <strong>Työ näyttää yhtä hyvältä kuin se on.</strong>
                 <small>KONSEPTIESIMERKKI — EI ASIAKASTYÖ</small>
               </div>
@@ -328,24 +270,19 @@ export default function Mechanism() {
           </div>
 
           <div className="mechanism-raw__copy mechanism-raw__copy--final">
-            <span className="type-label text-signal">02 / FINAL</span>
+            <span className="type-label text-signal-on-light">02 / FINAL</span>
             <h3>Julkaisuun.</h3>
-            <p>
-              Rajaus, rakenne, copy ja CTA — sama työ selkeämmässä muodossa.
-            </p>
+            <p>Rajaus, rakenne, copy ja CTA — sama työ selkeämmässä muodossa.</p>
           </div>
         </div>
       </div>
 
-      <div
-        ref={filmSectionRef}
-        className="mechanism-film"
-        data-scroll-film
-      >
+      <div ref={filmSectionRef} className="mechanism-film" data-scroll-film>
         <div ref={filmStickyRef} className="mechanism-film__sticky">
           <div className="mechanism-film__header">
-            <p className="type-label text-signal">Filmstrip / prosessi</p>
+            <p className="type-label text-signal-on-dark">Kuvaketju / prosessi</p>
             <h3>Yksi työmaa. Monta kulmaa.</h3>
+            <p className="type-label text-ghost/60 lg:hidden">Pyyhkäise kortteja →</p>
           </div>
 
           <div
