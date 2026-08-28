@@ -1,7 +1,11 @@
 name: Deploy GhoulHouse production once
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - ops/apex-domain-rollout-20260828
+    paths:
+      - .github/workflows/deploy-production-once.yml
 
 permissions:
   contents: read
@@ -19,16 +23,20 @@ jobs:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       CANONICAL_URL: https://ghoulhouse.fi
       WWW_URL: https://www.ghoulhouse.fi
+      SOURCE_COMMIT: 5465b8a540da4a4b31d0e41856aade6595d3b0fd
 
     steps:
       - name: Checkout validated main
         uses: actions/checkout@v4
+        with:
+          ref: ${{ env.SOURCE_COMMIT }}
 
       - name: Verify release source
         shell: bash
         run: |
-          test "${GITHUB_REF_NAME}" = "main"
-          echo "Releasing commit ${GITHUB_SHA}"
+          actual_sha="$(git rev-parse HEAD)"
+          test "$actual_sha" = "$SOURCE_COMMIT"
+          echo "Releasing commit $actual_sha"
 
       - name: Verify Vercel credentials
         shell: bash
@@ -93,6 +101,10 @@ jobs:
 
           printf '%s' "$html" | grep -q 'data-offer-name="SOME 12"'
           printf '%s' "$html" | grep -q 'data-offer-price="490"'
+          printf '%s' "$html" | grep -Eqi 'name="robots" content="noindex'
+
+          preview_robots="$(vercel curl /robots.txt --deployment "$url" --token="$VERCEL_TOKEN" 2>/dev/null || true)"
+          printf '%s' "$preview_robots" | grep -q 'Disallow: /'
 
           if printf '%s' "$html" | grep -Eqi 'MANAGED|Palvelujaksosta 4'; then
             echo "::error::Preview contains obsolete pricing lifecycle."
@@ -116,6 +128,23 @@ jobs:
             cat /tmp/preview-errors.log
             exit 1
           fi
+
+      - name: Clear apex platform redirect
+        shell: bash
+        run: |
+          curl --silent --show-error --fail-with-body \
+            --request PATCH \
+            --url "https://api.vercel.com/v9/projects/$VERCEL_PROJECT_ID/domains/ghoulhouse.fi?teamId=$VERCEL_ORG_ID" \
+            --header "Authorization: Bearer $VERCEL_TOKEN" \
+            --header "Content-Type: application/json" \
+            --data '{"redirect":null,"redirectStatusCode":null}' \
+            --output /tmp/apex-domain.json
+
+          jq -e '
+            .name == "ghoulhouse.fi" and
+            .redirect == null and
+            .redirectStatusCode == null
+          ' /tmp/apex-domain.json > /dev/null
 
       - name: Pull Production project settings
         run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
@@ -176,27 +205,51 @@ jobs:
           echo "::error::Production deployment URL did not return the validated application."
           exit 1
 
+      - name: Configure www platform redirect
+        shell: bash
+        run: |
+          curl --silent --show-error --fail-with-body \
+            --request PATCH \
+            --url "https://api.vercel.com/v9/projects/$VERCEL_PROJECT_ID/domains/www.ghoulhouse.fi?teamId=$VERCEL_ORG_ID" \
+            --header "Authorization: Bearer $VERCEL_TOKEN" \
+            --header "Content-Type: application/json" \
+            --data '{"redirect":"ghoulhouse.fi","redirectStatusCode":301}' \
+            --output /tmp/www-domain.json
+
+          jq -e '
+            .name == "www.ghoulhouse.fi" and
+            .redirect == "ghoulhouse.fi" and
+            .redirectStatusCode == 301
+          ' /tmp/www-domain.json > /dev/null
+
       - name: Custom-domain routing QA
         shell: bash
         run: |
-          curl --silent --show-error --head "$CANONICAL_URL/" > /tmp/apex.txt
-          grep -qi '^HTTP/.* 200' /tmp/apex.txt
+          for i in {1..20}; do
+            curl --silent --show-error --head "$CANONICAL_URL/" > /tmp/apex.txt
+            curl --silent --show-error --head "$WWW_URL/" > /tmp/www.txt
 
-          if grep -qi '^location:' /tmp/apex.txt; then
-            echo "::error::Canonical apex host redirects unexpectedly."
-            cat /tmp/apex.txt
-            exit 1
-          fi
+            if grep -qi '^HTTP/.* 200' /tmp/apex.txt && \
+               ! grep -qi '^location:' /tmp/apex.txt && \
+               grep -qi '^HTTP/.* 301' /tmp/www.txt && \
+               grep -qi '^location: https://ghoulhouse.fi/' /tmp/www.txt; then
+              redirect_result="$(curl --silent --show-error --location --max-redirs 1 \
+                --output /dev/null \
+                --write-out '%{http_code} %{num_redirects} %{url_effective}' \
+                "$WWW_URL/" || true)"
 
-          curl --silent --show-error --head "$WWW_URL/" > /tmp/www.txt
-          grep -qi '^HTTP/.* 301' /tmp/www.txt
-          grep -qi '^location: https://ghoulhouse.fi/' /tmp/www.txt
+              if [ "$redirect_result" = "200 1 https://ghoulhouse.fi/" ]; then
+                exit 0
+              fi
+            fi
 
-          redirect_result="$(curl --silent --show-error --location --max-redirs 1 \
-            --output /dev/null \
-            --write-out '%{http_code} %{num_redirects} %{url_effective}' \
-            "$WWW_URL/")"
-          test "$redirect_result" = "200 1 https://ghoulhouse.fi/"
+            sleep 3
+          done
+
+          echo "::error::Custom-domain routing did not converge."
+          cat /tmp/apex.txt
+          cat /tmp/www.txt
+          exit 1
 
       - name: Canonical and security QA
         shell: bash
@@ -205,6 +258,18 @@ jobs:
           headers="$(curl --silent --show-error --head "$CANONICAL_URL/")"
 
           printf '%s' "$html" | grep -q 'rel="canonical" href="https://ghoulhouse.fi'
+          printf '%s' "$html" | grep -q 'property="og:url" content="https://ghoulhouse.fi'
+          printf '%s' "$html" | grep -q 'property="og:image" content="https://ghoulhouse.fi/opengraph-image'
+          printf '%s' "$html" | grep -q 'id="ghoulhouse-structured-data"'
+          printf '%s' "$html" | grep -q '"@id":"https://ghoulhouse.fi/#organization"'
+          printf '%s' "$html" | grep -q '"@id":"https://ghoulhouse.fi/#website"'
+          printf '%s' "$html" | grep -q '"url":"https://ghoulhouse.fi"'
+
+          if printf '%s' "$html" | grep -q 'https://www.ghoulhouse.fi'; then
+            echo "::error::Canonical metadata still exposes the www host."
+            exit 1
+          fi
+
           printf '%s' "$html" | grep -q "TYÖMAAKUVAT SISÄÄN"
           printf '%s' "$html" | grep -q "Yksi työmaa. Monta kulmaa."
           printf '%s' "$html" | grep -q "KONSEPTIESIMERKKI — EI ASIAKASTYÖ"
@@ -287,7 +352,7 @@ jobs:
 
       - name: Release summary
         run: |
-          echo "Validated source: $GITHUB_SHA"
+          echo "Validated source: $SOURCE_COMMIT"
           echo "Preview: ${{ steps.preview.outputs.url }}"
           echo "Production: ${{ steps.production.outputs.url }}"
           echo "Canonical: $CANONICAL_URL"
