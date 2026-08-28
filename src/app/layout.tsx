@@ -7,6 +7,7 @@ import {
   isProductionDeployment,
   productionUrl,
 } from '@/lib/seo';
+import VercelAnalytics from '@/components/analytics/VercelAnalytics';
 import './globals.css';
 
 const anton = Anton({
@@ -145,6 +146,7 @@ export default function RootLayout({
     <html lang="fi">
       <body className={anton.variable}>
         {children}
+        <VercelAnalytics />
         <script
           id="ghoulhouse-structured-data"
           type="application/ld+json"
