@@ -9,19 +9,37 @@ export type FunnelEvent =
   | 'pricing_view'
   | 'content_example_view';
 
+type AnalyticsProperties = Record<string, string | number | boolean>;
+
+type VercelAnalyticsFn = (
+  command: 'event',
+  payload: {
+    name: string;
+    data?: AnalyticsProperties;
+  }
+) => void;
+
 export function trackEvent(
   event: FunnelEvent,
-  properties: Record<string, string | number | boolean> = {}
+  properties: AnalyticsProperties = {}
 ) {
   if (typeof window === 'undefined') return;
 
   const payload = { event, ...properties };
   const target = window as Window & {
     dataLayer?: Array<Record<string, unknown>>;
+    va?: VercelAnalyticsFn;
   };
 
   if (Array.isArray(target.dataLayer)) {
     target.dataLayer.push(payload);
+  }
+
+  if (typeof target.va === 'function') {
+    target.va('event', {
+      name: event,
+      ...(Object.keys(properties).length > 0 ? { data: properties } : {}),
+    });
   }
 
   window.dispatchEvent(
