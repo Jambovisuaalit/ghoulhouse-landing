@@ -17,8 +17,8 @@ jobs:
       VERCEL_ORG_ID: team_zwsvoePoiBeskRuyl2Iar883
       VERCEL_PROJECT_ID: prj_LDmPUItb4oGQlzU2ZZAgyjs7rfLw
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      CANONICAL_URL: https://ghoulhouse.fi
-      WWW_URL: https://www.ghoulhouse.fi
+      CANONICAL_URL: https://www.ghoulhouse.fi
+      APEX_URL: https://ghoulhouse.fi
 
     steps:
       - name: Checkout validated main
@@ -179,18 +179,18 @@ jobs:
       - name: Custom-domain routing QA
         shell: bash
         run: |
-          curl --silent --show-error --head "$CANONICAL_URL/" > /tmp/apex.txt
-          grep -qi '^HTTP/.* 200' /tmp/apex.txt
+          curl --silent --show-error --head "$APEX_URL/" > /tmp/apex.txt
+          grep -qi '^HTTP/.* 308' /tmp/apex.txt
+          grep -qi '^location: https://www.ghoulhouse.fi/' /tmp/apex.txt
 
-          if grep -qi '^location:' /tmp/apex.txt; then
-            echo "::error::Canonical apex host redirects unexpectedly."
-            cat /tmp/apex.txt
+          curl --silent --show-error --head "$CANONICAL_URL/" > /tmp/www.txt
+          grep -qi '^HTTP/.* 200' /tmp/www.txt
+
+          if grep -qi '^location:' /tmp/www.txt; then
+            echo "::error::Canonical www host redirects unexpectedly."
+            cat /tmp/www.txt
             exit 1
           fi
-
-          curl --silent --show-error --head "$WWW_URL/" > /tmp/www.txt
-          grep -qi '^HTTP/.* 308' /tmp/www.txt
-          grep -qi '^location: https://ghoulhouse.fi/' /tmp/www.txt
 
       - name: Canonical and security QA
         shell: bash
@@ -198,7 +198,7 @@ jobs:
           html="$(curl --fail --silent --show-error "$CANONICAL_URL/")"
           headers="$(curl --silent --show-error --head "$CANONICAL_URL/")"
 
-          printf '%s' "$html" | grep -q 'rel="canonical" href="https://ghoulhouse.fi'
+          printf '%s' "$html" | grep -q 'rel="canonical" href="https://www.ghoulhouse.fi'
           printf '%s' "$html" | grep -q "TYÖMAAKUVAT SISÄÄN"
           printf '%s' "$html" | grep -q "Yksi työmaa. Monta kulmaa."
           printf '%s' "$html" | grep -q "KONSEPTIESIMERKKI — EI ASIAKASTYÖ"
@@ -233,7 +233,7 @@ jobs:
             --write-out '%{http_code}' \
             --request POST \
             --header 'content-type: application/json' \
-            --data '{"company":"GhoulHouse Release QA","name":"Release Gate","email":"release-qa@ghoulhouse.fi","profile":"https://ghoulhouse.fi","message":"Automated production release QA. No action required."}' \
+            --data '{"company":"GhoulHouse Release QA","name":"Release Gate","email":"release-qa@ghoulhouse.fi","profile":"https://www.ghoulhouse.fi","message":"Automated production release QA. No action required."}' \
             "$CANONICAL_URL/api/leads")"
 
           if [ "$valid_status" != "201" ]; then
