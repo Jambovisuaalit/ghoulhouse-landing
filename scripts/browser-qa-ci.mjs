@@ -314,6 +314,8 @@ try {
           heroText: hero?.textContent?.replace(/\\s+/g, ' ').trim() || '',
           ctaText: cta?.textContent?.replace(/\\s+/g, ' ').trim() || '',
           priceText: price?.textContent?.replace(/\\s+/g, ' ').trim() || '',
+          brandText: brand?.textContent?.replace(/\\s+/g, ' ').trim() || '',
+          brandRect: rect(brand),
           h1Rect: rect(h1),
           ctaRect: rect(cta),
           priceRect: rect(price),
