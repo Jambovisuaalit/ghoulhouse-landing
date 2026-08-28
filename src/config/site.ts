@@ -1,5 +1,5 @@
 const canonicalSiteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL?.trim() || 'https://ghoulhouse.fi';
+  process.env.NEXT_PUBLIC_SITE_URL?.trim() || 'https://www.ghoulhouse.fi';
 const privacyPath =
   process.env.NEXT_PUBLIC_PRIVACY_PATH?.trim() || null;
 const termsPath =
