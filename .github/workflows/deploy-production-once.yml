@@ -117,6 +117,28 @@ jobs:
       - name: Pull Production project settings
         run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
 
+      - name: Verify Production lead delivery config
+        shell: bash
+        run: |
+          env_file="/tmp/ghoulhouse-production.env"
+          rm -f "$env_file"
+          vercel env pull "$env_file" --environment=production --token="$VERCEL_TOKEN"
+
+          if grep -Eq '^LEAD_DELIVERY_MODE="?resend"?$' "$env_file"; then
+            grep -Eq '^RESEND_API_KEY=.+$' "$env_file"
+            grep -Eq '^LEAD_TO_EMAIL=.+$' "$env_file"
+            grep -Eq '^LEAD_FROM_EMAIL=.+$' "$env_file"
+            echo "Production lead delivery config: resend"
+          elif grep -Eq '^LEAD_DELIVERY_MODE="?webhook"?$' "$env_file"; then
+            grep -Eq '^LEAD_WEBHOOK_URL="?https://.+' "$env_file"
+            echo "Production lead delivery config: webhook"
+          else
+            echo "::error::Production lead delivery is not configured."
+            exit 1
+          fi
+
+          rm -f "$env_file"
+
       - name: Build Production candidate
         run: vercel build --prod --token="$VERCEL_TOKEN"
 
