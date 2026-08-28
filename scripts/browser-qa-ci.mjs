@@ -303,6 +303,7 @@ try {
         const price = [...(hero?.querySelectorAll('*') || [])].find(
           (el) => visible(el) && el.children.length === 0 && el.textContent?.includes('490 €')
         );
+        const offerCard = document.querySelector('[data-offer-card]');
         const rect = (el) => {
           if (!el) return null;
           const r = el.getBoundingClientRect();
@@ -314,6 +315,9 @@ try {
           heroText: hero?.textContent?.replace(/\\s+/g, ' ').trim() || '',
           ctaText: cta?.textContent?.replace(/\\s+/g, ' ').trim() || '',
           priceText: price?.textContent?.replace(/\\s+/g, ' ').trim() || '',
+          offerName: offerCard?.getAttribute('data-offer-name') || '',
+          offerPrice: offerCard?.getAttribute('data-offer-price') || '',
+          bodyText: document.body.innerText.replace(/\\s+/g, ' ').trim(),
           brandText: brand?.textContent?.replace(/\\s+/g, ' ').trim() || '',
           brandRect: rect(brand),
           h1Rect: rect(h1),
@@ -338,7 +342,21 @@ try {
     );
     assert(metrics.brandText.toUpperCase() === 'GHOULHOUSE', `${viewport.width}px: full GhoulHouse wordmark is missing.`);
     assert(metrics.ctaText.includes('PYYDÄ 2 SISÄLTÖESIMERKKIÄ'), `${viewport.width}px: CTA missing.`);
-    assert(metrics.priceText.includes('490 €'), `${viewport.width}px: START price missing.`);
+    assert(metrics.priceText.includes('490 €'), `${viewport.width}px: SOME 12 price missing.`);
+    assert(
+      metrics.offerName === 'SOME 12',
+      `${viewport.width}px: pricing card offer name must be SOME 12, got "${metrics.offerName}".`
+    );
+    assert(
+      metrics.offerPrice === '490',
+      `${viewport.width}px: pricing card offer price must be 490, got "${metrics.offerPrice}".`
+    );
+    assert(
+      !metrics.bodyText.includes('790 €') &&
+        !metrics.bodyText.includes('MANAGED') &&
+        !metrics.bodyText.toLowerCase().includes('palvelujaksosta 4'),
+      `${viewport.width}px: obsolete 490→790 pricing lifecycle reappeared in rendered page.`
+    );
     assert(
       metrics.scrollWidth <= metrics.innerWidth + 1,
       `${viewport.width}px: horizontal overflow ${metrics.scrollWidth}px > ${metrics.innerWidth}px.`
@@ -539,78 +557,103 @@ try {
   await client.send('Page.navigate', { url: BASE_URL });
   await waitForDocument(client);
 
-  const rawTarget = await evaluate(
-    client,
-    `(() => {
-      document.documentElement.style.scrollBehavior = 'auto';
-      const section = document.querySelector('[data-scroll-raw]');
-      const sticky = section?.querySelector('.mechanism-raw__sticky');
-      if (!section || !sticky) return null;
-      const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0;
-      const sectionTop = section.getBoundingClientRect().top + scrollY;
-      const travel = Math.max(1, section.offsetHeight - sticky.offsetHeight);
-      const target = sectionTop - stickyTop + travel * 0.5;
-      window.scrollTo(0, target);
-      return { target, travel };
-    })()`
-  );
-  assert(rawTarget, 'Desktop RAW scroll geometry is missing.');
-  await sleep(180);
+  const sampleRawAt = async (fraction) => {
+    const target = await evaluate(
+      client,
+      `(() => {
+        document.documentElement.style.scrollBehavior = 'auto';
+        const section = document.querySelector('[data-scroll-raw]');
+        const sticky = section?.querySelector('.mechanism-raw__sticky');
+        if (!section || !sticky) return null;
+        const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0;
+        const sectionTop = section.getBoundingClientRect().top + scrollY;
+        const travel = Math.max(1, section.offsetHeight - sticky.offsetHeight);
+        const target = sectionTop - stickyTop + travel * ${fraction};
+        window.scrollTo(0, target);
+        return { target, travel };
+      })()`
+    );
 
-  const rawMid = await evaluate(
-    client,
-    `(() => {
-      const section = document.querySelector('[data-scroll-raw]');
-      const sticky = section?.querySelector('.mechanism-raw__sticky');
-      const stage = section?.querySelector('.mechanism-raw__stage');
-      const finalImage = section?.querySelector('.mechanism-raw__image--final');
-      const divider = section?.querySelector('.mechanism-raw__divider');
-      if (!section || !sticky || !stage || !finalImage || !divider) return null;
-      const stickyRect = sticky.getBoundingClientRect();
-      const stageRect = stage.getBoundingClientRect();
-      return {
-        progress: parseFloat(getComputedStyle(section).getPropertyValue('--raw-progress')) || 0,
-        clipPath: getComputedStyle(finalImage).clipPath,
-        dividerLeft: getComputedStyle(divider).left,
-        stickyTop: stickyRect.top,
-        stickyBottom: stickyRect.bottom,
-        stickyHeight: stickyRect.height,
-        stageTop: stageRect.top,
-        stageBottom: stageRect.bottom,
-        stageHeight: stageRect.height,
-      };
-    })()`
-  );
-  assert(rawMid, 'Desktop RAW midpoint metrics are missing.');
+    assert(target, `Desktop RAW scroll geometry is missing at ${fraction}.`);
+    await sleep(180);
+
+    return evaluate(
+      client,
+      `(() => {
+        const section = document.querySelector('[data-scroll-raw]');
+        const sticky = section?.querySelector('.mechanism-raw__sticky');
+        const stage = section?.querySelector('.mechanism-raw__stage');
+        const finalImage = section?.querySelector('.mechanism-raw__image--final');
+        const divider = section?.querySelector('.mechanism-raw__divider');
+        if (!section || !sticky || !stage || !finalImage || !divider) return null;
+        const stickyRect = sticky.getBoundingClientRect();
+        const stageRect = stage.getBoundingClientRect();
+        return {
+          progress: parseFloat(getComputedStyle(section).getPropertyValue('--raw-progress')) || 0,
+          clipPath: getComputedStyle(finalImage).clipPath,
+          dividerLeft: parseFloat(getComputedStyle(divider).left) || 0,
+          stickyTop: stickyRect.top,
+          stickyBottom: stickyRect.bottom,
+          stageTop: stageRect.top,
+          stageBottom: stageRect.bottom,
+          stageHeight: stageRect.height,
+        };
+      })()`
+    );
+  };
+
+  const rawQuarter = await sampleRawAt(0.25);
+  const rawThreeQuarter = await sampleRawAt(0.75);
+
+  assert(rawQuarter, 'Desktop RAW quarter-point metrics are missing.');
+  assert(rawThreeQuarter, 'Desktop RAW three-quarter metrics are missing.');
   assert(
-    rawMid.progress > 0.35 && rawMid.progress < 0.65,
-    `Desktop RAW progress should be near 0.5, got ${rawMid.progress}.`
-  );
-  assert(
-    rawMid.clipPath && rawMid.clipPath !== 'none',
-    'Desktop RAW final image is not being clipped by scroll progress.'
-  );
-  assert(
-    rawMid.stickyTop >= 55 && rawMid.stickyTop <= 80,
-    `Desktop RAW sticky stage is not pinned below the header: top ${rawMid.stickyTop}px.`
-  );
-  assert(
-    rawMid.stickyBottom >= 860 && rawMid.stickyBottom <= 905,
-    `Desktop RAW sticky stage does not fill the usable viewport: bottom ${rawMid.stickyBottom}px.`
+    rawQuarter.progress > 0.15 && rawQuarter.progress < 0.35,
+    `Desktop RAW quarter progress should be near 0.25, got ${rawQuarter.progress}.`
   );
   assert(
-    rawMid.stageHeight >= 400 &&
-      rawMid.stageTop >= rawMid.stickyTop &&
-      rawMid.stageBottom <= rawMid.stickyBottom + 1,
-    `Desktop RAW visual stage is clipped or outside sticky viewport: ${JSON.stringify(rawMid)}.`
+    rawThreeQuarter.progress > 0.65 && rawThreeQuarter.progress < 0.85,
+    `Desktop RAW three-quarter progress should be near 0.75, got ${rawThreeQuarter.progress}.`
   );
+  assert(
+    rawQuarter.clipPath &&
+      rawQuarter.clipPath !== 'none' &&
+      rawThreeQuarter.clipPath &&
+      rawThreeQuarter.clipPath !== 'none' &&
+      rawQuarter.clipPath !== rawThreeQuarter.clipPath,
+    `Desktop RAW clip-path did not change with scroll: ${rawQuarter.clipPath} → ${rawThreeQuarter.clipPath}.`
+  );
+  assert(
+    rawThreeQuarter.dividerLeft > rawQuarter.dividerLeft + 100,
+    `Desktop RAW divider did not advance with scroll: ${rawQuarter.dividerLeft}px → ${rawThreeQuarter.dividerLeft}px.`
+  );
+
+  for (const [label, sample] of [
+    ['quarter', rawQuarter],
+    ['three-quarter', rawThreeQuarter],
+  ]) {
+    assert(
+      sample.stickyTop >= 55 && sample.stickyTop <= 80,
+      `Desktop RAW ${label} sticky stage is not pinned below the header: top ${sample.stickyTop}px.`
+    );
+    assert(
+      sample.stickyBottom >= 860 && sample.stickyBottom <= 905,
+      `Desktop RAW ${label} sticky stage does not fill the usable viewport: bottom ${sample.stickyBottom}px.`
+    );
+    assert(
+      sample.stageHeight >= 400 &&
+        sample.stageTop >= sample.stickyTop &&
+        sample.stageBottom <= sample.stickyBottom + 1,
+      `Desktop RAW ${label} visual stage is clipped or outside sticky viewport: ${JSON.stringify(sample)}.`
+    );
+  }
 
   const rawShot = await client.send('Page.captureScreenshot', {
     format: 'png',
     captureBeyondViewport: false,
   });
   await writeFile(
-    `${SCREENSHOT_DIR}/scroll-raw-mid-1440x900.png`,
+    `${SCREENSHOT_DIR}/scroll-raw-three-quarter-1440x900.png`,
     Buffer.from(rawShot.data, 'base64')
   );
 
@@ -673,9 +716,10 @@ try {
     `Desktop filmstrip progress should be near 0.5, got ${filmMid.progress}.`
   );
   assert(
-    Math.abs(filmMid.translateX) > filmMid.horizontalTravel * 0.3 &&
+    filmMid.translateX < 0 &&
+      Math.abs(filmMid.translateX) > filmMid.horizontalTravel * 0.3 &&
       Math.abs(filmMid.translateX) < filmMid.horizontalTravel * 0.7,
-    `Desktop filmstrip translateX is out of sync: ${filmMid.translateX}px of ${filmMid.horizontalTravel}px.`
+    `Desktop filmstrip must translate left in sync with scroll: ${filmMid.translateX}px of ${filmMid.horizontalTravel}px.`
   );
   assert(
     filmMid.stickyTop >= 55 && filmMid.stickyTop <= 80,
@@ -800,10 +844,10 @@ try {
 
   await writeFile(
     `${SCREENSHOT_DIR}/results.json`,
-    JSON.stringify({ chromePath, results, scrollEffects: { rawMid, filmMid }, reducedMotion, dialog }, null, 2)
+    JSON.stringify({ chromePath, results, scrollEffects: { rawQuarter, rawThreeQuarter, filmMid }, reducedMotion, dialog }, null, 2)
   );
 
-  console.log(JSON.stringify({ chromePath, results, scrollEffects: { rawMid, filmMid }, reducedMotion, dialog }, null, 2));
+  console.log(JSON.stringify({ chromePath, results, scrollEffects: { rawQuarter, rawThreeQuarter, filmMid }, reducedMotion, dialog }, null, 2));
 } finally {
   client?.close();
 

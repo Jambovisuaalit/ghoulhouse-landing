@@ -263,6 +263,7 @@ try {
         };
         const hero = document.querySelector('#top');
         const h1 = document.querySelector('h1');
+        const offerCard = document.querySelector('[data-offer-card]');
         const heroButtons = [...(hero?.querySelectorAll('button') || [])].filter(visible);
         const cta = heroButtons.find((element) => element.textContent?.includes('PYYDÄ 2 SISÄLTÖESIMERKKIÄ'));
         const price = [...(hero?.querySelectorAll('p') || [])].find(
@@ -286,6 +287,9 @@ try {
           h1Count: document.querySelectorAll('h1').length,
           h1Text: h1?.textContent?.replace(/\\s+/g, ' ').trim() || '',
           heroText: hero?.textContent?.replace(/\\s+/g, ' ').trim() || '',
+          bodyText: document.body.innerText.replace(/\\s+/g, ' ').trim(),
+          offerName: offerCard?.getAttribute('data-offer-name') || '',
+          offerPrice: offerCard?.getAttribute('data-offer-price') || '',
           viewport: { width: innerWidth, height: innerHeight },
           scrollWidth: document.documentElement.scrollWidth,
           h1Rect: rect(h1),
@@ -339,7 +343,21 @@ try {
     );
     assert(
       metrics.priceText.includes('490 €'),
-      `${viewport.width}px: START price missing from hero.`
+      `${viewport.width}px: SOME 12 price missing from hero.`
+    );
+    assert(
+      metrics.offerName === 'SOME 12',
+      `${viewport.width}px: pricing card offer name must be SOME 12, got "${metrics.offerName}".`
+    );
+    assert(
+      metrics.offerPrice === '490',
+      `${viewport.width}px: pricing card offer price must be 490, got "${metrics.offerPrice}".`
+    );
+    assert(
+      !metrics.bodyText.includes('790 €') &&
+        !metrics.bodyText.includes('MANAGED') &&
+        !metrics.bodyText.toLowerCase().includes('palvelujaksosta 4'),
+      `${viewport.width}px: obsolete 490→790 pricing lifecycle reappeared in rendered page.`
     );
     assert(
       metrics.scrollWidth <= metrics.viewport.width + 1,
@@ -368,7 +386,7 @@ try {
     );
     assert(
       metrics.priceRect.bottom <= metrics.viewport.height,
-      `${viewport.width}px: START price is not visible in the first viewport.`
+      `${viewport.width}px: SOME 12 price is not visible in the first viewport.`
     );
 
     const shot = await client.send('Page.captureScreenshot', {

@@ -91,6 +91,14 @@ jobs:
             sleep 3
           done
 
+          printf '%s' "$html" | grep -q 'data-offer-name="SOME 12"'
+          printf '%s' "$html" | grep -q 'data-offer-price="490"'
+
+          if printf '%s' "$html" | grep -Eqi 'MANAGED|Palvelujaksosta 4'; then
+            echo "::error::Preview contains obsolete pricing lifecycle."
+            exit 1
+          fi
+
           api_response="$(vercel curl /api/leads \
             --deployment "$url" \
             --token="$VERCEL_TOKEN" \
@@ -112,6 +120,28 @@ jobs:
       - name: Pull Production project settings
         run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
 
+      - name: Verify Production lead delivery config
+        shell: bash
+        run: |
+          env_file="/tmp/ghoulhouse-production.env"
+          rm -f "$env_file"
+          vercel env pull "$env_file" --environment=production --token="$VERCEL_TOKEN"
+
+          if grep -Eq '^LEAD_DELIVERY_MODE="?resend"?$' "$env_file"; then
+            grep -Eq '^RESEND_API_KEY=.+$' "$env_file"
+            grep -Eq '^LEAD_TO_EMAIL=.+$' "$env_file"
+            grep -Eq '^LEAD_FROM_EMAIL=.+$' "$env_file"
+            echo "Production lead delivery config: resend"
+          elif grep -Eq '^LEAD_DELIVERY_MODE="?webhook"?$' "$env_file"; then
+            grep -Eq '^LEAD_WEBHOOK_URL="?https://.+' "$env_file"
+            echo "Production lead delivery config: webhook"
+          else
+            echo "::error::Production lead delivery is not configured."
+            exit 1
+          fi
+
+          rm -f "$env_file"
+
       - name: Build Production candidate
         run: vercel build --prod --token="$VERCEL_TOKEN"
 
@@ -131,8 +161,13 @@ jobs:
           for i in {1..20}; do
             html="$(vercel curl / --deployment "$url" --token="$VERCEL_TOKEN" 2>/dev/null || true)"
             if printf '%s' "$html" | grep -q "TYÖMAAKUVAT SISÄÄN" && \
-               printf '%s' "$html" | grep -q "490" && \
+               printf '%s' "$html" | grep -q 'data-offer-name="SOME 12"' && \
+               printf '%s' "$html" | grep -q 'data-offer-price="490"' && \
                printf '%s' "$html" | grep -q "KONSEPTIESIMERKKI — EI ASIAKASTYÖ"; then
+              if printf '%s' "$html" | grep -Eqi 'MANAGED|Palvelujaksosta 4'; then
+                echo "::error::Production candidate contains obsolete pricing lifecycle."
+                exit 1
+              fi
               exit 0
             fi
             sleep 3
@@ -167,6 +202,13 @@ jobs:
           printf '%s' "$html" | grep -q "TYÖMAAKUVAT SISÄÄN"
           printf '%s' "$html" | grep -q "Yksi työmaa. Monta kulmaa."
           printf '%s' "$html" | grep -q "KONSEPTIESIMERKKI — EI ASIAKASTYÖ"
+          printf '%s' "$html" | grep -q 'data-offer-name="SOME 12"'
+          printf '%s' "$html" | grep -q 'data-offer-price="490"'
+
+          if printf '%s' "$html" | grep -Eqi 'MANAGED|Palvelujaksosta 4'; then
+            echo "::error::Canonical homepage contains obsolete pricing lifecycle."
+            exit 1
+          fi
 
           printf '%s' "$headers" | grep -qi '^content-security-policy-report-only:'
           printf '%s' "$headers" | grep -qi '^cross-origin-opener-policy: same-origin'
@@ -175,7 +217,7 @@ jobs:
       - name: Lead API live QA
         shell: bash
         run: |
-          status="$(curl --silent --show-error \
+          invalid_status="$(curl --silent --show-error \
             --output /tmp/lead-invalid.json \
             --write-out '%{http_code}' \
             --request POST \
@@ -183,8 +225,24 @@ jobs:
             --data '{}' \
             "$CANONICAL_URL/api/leads")"
 
-          test "$status" = "400"
+          test "$invalid_status" = "400"
           grep -q '"validation_error"' /tmp/lead-invalid.json
+
+          valid_status="$(curl --silent --show-error \
+            --output /tmp/lead-valid.json \
+            --write-out '%{http_code}' \
+            --request POST \
+            --header 'content-type: application/json' \
+            --data '{"company":"GhoulHouse Release QA","name":"Release Gate","email":"release-qa@ghoulhouse.fi","profile":"https://www.ghoulhouse.fi","message":"Automated production release QA. No action required."}' \
+            "$CANONICAL_URL/api/leads")"
+
+          if [ "$valid_status" != "201" ]; then
+            echo "::error::Valid production lead was not delivered successfully (HTTP $valid_status)."
+            cat /tmp/lead-valid.json
+            exit 1
+          fi
+
+          grep -q '"ok":true' /tmp/lead-valid.json
 
       - name: Robots and sitemap live QA
         shell: bash
