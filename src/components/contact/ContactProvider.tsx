@@ -5,7 +5,9 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -25,6 +27,7 @@ const ContactContext = createContext<ContactContextValue | null>(null);
 
 export function ContactProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
+  const siteContentRef = useRef<HTMLDivElement>(null);
 
   const openContact = useCallback(() => {
     trackEvent('primary_cta_click');
@@ -36,6 +39,24 @@ export function ContactProvider({ children }: { children: ReactNode }) {
     setIsOpen(false);
   }, []);
 
+  useEffect(() => {
+    const siteContent = siteContentRef.current;
+    if (!siteContent) return;
+
+    if (isOpen) {
+      siteContent.setAttribute('inert', '');
+      siteContent.setAttribute('aria-hidden', 'true');
+    } else {
+      siteContent.removeAttribute('inert');
+      siteContent.removeAttribute('aria-hidden');
+    }
+
+    return () => {
+      siteContent.removeAttribute('inert');
+      siteContent.removeAttribute('aria-hidden');
+    };
+  }, [isOpen]);
+
   const value = useMemo(
     () => ({ openContact, closeContact, isOpen }),
     [openContact, closeContact, isOpen]
@@ -43,7 +64,7 @@ export function ContactProvider({ children }: { children: ReactNode }) {
 
   return (
     <ContactContext.Provider value={value}>
-      {children}
+      <div ref={siteContentRef}>{children}</div>
       {isOpen ? <ContactModal onClose={closeContact} /> : null}
     </ContactContext.Provider>
   );
