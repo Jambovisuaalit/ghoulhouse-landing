@@ -61,6 +61,7 @@ Indexing is intentionally disabled by default.
 
 - Local development: noindex
 - Vercel Preview deployments: noindex
+- `www.ghoulhouse.fi`: exactly one permanent `301` redirect to `https://ghoulhouse.fi`
 - Vercel production aliases: protected with `X-Robots-Tag: noindex`
 - `ghoulhouse.fi`: indexable only when all of the following are true:
   1. deployment environment is Vercel Production
