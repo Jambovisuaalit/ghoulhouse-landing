@@ -290,6 +290,7 @@ try {
       `(() => {
         const hero = document.querySelector('#top');
         const h1 = document.querySelector('h1');
+        const brand = document.querySelector('header a[aria-label="GhoulHouse — sivun alku"]');
         const visible = (el) => {
           if (!el) return false;
           const r = el.getBoundingClientRect();
@@ -333,6 +334,7 @@ try {
         metrics.heroText.includes('Me pidämme huolen, että asiakkaat myös näkevät sen.'),
       `${viewport.width}px: canonical value proposition missing.`
     );
+    assert(metrics.brandText.toUpperCase() === 'GHOULHOUSE', `${viewport.width}px: full GhoulHouse wordmark is missing.`);
     assert(metrics.ctaText.includes('PYYDÄ 2 SISÄLTÖESIMERKKIÄ'), `${viewport.width}px: CTA missing.`);
     assert(metrics.priceText.includes('490 €'), `${viewport.width}px: START price missing.`);
     assert(
@@ -344,6 +346,7 @@ try {
     assert(metrics.priceRect?.bottom <= metrics.innerHeight, `${viewport.width}px: price below first viewport.`);
 
     for (const [name, rect] of [
+      ['brand lockup', metrics.brandRect],
       ['headline', metrics.h1Rect],
       ['CTA', metrics.ctaRect],
       ['price', metrics.priceRect],
