@@ -22,7 +22,7 @@ export default function Examples() {
         <div className="grid grid-cols-1 gap-6 border-b-2 border-ink pb-8 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-8">
             <p className="type-label mb-4 text-signal">
-              Proof of craft / sisältöesimerkit
+              Toteutustapa / konseptiesimerkit
             </p>
             <h2 className="type-section-title max-w-[15ch] text-ink">
               Ei vain kuva.
@@ -32,12 +32,12 @@ export default function Examples() {
 
           <div className="lg:col-span-4">
             <p className="type-editorial max-w-md text-ink/70">
-              Sama työmaamateriaali voidaan muuttaa eri tarkoituksiin ilman
-              keksittyä täytesisältöä. Alla näkyy mitä GhoulHouse tekee
-              materiaalin ja valmiin julkaisun välissä.
+              Alla olevat toteutukset ovat konseptiesimerkkejä, eivät
+              asiakascaseja. Ne näyttävät GhoulHousen työskentelytavan
+              materiaalin ja valmiin julkaisun välillä.
             </p>
             <p className="type-caption mt-4 uppercase tracking-[0.06em] text-ink/65">
-              Source → content angle → finished execution
+              Konseptiesimerkit · ei asiakastyötä
             </p>
           </div>
         </div>
