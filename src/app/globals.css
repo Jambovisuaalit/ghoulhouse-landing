@@ -601,7 +601,7 @@ a:hover {
   will-change: transform;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1100px) {
   .mechanism-raw {
     height: 240svh;
   }
@@ -674,7 +674,7 @@ a:hover {
   }
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1099px) {
   .mechanism-raw__sticky {
     grid-template-columns: 1fr;
   }
