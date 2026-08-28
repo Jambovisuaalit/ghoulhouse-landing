@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
   SITE_HOST,
-  isWwwHost,
   shouldIndexRequest,
+  shouldRedirectToCanonical,
 } from './lib/seo';
 
 export function middleware(request: NextRequest) {
   const requestHost =
     request.headers.get('x-forwarded-host') || request.headers.get('host');
 
-  if (isWwwHost(requestHost)) {
+  if (shouldRedirectToCanonical(requestHost)) {
     const canonicalUrl = request.nextUrl.clone();
     canonicalUrl.protocol = 'https';
     canonicalUrl.hostname = SITE_HOST;
