@@ -50,17 +50,20 @@ export default function Navigation() {
         >
           <Link
             href="#top"
-            className="inline-flex shrink-0 items-center"
+            className="inline-flex shrink-0 items-center gap-2"
             aria-label="GhoulHouse — sivun alku"
           >
             <Image
-              src="/logo-horizontal.svg"
-              alt="GhoulHouse"
-              width={420}
-              height={138}
+              src="/mark-color.svg"
+              alt=""
+              width={96}
+              height={96}
               priority
-              className="h-auto w-[150px] md:w-[176px]"
+              className="h-10 w-10 shrink-0 md:h-11 md:w-11"
             />
+            <span className="font-display text-[1.55rem] uppercase leading-none tracking-[-0.025em] text-ink md:text-[1.75rem]">
+              GhoulHouse
+            </span>
           </Link>
 
           <div className="hidden items-center gap-7 md:flex lg:gap-9">
