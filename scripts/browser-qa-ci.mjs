@@ -589,6 +589,18 @@ try {
     media: '',
     features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }],
   });
+
+  await evaluate(
+    client,
+    `(() => {
+      window.__ghAnalyticsEvents = [];
+      window.va = (command, payload) => {
+        window.__ghAnalyticsEvents.push({ command, payload });
+      };
+      return true;
+    })()`
+  );
+
   const ctaClicked = await evaluate(
     client,
     `(() => {
@@ -619,6 +631,7 @@ try {
         backgroundInert: Boolean(siteContent),
         skipLinkExists: Boolean(document.querySelector('a.skip-link[href="#main-content"]')),
         openLatencyMs: ${dialogOpenMs},
+        analyticsEvents: window.__ghAnalyticsEvents || [],
       };
     })()`
   );
@@ -627,6 +640,14 @@ try {
   assert(dialog.activeName === 'company', 'Lead dialog did not focus first field.');
   assert(dialog.backgroundInert, 'Background content is not inert while dialog is open.');
   assert(dialog.skipLinkExists, 'Skip link to main content is missing.');
+  const analyticsNames = dialog.analyticsEvents
+    .filter((entry) => entry?.command === 'event')
+    .map((entry) => entry?.payload?.name);
+  assert(
+    analyticsNames.includes('primary_cta_click') &&
+      analyticsNames.includes('lead_form_open'),
+    `CTA analytics events were not forwarded to Vercel Analytics: ${JSON.stringify(dialog.analyticsEvents)}.`
+  );
   assert(pageExceptions.length === 0, `Page exceptions: ${pageExceptions.join(' | ')}`);
 
   await writeFile(
