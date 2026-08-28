@@ -1,6 +1,3 @@
-'use client';
-
-import { useCallback, useState } from 'react';
 import Hero from '@/components/sections/Hero';
 import Problem from '@/components/sections/Problem';
 import Mechanism from '@/components/sections/Mechanism';
@@ -13,41 +10,30 @@ import FAQ from '@/components/sections/FAQ';
 import FinalCTA from '@/components/sections/FinalCTA';
 import Footer from '@/components/layout/Footer';
 import Navigation from '@/components/layout/Navigation';
-import ContactModal from '@/components/ui/ContactModal';
 import FunnelAnalytics from '@/components/analytics/FunnelAnalytics';
-import { trackEvent } from '@/lib/analytics';
+import { ContactProvider } from '@/components/contact/ContactProvider';
 
 export default function Home() {
-  const [showContactModal, setShowContactModal] = useState(false);
-
-  const handleCTAClick = useCallback(() => {
-    trackEvent('primary_cta_click');
-    trackEvent('lead_form_open');
-    setShowContactModal(true);
-  }, []);
-
-  const handleCloseModal = useCallback(() => {
-    setShowContactModal(false);
-  }, []);
-
   return (
-    <>
+    <ContactProvider>
+      <a className="skip-link" href="#main-content">
+        Siirry pääsisältöön
+      </a>
       <FunnelAnalytics />
-      <Navigation onCtaClick={handleCTAClick} />
-      <main className="min-h-screen bg-ghost">
-        <Hero onCtaClick={handleCTAClick} />
+      <Navigation />
+      <main id="main-content" className="min-h-screen bg-ghost">
+        <Hero />
         <Problem />
         <Mechanism />
         <Examples />
         <Deliverables />
         <Process />
-        <Pricing onCtaClick={handleCTAClick} />
+        <Pricing />
         <Founder />
         <FAQ />
-        <FinalCTA onCtaClick={handleCTAClick} />
+        <FinalCTA />
       </main>
       <Footer />
-      {showContactModal && <ContactModal onClose={handleCloseModal} />}
-    </>
+    </ContactProvider>
   );
 }

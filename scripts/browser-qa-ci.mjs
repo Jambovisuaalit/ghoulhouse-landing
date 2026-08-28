@@ -36,6 +36,45 @@ async function sleep(ms) {
   await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+async function waitForProcessExit(process, timeoutMs = 3_000) {
+  if (process.exitCode !== null) return true;
+
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => {
+      process.off('exit', handleExit);
+      resolve(false);
+    }, timeoutMs);
+
+    const handleExit = () => {
+      clearTimeout(timer);
+      resolve(true);
+    };
+
+    process.once('exit', handleExit);
+  });
+}
+
+async function removeUserDataDir() {
+  for (let attempt = 1; attempt <= 5; attempt += 1) {
+    try {
+      await rm(USER_DATA_DIR, { recursive: true, force: true });
+      return;
+    } catch (error) {
+      if (
+        !error ||
+        typeof error !== 'object' ||
+        !('code' in error) ||
+        !['ENOTEMPTY', 'EBUSY', 'EPERM'].includes(String(error.code)) ||
+        attempt === 5
+      ) {
+        throw error;
+      }
+
+      await sleep(100 * attempt);
+    }
+  }
+}
+
 async function waitForJson(url, chrome, stderr, timeoutMs = 20_000) {
   const start = Date.now();
 
@@ -154,6 +193,20 @@ async function waitForDocument(client, timeoutMs = 15_000) {
   throw new Error('Page did not reach complete readyState.');
 }
 
+async function waitForCondition(client, expression, timeoutMs = 3_000) {
+  const start = Date.now();
+
+  while (Date.now() - start < timeoutMs) {
+    if (await evaluate(client, expression)) {
+      return Date.now() - start;
+    }
+
+    await sleep(50);
+  }
+
+  return null;
+}
+
 function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
@@ -237,6 +290,7 @@ try {
       `(() => {
         const hero = document.querySelector('#top');
         const h1 = document.querySelector('h1');
+        const brand = document.querySelector('header a[aria-label="GhoulHouse — sivun alku"]');
         const visible = (el) => {
           if (!el) return false;
           const r = el.getBoundingClientRect();
@@ -260,6 +314,8 @@ try {
           heroText: hero?.textContent?.replace(/\\s+/g, ' ').trim() || '',
           ctaText: cta?.textContent?.replace(/\\s+/g, ' ').trim() || '',
           priceText: price?.textContent?.replace(/\\s+/g, ' ').trim() || '',
+          brandText: brand?.textContent?.replace(/\\s+/g, ' ').trim() || '',
+          brandRect: rect(brand),
           h1Rect: rect(h1),
           ctaRect: rect(cta),
           priceRect: rect(price),
@@ -280,6 +336,7 @@ try {
         metrics.heroText.includes('Me pidämme huolen, että asiakkaat myös näkevät sen.'),
       `${viewport.width}px: canonical value proposition missing.`
     );
+    assert(metrics.brandText.toUpperCase() === 'GHOULHOUSE', `${viewport.width}px: full GhoulHouse wordmark is missing.`);
     assert(metrics.ctaText.includes('PYYDÄ 2 SISÄLTÖESIMERKKIÄ'), `${viewport.width}px: CTA missing.`);
     assert(metrics.priceText.includes('490 €'), `${viewport.width}px: START price missing.`);
     assert(
@@ -291,6 +348,7 @@ try {
     assert(metrics.priceRect?.bottom <= metrics.innerHeight, `${viewport.width}px: price below first viewport.`);
 
     for (const [name, rect] of [
+      ['brand lockup', metrics.brandRect],
       ['headline', metrics.h1Rect],
       ['CTA', metrics.ctaRect],
       ['price', metrics.priceRect],
@@ -531,7 +589,7 @@ try {
     media: '',
     features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }],
   });
-  await evaluate(
+  const ctaClicked = await evaluate(
     client,
     `(() => {
       const hero = document.querySelector('#top');
@@ -542,17 +600,33 @@ try {
       return Boolean(button);
     })()`
   );
-  await sleep(250);
+  assert(ctaClicked, 'Primary CTA button was not found in the hero.');
+
+  const dialogOpenMs = await waitForCondition(
+    client,
+    'Boolean(document.querySelector(\'[role="dialog"]\'))',
+    3_000
+  );
+  assert(dialogOpenMs !== null, 'Primary CTA did not open lead dialog.');
 
   const dialog = await evaluate(
     client,
-    `(() => ({
-      exists: Boolean(document.querySelector('[role="dialog"]')),
-      activeName: document.activeElement?.getAttribute('name') || '',
-    }))()`
+    `(() => {
+      const siteContent = document.querySelector('[aria-hidden="true"][inert]');
+      return {
+        exists: Boolean(document.querySelector('[role="dialog"]')),
+        activeName: document.activeElement?.getAttribute('name') || '',
+        backgroundInert: Boolean(siteContent),
+        skipLinkExists: Boolean(document.querySelector('a.skip-link[href="#main-content"]')),
+        openLatencyMs: ${dialogOpenMs},
+      };
+    })()`
   );
   assert(dialog.exists, 'Primary CTA did not open lead dialog.');
+  assert(dialogOpenMs <= 1_500, `Lead dialog took too long to open: ${dialogOpenMs}ms.`);
   assert(dialog.activeName === 'company', 'Lead dialog did not focus first field.');
+  assert(dialog.backgroundInert, 'Background content is not inert while dialog is open.');
+  assert(dialog.skipLinkExists, 'Skip link to main content is missing.');
   assert(pageExceptions.length === 0, `Page exceptions: ${pageExceptions.join(' | ')}`);
 
   await writeFile(
@@ -563,6 +637,16 @@ try {
   console.log(JSON.stringify({ chromePath, results, scrollEffects: { rawMid, filmMid }, reducedMotion, dialog }, null, 2));
 } finally {
   client?.close();
-  if (chrome.exitCode === null) chrome.kill('SIGTERM');
-  await rm(USER_DATA_DIR, { recursive: true, force: true });
+
+  if (chrome.exitCode === null) {
+    chrome.kill('SIGTERM');
+    const exited = await waitForProcessExit(chrome);
+
+    if (!exited && chrome.exitCode === null) {
+      chrome.kill('SIGKILL');
+      await waitForProcessExit(chrome, 2_000);
+    }
+  }
+
+  await removeUserDataDir();
 }

@@ -1,3 +1,4 @@
+import { siteConfig } from '@/config/site';
 export const SITE_URL = 'https://ghoulhouse.fi';
 export const SITE_HOST = 'ghoulhouse.fi';
 
@@ -14,7 +15,10 @@ export function isProductionDeployment() {
 }
 
 export function isIndexingApproved() {
-  return process.env.SITE_INDEXABLE === 'true';
+  return (
+    process.env.SITE_INDEXABLE === 'true' &&
+    Boolean(siteConfig.legal.privacyPath)
+  );
 }
 
 export function isCanonicalHost(value: string | null | undefined) {

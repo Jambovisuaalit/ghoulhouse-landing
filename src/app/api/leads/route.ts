@@ -3,10 +3,26 @@ import { validateLead } from '@/lib/lead';
 import { deliverLead, LeadDeliveryError } from '@/lib/lead-delivery';
 
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 const WINDOW_MS = 10 * 60 * 1000;
 const MAX_REQUESTS = 5;
+const MAX_BUCKETS_BEFORE_PRUNE = 1_000;
 const buckets = new Map<string, { count: number; resetAt: number }>();
+
+function json(
+  body: Record<string, unknown>,
+  status: number,
+  headers: Record<string, string> = {}
+) {
+  return NextResponse.json(body, {
+    status,
+    headers: {
+      'cache-control': 'no-store, max-age=0',
+      ...headers,
+    },
+  });
+}
 
 function getClientKey(request: NextRequest) {
   return (
@@ -16,35 +32,58 @@ function getClientKey(request: NextRequest) {
   );
 }
 
-function isRateLimited(key: string) {
+function pruneExpiredBuckets(now: number) {
+  if (buckets.size < MAX_BUCKETS_BEFORE_PRUNE) return;
+
+  for (const [key, value] of buckets) {
+    if (value.resetAt <= now) buckets.delete(key);
+  }
+}
+
+function checkRateLimit(key: string) {
   const now = Date.now();
+  pruneExpiredBuckets(now);
+
   const current = buckets.get(key);
 
   if (!current || current.resetAt <= now) {
     buckets.set(key, { count: 1, resetAt: now + WINDOW_MS });
-    return false;
+    return { limited: false, retryAfter: 0 };
   }
 
   current.count += 1;
   buckets.set(key, current);
-  return current.count > MAX_REQUESTS;
+
+  return {
+    limited: current.count > MAX_REQUESTS,
+    retryAfter: Math.max(1, Math.ceil((current.resetAt - now) / 1000)),
+  };
+}
+
+function isCrossSiteRequest(request: NextRequest) {
+  const site = request.headers.get('sec-fetch-site');
+  return Boolean(site && !['same-origin', 'same-site', 'none'].includes(site));
 }
 
 export async function POST(request: NextRequest) {
+  if (isCrossSiteRequest(request)) {
+    return json({ ok: false, code: 'cross_site_request' }, 403);
+  }
+
   const contentLength = Number(request.headers.get('content-length') || 0);
 
   if (contentLength > 20_000) {
-    return NextResponse.json(
-      { ok: false, code: 'payload_too_large' },
-      { status: 413 }
-    );
+    return json({ ok: false, code: 'payload_too_large' }, 413);
   }
 
   const clientKey = getClientKey(request);
-  if (isRateLimited(clientKey)) {
-    return NextResponse.json(
+  const rateLimit = checkRateLimit(clientKey);
+
+  if (rateLimit.limited) {
+    return json(
       { ok: false, code: 'rate_limited' },
-      { status: 429 }
+      429,
+      { 'retry-after': String(rateLimit.retryAfter) }
     );
   }
 
@@ -53,36 +92,34 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json(
-      { ok: false, code: 'invalid_json' },
-      { status: 400 }
-    );
+    return json({ ok: false, code: 'invalid_json' }, 400);
   }
 
   if (typeof body.fax === 'string' && body.fax.trim()) {
-    return NextResponse.json({ ok: true }, { status: 201 });
+    return json({ ok: true }, 201);
   }
 
   const validation = validateLead(body);
 
   if (!validation.ok || !validation.data) {
-    return NextResponse.json(
+    return json(
       {
         ok: false,
         code: 'validation_error',
-        errors: validation.errors,
+        errors: validation.errors || {},
       },
-      { status: 400 }
+      400
     );
   }
 
   try {
     await deliverLead(validation.data);
-    return NextResponse.json({ ok: true }, { status: 201 });
+    return json({ ok: true }, 201);
   } catch (error) {
     if (error instanceof LeadDeliveryError) {
       const status = error.code === 'not_configured' ? 503 : 502;
-      return NextResponse.json(
+
+      return json(
         {
           ok: false,
           code:
@@ -90,13 +127,10 @@ export async function POST(request: NextRequest) {
               ? 'delivery_unavailable'
               : 'delivery_failed',
         },
-        { status }
+        status
       );
     }
 
-    return NextResponse.json(
-      { ok: false, code: 'delivery_failed' },
-      { status: 502 }
-    );
+    return json({ ok: false, code: 'delivery_failed' }, 502);
   }
 }

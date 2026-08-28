@@ -53,20 +53,39 @@ jobs:
           cat /tmp/ghoulhouse-next.log
           exit 1
 
-      - name: Browser QA
+      - name: Lead API QA
+        shell: bash
         run: |
-          set +e
-          node scripts/browser-qa-ci.mjs > /tmp/browser-qa.log 2>&1
-          status=$?
-          cat /tmp/browser-qa.log
-          if [ "$status" -eq 0 ]; then
-            exit 0
-          fi
-          if grep -q 'ENOTEMPTY: directory not empty' /tmp/browser-qa.log && grep -q '"status": "PASS"' /tmp/browser-qa.log; then
-            echo 'Browser assertions passed; ignoring Chrome profile cleanup race.'
-            exit 0
-          fi
-          exit "$status"
+          invalid_status="$(curl --silent --output /tmp/lead-invalid.json --write-out '%{http_code}' \
+            --request POST \
+            --header 'content-type: application/json' \
+            --data '{}' \
+            http://127.0.0.1:3000/api/leads)"
+
+          test "$invalid_status" = "400"
+          grep -q '"validation_error"' /tmp/lead-invalid.json
+
+          cross_site_status="$(curl --silent --output /tmp/lead-cross-site.json --write-out '%{http_code}' \
+            --request POST \
+            --header 'content-type: application/json' \
+            --header 'sec-fetch-site: cross-site' \
+            --data '{}' \
+            http://127.0.0.1:3000/api/leads)"
+
+          test "$cross_site_status" = "403"
+          grep -q '"cross_site_request"' /tmp/lead-cross-site.json
+
+      - name: SEO safety QA
+        shell: bash
+        run: |
+          curl --silent --head http://127.0.0.1:3000/ \
+            | grep -qi '^x-robots-tag: noindex, nofollow, noarchive, noimageindex'
+
+          robots="$(curl --fail --silent http://127.0.0.1:3000/robots.txt)"
+          printf '%s\n' "$robots" | grep -q 'Disallow: /'
+
+      - name: Browser QA
+        run: node scripts/browser-qa-ci.mjs
 
       - name: Upload browser QA artifacts
         if: always()
