@@ -404,88 +404,111 @@ try {
   await waitForDocument(client);
   await new Promise((resolve) => setTimeout(resolve, 250));
 
-  const rawTarget = await evaluate(
-    client,
-    `(() => {
-      document.documentElement.style.scrollBehavior = 'auto';
-      const section = document.querySelector('[data-scroll-raw]');
-      const sticky = section?.querySelector('.mechanism-raw__sticky');
-      if (!section || !sticky) return null;
+  const sampleRawAt = async (fraction) => {
+    const target = await evaluate(
+      client,
+      `(() => {
+        document.documentElement.style.scrollBehavior = 'auto';
+        const section = document.querySelector('[data-scroll-raw]');
+        const sticky = section?.querySelector('.mechanism-raw__sticky');
+        if (!section || !sticky) return null;
 
-      const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0;
-      const sectionTop = section.getBoundingClientRect().top + scrollY;
-      const travel = Math.max(1, section.offsetHeight - sticky.offsetHeight);
-      const target = sectionTop - stickyTop + travel * 0.5;
+        const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0;
+        const sectionTop = section.getBoundingClientRect().top + scrollY;
+        const travel = Math.max(1, section.offsetHeight - sticky.offsetHeight);
+        const target = sectionTop - stickyTop + travel * ${fraction};
 
-      window.scrollTo(0, target);
-      return { target, travel };
-    })()`
-  );
+        window.scrollTo(0, target);
+        return { target, travel };
+      })()`
+    );
 
-  assert(rawTarget, 'Desktop RAW scroll geometry is missing.');
-  await new Promise((resolve) => setTimeout(resolve, 200));
+    assert(target, `Desktop RAW scroll geometry is missing at ${fraction}.`);
+    await new Promise((resolve) => setTimeout(resolve, 200));
 
-  const rawMid = await evaluate(
-    client,
-    `(() => {
-      const section = document.querySelector('[data-scroll-raw]');
-      const sticky = section?.querySelector('.mechanism-raw__sticky');
-      const stage = section?.querySelector('.mechanism-raw__stage');
-      const finalImage = section?.querySelector('.mechanism-raw__image--final');
-      const divider = section?.querySelector('.mechanism-raw__divider');
+    return evaluate(
+      client,
+      `(() => {
+        const section = document.querySelector('[data-scroll-raw]');
+        const sticky = section?.querySelector('.mechanism-raw__sticky');
+        const stage = section?.querySelector('.mechanism-raw__stage');
+        const finalImage = section?.querySelector('.mechanism-raw__image--final');
+        const divider = section?.querySelector('.mechanism-raw__divider');
 
-      if (!section || !sticky || !stage || !finalImage || !divider) return null;
+        if (!section || !sticky || !stage || !finalImage || !divider) return null;
 
-      const stickyRect = sticky.getBoundingClientRect();
-      const stageRect = stage.getBoundingClientRect();
+        const stickyRect = sticky.getBoundingClientRect();
+        const stageRect = stage.getBoundingClientRect();
 
-      return {
-        progress:
-          parseFloat(
-            getComputedStyle(section).getPropertyValue('--raw-progress')
-          ) || 0,
-        clipPath: getComputedStyle(finalImage).clipPath,
-        dividerLeft: getComputedStyle(divider).left,
-        stickyTop: stickyRect.top,
-        stickyBottom: stickyRect.bottom,
-        stickyHeight: stickyRect.height,
-        stageTop: stageRect.top,
-        stageBottom: stageRect.bottom,
-        stageHeight: stageRect.height,
-      };
-    })()`
-  );
+        return {
+          progress:
+            parseFloat(
+              getComputedStyle(section).getPropertyValue('--raw-progress')
+            ) || 0,
+          clipPath: getComputedStyle(finalImage).clipPath,
+          dividerLeft: parseFloat(getComputedStyle(divider).left) || 0,
+          stickyTop: stickyRect.top,
+          stickyBottom: stickyRect.bottom,
+          stageTop: stageRect.top,
+          stageBottom: stageRect.bottom,
+          stageHeight: stageRect.height,
+        };
+      })()`
+    );
+  };
 
-  assert(rawMid, 'Desktop RAW midpoint metrics are missing.');
+  const rawQuarter = await sampleRawAt(0.25);
+  const rawThreeQuarter = await sampleRawAt(0.75);
+
+  assert(rawQuarter, 'Desktop RAW quarter-point metrics are missing.');
+  assert(rawThreeQuarter, 'Desktop RAW three-quarter metrics are missing.');
   assert(
-    rawMid.progress > 0.35 && rawMid.progress < 0.65,
-    `Desktop RAW progress should be near 0.5, got ${rawMid.progress}.`
-  );
-  assert(
-    rawMid.clipPath && rawMid.clipPath !== 'none',
-    'Desktop RAW final image is not being clipped by scroll progress.'
-  );
-  assert(
-    rawMid.stickyTop >= 55 && rawMid.stickyTop <= 80,
-    `Desktop RAW sticky stage is not pinned below the header: top ${rawMid.stickyTop}px.`
+    rawQuarter.progress > 0.15 && rawQuarter.progress < 0.35,
+    `Desktop RAW quarter progress should be near 0.25, got ${rawQuarter.progress}.`
   );
   assert(
-    rawMid.stickyBottom >= 860 && rawMid.stickyBottom <= 905,
-    `Desktop RAW sticky stage does not fill the usable viewport: bottom ${rawMid.stickyBottom}px.`
+    rawThreeQuarter.progress > 0.65 && rawThreeQuarter.progress < 0.85,
+    `Desktop RAW three-quarter progress should be near 0.75, got ${rawThreeQuarter.progress}.`
   );
   assert(
-    rawMid.stageHeight >= 400 &&
-      rawMid.stageTop >= rawMid.stickyTop &&
-      rawMid.stageBottom <= rawMid.stickyBottom + 1,
-    `Desktop RAW visual stage is clipped or outside sticky viewport: ${JSON.stringify(rawMid)}.`
+    rawQuarter.clipPath &&
+      rawQuarter.clipPath !== 'none' &&
+      rawThreeQuarter.clipPath &&
+      rawThreeQuarter.clipPath !== 'none' &&
+      rawQuarter.clipPath !== rawThreeQuarter.clipPath,
+    `Desktop RAW clip-path did not change with scroll: ${rawQuarter.clipPath} → ${rawThreeQuarter.clipPath}.`
   );
+  assert(
+    rawThreeQuarter.dividerLeft > rawQuarter.dividerLeft + 100,
+    `Desktop RAW divider did not advance with scroll: ${rawQuarter.dividerLeft}px → ${rawThreeQuarter.dividerLeft}px.`
+  );
+
+  for (const [label, sample] of [
+    ['quarter', rawQuarter],
+    ['three-quarter', rawThreeQuarter],
+  ]) {
+    assert(
+      sample.stickyTop >= 55 && sample.stickyTop <= 80,
+      `Desktop RAW ${label} sticky stage is not pinned below the header: top ${sample.stickyTop}px.`
+    );
+    assert(
+      sample.stickyBottom >= 860 && sample.stickyBottom <= 905,
+      `Desktop RAW ${label} sticky stage does not fill the usable viewport: bottom ${sample.stickyBottom}px.`
+    );
+    assert(
+      sample.stageHeight >= 400 &&
+        sample.stageTop >= sample.stickyTop &&
+        sample.stageBottom <= sample.stickyBottom + 1,
+      `Desktop RAW ${label} visual stage is clipped or outside sticky viewport: ${JSON.stringify(sample)}.`
+    );
+  }
 
   const rawShot = await client.send('Page.captureScreenshot', {
     format: 'png',
     captureBeyondViewport: false,
   });
   await writeFile(
-    `${SCREENSHOT_DIR}/scroll-raw-mid-1440x900.png`,
+    `${SCREENSHOT_DIR}/scroll-raw-three-quarter-1440x900.png`,
     Buffer.from(rawShot.data, 'base64')
   );
 
@@ -563,9 +586,10 @@ try {
     `Desktop filmstrip progress should be near 0.5, got ${filmMid.progress}.`
   );
   assert(
-    Math.abs(filmMid.translateX) > filmMid.horizontalTravel * 0.3 &&
+    filmMid.translateX < 0 &&
+      Math.abs(filmMid.translateX) > filmMid.horizontalTravel * 0.3 &&
       Math.abs(filmMid.translateX) < filmMid.horizontalTravel * 0.7,
-    `Desktop filmstrip translateX is out of sync: ${filmMid.translateX}px of ${filmMid.horizontalTravel}px.`
+    `Desktop filmstrip must translate left in sync with scroll: ${filmMid.translateX}px of ${filmMid.horizontalTravel}px.`
   );
   assert(
     filmMid.stickyTop >= 55 && filmMid.stickyTop <= 80,
@@ -730,7 +754,7 @@ try {
     JSON.stringify(
       {
         results,
-        scrollEffects: { rawMid, filmMid },
+        scrollEffects: { rawQuarter, rawThreeQuarter, filmMid },
         reducedMotion,
         dialog: {
           opens: dialogState.exists,
