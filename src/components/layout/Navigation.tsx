@@ -91,7 +91,7 @@ export default function Navigation() {
     <header className="sticky top-0 z-40 border-b border-ink/20 bg-ghost">
       <Container>
         <nav
-          className="flex min-h-[60px] items-center justify-between gap-5 md:min-h-[66px]"
+          className="flex min-h-[60px] items-center justify-between gap-5 min-[1100px]:min-h-[66px]"
           aria-label="Päänavigaatio"
         >
           <Link
@@ -105,14 +105,14 @@ export default function Navigation() {
               width={96}
               height={96}
               priority
-              className="h-10 w-10 shrink-0 md:h-11 md:w-11"
+              className="h-10 w-10 shrink-0 min-[1100px]:h-11 min-[1100px]:w-11"
             />
-            <span className="font-display text-[1.55rem] uppercase leading-none tracking-[-0.025em] text-ink md:text-[1.75rem]">
+            <span className="font-display text-[1.55rem] uppercase leading-none tracking-[-0.025em] text-ink min-[1100px]:text-[1.75rem]">
               GhoulHouse
             </span>
           </Link>
 
-          <div className="hidden items-center gap-7 md:flex lg:gap-9">
+          <div className="hidden items-center gap-7 min-[1100px]:flex min-[1100px]:gap-9">
             {links.map((link) => (
               <a
                 key={link.href}
@@ -132,7 +132,7 @@ export default function Navigation() {
             ref={menuButtonRef}
             type="button"
             onClick={() => setMobileMenuOpen((open) => !open)}
-            className="type-label inline-flex min-h-11 items-center gap-2 text-ink md:hidden"
+            className="type-label inline-flex min-h-11 items-center gap-2 text-ink min-[1100px]:hidden"
             aria-label={mobileMenuOpen ? 'Sulje valikko' : 'Avaa valikko'}
             aria-expanded={mobileMenuOpen}
             aria-controls="mobile-navigation"
@@ -148,7 +148,7 @@ export default function Navigation() {
       {mobileMenuOpen && (
         <div
           id="mobile-navigation"
-          className="absolute inset-x-0 top-full max-h-[calc(100svh-60px)] overflow-y-auto border-y-2 border-ink bg-ghost md:hidden"
+          className="absolute inset-x-0 top-full max-h-[calc(100svh-60px)] overflow-y-auto border-y-2 border-ink bg-ghost min-[1100px]:hidden"
         >
           <Container className="py-5">
             <div className="grid">
