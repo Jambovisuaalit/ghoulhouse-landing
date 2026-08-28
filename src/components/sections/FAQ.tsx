@@ -14,7 +14,7 @@ const faqItems = [
   {
     question: 'Sisältyykö maksettu mainonta?',
     answer:
-      'Ei. START- ja MANAGED-palvelut keskittyvät orgaaniseen sisältöön ja sen julkaisemiseen. Maksettu mainonta ei sisälly tähän palveluun.',
+      'Ei. SOME 12 -palvelu keskittyy orgaaniseen sisältöön ja sen julkaisemiseen. Maksettu mainonta ei sisälly palveluun.',
   },
   {
     question: 'Sisältyykö kuvauspäivä tai jatkuva videotuotanto?',
@@ -32,9 +32,9 @@ const faqItems = [
       'Palvelu toimii 30 päivän jaksoissa ja on kuukausittain irtisanottava sovittujen ehtojen mukaisesti.',
   },
   {
-    question: 'Mitä tapahtuu palvelujaksosta 4 alkaen?',
+    question: 'Mitä palveluun ei kuulu?',
     answer:
-      'Asiakkuus alkaa START-mallilla palvelujaksoiksi 1–3 hintaan 490 € + ALV / 30 päivää. Palvelujaksosta 4 alkaen sama asiakkuus jatkuu MANAGED-mallilla hintaan 790 € + ALV / 30 päivää. MANAGED sisältää START-palvelun lisäksi jatkuvan optimoinnin: parhaiden aiheiden, formaattien, CTA:iden ja julkaisurytmin analyysin sekä sisältöpankin hallinnan, lyhyen viikkotilanteen, rajatun community managementin ja yhden konkreettisen kehityssuosituksen kuukaudessa. Kyse ei ole kahdesta rinnakkaisesta aloituspaketista.',
+      'Maksettu mainonta, community management, jatkuva videotuotanto, kuvauspäivät ja Instagramin sekä Facebookin ulkopuoliset kanavat eivät sisälly SOME 12 -palveluun. Mahdolliset lisätyöt sovitaan aina erikseen.',
   },
   {
     question: 'Lupaako GhoulHouse liidejä tai myyntiä?',
