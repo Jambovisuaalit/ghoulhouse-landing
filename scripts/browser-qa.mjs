@@ -286,6 +286,7 @@ try {
           h1Count: document.querySelectorAll('h1').length,
           h1Text: h1?.textContent?.replace(/\\s+/g, ' ').trim() || '',
           heroText: hero?.textContent?.replace(/\\s+/g, ' ').trim() || '',
+          bodyText: document.body.innerText.replace(/\\s+/g, ' ').trim(),
           viewport: { width: innerWidth, height: innerHeight },
           scrollWidth: document.documentElement.scrollWidth,
           h1Rect: rect(h1),
@@ -339,7 +340,17 @@ try {
     );
     assert(
       metrics.priceText.includes('490 €'),
-      `${viewport.width}px: START price missing from hero.`
+      `${viewport.width}px: SOME 12 price missing from hero.`
+    );
+    assert(
+      metrics.bodyText.includes('SOME 12'),
+      `${viewport.width}px: SOME 12 offer label missing from rendered page.`
+    );
+    assert(
+      !metrics.bodyText.includes('790 €') &&
+        !metrics.bodyText.includes('MANAGED') &&
+        !metrics.bodyText.toLowerCase().includes('palvelujaksosta 4'),
+      `${viewport.width}px: obsolete 490→790 pricing lifecycle reappeared in rendered page.`
     );
     assert(
       metrics.scrollWidth <= metrics.viewport.width + 1,
@@ -368,7 +379,7 @@ try {
     );
     assert(
       metrics.priceRect.bottom <= metrics.viewport.height,
-      `${viewport.width}px: START price is not visible in the first viewport.`
+      `${viewport.width}px: SOME 12 price is not visible in the first viewport.`
     );
 
     const shot = await client.send('Page.captureScreenshot', {
