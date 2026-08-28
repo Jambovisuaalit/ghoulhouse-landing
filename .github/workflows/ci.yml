@@ -84,6 +84,40 @@ jobs:
           robots="$(curl --fail --silent http://127.0.0.1:3000/robots.txt)"
           printf '%s\n' "$robots" | grep -q 'Disallow: /'
 
+      - name: Security headers QA
+        shell: bash
+        run: |
+          headers="$(curl --silent --head http://127.0.0.1:3000/ | tr -d '\r')"
+
+          printf '%s\n' "$headers" | grep -qi '^content-security-policy-report-only:'
+          printf '%s\n' "$headers" | grep -qi "default-src 'self'"
+          printf '%s\n' "$headers" | grep -qi "frame-ancestors 'none'"
+          printf '%s\n' "$headers" | grep -qi '^cross-origin-opener-policy: same-origin
+      - name: Upload browser QA artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-qa
+          path: qa-artifacts/
+          if-no-files-found: warn
+          retention-days: 7
+
+          printf '%s\n' "$headers" | grep -qi '^x-permitted-cross-domain-policies: none
+      - name: Upload browser QA artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-qa
+          path: qa-artifacts/
+          if-no-files-found: warn
+          retention-days: 7
+
+
+          if printf '%s\n' "$headers" | grep -qi '^content-security-policy:'; then
+            echo "::error::CSP enforcement must remain off until Preview validation is complete."
+            exit 1
+          fi
+
       - name: Browser QA
         run: node scripts/browser-qa-ci.mjs
 
