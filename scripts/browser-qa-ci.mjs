@@ -36,6 +36,45 @@ async function sleep(ms) {
   await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+async function waitForProcessExit(process, timeoutMs = 3_000) {
+  if (process.exitCode !== null) return true;
+
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => {
+      process.off('exit', handleExit);
+      resolve(false);
+    }, timeoutMs);
+
+    const handleExit = () => {
+      clearTimeout(timer);
+      resolve(true);
+    };
+
+    process.once('exit', handleExit);
+  });
+}
+
+async function removeUserDataDir() {
+  for (let attempt = 1; attempt <= 5; attempt += 1) {
+    try {
+      await rm(USER_DATA_DIR, { recursive: true, force: true });
+      return;
+    } catch (error) {
+      if (
+        !error ||
+        typeof error !== 'object' ||
+        !('code' in error) ||
+        !['ENOTEMPTY', 'EBUSY', 'EPERM'].includes(String(error.code)) ||
+        attempt === 5
+      ) {
+        throw error;
+      }
+
+      await sleep(100 * attempt);
+    }
+  }
+}
+
 async function waitForJson(url, chrome, stderr, timeoutMs = 20_000) {
   const start = Date.now();
 
@@ -563,6 +602,16 @@ try {
   console.log(JSON.stringify({ chromePath, results, scrollEffects: { rawMid, filmMid }, reducedMotion, dialog }, null, 2));
 } finally {
   client?.close();
-  if (chrome.exitCode === null) chrome.kill('SIGTERM');
-  await rm(USER_DATA_DIR, { recursive: true, force: true });
+
+  if (chrome.exitCode === null) {
+    chrome.kill('SIGTERM');
+    const exited = await waitForProcessExit(chrome);
+
+    if (!exited && chrome.exitCode === null) {
+      chrome.kill('SIGKILL');
+      await waitForProcessExit(chrome, 2_000);
+    }
+  }
+
+  await removeUserDataDir();
 }
