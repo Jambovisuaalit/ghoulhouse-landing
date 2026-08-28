@@ -1,0 +1,85 @@
+name: P0 live production QA
+
+on:
+  push:
+    branches:
+      - ops/p0-live-qa
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  live:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Get GitHub OIDC token
+        uses: actions/github-script@v7
+        id: oidc
+        with:
+          script: |
+            const token = await core.getIDToken();
+            core.setSecret(token);
+            core.setOutput('token', token);
+
+      - name: Domain, canonical, security and API QA
+        env:
+          OIDC_TOKEN: ${{ steps.oidc.outputs.token }}
+          APEX_URL: https://ghoulhouse.fi
+          CANONICAL_URL: https://www.ghoulhouse.fi
+        shell: bash
+        run: |
+          set -euo pipefail
+          auth=(-H "x-vercel-trusted-oidc-idp-token: $OIDC_TOKEN")
+
+          apex_status="$(curl -sS -o /dev/null -D /tmp/apex.txt -w '%{http_code}' "${auth[@]}" "$APEX_URL/")"
+          test "$apex_status" = "308"
+          grep -qi '^location: https://www\.ghoulhouse\.fi/' /tmp/apex.txt
+
+          www_status="$(curl -sS -o /tmp/home.html -D /tmp/www.txt -w '%{http_code}' "${auth[@]}" "$CANONICAL_URL/")"
+          test "$www_status" = "200"
+          if grep -qi '^location:' /tmp/www.txt; then
+            echo "::error::Canonical www host redirects unexpectedly."
+            cat /tmp/www.txt
+            exit 1
+          fi
+
+          grep -q 'TYÖMAAKUVAT SISÄÄN' /tmp/home.html
+          grep -q 'data-offer-name="SOME 12"' /tmp/home.html
+          grep -q 'data-offer-price="490"' /tmp/home.html
+          grep -q 'rel="canonical" href="https://www.ghoulhouse.fi' /tmp/home.html
+          if grep -Eqi 'MANAGED|Palvelujaksosta 4' /tmp/home.html; then
+            echo "::error::Obsolete pricing lifecycle is present."
+            exit 1
+          fi
+
+          grep -qi '^content-security-policy-report-only:' /tmp/www.txt
+          grep -qi '^x-content-type-options: nosniff' /tmp/www.txt
+          grep -qi '^cross-origin-opener-policy: same-origin' /tmp/www.txt
+
+          invalid_status="$(curl -sS -o /tmp/invalid.json -w '%{http_code}' "${auth[@]}"             -X POST -H 'content-type: application/json' --data '{}'             "$CANONICAL_URL/api/leads")"
+          test "$invalid_status" = "400"
+          grep -q '"validation_error"' /tmp/invalid.json
+
+          valid_status="$(curl -sS -o /tmp/valid.json -w '%{http_code}' "${auth[@]}"             -X POST -H 'content-type: application/json'             --data '{"company":"GhoulHouse Release QA","name":"Release Gate","email":"release-qa@ghoulhouse.fi","profile":"https://www.ghoulhouse.fi","message":"Automated production release QA. No action required."}'             "$CANONICAL_URL/api/leads")"
+          test "$valid_status" = "201"
+          grep -q '"ok":true' /tmp/valid.json
+
+          robots="$(curl -sS "${auth[@]}" "$CANONICAL_URL/robots.txt")"
+          printf '%s' "$robots" | grep -q 'Disallow: /'
+
+          sitemap="$(curl -sS "${auth[@]}" "$CANONICAL_URL/sitemap.xml")"
+          printf '%s' "$sitemap" | grep -q '<urlset'
+          if printf '%s' "$sitemap" | grep -q '<url>'; then
+            echo "::error::Pre-launch sitemap exposes URLs."
+            exit 1
+          fi
+
+          if grep -q '/_vercel/insights/script.js' /tmp/home.html; then
+            echo "analytics=enabled"
+          else
+            echo "analytics=not-enabled"
+          fi
+
+          echo "P0 live QA passed"
