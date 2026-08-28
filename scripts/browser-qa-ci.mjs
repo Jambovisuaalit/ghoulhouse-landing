@@ -377,6 +377,154 @@ try {
     });
   }
 
+  // Mobile navigation accessibility regression.
+  await client.send('Emulation.setDeviceMetricsOverride', {
+    width: 390,
+    height: 844,
+    deviceScaleFactor: 1,
+    mobile: true,
+  });
+  await client.send('Page.navigate', { url: BASE_URL });
+  await waitForDocument(client);
+
+  const menuOpened = await evaluate(
+    client,
+    `(() => {
+      const button = document.querySelector('button[aria-controls="mobile-navigation"]');
+      button?.click();
+      return Boolean(button);
+    })()`
+  );
+  assert(menuOpened, 'Mobile menu button was not found.');
+
+  const mobileMenuReady = await waitForCondition(
+    client,
+    'Boolean(document.querySelector(\'#mobile-navigation\'))',
+    2_000
+  );
+  assert(mobileMenuReady !== null, 'Mobile menu did not open.');
+
+  const mobileMenu = await evaluate(
+    client,
+    `(() => {
+      const firstLink = document.querySelector('#mobile-navigation a[href]');
+      const main = document.querySelector('main');
+      const footer = document.querySelector('footer');
+      const skipLink = document.querySelector('a.skip-link');
+      const button = document.querySelector('button[aria-controls="mobile-navigation"]');
+      const cta = document.querySelector('#mobile-navigation button');
+      return {
+        expanded: button?.getAttribute('aria-expanded'),
+        activeText: document.activeElement?.textContent?.replace(/\\s+/g, ' ').trim() || '',
+        firstText: firstLink?.textContent?.replace(/\\s+/g, ' ').trim() || '',
+        mainInert: main?.hasAttribute('inert') || false,
+        footerInert: footer?.hasAttribute('inert') || false,
+        skipInert: skipLink?.hasAttribute('inert') || false,
+        ctaText: cta?.textContent?.replace(/\\s+/g, ' ').trim() || '',
+      };
+    })()`
+  );
+
+  assert(mobileMenu.expanded === 'true', 'Mobile menu aria-expanded is not true.');
+  assert(
+    mobileMenu.activeText === mobileMenu.firstText,
+    `Mobile menu did not focus its first link: ${JSON.stringify(mobileMenu)}.`
+  );
+  assert(
+    mobileMenu.mainInert && mobileMenu.footerInert && mobileMenu.skipInert,
+    `Mobile menu background is not fully inert: ${JSON.stringify(mobileMenu)}.`
+  );
+  assert(
+    mobileMenu.ctaText.includes('PYYDÄ 2 SISÄLTÖESIMERKKIÄ'),
+    'Mobile menu CTA is missing.'
+  );
+
+  await evaluate(
+    client,
+    `(() => {
+      document.querySelector('button[aria-controls="mobile-navigation"]')?.focus();
+      return true;
+    })()`
+  );
+  await client.send('Input.dispatchKeyEvent', {
+    type: 'keyDown',
+    key: 'Tab',
+    code: 'Tab',
+    modifiers: 8,
+  });
+  await client.send('Input.dispatchKeyEvent', {
+    type: 'keyUp',
+    key: 'Tab',
+    code: 'Tab',
+    modifiers: 8,
+  });
+  await sleep(80);
+
+  const shiftTabTrap = await evaluate(
+    client,
+    `(() => ({
+      insideMenu: Boolean(document.activeElement?.closest?.('#mobile-navigation')),
+      activeText: document.activeElement?.textContent?.replace(/\\s+/g, ' ').trim() || '',
+    }))()`
+  );
+  assert(
+    shiftTabTrap.insideMenu &&
+      shiftTabTrap.activeText.includes('PYYDÄ 2 SISÄLTÖESIMERKKIÄ'),
+    `Shift+Tab escaped the mobile menu focus trap: ${JSON.stringify(shiftTabTrap)}.`
+  );
+
+  await client.send('Input.dispatchKeyEvent', {
+    type: 'keyDown',
+    key: 'Tab',
+    code: 'Tab',
+  });
+  await client.send('Input.dispatchKeyEvent', {
+    type: 'keyUp',
+    key: 'Tab',
+    code: 'Tab',
+  });
+  await sleep(80);
+
+  const tabTrap = await evaluate(
+    client,
+    `(() => ({
+      isMenuButton: document.activeElement?.getAttribute('aria-controls') === 'mobile-navigation',
+    }))()`
+  );
+  assert(tabTrap.isMenuButton, 'Tab did not wrap from mobile CTA back to menu button.');
+
+  await client.send('Input.dispatchKeyEvent', {
+    type: 'keyDown',
+    key: 'Escape',
+    code: 'Escape',
+  });
+  await client.send('Input.dispatchKeyEvent', {
+    type: 'keyUp',
+    key: 'Escape',
+    code: 'Escape',
+  });
+  await sleep(100);
+
+  const mobileMenuClosed = await evaluate(
+    client,
+    `(() => ({
+      exists: Boolean(document.querySelector('#mobile-navigation')),
+      focusReturned:
+        document.activeElement?.getAttribute('aria-controls') === 'mobile-navigation',
+      mainInert: document.querySelector('main')?.hasAttribute('inert') || false,
+      footerInert: document.querySelector('footer')?.hasAttribute('inert') || false,
+      skipInert: document.querySelector('a.skip-link')?.hasAttribute('inert') || false,
+    }))()`
+  );
+  assert(!mobileMenuClosed.exists, 'Escape did not close mobile menu.');
+  assert(mobileMenuClosed.focusReturned, 'Escape did not restore focus to mobile menu button.');
+  assert(
+    !mobileMenuClosed.mainInert &&
+      !mobileMenuClosed.footerInert &&
+      !mobileMenuClosed.skipInert,
+    `Mobile menu background inert state was not restored: ${JSON.stringify(mobileMenuClosed)}.`
+  );
+
   // Desktop scroll-effect regression: progress must track actual geometry.
   await client.send('Emulation.setDeviceMetricsOverride', {
     width: 1440,

@@ -23,21 +23,67 @@ export default function Navigation() {
     if (!mobileMenuOpen) return;
 
     const previousOverflow = document.body.style.overflow;
+    const backgroundElements = Array.from(
+      document.querySelectorAll<HTMLElement>('main, footer, a.skip-link')
+    );
+    const backgroundState = backgroundElements.map((element) => ({
+      element,
+      inert: element.hasAttribute('inert'),
+      ariaHidden: element.getAttribute('aria-hidden'),
+    }));
+
     document.body.style.overflow = 'hidden';
+
+    for (const element of backgroundElements) {
+      element.setAttribute('inert', '');
+      element.setAttribute('aria-hidden', 'true');
+    }
 
     requestAnimationFrame(() => firstMobileLinkRef.current?.focus());
 
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape') return;
-      setMobileMenuOpen(false);
-      requestAnimationFrame(() => menuButtonRef.current?.focus());
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMobileMenuOpen(false);
+        requestAnimationFrame(() => menuButtonRef.current?.focus());
+        return;
+      }
+
+      if (event.key !== 'Tab') return;
+
+      const focusable = Array.from(
+        document.querySelectorAll<HTMLElement>(
+          'button[aria-controls="mobile-navigation"], #mobile-navigation a[href], #mobile-navigation button:not([disabled])'
+        )
+      ).filter((element) => element.offsetParent !== null);
+
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+
+      if (event.shiftKey && active === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
 
-    document.addEventListener('keydown', handleEscape);
+    document.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = previousOverflow;
+
+      for (const { element, inert, ariaHidden } of backgroundState) {
+        if (inert) element.setAttribute('inert', '');
+        else element.removeAttribute('inert');
+
+        if (ariaHidden === null) element.removeAttribute('aria-hidden');
+        else element.setAttribute('aria-hidden', ariaHidden);
+      }
     };
   }, [mobileMenuOpen]);
 
