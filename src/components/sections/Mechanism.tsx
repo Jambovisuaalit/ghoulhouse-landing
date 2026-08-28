@@ -69,7 +69,7 @@ export default function Mechanism() {
     }
 
     const desktopMotion = window.matchMedia(
-      '(min-width: 1024px) and (prefers-reduced-motion: no-preference)'
+      '(min-width: 1100px) and (prefers-reduced-motion: no-preference)'
     );
 
     let animationFrame = 0;
