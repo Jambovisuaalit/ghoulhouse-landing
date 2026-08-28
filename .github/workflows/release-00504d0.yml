@@ -71,6 +71,20 @@ jobs:
           cat /tmp/ghoulhouse-next.log
           exit 1
 
+      - name: Enforce literal zero horizontal overflow
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path("scripts/browser-qa-ci.mjs")
+          s = p.read_text()
+          old = "metrics.scrollWidth <= metrics.innerWidth + 1"
+          new = "metrics.scrollWidth <= metrics.innerWidth"
+          if old not in s:
+              raise SystemExit("Expected overflow tolerance assertion not found")
+          p.write_text(s.replace(old, new))
+          PY
+
       - name: 9 viewport + scroll regression QA
         run: node scripts/browser-qa-ci.mjs
 
