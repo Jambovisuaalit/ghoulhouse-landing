@@ -37,7 +37,7 @@ export default function Hero() {
               </ContactTrigger>
             </div>
             <p className="type-caption mt-4 max-w-xl uppercase tracking-[0.08em] text-ink/60">
-              START · palvelujaksot 1–3 · kuukausittain irtisanottava sovittujen ehtojen mukaisesti
+              SOME 12 · 30 päivän palvelujakso · kuukausittain irtisanottava sovittujen ehtojen mukaisesti
             </p>
           </div>
         </div>
