@@ -52,7 +52,25 @@ export default function Footer() {
         </div>
 
         <div className="type-caption mt-12 flex flex-col gap-3 border-t border-ghost/20 pt-6 text-ghost/65 sm:flex-row sm:items-center sm:justify-between">
-          <p>© 2026 {siteConfig.company.legalName}</p>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <p>© 2026 {siteConfig.company.legalName}</p>
+            {siteConfig.legal.privacyPath && (
+              <a
+                href={siteConfig.legal.privacyPath}
+                className="font-bold uppercase tracking-[0.1em] text-ghost/70 hover:text-ghost"
+              >
+                Tietosuoja
+              </a>
+            )}
+            {siteConfig.legal.termsPath && (
+              <a
+                href={siteConfig.legal.termsPath}
+                className="font-bold uppercase tracking-[0.1em] text-ghost/70 hover:text-ghost"
+              >
+                Ehdot
+              </a>
+            )}
+          </div>
           <a href="#top" className="font-bold uppercase tracking-[0.12em] text-ghost/70">
             Takaisin ylös ↑
           </a>
