@@ -388,6 +388,215 @@ try {
     });
   }
 
+  // Desktop cinematic scroll regression QA.
+  // This was previously covered, then lost during the server/client QA refactor.
+  await client.send('Emulation.setDeviceMetricsOverride', {
+    width: 1440,
+    height: 900,
+    deviceScaleFactor: 1,
+    mobile: false,
+  });
+  await client.send('Emulation.setEmulatedMedia', {
+    media: '',
+    features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }],
+  });
+  await client.send('Page.navigate', { url: BASE_URL });
+  await waitForDocument(client);
+  await new Promise((resolve) => setTimeout(resolve, 250));
+
+  const rawTarget = await evaluate(
+    client,
+    `(() => {
+      document.documentElement.style.scrollBehavior = 'auto';
+      const section = document.querySelector('[data-scroll-raw]');
+      const sticky = section?.querySelector('.mechanism-raw__sticky');
+      if (!section || !sticky) return null;
+
+      const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0;
+      const sectionTop = section.getBoundingClientRect().top + scrollY;
+      const travel = Math.max(1, section.offsetHeight - sticky.offsetHeight);
+      const target = sectionTop - stickyTop + travel * 0.5;
+
+      window.scrollTo(0, target);
+      return { target, travel };
+    })()`
+  );
+
+  assert(rawTarget, 'Desktop RAW scroll geometry is missing.');
+  await new Promise((resolve) => setTimeout(resolve, 200));
+
+  const rawMid = await evaluate(
+    client,
+    `(() => {
+      const section = document.querySelector('[data-scroll-raw]');
+      const sticky = section?.querySelector('.mechanism-raw__sticky');
+      const stage = section?.querySelector('.mechanism-raw__stage');
+      const finalImage = section?.querySelector('.mechanism-raw__image--final');
+      const divider = section?.querySelector('.mechanism-raw__divider');
+
+      if (!section || !sticky || !stage || !finalImage || !divider) return null;
+
+      const stickyRect = sticky.getBoundingClientRect();
+      const stageRect = stage.getBoundingClientRect();
+
+      return {
+        progress:
+          parseFloat(
+            getComputedStyle(section).getPropertyValue('--raw-progress')
+          ) || 0,
+        clipPath: getComputedStyle(finalImage).clipPath,
+        dividerLeft: getComputedStyle(divider).left,
+        stickyTop: stickyRect.top,
+        stickyBottom: stickyRect.bottom,
+        stickyHeight: stickyRect.height,
+        stageTop: stageRect.top,
+        stageBottom: stageRect.bottom,
+        stageHeight: stageRect.height,
+      };
+    })()`
+  );
+
+  assert(rawMid, 'Desktop RAW midpoint metrics are missing.');
+  assert(
+    rawMid.progress > 0.35 && rawMid.progress < 0.65,
+    `Desktop RAW progress should be near 0.5, got ${rawMid.progress}.`
+  );
+  assert(
+    rawMid.clipPath && rawMid.clipPath !== 'none',
+    'Desktop RAW final image is not being clipped by scroll progress.'
+  );
+  assert(
+    rawMid.stickyTop >= 55 && rawMid.stickyTop <= 80,
+    `Desktop RAW sticky stage is not pinned below the header: top ${rawMid.stickyTop}px.`
+  );
+  assert(
+    rawMid.stickyBottom >= 860 && rawMid.stickyBottom <= 905,
+    `Desktop RAW sticky stage does not fill the usable viewport: bottom ${rawMid.stickyBottom}px.`
+  );
+  assert(
+    rawMid.stageHeight >= 400 &&
+      rawMid.stageTop >= rawMid.stickyTop &&
+      rawMid.stageBottom <= rawMid.stickyBottom + 1,
+    `Desktop RAW visual stage is clipped or outside sticky viewport: ${JSON.stringify(rawMid)}.`
+  );
+
+  const rawShot = await client.send('Page.captureScreenshot', {
+    format: 'png',
+    captureBeyondViewport: false,
+  });
+  await writeFile(
+    `${SCREENSHOT_DIR}/scroll-raw-mid-1440x900.png`,
+    Buffer.from(rawShot.data, 'base64')
+  );
+
+  const filmTarget = await evaluate(
+    client,
+    `(() => {
+      const section = document.querySelector('[data-scroll-film]');
+      const sticky = section?.querySelector('.mechanism-film__sticky');
+      if (!section || !sticky) return null;
+
+      const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0;
+      const sectionTop = section.getBoundingClientRect().top + scrollY;
+      const travel = Math.max(1, section.offsetHeight - sticky.offsetHeight);
+      const target = sectionTop - stickyTop + travel * 0.5;
+
+      window.scrollTo(0, target);
+      return { target, travel };
+    })()`
+  );
+
+  assert(filmTarget, 'Desktop filmstrip scroll geometry is missing.');
+  await new Promise((resolve) => setTimeout(resolve, 200));
+
+  const filmMid = await evaluate(
+    client,
+    `(() => {
+      const section = document.querySelector('[data-scroll-film]');
+      const sticky = section?.querySelector('.mechanism-film__sticky');
+      const heading = section?.querySelector('.mechanism-film__header h3');
+      const viewport = section?.querySelector('.mechanism-film__viewport');
+      const track = section?.querySelector('.mechanism-film__track');
+      const frame = section?.querySelector('.mechanism-film__frame');
+
+      if (!section || !sticky || !heading || !viewport || !track || !frame) {
+        return null;
+      }
+
+      const matrix = new DOMMatrixReadOnly(getComputedStyle(track).transform);
+      const horizontalTravel = Math.max(
+        0,
+        track.scrollWidth - viewport.clientWidth
+      );
+      const stickyRect = sticky.getBoundingClientRect();
+      const viewportRect = viewport.getBoundingClientRect();
+      const frameRect = frame.getBoundingClientRect();
+
+      return {
+        progress:
+          parseFloat(
+            getComputedStyle(section).getPropertyValue('--film-progress')
+          ) || 0,
+        translateX: matrix.m41,
+        horizontalTravel,
+        stickyTop: stickyRect.top,
+        stickyBottom: stickyRect.bottom,
+        stickyHeight: stickyRect.height,
+        viewportTop: viewportRect.top,
+        viewportBottom: viewportRect.bottom,
+        frameTop: frameRect.top,
+        frameBottom: frameRect.bottom,
+        frameHeight: frameRect.height,
+        headingClientWidth: heading.clientWidth,
+        headingScrollWidth: heading.scrollWidth,
+      };
+    })()`
+  );
+
+  assert(filmMid, 'Desktop filmstrip midpoint metrics are missing.');
+  assert(
+    filmMid.horizontalTravel > 200,
+    `Desktop filmstrip has insufficient horizontal travel: ${filmMid.horizontalTravel}px.`
+  );
+  assert(
+    filmMid.progress > 0.35 && filmMid.progress < 0.65,
+    `Desktop filmstrip progress should be near 0.5, got ${filmMid.progress}.`
+  );
+  assert(
+    Math.abs(filmMid.translateX) > filmMid.horizontalTravel * 0.3 &&
+      Math.abs(filmMid.translateX) < filmMid.horizontalTravel * 0.7,
+    `Desktop filmstrip translateX is out of sync: ${filmMid.translateX}px of ${filmMid.horizontalTravel}px.`
+  );
+  assert(
+    filmMid.stickyTop >= 55 && filmMid.stickyTop <= 80,
+    `Desktop filmstrip sticky stage is not pinned below the header: top ${filmMid.stickyTop}px.`
+  );
+  assert(
+    filmMid.stickyBottom >= 860 && filmMid.stickyBottom <= 905,
+    `Desktop filmstrip sticky stage does not fill the usable viewport: bottom ${filmMid.stickyBottom}px.`
+  );
+  assert(
+    filmMid.viewportTop >= filmMid.stickyTop &&
+      filmMid.viewportBottom <= filmMid.stickyBottom + 16 &&
+      filmMid.frameTop >= filmMid.stickyTop &&
+      filmMid.frameBottom <= filmMid.stickyBottom + 1 &&
+      filmMid.frameHeight >= 300,
+    `Desktop filmstrip content is clipped or outside sticky viewport: ${JSON.stringify(filmMid)}.`
+  );
+  assert(
+    filmMid.headingScrollWidth <= filmMid.headingClientWidth + 1,
+    `Desktop filmstrip heading overflows its box: ${filmMid.headingScrollWidth}px > ${filmMid.headingClientWidth}px.`
+  );
+
+  const filmShot = await client.send('Page.captureScreenshot', {
+    format: 'png',
+    captureBeyondViewport: false,
+  });
+  await writeFile(
+    `${SCREENSHOT_DIR}/scroll-film-mid-1440x900.png`,
+    Buffer.from(filmShot.data, 'base64')
+  );
+
   await client.send('Emulation.setDeviceMetricsOverride', {
     width: 390,
     height: 844,
@@ -521,6 +730,7 @@ try {
     JSON.stringify(
       {
         results,
+        scrollEffects: { rawMid, filmMid },
         reducedMotion,
         dialog: {
           opens: dialogState.exists,
@@ -535,6 +745,7 @@ try {
   );
 
   console.table(results);
+  console.log('Desktop cinematic scroll: PASS');
   console.log('Reduced motion: PASS');
   console.log('Lead dialog: PASS');
   console.log('Lead fail-safe submission: PASS');
