@@ -624,13 +624,20 @@ try {
 
   const dialog = await evaluate(
     client,
-    `(() => ({
-      exists: Boolean(document.querySelector('[role="dialog"]')),
-      activeName: document.activeElement?.getAttribute('name') || '',
-    }))()`
+    `(() => {
+      const siteContent = document.querySelector('[aria-hidden="true"][inert]');
+      return {
+        exists: Boolean(document.querySelector('[role="dialog"]')),
+        activeName: document.activeElement?.getAttribute('name') || '',
+        backgroundInert: Boolean(siteContent),
+        skipLinkExists: Boolean(document.querySelector('a.skip-link[href="#main-content"]')),
+      };
+    })()`
   );
   assert(dialog.exists, 'Primary CTA did not open lead dialog.');
   assert(dialog.activeName === 'company', 'Lead dialog did not focus first field.');
+  assert(dialog.backgroundInert, 'Background content is not inert while dialog is open.');
+  assert(dialog.skipLinkExists, 'Skip link to main content is missing.');
   assert(pageExceptions.length === 0, `Page exceptions: ${pageExceptions.join(' | ')}`);
 
   await writeFile(
