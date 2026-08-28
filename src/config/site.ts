@@ -1,3 +1,8 @@
+const privacyPath =
+  process.env.NEXT_PUBLIC_PRIVACY_PATH?.trim() || null;
+const termsPath =
+  process.env.NEXT_PUBLIC_TERMS_PATH?.trim() || null;
+
 export const siteConfig = {
   company: {
     brand: 'GhoulHouse',
@@ -64,8 +69,8 @@ export const siteConfig = {
     instagram: null,
   },
   legal: {
-    privacyPath: null,
-    termsPath: null,
+    privacyPath,
+    termsPath,
   },
 } as const;
 
