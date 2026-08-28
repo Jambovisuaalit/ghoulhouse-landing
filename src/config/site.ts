@@ -25,11 +25,11 @@ export const siteConfig = {
   },
   offer: {
     start: {
-      name: 'START',
+      name: 'SOME 12',
       price: 490,
       vatLabel: '+ ALV',
       period: '30 päivää',
-      lifecycle: 'Palvelujaksot 1–3',
+      lifecycle: '30 päivän palvelujakso',
       includes: [
         '12 alkuperäistä sisältöä / 30 päivää',
         'Instagram + Facebook -sovitus',
