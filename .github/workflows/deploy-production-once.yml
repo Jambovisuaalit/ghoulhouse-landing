@@ -192,7 +192,10 @@ jobs:
           grep -qi '^HTTP/.* 301' /tmp/www.txt
           grep -qi '^location: https://ghoulhouse.fi/' /tmp/www.txt
 
-          redirect_result="$(curl --silent --show-error --location --max-redirs 1             --output /dev/null             --write-out '%{http_code} %{num_redirects} %{url_effective}'             "$WWW_URL/")"
+          redirect_result="$(curl --silent --show-error --location --max-redirs 1 \
+            --output /dev/null \
+            --write-out '%{http_code} %{num_redirects} %{url_effective}' \
+            "$WWW_URL/")"
           test "$redirect_result" = "200 1 https://ghoulhouse.fi/"
 
       - name: Canonical and security QA
