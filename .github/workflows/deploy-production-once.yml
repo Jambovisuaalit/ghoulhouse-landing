@@ -191,7 +191,7 @@ jobs:
       - name: Lead API live QA
         shell: bash
         run: |
-          status="$(curl --silent --show-error \
+          invalid_status="$(curl --silent --show-error \
             --output /tmp/lead-invalid.json \
             --write-out '%{http_code}' \
             --request POST \
@@ -199,8 +199,24 @@ jobs:
             --data '{}' \
             "$CANONICAL_URL/api/leads")"
 
-          test "$status" = "400"
+          test "$invalid_status" = "400"
           grep -q '"validation_error"' /tmp/lead-invalid.json
+
+          valid_status="$(curl --silent --show-error \
+            --output /tmp/lead-valid.json \
+            --write-out '%{http_code}' \
+            --request POST \
+            --header 'content-type: application/json' \
+            --data '{"company":"GhoulHouse Release QA","name":"Release Gate","email":"release-qa@ghoulhouse.fi","profile":"https://www.ghoulhouse.fi","message":"Automated production release QA. No action required."}' \
+            "$CANONICAL_URL/api/leads")"
+
+          if [ "$valid_status" != "201" ]; then
+            echo "::error::Valid production lead was not delivered successfully (HTTP $valid_status)."
+            cat /tmp/lead-valid.json
+            exit 1
+          fi
+
+          grep -q '"ok":true' /tmp/lead-valid.json
 
       - name: Robots and sitemap live QA
         shell: bash
