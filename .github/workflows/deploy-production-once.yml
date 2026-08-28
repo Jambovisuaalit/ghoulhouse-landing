@@ -17,10 +17,18 @@ jobs:
       VERCEL_ORG_ID: team_zwsvoePoiBeskRuyl2Iar883
       VERCEL_PROJECT_ID: prj_LDmPUItb4oGQlzU2ZZAgyjs7rfLw
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      CANONICAL_URL: https://www.ghoulhouse.fi
+      APEX_URL: https://ghoulhouse.fi
 
     steps:
       - name: Checkout validated main
         uses: actions/checkout@v4
+
+      - name: Verify release source
+        shell: bash
+        run: |
+          test "${GITHUB_REF_NAME}" = "main"
+          echo "Releasing commit ${GITHUB_SHA}"
 
       - name: Verify Vercel credentials
         shell: bash
@@ -38,7 +46,7 @@ jobs:
       - name: Install locked dependencies
         run: npm ci --no-audit --no-fund
 
-      - name: Re-run production validation
+      - name: Re-run source validation
         run: |
           npm audit --omit=dev --audit-level=high
           npm run typecheck
@@ -48,50 +56,174 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      - name: Pull production project settings
-        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+      - name: Pull Preview project settings
+        run: vercel pull --yes --environment=preview --token="$VERCEL_TOKEN"
 
-      - name: Build for Vercel production
-        run: vercel build --prod --token="$VERCEL_TOKEN"
+      - name: Build Preview candidate
+        run: vercel build --token="$VERCEL_TOKEN"
 
-      - name: Deploy prebuilt output to production
-        id: deploy
+      - name: Deploy Preview candidate
+        id: preview
         shell: bash
         run: |
-          url="$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN")"
+          url="$(vercel deploy --prebuilt --token="$VERCEL_TOKEN")"
           echo "url=$url" >> "$GITHUB_OUTPUT"
-          echo "Production deployment: $url"
+          echo "Preview deployment: $url"
 
-      - name: Verify deployed application
+      - name: Preview smoke QA
         shell: bash
         run: |
-          url="${{ steps.deploy.outputs.url }}"
+          url="${{ steps.preview.outputs.url }}"
 
           for i in {1..20}; do
-            html="$(curl --fail --silent --show-error "$url" || true)"
+            html="$(vercel curl / --deployment "$url" --token="$VERCEL_TOKEN" 2>/dev/null || true)"
             if printf '%s' "$html" | grep -q "TYÖMAAKUVAT SISÄÄN" && \
-               printf '%s' "$html" | grep -q "490"; then
+               printf '%s' "$html" | grep -q "PYYDÄ 2 SISÄLTÖESIMERKKIÄ" && \
+               printf '%s' "$html" | grep -q "Yksi työmaa. Monta kulmaa."; then
               break
             fi
 
             if [ "$i" -eq 20 ]; then
-              echo "::error::Deployment did not return the validated GhoulHouse homepage."
+              echo "::error::Preview did not return the validated GhoulHouse homepage."
               exit 1
             fi
 
             sleep 3
           done
 
-          api_status="$(curl --silent --output /tmp/lead-api.json --write-out '%{http_code}' \
-            --request POST \
-            --header 'content-type: application/json' \
-            --data '{}' \
-            "$url/api/leads")"
+          api_response="$(vercel curl /api/leads \
+            --deployment "$url" \
+            --token="$VERCEL_TOKEN" \
+            -- \
+            -X POST \
+            -H 'content-type: application/json' \
+            --data '{}' 2>/dev/null || true)"
 
-          if [ "$api_status" != "400" ] || ! grep -q '"validation_error"' /tmp/lead-api.json; then
-            echo "::error::Lead API smoke check failed with HTTP $api_status."
-            cat /tmp/lead-api.json
+          printf '%s' "$api_response" | grep -q '"validation_error"'
+
+          vercel logs --deployment "$url" --level error --limit 50 --token="$VERCEL_TOKEN" > /tmp/preview-errors.log || true
+
+          if [ -s /tmp/preview-errors.log ]; then
+            echo "::error::Preview deployment emitted runtime errors."
+            cat /tmp/preview-errors.log
             exit 1
           fi
 
-          echo "GhoulHouse production application smoke check passed."
+      - name: Pull Production project settings
+        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+
+      - name: Build Production candidate
+        run: vercel build --prod --token="$VERCEL_TOKEN"
+
+      - name: Deploy Production candidate
+        id: production
+        shell: bash
+        run: |
+          url="$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN")"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Production deployment: $url"
+
+      - name: Verify Production deployment URL
+        shell: bash
+        run: |
+          url="${{ steps.production.outputs.url }}"
+
+          for i in {1..20}; do
+            html="$(vercel curl / --deployment "$url" --token="$VERCEL_TOKEN" 2>/dev/null || true)"
+            if printf '%s' "$html" | grep -q "TYÖMAAKUVAT SISÄÄN" && \
+               printf '%s' "$html" | grep -q "490" && \
+               printf '%s' "$html" | grep -q "KONSEPTIESIMERKKI — EI ASIAKASTYÖ"; then
+              exit 0
+            fi
+            sleep 3
+          done
+
+          echo "::error::Production deployment URL did not return the validated application."
+          exit 1
+
+      - name: Custom-domain routing QA
+        shell: bash
+        run: |
+          curl --silent --show-error --head "$APEX_URL/" > /tmp/apex.txt
+          grep -qi '^HTTP/.* 308' /tmp/apex.txt
+          grep -qi '^location: https://www.ghoulhouse.fi/' /tmp/apex.txt
+
+          curl --silent --show-error --head "$CANONICAL_URL/" > /tmp/www.txt
+          grep -qi '^HTTP/.* 200' /tmp/www.txt
+
+          if grep -qi '^location:' /tmp/www.txt; then
+            echo "::error::Canonical www host redirects unexpectedly."
+            cat /tmp/www.txt
+            exit 1
+          fi
+
+      - name: Canonical and security QA
+        shell: bash
+        run: |
+          html="$(curl --fail --silent --show-error "$CANONICAL_URL/")"
+          headers="$(curl --silent --show-error --head "$CANONICAL_URL/")"
+
+          printf '%s' "$html" | grep -q 'rel="canonical" href="https://www.ghoulhouse.fi'
+          printf '%s' "$html" | grep -q "TYÖMAAKUVAT SISÄÄN"
+          printf '%s' "$html" | grep -q "Yksi työmaa. Monta kulmaa."
+          printf '%s' "$html" | grep -q "KONSEPTIESIMERKKI — EI ASIAKASTYÖ"
+
+          printf '%s' "$headers" | grep -qi '^content-security-policy-report-only:'
+          printf '%s' "$headers" | grep -qi '^cross-origin-opener-policy: same-origin'
+          printf '%s' "$headers" | grep -qi '^x-content-type-options: nosniff'
+
+      - name: Lead API live QA
+        shell: bash
+        run: |
+          status="$(curl --silent --show-error \
+            --output /tmp/lead-invalid.json \
+            --write-out '%{http_code}' \
+            --request POST \
+            --header 'content-type: application/json' \
+            --data '{}' \
+            "$CANONICAL_URL/api/leads")"
+
+          test "$status" = "400"
+          grep -q '"validation_error"' /tmp/lead-invalid.json
+
+      - name: Robots and sitemap live QA
+        shell: bash
+        run: |
+          robots="$(curl --fail --silent --show-error "$CANONICAL_URL/robots.txt")"
+          sitemap="$(curl --fail --silent --show-error "$CANONICAL_URL/sitemap.xml")"
+
+          printf '%s' "$robots" | grep -q 'Disallow: /'
+          printf '%s' "$sitemap" | grep -q '<urlset'
+          if printf '%s' "$sitemap" | grep -q '<url>'; then
+            echo "::error::Pre-launch sitemap unexpectedly exposes indexable URLs."
+            exit 1
+          fi
+
+      - name: Analytics bootstrap QA
+        shell: bash
+        run: |
+          html="$(curl --fail --silent --show-error "$CANONICAL_URL/")"
+
+          if printf '%s' "$html" | grep -q '/_vercel/insights/script.js'; then
+            echo "Vercel Analytics bootstrap detected."
+          else
+            echo "::warning::Vercel Analytics is not enabled in the Production build yet."
+          fi
+
+      - name: Production runtime error QA
+        shell: bash
+        run: |
+          vercel logs --environment production --level error --since 5m --limit 50 --token="$VERCEL_TOKEN" > /tmp/prod-errors.log || true
+
+          if [ -s /tmp/prod-errors.log ]; then
+            echo "::error::Production emitted runtime errors after deployment."
+            cat /tmp/prod-errors.log
+            exit 1
+          fi
+
+      - name: Release summary
+        run: |
+          echo "Validated source: $GITHUB_SHA"
+          echo "Preview: ${{ steps.preview.outputs.url }}"
+          echo "Production: ${{ steps.production.outputs.url }}"
+          echo "Canonical: $CANONICAL_URL"
