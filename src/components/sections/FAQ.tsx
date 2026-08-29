@@ -1,6 +1,6 @@
 import Container from '@/components/ui/Container';
 
-const faqItems = [
+export const faqItems = [
   {
     question: 'Mitä materiaalia meidän pitää toimittaa?',
     answer:
