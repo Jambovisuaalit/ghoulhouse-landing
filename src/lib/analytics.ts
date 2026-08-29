@@ -1,13 +1,13 @@
 export type FunnelEvent =
   | 'page_view'
-  | 'primary_cta_click'
+  | 'cta_click'
   | 'lead_form_open'
   | 'lead_form_start'
   | 'lead_form_submit'
   | 'lead_form_success'
   | 'lead_form_error'
   | 'pricing_view'
-  | 'content_example_view';
+  | 'case_view';
 
 type AnalyticsProperties = Record<string, string | number | boolean>;
 

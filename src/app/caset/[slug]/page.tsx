@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import Container from '@/components/ui/Container';
 import ContactTrigger from '@/components/contact/ContactTrigger';
+import CaseViewAnalytics from '@/components/analytics/CaseViewAnalytics';
 import { cases } from '@/content/cases';
 import { siteConfig } from '@/config/site';
 
@@ -39,6 +40,7 @@ export default async function CasePage({
 
   return (
     <main id="main-content" className="min-h-screen bg-ghost">
+      <CaseViewAnalytics slug={item.slug} />
       <section className="border-b-2 border-ink py-12 md:py-20">
         <Container>
           <p className="type-label text-signal">{item.status}</p>

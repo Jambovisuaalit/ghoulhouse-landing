@@ -30,8 +30,8 @@ export function ContactProvider({ children }: { children: ReactNode }) {
   const siteContentRef = useRef<HTMLDivElement>(null);
 
   const openContact = useCallback(() => {
-    trackEvent('primary_cta_click');
-    trackEvent('lead_form_open');
+    trackEvent('cta_click', { path: window.location.pathname });
+    trackEvent('lead_form_open', { path: window.location.pathname });
     setIsOpen(true);
   }, []);
 
