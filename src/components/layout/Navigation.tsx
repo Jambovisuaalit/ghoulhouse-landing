@@ -94,7 +94,7 @@ export default function Navigation() {
           className="flex min-h-[60px] items-center justify-between gap-5 min-[1100px]:min-h-[66px]"
           aria-label="Päänavigaatio"
         >
-          <Link href="/" className="inline-flex shrink-0 items-center" aria-label="GhoulHouse — etusivu">
+          <Link href="/" className="inline-flex shrink-0 items-center" aria-label="GhoulHouse — sivun alku">\n            <span className="sr-only">GhoulHouse</span>
             <Image
               src="/logo-horizontal.svg"
               alt="GhoulHouse"
