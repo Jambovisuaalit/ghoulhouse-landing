@@ -15,7 +15,7 @@ body {
   margin: 0;
   background: #F7F4EF;
   color: #111111;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-sans), Arial, sans-serif;
   line-height: 1.6;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -108,7 +108,7 @@ a:hover {
 }
 
 .type-section-title {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-sans), Arial, sans-serif;
   font-size: clamp(2.25rem, 4.8vw, 4.75rem);
   font-weight: 800;
   line-height: 0.96;

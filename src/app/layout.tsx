@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Anton } from 'next/font/google';
+import { Anton, Montserrat } from 'next/font/google';
 import { siteConfig } from '@/config/site';
 import {
   SITE_URL,
@@ -18,6 +18,12 @@ const anton = Anton({
   weight: '400',
   subsets: ['latin'],
   variable: '--font-display',
+  display: 'swap',
+});
+
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  variable: '--font-sans',
   display: 'swap',
 });
 
@@ -122,7 +128,7 @@ const structuredData = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fi">
-      <body className={anton.variable}>
+      <body className={`${anton.variable} ${montserrat.variable}`}>
         <ContactProvider>
           <a className="skip-link" href="#main-content">
             Siirry pääsisältöön
