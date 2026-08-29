@@ -1,8 +1,4 @@
 const canonicalSiteUrl = 'https://ghoulhouse.fi';
-const privacyPath =
-  process.env.NEXT_PUBLIC_PRIVACY_PATH?.trim() || null;
-const termsPath =
-  process.env.NEXT_PUBLIC_TERMS_PATH?.trim() || null;
 
 export const siteConfig = {
   company: {
@@ -19,9 +15,7 @@ export const siteConfig = {
       'Me pidämme huolen, että asiakkaat myös näkevät sen.',
     ],
   },
-  cta: {
-    primary: 'PYYDÄ 2 SISÄLTÖESIMERKKIÄ',
-  },
+  cta: { primary: 'PYYDÄ 2 SISÄLTÖESIMERKKIÄ' },
   offer: {
     start: {
       name: 'SOME 12',
@@ -45,14 +39,11 @@ export const siteConfig = {
       ],
     },
   },
-  contact: {
-    email: null,
-    phone: null,
-    instagram: null,
-  },
+  contact: { email: null, phone: null, instagram: null },
   legal: {
-    privacyPath,
-    termsPath,
+    privacyPath: '/tietosuoja',
+    cookiesPath: '/evasteet',
+    termsPath: '/kayttoehdot',
   },
 } as const;
 

@@ -8,6 +8,10 @@ import {
   productionUrl,
 } from '@/lib/seo';
 import VercelAnalytics from '@/components/analytics/VercelAnalytics';
+import FunnelAnalytics from '@/components/analytics/FunnelAnalytics';
+import { ContactProvider } from '@/components/contact/ContactProvider';
+import Navigation from '@/components/layout/Navigation';
+import Footer from '@/components/layout/Footer';
 import './globals.css';
 
 const anton = Anton({
@@ -19,7 +23,7 @@ const anton = Anton({
 
 const title = 'GhoulHouse — Työmaakuvat sisään. Valmis some ulos.';
 const description =
-  'GhoulHouse tekee työmaamateriaalista 12 valmista Instagram- ja Facebook-sisältöä 30 päiväksi. START 490 € + ALV.';
+  'GhoulHouse tekee työmaamateriaalista 12 valmista Instagram- ja Facebook-sisältöä 30 päiväksi. SOME 12 490 € + ALV.';
 const socialDescription =
   'Teette hyvää työtä. Me pidämme huolen, että asiakkaat myös näkevät sen.';
 
@@ -29,9 +33,7 @@ export const metadata: Metadata = {
   title,
   description,
   metadataBase: new URL(SITE_URL),
-  alternates: {
-    canonical: '/',
-  },
+  alternates: { canonical: '/' },
   openGraph: {
     title,
     description: socialDescription,
@@ -39,14 +41,7 @@ export const metadata: Metadata = {
     siteName: 'GhoulHouse',
     locale: 'fi_FI',
     type: 'website',
-    images: [
-      {
-        url: '/opengraph-image',
-        width: 1200,
-        height: 630,
-        alt: 'GhoulHouse — Työmaakuvat sisään. Valmis some ulos.',
-      },
-    ],
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: title }],
   },
   twitter: {
     card: 'summary_large_image',
@@ -70,11 +65,7 @@ export const metadata: Metadata = {
         index: false,
         follow: false,
         nocache: true,
-        googleBot: {
-          index: false,
-          follow: false,
-          noimageindex: true,
-        },
+        googleBot: { index: false, follow: false, noimageindex: true },
       },
 };
 
@@ -100,18 +91,13 @@ const structuredData = {
       url: SITE_URL,
       logo: productionUrl('/icon'),
       image: productionUrl('/opengraph-image'),
-      founder: {
-        '@id': founderId,
-      },
+      founder: { '@id': founderId },
       address: {
         '@type': 'PostalAddress',
         addressLocality: 'Helsinki',
         addressCountry: 'FI',
       },
-      areaServed: {
-        '@type': 'Country',
-        name: 'Finland',
-      },
+      areaServed: { '@type': 'Country', name: 'Finland' },
       description:
         'Tuotteistettu sosiaalisen median sisältö- ja hallintapalvelu suomalaisille paikallisille palveluyrityksille.',
     },
@@ -120,32 +106,32 @@ const structuredData = {
       '@id': founderId,
       name: siteConfig.company.founder,
       jobTitle: 'Founder',
-      worksFor: {
-        '@id': organizationId,
-      },
+      worksFor: { '@id': organizationId },
     },
     {
       '@type': 'WebSite',
       '@id': websiteId,
       url: SITE_URL,
       name: siteConfig.company.brand,
-      publisher: {
-        '@id': organizationId,
-      },
+      publisher: { '@id': organizationId },
       inLanguage: 'fi-FI',
     },
   ],
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fi">
       <body className={anton.variable}>
-        {children}
+        <ContactProvider>
+          <a className="skip-link" href="#main-content">
+            Siirry pääsisältöön
+          </a>
+          <FunnelAnalytics />
+          <Navigation />
+          {children}
+          <Footer />
+        </ContactProvider>
         <VercelAnalytics />
         <script
           id="ghoulhouse-structured-data"
