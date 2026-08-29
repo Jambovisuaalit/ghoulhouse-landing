@@ -8,12 +8,12 @@ const observedSections: Array<{
   event: FunnelEvent;
 }> = [
   { id: 'pricing', event: 'pricing_view' },
-  { id: 'examples', event: 'content_example_view' },
+  { id: 'examples', event: 'case_view' },
 ];
 
 export default function FunnelAnalytics() {
   useEffect(() => {
-    trackEvent('page_view');
+    trackEvent('page_view', { path: window.location.pathname });
 
     if (!('IntersectionObserver' in window)) return;
 

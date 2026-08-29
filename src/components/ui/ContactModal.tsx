@@ -124,6 +124,24 @@ export default function ContactModal({ onClose }: ContactModalProps) {
     const data = Object.fromEntries(formData.entries());
     const clientErrors = getClientErrors(data);
 
+    const searchParams = new URLSearchParams(window.location.search);
+    const attributedData = {
+      ...data,
+      source:
+        searchParams.get('utm_source') ||
+        searchParams.get('source') ||
+        '',
+      campaign:
+        searchParams.get('utm_campaign') ||
+        searchParams.get('campaign') ||
+        '',
+      ad:
+        searchParams.get('utm_content') ||
+        searchParams.get('ad') ||
+        '',
+      landingPage: `${window.location.pathname}${window.location.search}`,
+    };
+
     if (Object.keys(clientErrors).length > 0) {
       setStatus('error');
       setFieldErrors(clientErrors);
@@ -133,13 +151,13 @@ export default function ContactModal({ onClose }: ContactModalProps) {
     }
 
     setStatus('submitting');
-    trackEvent('lead_form_submit');
+    trackEvent('lead_form_submit', { path: window.location.pathname });
 
     try {
       const response = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify(attributedData),
       });
 
       const payload = (await response.json().catch(() => ({}))) as {
@@ -165,7 +183,7 @@ export default function ContactModal({ onClose }: ContactModalProps) {
       }
 
       setStatus('success');
-      trackEvent('lead_form_success');
+      trackEvent('lead_form_success', { path: window.location.pathname });
     } catch (error) {
       setStatus('error');
       setErrorMessage(
@@ -173,7 +191,7 @@ export default function ContactModal({ onClose }: ContactModalProps) {
           ? error.message
           : 'Pyyntöä ei voitu lähettää juuri nyt. Yritä uudelleen.'
       );
-      trackEvent('lead_form_error');
+      trackEvent('lead_form_error', { path: window.location.pathname });
     }
   };
 

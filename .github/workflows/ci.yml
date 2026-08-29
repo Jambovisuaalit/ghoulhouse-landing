@@ -127,3 +127,95 @@ jobs:
           path: qa-artifacts/
           if-no-files-found: warn
           retention-days: 7
+
+
+  exact-commit-preview:
+    if: github.event_name == 'pull_request'
+    needs: validate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      VERCEL_ORG_ID: team_zwsvoePoiBeskRuyl2Iar883
+      VERCEL_PROJECT_ID: prj_yClSuc4kuRrCpRKbBM9iieVhAx9B
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      EXPECTED_SHA: ${{ github.event.pull_request.head.sha }}
+
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Verify exact source provenance
+        shell: bash
+        run: |
+          actual_sha="$(git rev-parse HEAD)"
+          test "$actual_sha" = "$EXPECTED_SHA"
+          echo "Exact preview source: $actual_sha"
+
+      - name: Verify Vercel credentials
+        shell: bash
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "::error::VERCEL_TOKEN secret is not available."
+            exit 1
+          fi
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull isolated Preview settings
+        run: vercel pull --yes --environment=preview --token="$VERCEL_TOKEN"
+
+      - name: Build exact Preview candidate
+        run: vercel build --token="$VERCEL_TOKEN"
+
+      - name: Deploy exact Preview candidate
+        id: preview
+        shell: bash
+        run: |
+          url="$(vercel deploy --prebuilt --token="$VERCEL_TOKEN")"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Exact-commit Preview: $url"
+          echo "Source SHA: $EXPECTED_SHA"
+
+      - name: Preview route and conversion smoke QA
+        shell: bash
+        run: |
+          url="${{ steps.preview.outputs.url }}"
+
+          home="$(vercel curl / --deployment "$url" --token="$VERCEL_TOKEN" 2>/dev/null)"
+          printf '%s' "$home" | grep -q "TYÖMAAKUVAT SISÄÄN"
+          printf '%s' "$home" | grep -q "PYYDÄ 2 SISÄLTÖESIMERKKIÄ"
+          printf '%s' "$home" | grep -q "logo-horizontal.svg"
+          printf '%s' "$home" | grep -q 'data-offer-name="SOME 12"'
+          printf '%s' "$home" | grep -q 'data-offer-price="490"'
+
+          some12="$(vercel curl /some-12 --deployment "$url" --token="$VERCEL_TOKEN" 2>/dev/null)"
+          printf '%s' "$some12" | grep -q "490"
+          printf '%s' "$some12" | grep -q "PYYDÄ 2 SISÄLTÖESIMERKKIÄ"
+
+          cases="$(vercel curl /caset --deployment "$url" --token="$VERCEL_TOKEN" 2>/dev/null)"
+          printf '%s' "$cases" | grep -q "KONSEPTIESIMERKKI — EI ASIAKASTYÖ"
+
+          pilot="$(vercel curl /kylpyhuoneremontit --deployment "$url" --token="$VERCEL_TOKEN" 2>/dev/null)"
+          printf '%s' "$pilot" | grep -q "Performance MVP"
+          printf '%s' "$pilot" | grep -q 'noindex'
+
+          lead_api="$(vercel curl /api/leads --deployment "$url" --token="$VERCEL_TOKEN" -- -X POST -H 'content-type: application/json' --data '{}' 2>/dev/null || true)"
+          printf '%s' "$lead_api" | grep -q '"validation_error"'
+
+          vercel logs --deployment "$url" --level error --limit 50 --token="$VERCEL_TOKEN" > /tmp/preview-errors.log || true
+          if [ -s /tmp/preview-errors.log ]; then
+            echo "::error::Exact-commit Preview emitted runtime errors."
+            cat /tmp/preview-errors.log
+            exit 1
+          fi

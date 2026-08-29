@@ -8,10 +8,10 @@ import ContactTrigger from '@/components/contact/ContactTrigger';
 import { siteConfig } from '@/config/site';
 
 const links = [
-  { href: '#deliverables', label: 'Palvelu' },
-  { href: '#mechanism', label: 'Näin toimii' },
-  { href: '#pricing', label: 'Hinta' },
-  { href: '#faq', label: 'UKK' },
+  { href: '/some-12', label: 'Some 12' },
+  { href: '/miten-toimii', label: 'Miten toimii' },
+  { href: '/caset', label: 'Caset' },
+  { href: '/meista', label: 'Meistä' },
 ] as const;
 
 export default function Navigation() {
@@ -94,33 +94,31 @@ export default function Navigation() {
           className="flex min-h-[60px] items-center justify-between gap-5 min-[1100px]:min-h-[66px]"
           aria-label="Päänavigaatio"
         >
-          <Link
-            href="#top"
-            className="inline-flex shrink-0 items-center gap-2"
-            aria-label="GhoulHouse — sivun alku"
-          >
+          <Link href="/" className="inline-flex shrink-0 items-center" aria-label="GhoulHouse — sivun alku">
+            <span className="sr-only">GhoulHouse</span>
+            <Image
+              src="/logo-horizontal.svg"
+              alt="GhoulHouse"
+              width={1400}
+              height={460}
+              priority
+              className="hidden h-auto w-[150px] sm:block min-[1100px]:w-[178px]"
+            />
             <Image
               src="/mark-color.svg"
-              alt=""
+              alt="GhoulHouse"
               width={96}
               height={96}
               priority
-              className="h-10 w-10 shrink-0 min-[1100px]:h-11 min-[1100px]:w-11"
+              className="h-10 w-10 shrink-0 sm:hidden"
             />
-            <span className="font-display text-[1.55rem] uppercase leading-none tracking-[-0.025em] text-ink min-[1100px]:text-[1.75rem]">
-              GhoulHouse
-            </span>
           </Link>
 
           <div className="hidden items-center gap-7 min-[1100px]:flex min-[1100px]:gap-9">
             {links.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="type-label text-ink transition-colors hover:text-signal"
-              >
+              <Link key={link.href} href={link.href} className="type-label text-ink transition-colors hover:text-signal">
                 {link.label}
-              </a>
+              </Link>
             ))}
             <ContactTrigger className="type-cta inline-flex min-h-11 items-center gap-2 text-signal transition-colors hover:text-ink">
               <span>2 sisältöesimerkkiä</span>
@@ -153,7 +151,7 @@ export default function Navigation() {
           <Container className="py-5">
             <div className="grid">
               {links.map((link, index) => (
-                <a
+                <Link
                   ref={index === 0 ? firstMobileLinkRef : undefined}
                   key={link.href}
                   href={link.href}
@@ -164,7 +162,7 @@ export default function Navigation() {
                 >
                   <span>{link.label}</span>
                   <span aria-hidden="true" className="text-signal">→</span>
-                </a>
+                </Link>
               ))}
             </div>
             <ContactTrigger

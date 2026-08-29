@@ -15,7 +15,7 @@ body {
   margin: 0;
   background: #F7F4EF;
   color: #111111;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-sans), Arial, sans-serif;
   line-height: 1.6;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -108,7 +108,7 @@ a:hover {
 }
 
 .type-section-title {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-sans), Arial, sans-serif;
   font-size: clamp(2.25rem, 4.8vw, 4.75rem);
   font-weight: 800;
   line-height: 0.96;
@@ -278,9 +278,9 @@ a:hover {
 }
 
 
-/* Geometry-driven RAW → FINAL / filmstrip scroll sequence.
-   Desktop scroll distance is measured from the actual sticky viewport and
-   horizontal content width in Mechanism.tsx. Mobile remains directly scrollable. */
+/* RAW → FINAL signature + non-pinned filmstrip.
+   Desktop keeps one short sticky transformation. The filmstrip remains a
+   normal content section and its progress follows the actual horizontal scroll. */
 
 .mechanism-raw {
   --raw-progress: 0.5;
@@ -303,10 +303,7 @@ a:hover {
   padding: 2rem max(1rem, calc((100vw - 1440px) / 2));
 }
 
-.mechanism-raw__copy {
-  position: relative;
-  z-index: 4;
-}
+.mechanism-raw__copy { position: relative; z-index: 4; }
 
 .mechanism-raw__copy h3,
 .mechanism-film__header h3 {
@@ -340,11 +337,7 @@ a:hover {
   background: #111111;
 }
 
-.mechanism-raw__image {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-}
+.mechanism-raw__image { position: absolute; inset: 0; overflow: hidden; }
 
 .mechanism-raw__image--source img {
   filter: grayscale(1) contrast(1.08);
@@ -480,10 +473,7 @@ a:hover {
   color: #F7F4EF;
 }
 
-.mechanism-film__sticky {
-  padding: 4.5rem 0 2.25rem;
-  overflow: hidden;
-}
+.mechanism-film__body { padding: 4rem 0 3rem; }
 
 .mechanism-film__header {
   display: flex;
@@ -502,15 +492,14 @@ a:hover {
 
 .mechanism-film__viewport {
   min-width: 0;
-  padding: 2.5rem 0;
+  padding: 2rem 0;
   overflow-x: auto;
   overscroll-behavior-inline: contain;
   scrollbar-width: none;
+  scroll-snap-type: x mandatory;
 }
 
-.mechanism-film__viewport::-webkit-scrollbar {
-  display: none;
-}
+.mechanism-film__viewport::-webkit-scrollbar { display: none; }
 
 .mechanism-film__track {
   display: flex;
@@ -602,9 +591,7 @@ a:hover {
 }
 
 @media (min-width: 1100px) {
-  .mechanism-raw {
-    height: 240svh;
-  }
+  .mechanism-raw { height: 185svh; }
 
   .mechanism-raw__sticky {
     position: sticky;
@@ -635,20 +622,7 @@ a:hover {
     aspect-ratio: auto;
   }
 
-  .mechanism-film {
-    height: 280svh;
-  }
-
-  .mechanism-film__sticky {
-    position: sticky;
-    top: 66px;
-    height: calc(100svh - 66px);
-    display: grid;
-    grid-template-rows: auto minmax(0, 1fr) auto;
-    align-items: center;
-    padding: 2rem 0 1.5rem;
-    overflow: hidden;
-  }
+  .mechanism-film__body { padding: 4.25rem 0 3.25rem; }
 
   .mechanism-film__header {
     flex-direction: row;
@@ -659,51 +633,34 @@ a:hover {
 
   .mechanism-film__viewport {
     width: 100%;
-    overflow: hidden;
-    padding: 1.75rem 0;
+    padding: 2rem 0 1.75rem;
+    scroll-snap-type: x proximity;
   }
 
   .mechanism-film__track {
     gap: clamp(1rem, 2vw, 2rem);
     padding-inline: max(1.5rem, calc((100vw - 1440px) / 2));
-    will-change: transform;
   }
 
-  .mechanism-film__frame {
-    flex-basis: clamp(20rem, 38vw, 36rem);
-  }
+  .mechanism-film__frame { flex-basis: clamp(19rem, 34vw, 31rem); }
 }
 
 @media (max-width: 1099px) {
-  .mechanism-raw__sticky {
-    grid-template-columns: 1fr;
-  }
+  .mechanism-raw__sticky { grid-template-columns: 1fr; }
+  .mechanism-raw__copy--raw { order: 1; }
+  .mechanism-raw__stage { order: 2; }
+  .mechanism-raw__copy--final { order: 3; }
+}
 
-  .mechanism-raw__copy--raw {
-    order: 1;
-  }
-
-  .mechanism-raw__stage {
-    order: 2;
-  }
-
-  .mechanism-raw__copy--final {
-    order: 3;
-  }
-
-  .mechanism-film__track {
-    scroll-snap-type: x mandatory;
-  }
+@media (max-width: 640px) {
+  .mechanism-film__header,
+  .mechanism-film__progress { width: min(100% - 2rem, 1440px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mechanism-raw,
-  .mechanism-film {
-    height: auto !important;
-  }
+  .mechanism-raw { height: auto !important; }
 
-  .mechanism-raw__sticky,
-  .mechanism-film__sticky {
+  .mechanism-raw__sticky {
     position: relative !important;
     top: auto !important;
     height: auto !important;
@@ -714,19 +671,6 @@ a:hover {
     transform: none !important;
   }
 
-  .mechanism-raw__image--final {
-    clip-path: inset(0 50% 0 0) !important;
-  }
-
-  .mechanism-raw__divider {
-    left: 50% !important;
-  }
-
-  .mechanism-film__viewport {
-    overflow-x: auto;
-  }
-
-  .mechanism-film__track {
-    transform: none !important;
-  }
+  .mechanism-raw__image--final { clip-path: inset(0 50% 0 0) !important; }
+  .mechanism-raw__divider { left: 50% !important; }
 }

@@ -7,6 +7,10 @@ export interface LeadInput {
   website?: string;
   instagram?: string;
   message?: string;
+  source?: string;
+  campaign?: string;
+  ad?: string;
+  landingPage?: string;
 }
 
 export interface LeadValidationResult {
@@ -24,6 +28,10 @@ const limits = {
   website: 300,
   instagram: 120,
   message: 1200,
+  source: 160,
+  campaign: 200,
+  ad: 200,
+  landingPage: 500,
 } as const;
 
 function clean(value: unknown, maxLength: number) {
@@ -101,6 +109,10 @@ export function validateLead(input: unknown): LeadValidationResult {
     website: classifiedProfile?.website || '',
     instagram: classifiedProfile?.instagram || '',
     message: clean(source.message, limits.message),
+    source: clean(source.source, limits.source),
+    campaign: clean(source.campaign, limits.campaign),
+    ad: clean(source.ad, limits.ad),
+    landingPage: clean(source.landingPage, limits.landingPage),
   };
 
   const errors: Record<string, string> = {};

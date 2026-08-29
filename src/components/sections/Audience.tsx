@@ -47,9 +47,7 @@ export default function Audience() {
                 <span className="type-label text-signal">
                   {String(index + 1).padStart(2, '0')}
                 </span>
-                <p className="type-ui text-ink">
-                  {signal}
-                </p>
+                <p className="type-ui text-ink">{signal}</p>
               </div>
             ))}
 

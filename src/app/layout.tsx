@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Anton } from 'next/font/google';
+import { Anton, Montserrat } from 'next/font/google';
 import { siteConfig } from '@/config/site';
 import {
   SITE_URL,
@@ -9,12 +9,22 @@ import {
 } from '@/lib/seo';
 import { faqItems } from '@/components/sections/FAQ';
 import VercelAnalytics from '@/components/analytics/VercelAnalytics';
+import FunnelAnalytics from '@/components/analytics/FunnelAnalytics';
+import { ContactProvider } from '@/components/contact/ContactProvider';
+import Navigation from '@/components/layout/Navigation';
+import Footer from '@/components/layout/Footer';
 import './globals.css';
 
 const anton = Anton({
   weight: '400',
   subsets: ['latin'],
   variable: '--font-display',
+  display: 'swap',
+});
+
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  variable: '--font-sans',
   display: 'swap',
 });
 
@@ -45,9 +55,7 @@ export const metadata: Metadata = {
   creator: siteConfig.company.legalName,
   publisher: siteConfig.company.legalName,
   metadataBase: new URL(SITE_URL),
-  alternates: {
-    canonical: '/',
-  },
+  alternates: { canonical: '/' },
   openGraph: {
     title,
     description: socialDescription,
@@ -86,11 +94,7 @@ export const metadata: Metadata = {
         index: false,
         follow: false,
         nocache: true,
-        googleBot: {
-          index: false,
-          follow: false,
-          noimageindex: true,
-        },
+        googleBot: { index: false, follow: false, noimageindex: true },
       },
 };
 
@@ -108,14 +112,8 @@ const serviceId = `${SITE_URL}/#some-12`;
 const faqId = `${SITE_URL}/#faq`;
 
 const areaServed = [
-  {
-    '@type': 'AdministrativeArea',
-    name: 'Uusimaa',
-  },
-  {
-    '@type': 'Country',
-    name: 'Finland',
-  },
+  { '@type': 'AdministrativeArea', name: 'Uusimaa' },
+  { '@type': 'Country', name: 'Finland' },
 ];
 
 const structuredData = {
@@ -129,9 +127,7 @@ const structuredData = {
       url: SITE_URL,
       logo: productionUrl('/icon'),
       image: productionUrl('/opengraph-image'),
-      founder: {
-        '@id': founderId,
-      },
+      founder: { '@id': founderId },
       address: {
         '@type': 'PostalAddress',
         addressLocality: 'Helsinki',
@@ -152,10 +148,9 @@ const structuredData = {
       '@type': 'Service',
       '@id': serviceId,
       name: 'GhoulHouse SOME 12',
-      serviceType: 'Sosiaalisen median sisällöntuotanto ja ylläpito remonttiyrityksille',
-      provider: {
-        '@id': organizationId,
-      },
+      serviceType:
+        'Sosiaalisen median sisällöntuotanto ja ylläpito remonttiyrityksille',
+      provider: { '@id': organizationId },
       areaServed,
       audience: {
         '@type': 'BusinessAudience',
@@ -166,7 +161,7 @@ const structuredData = {
         'Asiakas toimittaa työmaa- ja referenssikuvat. GhoulHouse suunnittelee, käsittelee, kirjoittaa, ajastaa ja julkaisee 12 alkuperäistä sisältöä 30 päivän aikana Instagramiin ja Facebookiin.',
       offers: {
         '@type': 'Offer',
-        url: productionUrl('/#pricing'),
+        url: productionUrl('/some-12'),
         price: '490',
         priceCurrency: 'EUR',
         category: 'Sosiaalisen median sisällöntuotanto',
@@ -184,18 +179,14 @@ const structuredData = {
       '@id': founderId,
       name: siteConfig.company.founder,
       jobTitle: 'Founder',
-      worksFor: {
-        '@id': organizationId,
-      },
+      worksFor: { '@id': organizationId },
     },
     {
       '@type': 'WebSite',
       '@id': websiteId,
       url: SITE_URL,
       name: siteConfig.company.brand,
-      publisher: {
-        '@id': organizationId,
-      },
+      publisher: { '@id': organizationId },
       inLanguage: 'fi-FI',
     },
     {
@@ -213,15 +204,19 @@ const structuredData = {
   ],
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fi">
-      <body className={anton.variable}>
-        {children}
+      <body className={`${anton.variable} ${montserrat.variable}`}>
+        <ContactProvider>
+          <a className="skip-link" href="#main-content">
+            Siirry pääsisältöön
+          </a>
+          <FunnelAnalytics />
+          <Navigation />
+          {children}
+          <Footer />
+        </ContactProvider>
         <VercelAnalytics />
         <script
           id="ghoulhouse-structured-data"
