@@ -21,8 +21,10 @@ export default function Footer() {
               </span>
             </div>
             <p className="type-caption mt-6 max-w-md text-ghost/70">
-              Tuotteistettu sosiaalisen median sisältö- ja hallintapalvelu
-              suomalaisille paikallisille palveluyrityksille.
+              Tuotteistettu sosiaalisen median sisällöntuotanto- ja
+              ylläpitopalvelu Uudenmaan remontti- ja korjausrakentamisen
+              yrityksille. Työmaa- ja referenssikuvista valmiit Instagram- ja
+              Facebook-sisällöt.
             </p>
           </div>
 
@@ -31,6 +33,7 @@ export default function Footer() {
               Sivusto
             </p>
             <ul className="type-ui space-y-3 text-ghost/75">
+              <li><a href="#kenelle">Kenelle</a></li>
               <li><a href="#mechanism">Näin toimii</a></li>
               <li><a href="#deliverables">Mitä saat</a></li>
               <li><a href="#pricing">Hinta</a></li>

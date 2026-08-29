@@ -1,5 +1,6 @@
 import Hero from '@/components/sections/Hero';
 import Problem from '@/components/sections/Problem';
+import Audience from '@/components/sections/Audience';
 import Mechanism from '@/components/sections/Mechanism';
 import Examples from '@/components/sections/Examples';
 import Deliverables from '@/components/sections/Deliverables';
@@ -24,6 +25,7 @@ export default function Home() {
       <main id="main-content" className="min-h-screen bg-ghost">
         <Hero />
         <Problem />
+        <Audience />
         <Mechanism />
         <Examples />
         <Deliverables />

@@ -1,31 +1,40 @@
 import Container from '@/components/ui/Container';
 
 const signals = [
-  'Remontti-, korjausrakentamis- tai rakentamisen palveluyritys',
+  'Remontti-, korjausrakentamis- tai rakentamisen palveluyritys Uudellamaalla',
   'Noin 2–10 henkilöä ja omistajavetoinen päätöksenteko',
   'Kuluttaja-asiakkaille tehtävää aitoa projektityötä',
-  'Työmailta syntyy kuvia, mutta IG/FB päivittyy epäsäännöllisesti',
+  'Työmailta syntyy kuvia, mutta Instagram ja Facebook päivittyvät epäsäännöllisesti',
   'Tarve jatkuvalle sisällölle ilman omaa sisällöntuotantotiimiä',
 ] as const;
 
 export default function Audience() {
   return (
-    <section className="bg-bone py-16 md:py-24">
+    <section
+      id="kenelle"
+      className="bg-bone py-16 md:py-24"
+      aria-labelledby="audience-title"
+    >
       <Container>
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <p className="type-label mb-4 text-signal">
-              Kenelle tämä on
+              Somepalvelu remonttiyrityksille
             </p>
-            <h2 className="type-section-title max-w-[14ch] text-ink">
+            <h2
+              id="audience-title"
+              className="type-section-title max-w-[14ch] text-ink"
+            >
               Kun työ on hyvää,
               <span className="block">mutta some ei pysy mukana.</span>
             </h2>
             <p className="type-editorial mt-6 max-w-md text-ink/70">
-              Ensimmäinen validointiniche on Uudenmaan remontti- ja
-              korjausrakentamisen yritykset. Palvelumalli soveltuu myös muille
-              paikallisille palveluyrityksille, joilla syntyy vastaavaa
-              todistemateriaalia.
+              GhoulHouse on sosiaalisen median sisällöntuotanto- ja
+              ylläpitopalvelu erityisesti Uudenmaan 2–10 henkilön
+              B2C-remontti- ja korjausrakentamisen yrityksille. Palvelu sopii
+              yrityksille, joilla syntyy jatkuvasti työmaa- ja
+              referenssikuvia, mutta Instagram ja Facebook päivittyvät
+              epäsäännöllisesti.
             </p>
           </div>
 
