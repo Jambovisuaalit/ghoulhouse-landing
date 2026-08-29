@@ -64,6 +64,58 @@ jobs:
           echo "$?" > live-audit-artifacts/lighthouse-desktop-exit.txt
           exit 0
 
+
+      - name: Print audit summary
+        shell: bash
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          function load(path) {
+            try { return JSON.parse(fs.readFileSync(path, 'utf8')); } catch { return null; }
+          }
+          function summarize(label, lhr) {
+            if (!lhr) { console.log(label + ': NO REPORT'); return; }
+            const pct = x => Math.round((x?.score ?? 0) * 100);
+            console.log('===== ' + label + ' =====');
+            console.log(JSON.stringify({
+              finalUrl: lhr.finalUrl,
+              fetchTime: lhr.fetchTime,
+              categories: {
+                performance: pct(lhr.categories?.performance),
+                accessibility: pct(lhr.categories?.accessibility),
+                bestPractices: pct(lhr.categories?.['best-practices']),
+                seo: pct(lhr.categories?.seo),
+              },
+              metrics: {
+                FCP: lhr.audits?.['first-contentful-paint']?.displayValue,
+                LCP: lhr.audits?.['largest-contentful-paint']?.displayValue,
+                TBT: lhr.audits?.['total-blocking-time']?.displayValue,
+                CLS: lhr.audits?.['cumulative-layout-shift']?.displayValue,
+                SpeedIndex: lhr.audits?.['speed-index']?.displayValue,
+                TTI: lhr.audits?.interactive?.displayValue,
+              }
+            }, null, 2));
+            const failed = Object.entries(lhr.audits || {})
+              .filter(([,a]) => a && a.score !== null && a.score < 1 && ['binary','numeric'].includes(a.scoreDisplayMode))
+              .map(([id,a]) => ({id,title:a.title,score:a.score,displayValue:a.displayValue||null}))
+              .sort((a,b)=>(a.score??1)-(b.score??1));
+            console.log('FAILED_AUDITS');
+            console.log(JSON.stringify(failed.slice(0,40), null, 2));
+            const opp = Object.entries(lhr.audits || {})
+              .filter(([,a]) => a?.details?.type === 'opportunity' && (a.details?.overallSavingsMs || a.details?.overallSavingsBytes))
+              .map(([id,a]) => ({id,title:a.title,savingsMs:Math.round(a.details?.overallSavingsMs||0),savingsBytes:Math.round(a.details?.overallSavingsBytes||0),displayValue:a.displayValue||null}))
+              .sort((a,b)=>(b.savingsMs+b.savingsBytes/1000)-(a.savingsMs+a.savingsBytes/1000));
+            console.log('OPPORTUNITIES');
+            console.log(JSON.stringify(opp.slice(0,20), null, 2));
+          }
+          summarize('LIGHTHOUSE MOBILE', load('live-audit-artifacts/lighthouse-mobile.json'));
+          summarize('LIGHTHOUSE DESKTOP', load('live-audit-artifacts/lighthouse-desktop.json'));
+          console.log('===== HTTP SUMMARY =====');
+          try { console.log(fs.readFileSync('live-audit-artifacts/http.txt','utf8').slice(0,24000)); } catch {}
+          console.log('===== BROWSER EXIT =====');
+          try { console.log(fs.readFileSync('live-audit-artifacts/browser-exit-code.txt','utf8')); } catch {}
+          NODE
+
       - name: Upload audit artifacts
         uses: actions/upload-artifact@v4
         if: always()
