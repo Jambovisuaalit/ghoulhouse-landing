@@ -1,0 +1,74 @@
+name: Live GhoulHouse website audit
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  live-audit:
+    if: github.head_ref == 'ci-verify-00504d0'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: HTTP and redirect audit
+        shell: bash
+        run: |
+          mkdir -p live-audit-artifacts
+          for url in             https://ghoulhouse.fi/             https://www.ghoulhouse.fi/             https://ghoulhouse.fi/robots.txt             https://ghoulhouse.fi/sitemap.xml             https://ghoulhouse.fi/api/leads
+          do
+            echo "===== $url =====" | tee -a live-audit-artifacts/http.txt
+            curl -sS -D - -o /tmp/body --max-time 20 "$url" | tee -a live-audit-artifacts/http.txt || true
+            head -c 1200 /tmp/body | tee -a live-audit-artifacts/http.txt || true
+            printf "\n\n" | tee -a live-audit-artifacts/http.txt
+          done
+          echo "===== redirect chain apex =====" | tee -a live-audit-artifacts/http.txt
+          curl -sS -L -I --max-redirs 8 --max-time 30 https://ghoulhouse.fi/ | tee -a live-audit-artifacts/http.txt || true
+          echo "===== redirect chain www =====" | tee -a live-audit-artifacts/http.txt
+          curl -sS -L -I --max-redirs 8 --max-time 30 https://www.ghoulhouse.fi/ | tee -a live-audit-artifacts/http.txt || true
+
+      - name: Live browser regression audit
+        shell: bash
+        run: |
+          set +e
+          QA_BASE_URL=https://ghoulhouse.fi           QA_SCREENSHOT_DIR=live-audit-artifacts/browser           node scripts/browser-qa-ci.mjs 2>&1 | tee live-audit-artifacts/browser-audit.log
+          code=${PIPESTATUS[0]}
+          echo "$code" > live-audit-artifacts/browser-exit-code.txt
+          exit 0
+
+      - name: Lighthouse mobile
+        shell: bash
+        run: |
+          set +e
+          npx --yes lighthouse@12.8.2 https://ghoulhouse.fi             --output=json             --output-path=live-audit-artifacts/lighthouse-mobile.json             --chrome-flags="--headless --no-sandbox --disable-gpu"             --quiet
+          echo "$?" > live-audit-artifacts/lighthouse-mobile-exit.txt
+          exit 0
+
+      - name: Lighthouse desktop
+        shell: bash
+        run: |
+          set +e
+          npx --yes lighthouse@12.8.2 https://ghoulhouse.fi             --preset=desktop             --output=json             --output-path=live-audit-artifacts/lighthouse-desktop.json             --chrome-flags="--headless --no-sandbox --disable-gpu"             --quiet
+          echo "$?" > live-audit-artifacts/lighthouse-desktop-exit.txt
+          exit 0
+
+      - name: Upload audit artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ghoulhouse-live-audit
+          path: live-audit-artifacts
+          if-no-files-found: warn
+          retention-days: 7
