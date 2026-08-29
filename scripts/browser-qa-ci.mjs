@@ -836,7 +836,7 @@ try {
     .filter((entry) => entry?.command === 'event')
     .map((entry) => entry?.payload?.name);
   assert(
-    analyticsNames.includes('primary_cta_click') &&
+    analyticsNames.includes('cta_click') &&
       analyticsNames.includes('lead_form_open'),
     `CTA analytics events were not forwarded to Vercel Analytics: ${JSON.stringify(dialog.analyticsEvents)}.`
   );
