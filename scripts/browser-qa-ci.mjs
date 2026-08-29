@@ -14,6 +14,7 @@ const viewports = [
   { width: 768, height: 1024 },
   { width: 1024, height: 768 },
   { width: 1280, height: 800 },
+  { width: 1366, height: 768 },
   { width: 1440, height: 900 },
   { width: 1920, height: 1080 },
 ];
@@ -657,49 +658,48 @@ try {
     Buffer.from(rawShot.data, 'base64')
   );
 
-  const filmTarget = await evaluate(
+  const filmPrepared = await evaluate(
     client,
     `(() => {
       const section = document.querySelector('[data-scroll-film]');
-      const sticky = section?.querySelector('.mechanism-film__sticky');
-      if (!section || !sticky) return null;
-      const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0;
-      const sectionTop = section.getBoundingClientRect().top + scrollY;
-      const travel = Math.max(1, section.offsetHeight - sticky.offsetHeight);
-      const target = sectionTop - stickyTop + travel * 0.5;
-      window.scrollTo(0, target);
-      return { target, travel };
+      const body = section?.querySelector('.mechanism-film__body');
+      const viewport = section?.querySelector('.mechanism-film__viewport');
+      const track = section?.querySelector('.mechanism-film__track');
+      if (!section || !body || !viewport || !track) return null;
+      section.scrollIntoView({ block: 'center' });
+      const horizontalTravel = Math.max(0, track.scrollWidth - viewport.clientWidth);
+      viewport.scrollTo({ left: horizontalTravel * 0.5, behavior: 'auto' });
+      return { horizontalTravel };
     })()`
   );
-  assert(filmTarget, 'Desktop filmstrip scroll geometry is missing.');
+  assert(filmPrepared, 'Desktop filmstrip geometry is missing.');
   await sleep(180);
 
   const filmMid = await evaluate(
     client,
     `(() => {
       const section = document.querySelector('[data-scroll-film]');
-      const sticky = section?.querySelector('.mechanism-film__sticky');
+      const body = section?.querySelector('.mechanism-film__body');
       const heading = section?.querySelector('.mechanism-film__header h3');
       const viewport = section?.querySelector('.mechanism-film__viewport');
       const track = section?.querySelector('.mechanism-film__track');
       const frame = section?.querySelector('.mechanism-film__frame');
-      if (!section || !sticky || !heading || !viewport || !track || !frame) return null;
-      const matrix = new DOMMatrixReadOnly(getComputedStyle(track).transform);
+      if (!section || !body || !heading || !viewport || !track || !frame) return null;
       const horizontalTravel = Math.max(0, track.scrollWidth - viewport.clientWidth);
-      const stickyRect = sticky.getBoundingClientRect();
+      const bodyRect = body.getBoundingClientRect();
       const viewportRect = viewport.getBoundingClientRect();
       const frameRect = frame.getBoundingClientRect();
       return {
         progress: parseFloat(getComputedStyle(section).getPropertyValue('--film-progress')) || 0,
-        translateX: matrix.m41,
+        scrollLeft: viewport.scrollLeft,
         horizontalTravel,
-        stickyTop: stickyRect.top,
-        stickyBottom: stickyRect.bottom,
-        stickyHeight: stickyRect.height,
+        bodyPosition: getComputedStyle(body).position,
+        trackTransform: getComputedStyle(track).transform,
+        scrollSnapType: getComputedStyle(viewport).scrollSnapType,
+        bodyTop: bodyRect.top,
+        bodyBottom: bodyRect.bottom,
         viewportTop: viewportRect.top,
         viewportBottom: viewportRect.bottom,
-        frameTop: frameRect.top,
-        frameBottom: frameRect.bottom,
         frameHeight: frameRect.height,
         headingClientWidth: heading.clientWidth,
         headingScrollWidth: heading.scrollWidth,
@@ -713,29 +713,26 @@ try {
   );
   assert(
     filmMid.progress > 0.35 && filmMid.progress < 0.65,
-    `Desktop filmstrip progress should be near 0.5, got ${filmMid.progress}.`
+    `Desktop filmstrip progress should follow horizontal scroll near 0.5, got ${filmMid.progress}.`
   );
   assert(
-    filmMid.translateX < 0 &&
-      Math.abs(filmMid.translateX) > filmMid.horizontalTravel * 0.3 &&
-      Math.abs(filmMid.translateX) < filmMid.horizontalTravel * 0.7,
-    `Desktop filmstrip must translate left in sync with scroll: ${filmMid.translateX}px of ${filmMid.horizontalTravel}px.`
+    filmMid.scrollLeft > filmMid.horizontalTravel * 0.3 &&
+      filmMid.scrollLeft < filmMid.horizontalTravel * 0.7,
+    `Desktop filmstrip did not reach midpoint: ${filmMid.scrollLeft}px of ${filmMid.horizontalTravel}px.`
   );
   assert(
-    filmMid.stickyTop >= 55 && filmMid.stickyTop <= 80,
-    `Desktop filmstrip sticky stage is not pinned below the header: top ${filmMid.stickyTop}px.`
+    filmMid.bodyPosition !== 'sticky' && filmMid.bodyPosition !== 'fixed',
+    `Desktop filmstrip must not pin vertically, got position ${filmMid.bodyPosition}.`
   );
   assert(
-    filmMid.stickyBottom >= 860 && filmMid.stickyBottom <= 905,
-    `Desktop filmstrip sticky stage does not fill the usable viewport: bottom ${filmMid.stickyBottom}px.`
+    filmMid.trackTransform === 'none' || filmMid.trackTransform === 'matrix(1, 0, 0, 1, 0, 0)',
+    `Desktop filmstrip track must not be driven by vertical transforms: ${filmMid.trackTransform}.`
   );
   assert(
-    filmMid.viewportTop >= filmMid.stickyTop &&
-      filmMid.viewportBottom <= filmMid.stickyBottom + 16 &&
-      filmMid.frameTop >= filmMid.stickyTop &&
-      filmMid.frameBottom <= filmMid.stickyBottom + 1 &&
-      filmMid.frameHeight >= 300,
-    `Desktop filmstrip content is clipped or outside sticky viewport: ${JSON.stringify(filmMid)}.`
+    filmMid.viewportTop >= filmMid.bodyTop &&
+      filmMid.viewportBottom <= filmMid.bodyBottom + 1 &&
+      filmMid.frameHeight >= 280,
+    `Desktop filmstrip content is clipped outside its section body: ${JSON.stringify(filmMid)}.`
   );
   assert(
     filmMid.headingScrollWidth <= filmMid.headingClientWidth + 1,
@@ -757,6 +754,59 @@ try {
     deviceScaleFactor: 1,
     mobile: true,
   });
+  await client.send('Emulation.setEmulatedMedia', {
+    media: '',
+    features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }],
+  });
+  await client.send('Page.navigate', { url: BASE_URL });
+  await waitForDocument(client);
+
+  const mobileFilmPrepared = await evaluate(
+    client,
+    `(() => {
+      const section = document.querySelector('[data-scroll-film]');
+      const viewport = section?.querySelector('.mechanism-film__viewport');
+      const track = section?.querySelector('.mechanism-film__track');
+      if (!section || !viewport || !track) return null;
+      const horizontalTravel = Math.max(0, track.scrollWidth - viewport.clientWidth);
+      viewport.scrollTo({ left: horizontalTravel * 0.5, behavior: 'auto' });
+      return { horizontalTravel };
+    })()`
+  );
+  assert(mobileFilmPrepared, 'Mobile filmstrip geometry is missing.');
+  await sleep(180);
+
+  const mobileFilm = await evaluate(
+    client,
+    `(() => {
+      const section = document.querySelector('[data-scroll-film]');
+      const viewport = section?.querySelector('.mechanism-film__viewport');
+      const track = section?.querySelector('.mechanism-film__track');
+      if (!section || !viewport || !track) return null;
+      const horizontalTravel = Math.max(0, track.scrollWidth - viewport.clientWidth);
+      return {
+        progress: parseFloat(getComputedStyle(section).getPropertyValue('--film-progress')) || 0,
+        scrollLeft: viewport.scrollLeft,
+        horizontalTravel,
+        scrollSnapType: getComputedStyle(viewport).scrollSnapType,
+        trackScrollSnapType: getComputedStyle(track).scrollSnapType,
+      };
+    })()`
+  );
+  assert(mobileFilm, 'Mobile filmstrip metrics are missing.');
+  assert(
+    mobileFilm.progress > 0.25 && mobileFilm.progress < 0.75,
+    `Mobile filmstrip progress did not react to swipe position: ${mobileFilm.progress}.`
+  );
+  assert(
+    mobileFilm.scrollSnapType.includes('x'),
+    `Mobile scroll snap must live on the scrolling viewport, got "${mobileFilm.scrollSnapType}".`
+  );
+  assert(
+    !mobileFilm.trackScrollSnapType.includes('x'),
+    `Mobile scroll snap must not be assigned to the non-scrolling track, got "${mobileFilm.trackScrollSnapType}".`
+  );
+
   await client.send('Emulation.setEmulatedMedia', {
     media: '',
     features: [{ name: 'prefers-reduced-motion', value: 'reduce' }],
@@ -844,10 +894,10 @@ try {
 
   await writeFile(
     `${SCREENSHOT_DIR}/results.json`,
-    JSON.stringify({ chromePath, results, scrollEffects: { rawQuarter, rawThreeQuarter, filmMid }, reducedMotion, dialog }, null, 2)
+    JSON.stringify({ chromePath, results, scrollEffects: { rawQuarter, rawThreeQuarter, filmMid, mobileFilm }, reducedMotion, dialog }, null, 2)
   );
 
-  console.log(JSON.stringify({ chromePath, results, scrollEffects: { rawQuarter, rawThreeQuarter, filmMid }, reducedMotion, dialog }, null, 2));
+  console.log(JSON.stringify({ chromePath, results, scrollEffects: { rawQuarter, rawThreeQuarter, filmMid, mobileFilm }, reducedMotion, dialog }, null, 2));
 } finally {
   client?.close();
 
