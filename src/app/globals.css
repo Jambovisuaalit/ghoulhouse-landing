@@ -482,6 +482,10 @@ code {
     --page-gutter: 2rem;
   }
 
+  .type-display {
+    font-size: clamp(3.4rem, 8.75vw, 9.5rem);
+  }
+
   .proof-strip {
     grid-template-columns: repeat(5, minmax(0, 1fr));
   }
