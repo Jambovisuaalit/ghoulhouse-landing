@@ -14,6 +14,8 @@ const config: Config = {
         black: 'var(--color-black)',
         ink: 'var(--color-black)',
         paper: 'var(--color-paper)',
+        ghost: 'var(--color-paper)',
+        bone: 'var(--color-paper)',
         signal: 'var(--color-red)',
         white: 'var(--color-white)',
         muted: 'var(--color-muted)',
