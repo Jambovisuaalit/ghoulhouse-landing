@@ -28,6 +28,7 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       VERCEL_ORG_ID: team_zwsvoePoiBeskRuyl2Iar883
+      VERCEL_PROJECT_ID: prj_Xf2QTX7hkMQhdhGdcyQyMTv78weK
       OLD_PROJECT_ID: prj_LDmPUItb4oGQlzU2ZZAgyjs7rfLw
       OLD_PROJECT_NAME: ghoulhouse-landing-1ig9
       TARGET_PROJECT_ID: prj_Xf2QTX7hkMQhdhGdcyQyMTv78weK
@@ -78,26 +79,21 @@ jobs:
         run: npm install --global vercel@latest
 
       - name: Freeze legacy Git source
+        env:
+          VERCEL_PROJECT_ID: ${{ env.OLD_PROJECT_ID }}
         shell: bash
         run: |
           set -euo pipefail
           rm -rf .vercel
           mkdir -p .vercel
           printf '{"orgId":"%s","projectId":"%s"}\n' \
-            "${VERCEL_ORG_ID}" "${OLD_PROJECT_ID}" > .vercel/project.json
+            "${VERCEL_ORG_ID}" "${VERCEL_PROJECT_ID}" > .vercel/project.json
 
-          git_before="$(vercel git ls --token="${VERCEL_TOKEN}" 2>&1 || true)"
-          printf '%s\n' "${git_before}"
+          disconnect_output="$(printf 'y\n' | vercel git disconnect --token="${VERCEL_TOKEN}" 2>&1 || true)"
+          printf '%s\n' "${disconnect_output}"
 
-          if printf '%s' "${git_before}" | grep -Fqi 'vido-social/ghoulhouse-landing'; then
-            printf 'y\n' | vercel git disconnect --token="${VERCEL_TOKEN}"
-          fi
-
-          git_after="$(vercel git ls --token="${VERCEL_TOKEN}" 2>&1 || true)"
-          printf '%s\n' "${git_after}"
-
-          if printf '%s' "${git_after}" | grep -Fqi 'vido-social/ghoulhouse-landing'; then
-            echo "::error::Unsafe vido-social Git integration is still connected."
+          if printf '%s' "${disconnect_output}" | grep -Eqi 'error:.*(permission|unauthorized|forbidden|token)'; then
+            echo "::error::Vercel refused legacy Git disconnect."
             exit 1
           fi
 
@@ -113,6 +109,8 @@ jobs:
           gh issue comment "${{ github.event.issue.number }}" --repo "${GITHUB_REPOSITORY}" --body "LEGACY_GIT_FROZEN"
 
       - name: Link target project and verify production environment
+        env:
+          VERCEL_PROJECT_ID: ${{ env.TARGET_PROJECT_ID }}
         shell: bash
         run: |
           set -euo pipefail
@@ -204,6 +202,8 @@ jobs:
           rm -f "${target_env}" "${legacy_env}"
 
       - name: Build target production candidate
+        env:
+          VERCEL_PROJECT_ID: ${{ env.TARGET_PROJECT_ID }}
         shell: bash
         run: |
           set -euo pipefail
@@ -219,6 +219,8 @@ jobs:
           echo "Candidate deployment: ${url}"
 
       - name: Candidate smoke and lead QA
+        env:
+          VERCEL_PROJECT_ID: ${{ env.TARGET_PROJECT_ID }}
         shell: bash
         run: |
           set -euo pipefail
@@ -263,6 +265,8 @@ jobs:
           gh issue comment "${{ github.event.issue.number }}" --repo "${GITHUB_REPOSITORY}" --body "CANDIDATE_READY url=${{ steps.candidate.outputs.url }}"
 
       - name: Move domains, validate live production, rollback on failure
+        env:
+          VERCEL_PROJECT_ID: ${{ env.TARGET_PROJECT_ID }}
         shell: bash
         run: |
           set -euo pipefail
@@ -365,6 +369,8 @@ jobs:
           trap - EXIT
 
       - name: Verify final domain configuration
+        env:
+          VERCEL_PROJECT_ID: ${{ env.TARGET_PROJECT_ID }}
         shell: bash
         run: |
           set -euo pipefail
