@@ -1,4 +1,5 @@
 import Container from '@/components/ui/Container';
+import BeforeAfterSlider from '@/components/ui/BeforeAfterSlider';
 import { contentExamples } from '@/data/landing';
 
 export default function ContentExamples() {
@@ -18,6 +19,10 @@ export default function ContentExamples() {
               Nämä ovat sisältökategorioita, eivät asiakkaan hyväksymiä julkaisuja tai toteutuneita tuloksia.
             </p>
           </div>
+        </div>
+
+        <div className="mt-12">
+          <BeforeAfterSlider />
         </div>
 
         <div className="mt-12 grid gap-px border border-white/25 bg-white/25 md:grid-cols-2 lg:grid-cols-3">
