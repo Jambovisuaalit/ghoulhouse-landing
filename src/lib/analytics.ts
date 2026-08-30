@@ -1,6 +1,8 @@
 export type FunnelEvent =
   | 'page_view'
   | 'primary_cta_click'
+  | 'booking_cta_click'
+  | 'photo_demo_cta_click'
   | 'lead_form_open'
   | 'lead_form_start'
   | 'lead_form_submit'
