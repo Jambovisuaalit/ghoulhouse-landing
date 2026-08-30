@@ -12,5 +12,5 @@
     <path d="M235 254V312M204 283H266" stroke="#FFFFFF" stroke-width="7"/>
     <path d="M190 328 266 322M190 299 202 298M270 321 282 320" stroke="#FFFFFF" stroke-width="7"/>
   </g>
-  <text x="510" y="308" fill="#FFFFFF" font-family="Anton, Impact, sans-serif" font-size="190" letter-spacing="-3">GHOULHOUSE</text>
+  <text x="510" y="308" fill="#FFFFFF" font-family="Anton, Impact, sans-serif" font-size="190" letter-spacing="-3" textLength="820" lengthAdjust="spacingAndGlyphs">GHOULHOUSE</text>
 </svg>

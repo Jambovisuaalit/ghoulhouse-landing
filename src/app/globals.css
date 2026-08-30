@@ -658,6 +658,35 @@ code {
   }
 }
 
+@media (min-width: 641px) and (max-width: 1099px) {
+  .hero-container {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+
+  .hero-title {
+    max-width: 100%;
+    margin-top: 1.25rem;
+    font-size: clamp(4.35rem, 7.5vw, 5.1rem);
+    line-height: 0.86;
+  }
+
+  .hero-summary {
+    max-width: 48ch;
+    margin-top: 1.25rem;
+    font-size: 1.05rem;
+  }
+
+  .hero-actions,
+  .hero-price {
+    margin-top: 1.5rem;
+  }
+
+  .hero-price {
+    padding-top: 1rem;
+  }
+}
+
 @media (min-width: 640px) {
   .contact-modal-dialog {
     max-height: calc(100vh - 2rem);

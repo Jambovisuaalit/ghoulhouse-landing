@@ -15,7 +15,7 @@ export default function Hero() {
     if (!root) return;
 
     const desktopMotion = window.matchMedia(
-      '(min-width: 768px) and (prefers-reduced-motion: no-preference)'
+      '(min-width: 1100px) and (prefers-reduced-motion: no-preference)'
     );
     let animations: Animation[] = [];
 
