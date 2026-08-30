@@ -1,0 +1,294 @@
+name: Migrate GhoulHouse production once
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/migrate-production-once.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ghoulhouse-production
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    if: github.event.head_commit.message == 'ops: execute one-time Vercel consolidation'
+    runs-on: ubuntu-24.04
+    env:
+      VERCEL_ORG_ID: team_zwsvoePoiBeskRuyl2Iar883
+      OLD_PROJECT_ID: prj_LDmPUItb4oGQlzU2ZZAgyjs7rfLw
+      OLD_PROJECT_NAME: ghoulhouse-landing-1ig9
+      TARGET_PROJECT_ID: prj_Xf2QTX7hkMQhdhGdcyQyMTv78weK
+      TARGET_PROJECT_NAME: ghoulhouse-oy
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      CANONICAL_URL: https://ghoulhouse.fi
+      WWW_URL: https://www.ghoulhouse.fi
+
+    steps:
+      - name: Checkout exact main
+        uses: actions/checkout@v4
+
+      - name: Verify release source and credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${GITHUB_REF_NAME}" = "main"
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test -z "$(git status --porcelain)"
+          if [ -z "${VERCEL_TOKEN}" ]; then
+            echo "::error::VERCEL_TOKEN secret is unavailable."
+            exit 1
+          fi
+          echo "Migration source: ${GITHUB_SHA}"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Validate Landing v6 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci --no-audit --no-fund
+          npm run typecheck
+          npm run lint
+          npm run build
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Freeze legacy Git source
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .vercel
+          mkdir -p .vercel
+          printf '{"orgId":"%s","projectId":"%s"}\n'             "${VERCEL_ORG_ID}" "${OLD_PROJECT_ID}" > .vercel/project.json
+
+          curl --fail-with-body --silent --show-error             --header "Authorization: Bearer ${VERCEL_TOKEN}"             "https://api.vercel.com/v9/projects/${OLD_PROJECT_ID}?teamId=${VERCEL_ORG_ID}"             > /tmp/legacy-project-before.json
+
+          legacy_source="$(jq -r 'if .link then ((.link.org // .link.repoOwner // "") + "/" + (.link.repo // "")) else "" end' /tmp/legacy-project-before.json)"
+          echo "Legacy Git source before disconnect: ${legacy_source:-none}"
+
+          if [ -n "${legacy_source}" ]; then
+            (printf 'y\n' | vercel git disconnect --token="${VERCEL_TOKEN}") || true
+          fi
+
+          curl --fail-with-body --silent --show-error             --header "Authorization: Bearer ${VERCEL_TOKEN}"             "https://api.vercel.com/v9/projects/${OLD_PROJECT_ID}?teamId=${VERCEL_ORG_ID}"             > /tmp/legacy-project-after.json
+
+          remaining_source="$(jq -r 'if .link then ((.link.org // .link.repoOwner // "") + "/" + (.link.repo // "")) else "" end' /tmp/legacy-project-after.json)"
+          echo "Legacy Git source after disconnect: ${remaining_source:-none}"
+
+          if printf '%s' "${remaining_source}" | grep -Fqi 'vido-social/ghoulhouse-landing'; then
+            echo "::error::Unsafe vido-social Git integration is still connected."
+            exit 1
+          fi
+
+      - name: Link target project and verify production environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .vercel
+          mkdir -p .vercel
+          printf '{"orgId":"%s","projectId":"%s"}\n'             "${VERCEL_ORG_ID}" "${TARGET_PROJECT_ID}" > .vercel/project.json
+
+          vercel pull --yes --environment=production --token="${VERCEL_TOKEN}"
+
+          env_file="/tmp/ghoulhouse-target-production.env"
+          rm -f "${env_file}"
+          vercel env pull "${env_file}"             --environment=production             --token="${VERCEL_TOKEN}"
+
+          grep -Eq '^CSP_ENFORCE=.+$' "${env_file}" || {
+            echo "::error::CSP_ENFORCE is missing from ghoulhouse-oy Production."
+            exit 1
+          }
+
+          if grep -Eq '^SITE_INDEXABLE="?true"?$' "${env_file}"; then
+            echo "::error::SITE_INDEXABLE=true during infrastructure migration. Keep prelaunch indexing disabled."
+            exit 1
+          fi
+
+          if grep -Eq '^LEAD_DELIVERY_MODE="?resend"?$' "${env_file}"; then
+            grep -Eq '^RESEND_API_KEY=.+$' "${env_file}"
+            grep -Eq '^LEAD_TO_EMAIL=.+$' "${env_file}"
+            grep -Eq '^LEAD_FROM_EMAIL=.+$' "${env_file}"
+            echo "Lead delivery mode: resend"
+          elif grep -Eq '^LEAD_DELIVERY_MODE="?webhook"?$' "${env_file}"; then
+            grep -Eq '^LEAD_WEBHOOK_URL="?https://.+' "${env_file}"
+            echo "Lead delivery mode: webhook"
+          else
+            echo "::error::Production lead delivery is not configured on ghoulhouse-oy."
+            exit 1
+          fi
+
+          rm -f "${env_file}"
+
+      - name: Build target production candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          vercel build --prod --token="${VERCEL_TOKEN}"
+
+      - name: Deploy target production candidate
+        id: candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="$(vercel deploy --prebuilt --prod --token="${VERCEL_TOKEN}")"
+          echo "url=${url}" >> "${GITHUB_OUTPUT}"
+          echo "Candidate deployment: ${url}"
+
+      - name: Candidate smoke and lead QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="${{ steps.candidate.outputs.url }}"
+
+          for i in {1..20}; do
+            html="$(vercel curl / --deployment "${url}" --token="${VERCEL_TOKEN}" 2>/dev/null || true)"
+            if printf '%s' "${html}" | grep -q "TYÖMAAKUVAT SISÄÄN" &&                printf '%s' "${html}" | grep -q "VALMIS SOME ULOS" &&                printf '%s' "${html}" | grep -q "VARAA 20 MIN KESKUSTELU" &&                printf '%s' "${html}" | grep -q 'data-offer-name="GHOULHOUSE SOME 12"' &&                printf '%s' "${html}" | grep -q 'data-offer-price="490"'; then
+              break
+            fi
+
+            if [ "${i}" -eq 20 ]; then
+              echo "::error::Candidate did not return Landing v6."
+              exit 1
+            fi
+            sleep 3
+          done
+
+          if printf '%s' "${html}" | grep -Eqi 'MANAGED|Palvelujaksosta 4|790 €'; then
+            echo "::error::Candidate contains obsolete pricing lifecycle."
+            exit 1
+          fi
+
+          invalid="$(vercel curl /api/leads             --deployment "${url}"             --token="${VERCEL_TOKEN}"             --             -X POST             -H 'content-type: application/json'             --data '{}' 2>/dev/null || true)"
+          printf '%s' "${invalid}" | grep -q '"validation_error"'
+
+          valid="$(vercel curl /api/leads             --deployment "${url}"             --token="${VERCEL_TOKEN}"             --             -X POST             -H 'content-type: application/json'             --data '{"intent":"booking","company":"GhoulHouse Migration QA","name":"Migration Gate","email":"release-qa@ghoulhouse.fi","profile":"https://ghoulhouse.fi","message":"Pre-cutover candidate QA. No action required."}' 2>/dev/null || true)"
+          printf '%s' "${valid}" | grep -q '"ok":true'
+
+          vercel logs --deployment "${url}" --level error --limit 50 --token="${VERCEL_TOKEN}" > /tmp/candidate-errors.log || true
+          if [ -s /tmp/candidate-errors.log ]; then
+            echo "::error::Candidate emitted runtime errors."
+            cat /tmp/candidate-errors.log
+            exit 1
+          fi
+
+      - name: Move domains, validate live production, rollback on failure
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          CUTOVER_STARTED=0
+          MIGRATION_OK=0
+
+          move_domain() {
+            local source_project="$1"
+            local target_project="$2"
+            local domain="$3"
+
+            curl --fail-with-body --silent --show-error               --request POST               --url "https://api.vercel.com/v1/projects/${source_project}/domains/${domain}/move?teamId=${VERCEL_ORG_ID}"               --header "Authorization: Bearer ${VERCEL_TOKEN}"               --header "Content-Type: application/json"               --data "{"projectId":"${target_project}","gitBranch":null,"redirect":null,"redirectStatusCode":null}"
+          }
+
+          rollback_domains() {
+            echo "::warning::Post-cutover QA failed. Returning custom domains to legacy project."
+            move_domain "${TARGET_PROJECT_ID}" "${OLD_PROJECT_ID}" "www.ghoulhouse.fi" >/tmp/rollback-www.json 2>&1 || true
+            move_domain "${TARGET_PROJECT_ID}" "${OLD_PROJECT_ID}" "ghoulhouse.fi" >/tmp/rollback-apex.json 2>&1 || true
+          }
+
+          cleanup() {
+            status="$?"
+            if [ "${CUTOVER_STARTED}" -eq 1 ] && [ "${MIGRATION_OK}" -ne 1 ]; then
+              rollback_domains
+            fi
+            exit "${status}"
+          }
+          trap cleanup EXIT
+
+          move_domain "${OLD_PROJECT_ID}" "${TARGET_PROJECT_ID}" "ghoulhouse.fi" > /tmp/move-apex.json
+          CUTOVER_STARTED=1
+          jq -e --arg id "${TARGET_PROJECT_ID}" '.projectId == $id and .verified == true' /tmp/move-apex.json
+
+          move_domain "${OLD_PROJECT_ID}" "${TARGET_PROJECT_ID}" "www.ghoulhouse.fi" > /tmp/move-www.json
+          jq -e --arg id "${TARGET_PROJECT_ID}" '.projectId == $id and .verified == true' /tmp/move-www.json
+
+          routing_ok=0
+          for i in {1..30}; do
+            apex_status="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' "${CANONICAL_URL}/" || true)"
+            www_result="$(curl --silent --show-error --output /dev/null --write-out '%{http_code} %{redirect_url}' "${WWW_URL}/" || true)"
+            if [ "${apex_status}" = "200" ] && [ "${www_result}" = "301 https://ghoulhouse.fi/" ]; then
+              routing_ok=1
+              break
+            fi
+            sleep 2
+          done
+          test "${routing_ok}" = "1"
+
+          redirect_result="$(curl --silent --show-error --location --max-redirs 1             --output /dev/null             --write-out '%{http_code} %{num_redirects} %{url_effective}'             "${WWW_URL}/")"
+          test "${redirect_result}" = "200 1 https://ghoulhouse.fi/"
+
+          html="$(curl --fail --silent --show-error "${CANONICAL_URL}/")"
+          headers="$(curl --silent --show-error --head "${CANONICAL_URL}/")"
+
+          printf '%s' "${html}" | grep -q 'rel="canonical" href="https://ghoulhouse.fi'
+          printf '%s' "${html}" | grep -q "TYÖMAAKUVAT SISÄÄN"
+          printf '%s' "${html}" | grep -q "VALMIS SOME ULOS"
+          printf '%s' "${html}" | grep -q "VARAA 20 MIN KESKUSTELU"
+          printf '%s' "${html}" | grep -q 'data-offer-name="GHOULHOUSE SOME 12"'
+          printf '%s' "${html}" | grep -q 'data-offer-price="490"'
+
+          if printf '%s' "${html}" | grep -Eqi 'MANAGED|Palvelujaksosta 4|790 €'; then
+            echo "::error::Live homepage contains obsolete pricing lifecycle."
+            exit 1
+          fi
+
+          printf '%s' "${headers}" | grep -qi '^x-content-type-options: nosniff'
+          printf '%s' "${headers}" | grep -qi '^x-frame-options: DENY'
+          printf '%s' "${headers}" | grep -qi '^referrer-policy: strict-origin-when-cross-origin'
+          printf '%s' "${headers}" | grep -qi '^permissions-policy: camera=(), microphone=(), geolocation=()'
+          printf '%s' "${headers}" | grep -qi '^cross-origin-opener-policy: same-origin'
+          printf '%s' "${headers}" | grep -qi '^content-security-policy-report-only:'
+
+          robots="$(curl --fail --silent --show-error "${CANONICAL_URL}/robots.txt")"
+          sitemap="$(curl --fail --silent --show-error "${CANONICAL_URL}/sitemap.xml")"
+          printf '%s' "${robots}" | grep -q 'Disallow: /'
+          if printf '%s' "${sitemap}" | grep -q '<url>'; then
+            echo "::error::Prelaunch sitemap unexpectedly exposes indexable URLs."
+            exit 1
+          fi
+
+          invalid_status="$(curl --silent --show-error             --output /tmp/live-lead-invalid.json             --write-out '%{http_code}'             --request POST             --header 'content-type: application/json'             --data '{}'             "${CANONICAL_URL}/api/leads")"
+          test "${invalid_status}" = "400"
+          grep -q '"validation_error"' /tmp/live-lead-invalid.json
+
+          valid_status="$(curl --silent --show-error             --output /tmp/live-lead-valid.json             --write-out '%{http_code}'             --request POST             --header 'content-type: application/json'             --data '{"intent":"booking","company":"GhoulHouse Migration QA","name":"Migration Gate","email":"release-qa@ghoulhouse.fi","profile":"https://ghoulhouse.fi","message":"Post-cutover production QA. No action required."}'             "${CANONICAL_URL}/api/leads")"
+          test "${valid_status}" = "201"
+          grep -q '"ok":true' /tmp/live-lead-valid.json
+
+          vercel logs --environment production --level error --since 5m --limit 50 --token="${VERCEL_TOKEN}" > /tmp/live-errors.log || true
+          if [ -s /tmp/live-errors.log ]; then
+            echo "::error::Production emitted runtime errors after cutover."
+            cat /tmp/live-errors.log
+            exit 1
+          fi
+
+          MIGRATION_OK=1
+          trap - EXIT
+
+      - name: Verify final project ownership
+        shell: bash
+        run: |
+          set -euo pipefail
+          for domain in ghoulhouse.fi www.ghoulhouse.fi; do
+            curl --fail-with-body --silent --show-error               --header "Authorization: Bearer ${VERCEL_TOKEN}"               "https://api.vercel.com/v9/projects/${TARGET_PROJECT_ID}/domains/${domain}?teamId=${VERCEL_ORG_ID}"               | jq -e --arg id "${TARGET_PROJECT_ID}" '.projectId == $id and .verified == true'
+          done
+
+          echo "Validated main SHA: ${GITHUB_SHA}"
+          echo "Production project: ${TARGET_PROJECT_NAME} (${TARGET_PROJECT_ID})"
+          echo "Canonical: ${CANONICAL_URL}"
