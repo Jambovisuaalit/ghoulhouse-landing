@@ -414,6 +414,16 @@ code {
 }
 
 @media (min-width: 760px) {
+  .content-system {
+    grid-template-columns: 1fr auto 1fr;
+  }
+
+  .content-system__arrow {
+    display: block;
+  }
+}
+
+@media (min-width: 1024px) {
   .proof-strip {
     grid-template-columns: repeat(5, minmax(0, 1fr));
   }
@@ -423,6 +433,7 @@ code {
     border-right: 1px solid rgba(17, 17, 17, 0.16);
     border-bottom: 0;
     padding: 1rem;
+    min-width: 0;
   }
 
   .proof-strip__item:first-child {
@@ -433,17 +444,6 @@ code {
     border-right: 0;
   }
 
-  .content-system {
-    grid-template-columns: 1fr auto 1fr;
-  }
-
-  .content-system__arrow {
-    display: block;
-  }
-
-}
-
-@media (min-width: 1024px) {
   .pricing-shell {
     grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.45fr);
   }
