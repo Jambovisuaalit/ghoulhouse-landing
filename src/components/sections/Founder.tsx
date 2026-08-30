@@ -1,57 +1,89 @@
+import Image from 'next/image';
 import Container from '@/components/ui/Container';
 import { siteConfig } from '@/config/site';
 
 export default function Founder() {
+  const portrait = siteConfig.company.founderImage;
+
   return (
     <section
-      className="border-y-2 border-ink bg-ghost py-14 md:py-20"
+      className="bg-bone py-16 md:py-24"
       aria-labelledby="founder-title"
     >
       <Container>
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
-          <div className="lg:col-span-4">
-            <p className="type-label text-signal">Omistajavetoinen palvelu</p>
-            <h2
-              id="founder-title"
-              className="type-section-title mt-4 max-w-[12ch] uppercase text-ink"
-            >
-              {siteConfig.company.founder}
-            </h2>
-            <p className="type-label mt-4 text-ink/65">
-              Founder · {siteConfig.company.legalName} · Helsinki
-            </p>
-          </div>
-
-          <div className="lg:col-span-7 lg:col-start-6">
-            <div className="border-y-2 border-ink">
-              <div className="grid grid-cols-1 border-b border-ink/25 sm:grid-cols-3">
-                <div className="p-5 sm:border-r sm:border-ink/25">
-                  <p className="type-label text-signal">Vastuu</p>
-                  <p className="type-ui mt-3 uppercase text-ink">
-                    Palvelun toteutus
+        <div className="grid grid-cols-1 gap-10 min-[960px]:grid-cols-12 min-[960px]:items-stretch">
+          <div className="min-[960px]:col-span-5">
+            {portrait ? (
+              <figure className="relative min-h-[420px] overflow-hidden bg-ghost sm:min-h-[560px]">
+                <Image
+                  src={portrait}
+                  alt="Hanna Nyholm, GhoulHousen perustaja"
+                  fill
+                  sizes="(max-width: 959px) 100vw, 42vw"
+                  className="object-cover"
+                />
+              </figure>
+            ) : (
+              <div className="flex min-h-[360px] flex-col justify-between bg-ghost p-7 sm:min-h-[500px] sm:p-9">
+                <Image
+                  src="/mark-color.svg"
+                  alt=""
+                  width={160}
+                  height={160}
+                  className="h-20 w-20"
+                />
+                <div>
+                  <p className="font-editorial-accent text-[clamp(2rem,4vw,3.4rem)] leading-[0.98] text-ink">
+                    Henkilökohtainen palvelu.
                   </p>
-                </div>
-                <div className="border-t border-ink/25 p-5 sm:border-r sm:border-t-0 sm:border-ink/25">
-                  <p className="type-label text-signal">Yhteys</p>
-                  <p className="type-ui mt-3 uppercase text-ink">
-                    Suoraan Hannalle
+                  <p className="type-caption mt-5 max-w-sm text-ink/60">
+                    Founder-kuvalle on valmis paikka. Oikea portrait lisätään
+                    ennen lopullista julkaisua — henkilöllisyyttä ei korvata
+                    stock- tai AI-kuvalla.
                   </p>
-                </div>
-                <div className="border-t border-ink/25 p-5 sm:border-t-0">
-                  <p className="type-label text-signal">Sijainti</p>
-                  <p className="type-ui mt-3 uppercase text-ink">Helsinki</p>
                 </div>
               </div>
+            )}
+          </div>
 
-              <div className="py-7 sm:py-8">
-                <p className="type-editorial font-semibold text-ink">
-                  Hanna vastaa GhoulHousen palvelun toteutuksesta ja
-                  asiakasviestinnästä.
-                </p>
-                <p className="type-editorial mt-4 max-w-2xl text-ink/70">
-                  Keskustelet suoraan palvelusta vastaavan ihmisen kanssa.
-                  Ei välikäsiä eikä erillistä asiakkuustiimiä.
-                </p>
+          <div className="flex flex-col justify-between min-[960px]:col-span-6 min-[960px]:col-start-7">
+            <div>
+              <p className="type-label text-signal">Perustaja / GhoulHouse</p>
+              <h2
+                id="founder-title"
+                className="type-section-title mt-4 max-w-[12ch] text-ink"
+              >
+                {siteConfig.company.founder}
+              </h2>
+              <p className="font-editorial-accent mt-5 max-w-[18ch] text-[clamp(1.8rem,3vw,2.8rem)] leading-[1.02] text-ink">
+                Hyvän työn pitäisi näyttää yhtä hyvältä verkossa kuin se näyttää
+                valmiina kohteessa.
+              </p>
+            </div>
+
+            <div className="mt-10 border-t border-ink/25 pt-7">
+              <p className="type-editorial max-w-2xl font-semibold text-ink">
+                Hanna vastaa GhoulHousen palvelun toteutuksesta ja
+                asiakasviestinnästä.
+              </p>
+              <p className="type-editorial mt-4 max-w-2xl text-ink/70">
+                Keskustelet suoraan palvelusta vastaavan ihmisen kanssa. Ei
+                välikäsiä eikä erillistä asiakkuustiimiä.
+              </p>
+
+              <div className="mt-8 grid grid-cols-1 gap-y-4 border-t border-ink/20 pt-5 sm:grid-cols-3 sm:gap-x-6">
+                <div>
+                  <p className="type-label text-signal">Vastuu</p>
+                  <p className="type-ui mt-2 text-ink">Palvelun toteutus</p>
+                </div>
+                <div>
+                  <p className="type-label text-signal">Yhteys</p>
+                  <p className="type-ui mt-2 text-ink">Suoraan Hannalle</p>
+                </div>
+                <div>
+                  <p className="type-label text-signal">Sijainti</p>
+                  <p className="type-ui mt-2 text-ink">Helsinki</p>
+                </div>
               </div>
             </div>
           </div>
