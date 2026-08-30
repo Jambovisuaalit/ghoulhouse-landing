@@ -36,10 +36,9 @@ export default function Founder() {
                   <p className="font-editorial-accent text-[clamp(2rem,4vw,3.4rem)] leading-[0.98] text-ink">
                     Henkilökohtainen palvelu.
                   </p>
-                  <p className="type-caption mt-5 max-w-sm text-ink/60">
-                    Founder-kuvalle on valmis paikka. Oikea portrait lisätään
-                    ennen lopullista julkaisua — henkilöllisyyttä ei korvata
-                    stock- tai AI-kuvalla.
+                  <p className="type-editorial mt-5 max-w-sm text-ink/70">
+                    Keskustelet suoraan palvelusta vastaavan ihmisen kanssa
+                    ensimmäisestä materiaalipyynnöstä kuukausiraporttiin asti.
                   </p>
                 </div>
               </div>
