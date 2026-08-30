@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Container from '@/components/ui/Container';
 
 const rawPhoto =
@@ -49,6 +49,44 @@ export default function Mechanism() {
   const filmStickyRef = useRef<HTMLDivElement>(null);
   const filmViewportRef = useRef<HTMLDivElement>(null);
   const filmTrackRef = useRef<HTMLDivElement>(null);
+  const mobilePositionRef = useRef(0.5);
+  const [mobilePosition, setMobilePosition] = useState(50);
+  const [showDragHint, setShowDragHint] = useState(false);
+
+  const updateMobilePosition = (value: number) => {
+    const progress = clamp(value / 100);
+    mobilePositionRef.current = progress;
+    setMobilePosition(Math.round(progress * 100));
+
+    const rawSection = rawSectionRef.current;
+    if (!rawSection) return;
+
+    rawSection.style.setProperty('--raw-progress', progress.toFixed(4));
+    rawSection.style.setProperty('--raw-cut', `${(100 - progress * 100).toFixed(2)}%`);
+    rawSection.style.setProperty('--raw-left', `${(progress * 100).toFixed(2)}%`);
+  };
+
+  const dismissDragHint = () => {
+    setShowDragHint(false);
+    try {
+      window.localStorage.setItem('ghoulhouse:raw-drag-seen', '1');
+    } catch {
+      // Storage can be unavailable in privacy-restricted contexts.
+    }
+  };
+
+  useEffect(() => {
+    const mobile = window.matchMedia('(max-width: 1099px)');
+    if (!mobile.matches) return;
+
+    try {
+      setShowDragHint(
+        window.localStorage.getItem('ghoulhouse:raw-drag-seen') !== '1'
+      );
+    } catch {
+      setShowDragHint(true);
+    }
+  }, []);
 
   useEffect(() => {
     const rawSection = rawSectionRef.current;
@@ -85,9 +123,18 @@ export default function Mechanism() {
       filmSticky.style.removeProperty('top');
       filmTrack.style.removeProperty('transform');
 
-      rawSection.style.setProperty('--raw-progress', '0.5');
-      rawSection.style.setProperty('--raw-cut', '50%');
-      rawSection.style.setProperty('--raw-left', '50%');
+      const staticProgress = window.matchMedia('(max-width: 1099px)').matches
+        ? mobilePositionRef.current
+        : 0.5;
+      rawSection.style.setProperty('--raw-progress', staticProgress.toFixed(4));
+      rawSection.style.setProperty(
+        '--raw-cut',
+        `${(100 - staticProgress * 100).toFixed(2)}%`
+      );
+      rawSection.style.setProperty(
+        '--raw-left',
+        `${(staticProgress * 100).toFixed(2)}%`
+      );
       rawSection.style.setProperty('--raw-shift', '0px');
       rawSection.style.setProperty('--final-shift', '0px');
       rawSection.style.setProperty('--raw-opacity', '1');
@@ -112,7 +159,6 @@ export default function Mechanism() {
       animationFrame = 0;
 
       if (!desktopMotion.matches) {
-        resetStaticState();
         return;
       }
 
@@ -305,6 +351,30 @@ export default function Mechanism() {
             <div className="mechanism-raw__divider" aria-hidden="true">
               <span />
             </div>
+
+            <input
+              className="mechanism-raw__range"
+              type="range"
+              min="0"
+              max="100"
+              step="1"
+              value={mobilePosition}
+              onPointerDown={dismissDragHint}
+              onChange={(event) => {
+                updateMobilePosition(Number(event.currentTarget.value));
+                dismissDragHint();
+              }}
+              aria-label="Vertaa raakakuvaa ja valmista sisältöä"
+              aria-valuetext={`${mobilePosition}% valmis sisältö`}
+            />
+
+            {showDragHint ? (
+              <div className="mechanism-raw__drag-hint" aria-hidden="true">
+                <span className="mechanism-raw__drag-arrow">←</span>
+                <strong>VEDÄ</strong>
+                <span className="mechanism-raw__drag-arrow">→</span>
+              </div>
+            ) : null}
           </div>
 
           <div className="mechanism-raw__copy mechanism-raw__copy--final">
