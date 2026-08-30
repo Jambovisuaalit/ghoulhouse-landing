@@ -25,13 +25,15 @@ export default function Founder() {
               </figure>
             ) : (
               <div className="flex min-h-[360px] flex-col justify-between bg-ghost p-7 sm:min-h-[500px] sm:p-9">
-                <Image
-                  src="/mark-color.svg"
-                  alt=""
-                  width={160}
-                  height={160}
-                  className="h-20 w-20"
-                />
+                <div
+                  className="flex h-28 w-28 items-center justify-center rounded-full border border-ink/20 bg-bone sm:h-36 sm:w-36"
+                  role="img"
+                  aria-label="Hanna Nyholmin profiiliavatar"
+                >
+                  <span className="font-display text-[3rem] leading-none tracking-[-0.03em] text-ink sm:text-[4rem]">
+                    HN
+                  </span>
+                </div>
                 <div>
                   <p className="font-editorial-accent text-[clamp(2rem,4vw,3.4rem)] leading-[0.98] text-ink">
                     Henkilökohtainen palvelu.
