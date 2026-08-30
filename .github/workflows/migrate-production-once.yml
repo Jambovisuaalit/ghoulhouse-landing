@@ -83,26 +83,27 @@ jobs:
           set -euo pipefail
           rm -rf .vercel
           mkdir -p .vercel
-          printf '{"orgId":"%s","projectId":"%s"}\n'             "${VERCEL_ORG_ID}" "${OLD_PROJECT_ID}" > .vercel/project.json
+          printf '{"orgId":"%s","projectId":"%s"}\n' \
+            "${VERCEL_ORG_ID}" "${OLD_PROJECT_ID}" > .vercel/project.json
 
-          curl --fail-with-body --silent --show-error             --header "Authorization: Bearer ${VERCEL_TOKEN}"             "https://api.vercel.com/v9/projects/${OLD_PROJECT_ID}?teamId=${VERCEL_ORG_ID}"             > /tmp/legacy-project-before.json
+          git_before="$(vercel git ls --token="${VERCEL_TOKEN}" 2>&1 || true)"
+          printf '%s\n' "${git_before}"
 
-          legacy_source="$(jq -r 'if .link then ((.link.org // .link.repoOwner // "") + "/" + (.link.repo // "")) else "" end' /tmp/legacy-project-before.json)"
-          echo "Legacy Git source before disconnect: ${legacy_source:-none}"
-
-          if [ -n "${legacy_source}" ]; then
-            (printf 'y\n' | vercel git disconnect --token="${VERCEL_TOKEN}") || true
+          if printf '%s' "${git_before}" | grep -Fqi 'vido-social/ghoulhouse-landing'; then
+            printf 'y\n' | vercel git disconnect --token="${VERCEL_TOKEN}"
           fi
 
-          curl --fail-with-body --silent --show-error             --header "Authorization: Bearer ${VERCEL_TOKEN}"             "https://api.vercel.com/v9/projects/${OLD_PROJECT_ID}?teamId=${VERCEL_ORG_ID}"             > /tmp/legacy-project-after.json
+          git_after="$(vercel git ls --token="${VERCEL_TOKEN}" 2>&1 || true)"
+          printf '%s\n' "${git_after}"
 
-          remaining_source="$(jq -r 'if .link then ((.link.org // .link.repoOwner // "") + "/" + (.link.repo // "")) else "" end' /tmp/legacy-project-after.json)"
-          echo "Legacy Git source after disconnect: ${remaining_source:-none}"
-
-          if printf '%s' "${remaining_source}" | grep -Fqi 'vido-social/ghoulhouse-landing'; then
+          if printf '%s' "${git_after}" | grep -Fqi 'vido-social/ghoulhouse-landing'; then
             echo "::error::Unsafe vido-social Git integration is still connected."
             exit 1
           fi
+
+          vercel env pull /tmp/ghoulhouse-legacy-production.env \
+            --environment=production \
+            --token="${VERCEL_TOKEN}"
 
       - name: Report legacy Git frozen
         if: github.event_name == 'issues'
@@ -117,38 +118,90 @@ jobs:
           set -euo pipefail
           rm -rf .vercel
           mkdir -p .vercel
-          printf '{"orgId":"%s","projectId":"%s"}\n'             "${VERCEL_ORG_ID}" "${TARGET_PROJECT_ID}" > .vercel/project.json
+          printf '{"orgId":"%s","projectId":"%s"}\n' \
+            "${VERCEL_ORG_ID}" "${TARGET_PROJECT_ID}" > .vercel/project.json
 
           vercel pull --yes --environment=production --token="${VERCEL_TOKEN}"
 
-          env_file="/tmp/ghoulhouse-target-production.env"
-          rm -f "${env_file}"
-          vercel env pull "${env_file}"             --environment=production             --token="${VERCEL_TOKEN}"
+          target_env="/tmp/ghoulhouse-target-production.env"
+          legacy_env="/tmp/ghoulhouse-legacy-production.env"
+          rm -f "${target_env}"
+          vercel env pull "${target_env}" \
+            --environment=production \
+            --token="${VERCEL_TOKEN}"
 
-          grep -Eq '^CSP_ENFORCE=.+$' "${env_file}" || {
-            echo "::error::CSP_ENFORCE is missing from ghoulhouse-oy Production."
-            exit 1
+          set -a
+          [ -f "${legacy_env}" ] && . "${legacy_env}"
+          set +a
+
+          ensure_from_legacy() {
+            key="$1"
+            if grep -Eq "^${key}=.+$" "${target_env}"; then
+              return 0
+            fi
+
+            value="$(printenv "${key}" || true)"
+            if [ -z "${value}" ]; then
+              echo "::error::${key} is missing from both legacy and target Production."
+              exit 1
+            fi
+
+            printf '%s' "${value}" | vercel env add "${key}" production \
+              --token="${VERCEL_TOKEN}"
           }
 
-          if grep -Eq '^SITE_INDEXABLE="?true"?$' "${env_file}"; then
-            echo "::error::SITE_INDEXABLE=true during infrastructure migration. Keep prelaunch indexing disabled."
+          ensure_plain_default() {
+            key="$1"
+            value="$2"
+            if grep -Eq "^${key}=.+$" "${target_env}"; then
+              return 0
+            fi
+            printf '%s' "${value}" | vercel env add "${key}" production \
+              --token="${VERCEL_TOKEN}"
+          }
+
+          legacy_mode="$(printenv LEAD_DELIVERY_MODE || true)"
+          target_mode="$(sed -n 's/^LEAD_DELIVERY_MODE=//p' "${target_env}" | tr -d '"' | tail -n1)"
+          mode="${target_mode:-${legacy_mode}}"
+
+          if [ "${mode}" = "resend" ]; then
+            ensure_from_legacy LEAD_DELIVERY_MODE
+            ensure_from_legacy RESEND_API_KEY
+            ensure_from_legacy LEAD_TO_EMAIL
+            ensure_from_legacy LEAD_FROM_EMAIL
+          elif [ "${mode}" = "webhook" ]; then
+            ensure_from_legacy LEAD_DELIVERY_MODE
+            ensure_from_legacy LEAD_WEBHOOK_URL
+          else
+            echo "::error::No valid lead delivery configuration is available."
             exit 1
           fi
 
-          if grep -Eq '^LEAD_DELIVERY_MODE="?resend"?$' "${env_file}"; then
-            grep -Eq '^RESEND_API_KEY=.+$' "${env_file}"
-            grep -Eq '^LEAD_TO_EMAIL=.+$' "${env_file}"
-            grep -Eq '^LEAD_FROM_EMAIL=.+$' "${env_file}"
+          ensure_plain_default CSP_ENFORCE false
+          ensure_plain_default SITE_INDEXABLE false
+
+          rm -f "${target_env}"
+          vercel env pull "${target_env}" \
+            --environment=production \
+            --token="${VERCEL_TOKEN}"
+
+          grep -Eq '^CSP_ENFORCE=.+$' "${target_env}"
+          grep -Eq '^SITE_INDEXABLE="?false"?$' "${target_env}"
+
+          if grep -Eq '^LEAD_DELIVERY_MODE="?resend"?$' "${target_env}"; then
+            grep -Eq '^RESEND_API_KEY=.+$' "${target_env}"
+            grep -Eq '^LEAD_TO_EMAIL=.+$' "${target_env}"
+            grep -Eq '^LEAD_FROM_EMAIL=.+$' "${target_env}"
             echo "Lead delivery mode: resend"
-          elif grep -Eq '^LEAD_DELIVERY_MODE="?webhook"?$' "${env_file}"; then
-            grep -Eq '^LEAD_WEBHOOK_URL="?https://.+' "${env_file}"
+          elif grep -Eq '^LEAD_DELIVERY_MODE="?webhook"?$' "${target_env}"; then
+            grep -Eq '^LEAD_WEBHOOK_URL="?https://.+' "${target_env}"
             echo "Lead delivery mode: webhook"
           else
             echo "::error::Production lead delivery is not configured on ghoulhouse-oy."
             exit 1
           fi
 
-          rm -f "${env_file}"
+          rm -f "${target_env}" "${legacy_env}"
 
       - name: Build target production candidate
         shell: bash
@@ -217,18 +270,19 @@ jobs:
           CUTOVER_STARTED=0
           MIGRATION_OK=0
 
-          move_domain() {
-            local source_project="$1"
-            local target_project="$2"
-            local domain="$3"
-
-            curl --fail-with-body --silent --show-error               --request POST               --url "https://api.vercel.com/v1/projects/${source_project}/domains/${domain}/move?teamId=${VERCEL_ORG_ID}"               --header "Authorization: Bearer ${VERCEL_TOKEN}"               --header "Content-Type: application/json"               --data "{"projectId":"${target_project}","gitBranch":null,"redirect":null,"redirectStatusCode":null}"
+          assign_domain() {
+            local domain="$1"
+            local project="$2"
+            vercel domains add "${domain}" "${project}" \
+              --force \
+              -T "${VERCEL_ORG_ID}" \
+              --token="${VERCEL_TOKEN}"
           }
 
           rollback_domains() {
             echo "::warning::Post-cutover QA failed. Returning custom domains to legacy project."
-            move_domain "${TARGET_PROJECT_ID}" "${OLD_PROJECT_ID}" "www.ghoulhouse.fi" >/tmp/rollback-www.json 2>&1 || true
-            move_domain "${TARGET_PROJECT_ID}" "${OLD_PROJECT_ID}" "ghoulhouse.fi" >/tmp/rollback-apex.json 2>&1 || true
+            assign_domain "www.ghoulhouse.fi" "${OLD_PROJECT_NAME}" >/tmp/rollback-www.log 2>&1 || true
+            assign_domain "ghoulhouse.fi" "${OLD_PROJECT_NAME}" >/tmp/rollback-apex.log 2>&1 || true
           }
 
           cleanup() {
@@ -240,12 +294,12 @@ jobs:
           }
           trap cleanup EXIT
 
-          move_domain "${OLD_PROJECT_ID}" "${TARGET_PROJECT_ID}" "ghoulhouse.fi" > /tmp/move-apex.json
-          CUTOVER_STARTED=1
-          jq -e --arg id "${TARGET_PROJECT_ID}" '.projectId == $id and .verified == true' /tmp/move-apex.json
+          vercel domains inspect ghoulhouse.fi -T "${VERCEL_ORG_ID}" --token="${VERCEL_TOKEN}"
+          vercel domains inspect www.ghoulhouse.fi -T "${VERCEL_ORG_ID}" --token="${VERCEL_TOKEN}"
 
-          move_domain "${OLD_PROJECT_ID}" "${TARGET_PROJECT_ID}" "www.ghoulhouse.fi" > /tmp/move-www.json
-          jq -e --arg id "${TARGET_PROJECT_ID}" '.projectId == $id and .verified == true' /tmp/move-www.json
+          assign_domain "ghoulhouse.fi" "${TARGET_PROJECT_NAME}"
+          CUTOVER_STARTED=1
+          assign_domain "www.ghoulhouse.fi" "${TARGET_PROJECT_NAME}"
 
           routing_ok=0
           for i in {1..30}; do
@@ -310,13 +364,18 @@ jobs:
           MIGRATION_OK=1
           trap - EXIT
 
-      - name: Verify final project ownership
+      - name: Verify final domain configuration
         shell: bash
         run: |
           set -euo pipefail
-          for domain in ghoulhouse.fi www.ghoulhouse.fi; do
-            curl --fail-with-body --silent --show-error               --header "Authorization: Bearer ${VERCEL_TOKEN}"               "https://api.vercel.com/v9/projects/${TARGET_PROJECT_ID}/domains/${domain}?teamId=${VERCEL_ORG_ID}"               | jq -e --arg id "${TARGET_PROJECT_ID}" '.projectId == $id and .verified == true'
-          done
+          vercel domains verify ghoulhouse.fi \
+            --project "${TARGET_PROJECT_NAME}" \
+            -T "${VERCEL_ORG_ID}" \
+            --token="${VERCEL_TOKEN}"
+          vercel domains verify www.ghoulhouse.fi \
+            --project "${TARGET_PROJECT_NAME}" \
+            -T "${VERCEL_ORG_ID}" \
+            --token="${VERCEL_TOKEN}"
 
           echo "Validated main SHA: ${GITHUB_SHA}"
           echo "Production project: ${TARGET_PROJECT_NAME} (${TARGET_PROJECT_ID})"
