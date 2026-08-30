@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Anton } from 'next/font/google';
+import { Anton, Cormorant_Garamond } from 'next/font/google';
 import { siteConfig } from '@/config/site';
 import {
   SITE_URL,
@@ -15,6 +15,14 @@ const anton = Anton({
   weight: '400',
   subsets: ['latin'],
   variable: '--font-display',
+  display: 'swap',
+});
+
+const cormorant = Cormorant_Garamond({
+  weight: ['500', '600'],
+  style: ['normal', 'italic'],
+  subsets: ['latin'],
+  variable: '--font-editorial',
   display: 'swap',
 });
 
@@ -220,7 +228,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fi">
-      <body className={anton.variable}>
+      <body className={`${anton.variable} ${cormorant.variable}`}>
         {children}
         <VercelAnalytics />
         <script
