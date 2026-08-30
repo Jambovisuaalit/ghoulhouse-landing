@@ -6,9 +6,13 @@ on:
       - main
     paths:
       - .github/workflows/migrate-production-once.yml
+  issues:
+    types:
+      - opened
 
 permissions:
   contents: read
+  issues: write
 
 concurrency:
   group: ghoulhouse-production
@@ -16,7 +20,11 @@ concurrency:
 
 jobs:
   migrate:
-    if: github.event.head_commit.message == 'ops: execute one-time Vercel consolidation'
+    if: >-
+      (github.event_name == 'push' && github.event.head_commit.message == 'ops: execute one-time Vercel consolidation') ||
+      (github.event_name == 'issues' &&
+       github.event.issue.title == 'RUN GHOULHOUSE VERCEL CONSOLIDATION' &&
+       contains(github.event.issue.body, 'nonce=ghoulhouse-cutover-20260830-v1'))
     runs-on: ubuntu-24.04
     env:
       VERCEL_ORG_ID: team_zwsvoePoiBeskRuyl2Iar883
@@ -29,6 +37,13 @@ jobs:
       WWW_URL: https://www.ghoulhouse.fi
 
     steps:
+      - name: Report migration start
+        if: github.event_name == 'issues'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue comment "${{ github.event.issue.number }}" --body "MIGRATION_STARTED sha=${GITHUB_SHA}"
+
       - name: Checkout exact main
         uses: actions/checkout@v4
 
@@ -88,6 +103,13 @@ jobs:
             echo "::error::Unsafe vido-social Git integration is still connected."
             exit 1
           fi
+
+      - name: Report legacy Git frozen
+        if: github.event_name == 'issues'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue comment "${{ github.event.issue.number }}" --body "LEGACY_GIT_FROZEN"
 
       - name: Link target project and verify production environment
         shell: bash
@@ -179,6 +201,13 @@ jobs:
             cat /tmp/candidate-errors.log
             exit 1
           fi
+
+      - name: Report candidate ready
+        if: github.event_name == 'issues'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue comment "${{ github.event.issue.number }}" --body "CANDIDATE_READY url=${{ steps.candidate.outputs.url }}"
 
       - name: Move domains, validate live production, rollback on failure
         shell: bash
@@ -292,3 +321,16 @@ jobs:
           echo "Validated main SHA: ${GITHUB_SHA}"
           echo "Production project: ${TARGET_PROJECT_NAME} (${TARGET_PROJECT_ID})"
           echo "Canonical: ${CANONICAL_URL}"
+
+      - name: Report migration result
+        if: always() && github.event_name == 'issues'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            gh issue comment "${{ github.event.issue.number }}" --body "MIGRATION_SUCCESS sha=${GITHUB_SHA} project=${TARGET_PROJECT_ID} canonical=${CANONICAL_URL}"
+            gh issue close "${{ github.event.issue.number }}" --reason completed
+          else
+            gh issue comment "${{ github.event.issue.number }}" --body "MIGRATION_FAILED status=${{ job.status }} sha=${GITHUB_SHA}; custom-domain rollback is automatic if cutover had started."
+          fi
