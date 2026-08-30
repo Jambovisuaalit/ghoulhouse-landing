@@ -2,6 +2,8 @@
 
 import Image from 'next/image';
 import { type CSSProperties, useEffect, useState } from 'react';
+import styles from './BeforeAfterSlider.module.css';
+import { tryGetItem, trySetItem } from '@/lib/storage';
 
 const HINT_STORAGE_KEY = 'ghoulhouse:before-after-slider-used';
 
@@ -10,34 +12,24 @@ export default function BeforeAfterSlider() {
   const [showFirstTouchHint, setShowFirstTouchHint] = useState(false);
 
   useEffect(() => {
-    const coarsePointer = window.matchMedia(
+    const coarsePointer = typeof window !== 'undefined' && window.matchMedia(
       '(hover: none) and (pointer: coarse)'
     ).matches;
-    const reducedMotion = window.matchMedia(
+    const reducedMotion = typeof window !== 'undefined' && window.matchMedia(
       '(prefers-reduced-motion: reduce)'
     ).matches;
 
     if (!coarsePointer || reducedMotion) return;
 
-    try {
-      setShowFirstTouchHint(
-        window.localStorage.getItem(HINT_STORAGE_KEY) !== '1'
-      );
-    } catch {
-      setShowFirstTouchHint(true);
-    }
+    const used = tryGetItem(HINT_STORAGE_KEY);
+    setShowFirstTouchHint(used !== '1');
   }, []);
 
   const markAsUsed = () => {
     if (!showFirstTouchHint) return;
 
     setShowFirstTouchHint(false);
-    try {
-      window.localStorage.setItem(HINT_STORAGE_KEY, '1');
-    } catch {
-      // Storage can be unavailable in strict privacy modes; the interaction
-      // remains fully functional without persistence.
-    }
+    trySetItem(HINT_STORAGE_KEY, '1');
   };
 
   const splitStyle = {
@@ -45,54 +37,51 @@ export default function BeforeAfterSlider() {
   } as CSSProperties;
 
   return (
-    <figure className="before-after-demo">
-      <div className="before-after-slider" style={splitStyle}>
+    <figure className={styles.beforeAfterDemo}>
+      <div className={styles.beforeAfterSlider} style={splitStyle}>
         <Image
           src="/hero-renovation-clean.svg"
           alt="Ennen-vaihetta havainnollistava remontin konseptikuva"
           fill
           sizes="(max-width: 767px) 100vw, 1100px"
-          className="before-after-slider__image"
+          className={styles.beforeAfterSlider__image}
           priority={false}
         />
 
-        <div className="before-after-slider__after" aria-hidden="true">
+        <div className={styles.beforeAfterSlider__after} aria-hidden="true">
           <Image
             src="/finished-space.svg"
             alt=""
             fill
             sizes="(max-width: 767px) 100vw, 1100px"
-            className="before-after-slider__image"
+            className={styles.beforeAfterSlider__image}
           />
         </div>
 
-        <div className="before-after-slider__label before-after-slider__label--before">
+        <div className={`${styles.beforeAfterSlider__label} ${styles['beforeAfterSlider__label--before']}`}>
           Ennen
         </div>
-        <div className="before-after-slider__label before-after-slider__label--after">
+        <div className={`${styles.beforeAfterSlider__label} ${styles['beforeAfterSlider__label--after']}`}>
           Jälkeen
         </div>
 
-        <div
-          className="before-after-slider__divider"
-          aria-hidden="true"
-        >
+        <div className={styles.beforeAfterSlider__divider} aria-hidden="true">
           <span
             className={
               showFirstTouchHint
-                ? 'before-after-slider__handle before-after-slider__handle--hint'
-                : 'before-after-slider__handle'
+                ? `${styles.beforeAfterSlider__handle} ${styles['beforeAfterSlider__handle--hint']}`
+                : styles.beforeAfterSlider__handle
             }
           >
-            <span className="before-after-slider__arrows">↔</span>
+            <span className={styles.beforeAfterSlider__arrows}>↔</span>
           </span>
           {showFirstTouchHint ? (
-            <span className="before-after-slider__touch-hint">Vedä ↔</span>
+            <span className={styles.beforeAfterSlider__touchHint}>Vedä ↔</span>
           ) : null}
         </div>
 
         <input
-          className="before-after-slider__range"
+          className={styles.beforeAfterSlider__range}
           type="range"
           min="0"
           max="100"
@@ -109,7 +98,7 @@ export default function BeforeAfterSlider() {
         />
       </div>
 
-      <figcaption className="before-after-demo__caption">
+      <figcaption className={styles.beforeAfterDemo__caption}>
         <span className="type-label text-signal">Before / after</span>
         <p>
           Vedä jakajaa nähdäksesi, miten sama työ voidaan esittää muutoksena.
