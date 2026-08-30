@@ -3,7 +3,11 @@ import { processSteps } from '@/data/landing';
 
 export default function Process() {
   return (
-    <section id="miten-toimii" className="border-y border-ink bg-white py-20 md:py-28" aria-labelledby="process-title">
+    <section
+      id="miten-toimii"
+      className="border-y border-ink bg-white py-16 md:py-28"
+      aria-labelledby="process-title"
+    >
       <Container>
         <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-8">
@@ -13,7 +17,8 @@ export default function Process() {
             </h2>
           </div>
           <p className="type-editorial text-muted lg:col-span-4">
-            Faktat ja kuvien julkaisuoikeudet vahvistetaan ennen tuotantoa. Sisältöä ei rakenneta arvailun varaan.
+            Faktat ja kuvien julkaisuoikeudet vahvistetaan ennen tuotantoa. Sisältöä ei rakenneta
+            arvailun varaan.
           </p>
         </div>
 

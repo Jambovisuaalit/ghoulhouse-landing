@@ -7,8 +7,8 @@ const CDP_PORT = Number(process.env.QA_CDP_PORT || 9222);
 const USER_DATA_DIR = `/tmp/ghoulhouse-browser-qa-${process.pid}`;
 
 const viewports = [
-  { width: 320, height: 800 },
-  { width: 375, height: 812 },
+  { width: 320, height: 568 },
+  { width: 375, height: 667 },
   { width: 390, height: 844 },
   { width: 430, height: 932 },
   { width: 768, height: 1024 },
@@ -343,22 +343,72 @@ try {
             })
             .filter((item) => item.left < -1 || item.right > innerWidth + 1)
             .slice(0, 12),
+          clippedHeadings: [...document.querySelectorAll('h1, h2, h3')]
+            .filter(visible)
+            .map((el) => {
+              const r = el.getBoundingClientRect();
+              return {
+                text: (el.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 90),
+                left: Math.round(r.left),
+                right: Math.round(r.right),
+                clientWidth: el.clientWidth,
+                scrollWidth: el.scrollWidth,
+              };
+            })
+            .filter(
+              (item) =>
+                item.left < -1 ||
+                item.right > innerWidth + 1 ||
+                item.scrollWidth > item.clientWidth + 1
+            ),
+          undersizedCtas: [...document.querySelectorAll('#top .btn, header button')]
+            .filter(visible)
+            .map((el) => {
+              const r = el.getBoundingClientRect();
+              return {
+                text: (el.textContent || '').replace(/\s+/g, ' ').trim(),
+                width: Math.round(r.width),
+                height: Math.round(r.height),
+              };
+            })
+            .filter((item) => item.width < 44 || item.height < 44),
+          distortedImages: [...document.images]
+            .filter((img) => visible(img) && img.complete && img.naturalWidth > 0 && img.naturalHeight > 0)
+            .map((img) => {
+              const r = img.getBoundingClientRect();
+              const naturalRatio = img.naturalWidth / img.naturalHeight;
+              const renderedRatio = r.width / r.height;
+              return {
+                alt: img.alt,
+                objectFit: getComputedStyle(img).objectFit,
+                ratioDelta: Math.abs(naturalRatio - renderedRatio) / naturalRatio,
+              };
+            })
+            .filter((item) => !['cover', 'contain'].includes(item.objectFit) && item.ratioDelta > 0.04),
         };
       })()`
     );
 
     assert(metrics.h1Count === 1, `${viewport.width}px: expected exactly one H1.`);
     assert(
-      metrics.h1Text.includes('TYÖMAAKUVAT SISÄÄN.') && metrics.h1Text.includes('VALMIS SOME ULOS.'),
+      metrics.h1Text.includes('TYÖMAAKUVAT SISÄÄN.') &&
+        metrics.h1Text.includes('VALMIS SOME ULOS.'),
       `${viewport.width}px: canonical headline missing.`
     );
     assert(
-      metrics.heroText.includes('GhoulHouse tekee remontti- ja palveluyritysten työmaakuvista') &&
-        metrics.heroText.includes('Instagramiin ja Facebookiin'),
-      `${viewport.width}px: canonical value proposition missing.`
+      metrics.heroText.includes('12 Instagram- ja Facebook-sisältöä') &&
+        metrics.heroText.includes('remontti- ja palveluyritysten') &&
+        metrics.heroText.includes('30 päivää'),
+      `${viewport.width}px: first viewport service/target proposition missing.`
     );
-    assert(metrics.brandText.toUpperCase() === 'GHOULHOUSE', `${viewport.width}px: full GhoulHouse wordmark is missing.`);
-    assert(metrics.ctaText.includes('VARAA 20 MIN KESKUSTELU'), `${viewport.width}px: CTA missing.`);
+    assert(
+      metrics.brandText.toUpperCase() === 'GHOULHOUSE',
+      `${viewport.width}px: full GhoulHouse wordmark is missing.`
+    );
+    assert(
+      metrics.ctaText.includes('VARAA 20 MIN KESKUSTELU'),
+      `${viewport.width}px: CTA missing.`
+    );
     assert(metrics.priceText.includes('490 €'), `${viewport.width}px: SOME 12 price missing.`);
     assert(
       metrics.offerName === 'GHOULHOUSE SOME 12',
@@ -381,7 +431,26 @@ try {
       `${viewport.width}px: horizontal overflow ${metrics.scrollWidth}px > ${metrics.innerWidth}px. Offenders: ${JSON.stringify(metrics.overflowing)}`
     );
     assert(metrics.ctaRect?.height >= 44, `${viewport.width}px: CTA target below 44px.`);
-    assert(metrics.ctaRect?.bottom <= metrics.innerHeight, `${viewport.width}px: CTA below first viewport.`);
+    assert(
+      metrics.ctaRect?.bottom <= metrics.innerHeight,
+      `${viewport.width}px: CTA below first viewport.`
+    );
+    assert(
+      metrics.priceRect?.bottom <= metrics.innerHeight,
+      `${viewport.width}px: price below first viewport.`
+    );
+    assert(
+      metrics.clippedHeadings.length === 0,
+      `${viewport.width}px: clipped heading detected: ${JSON.stringify(metrics.clippedHeadings)}`
+    );
+    assert(
+      metrics.undersizedCtas.length === 0,
+      `${viewport.width}px: CTA target below 44×44px: ${JSON.stringify(metrics.undersizedCtas)}`
+    );
+    assert(
+      metrics.distortedImages.length === 0,
+      `${viewport.width}px: distorted image detected: ${JSON.stringify(metrics.distortedImages)}`
+    );
 
     for (const [name, rect] of [
       ['brand lockup', metrics.brandRect],
@@ -407,6 +476,7 @@ try {
 
     results.push({
       viewport: `${viewport.width}x${viewport.height}`,
+      scrollWidth: metrics.scrollWidth,
       ctaBottom: Math.round(metrics.ctaRect.bottom),
       priceBottom: Math.round(metrics.priceRect.bottom),
       status: 'PASS',
@@ -415,8 +485,8 @@ try {
 
   // Mobile navigation / responsive regression.
   await client.send('Emulation.setDeviceMetricsOverride', {
-    width: 390,
-    height: 844,
+    width: 320,
+    height: 568,
     deviceScaleFactor: 1,
     mobile: true,
   });
@@ -496,7 +566,10 @@ try {
     })()`
   );
   assert(stickyHeader.fixed, 'Header did not become fixed after scroll.');
-  assert(stickyHeader.top !== null && Math.abs(stickyHeader.top) <= 1, `Sticky header top is ${stickyHeader.top}.`);
+  assert(
+    stickyHeader.top !== null && Math.abs(stickyHeader.top) <= 1,
+    `Sticky header top is ${stickyHeader.top}.`
+  );
 
   // Desktop Proof Engine scroll regression.
   await client.send('Emulation.setDeviceMetricsOverride', {
@@ -600,7 +673,10 @@ try {
     })()`
   );
   assert(filmMid, 'Filmstrip Proof Engine midpoint metrics are missing.');
-  assert(filmMid.horizontalTravel > 200, `Filmstrip travel too small: ${filmMid.horizontalTravel}px.`);
+  assert(
+    filmMid.horizontalTravel > 200,
+    `Filmstrip travel too small: ${filmMid.horizontalTravel}px.`
+  );
   assert(
     filmMid.progress > 0.35 && filmMid.progress < 0.65,
     `Filmstrip progress expected near 0.5, got ${filmMid.progress}.`
@@ -647,8 +723,14 @@ try {
   );
   assert(reducedMotion.scrollBehavior === 'auto', 'Reduced motion must disable smooth scrolling.');
   assert(reducedMotion.animatedElements === 0, 'Reduced motion left persistent animation running.');
-  assert(reducedMotion.rawPosition !== 'sticky', 'Reduced motion must disable RAW sticky choreography.');
-  assert(reducedMotion.filmPosition !== 'sticky', 'Reduced motion must disable filmstrip sticky choreography.');
+  assert(
+    reducedMotion.rawPosition !== 'sticky',
+    'Reduced motion must disable RAW sticky choreography.'
+  );
+  assert(
+    reducedMotion.filmPosition !== 'sticky',
+    'Reduced motion must disable filmstrip sticky choreography.'
+  );
 
   await client.send('Emulation.setEmulatedMedia', {
     media: '',
@@ -690,11 +772,26 @@ try {
     client,
     `(() => {
       const siteContent = document.querySelector('[aria-hidden="true"][inert]');
+      const dialog = document.querySelector('[role="dialog"]');
+      const close = dialog?.querySelector('button[aria-label="Sulje yhteydenottolomake"]');
+      const submit = dialog?.querySelector('button[type="submit"]');
+      submit?.scrollIntoView({ block: 'end' });
+      const rect = (el) => {
+        if (!el) return null;
+        const r = el.getBoundingClientRect();
+        return { top: r.top, right: r.right, bottom: r.bottom, left: r.left, width: r.width, height: r.height };
+      };
       return {
-        exists: Boolean(document.querySelector('[role="dialog"]')),
+        exists: Boolean(dialog),
         activeName: document.activeElement?.getAttribute('name') || '',
         backgroundInert: Boolean(siteContent),
         skipLinkExists: Boolean(document.querySelector('a.skip-link[href="#main-content"]')),
+        dialogRect: rect(dialog),
+        closeRect: rect(close),
+        submitRect: rect(submit),
+        clientHeight: dialog?.clientHeight || 0,
+        scrollHeight: dialog?.scrollHeight || 0,
+        viewportHeight: innerHeight,
         openLatencyMs: ${dialogOpenMs},
         analyticsEvents: window.__ghAnalyticsEvents || [],
       };
@@ -705,22 +802,65 @@ try {
   assert(dialog.activeName === 'company', 'Lead dialog did not focus first field.');
   assert(dialog.backgroundInert, 'Background content is not inert while dialog is open.');
   assert(dialog.skipLinkExists, 'Skip link to main content is missing.');
+  assert(
+    dialog.dialogRect?.top >= -1 && dialog.dialogRect?.bottom <= dialog.viewportHeight + 1,
+    `Lead dialog exceeds the 320×568 viewport: ${JSON.stringify(dialog.dialogRect)}.`
+  );
+  assert(
+    dialog.scrollHeight > dialog.clientHeight,
+    'Lead dialog must scroll independently on the smallest viewport.'
+  );
+  assert(
+    dialog.closeRect?.width >= 44 && dialog.closeRect?.height >= 44,
+    `Lead dialog close target is below 44×44px: ${JSON.stringify(dialog.closeRect)}.`
+  );
+  assert(
+    dialog.submitRect?.bottom <= dialog.viewportHeight + 1,
+    `Lead dialog submit CTA cannot be reached by scrolling: ${JSON.stringify(dialog.submitRect)}.`
+  );
   const analyticsNames = dialog.analyticsEvents
     .filter((entry) => entry?.command === 'event')
     .map((entry) => entry?.payload?.name);
   assert(
-    analyticsNames.includes('booking_cta_click') &&
-      analyticsNames.includes('lead_form_open'),
+    analyticsNames.includes('booking_cta_click') && analyticsNames.includes('lead_form_open'),
     `CTA analytics events were not forwarded to Vercel Analytics: ${JSON.stringify(dialog.analyticsEvents)}.`
   );
   assert(pageExceptions.length === 0, `Page exceptions: ${pageExceptions.join(' | ')}`);
 
   await writeFile(
     `${SCREENSHOT_DIR}/results.json`,
-    JSON.stringify({ chromePath, results, heroMotion, stickyHeader, proofEngine: { rawQuarter, rawThreeQuarter, filmMid }, mobileHeader, reducedMotion, dialog }, null, 2)
+    JSON.stringify(
+      {
+        chromePath,
+        results,
+        heroMotion,
+        stickyHeader,
+        proofEngine: { rawQuarter, rawThreeQuarter, filmMid },
+        mobileHeader,
+        reducedMotion,
+        dialog,
+      },
+      null,
+      2
+    )
   );
 
-  console.log(JSON.stringify({ chromePath, results, heroMotion, stickyHeader, proofEngine: { rawQuarter, rawThreeQuarter, filmMid }, mobileHeader, reducedMotion, dialog }, null, 2));
+  console.log(
+    JSON.stringify(
+      {
+        chromePath,
+        results,
+        heroMotion,
+        stickyHeader,
+        proofEngine: { rawQuarter, rawThreeQuarter, filmMid },
+        mobileHeader,
+        reducedMotion,
+        dialog,
+      },
+      null,
+      2
+    )
+  );
 } finally {
   client?.close();
 

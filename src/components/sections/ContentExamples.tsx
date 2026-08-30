@@ -3,7 +3,11 @@ import { contentExamples } from '@/data/landing';
 
 export default function ContentExamples() {
   return (
-    <section id="esimerkit" className="bg-black py-20 text-white md:py-28" aria-labelledby="examples-title">
+    <section
+      id="esimerkit"
+      className="bg-black py-16 text-white md:py-28"
+      aria-labelledby="examples-title"
+    >
       <Container>
         <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-8">
@@ -15,7 +19,8 @@ export default function ContentExamples() {
           <div className="lg:col-span-4">
             <p className="concept-label">KONSEPTIESIMERKKI — EI ASIAKASTYÖ</p>
             <p className="type-editorial mt-4 text-white/65">
-              Nämä ovat sisältökategorioita, eivät asiakkaan hyväksymiä julkaisuja tai toteutuneita tuloksia.
+              Nämä ovat sisältökategorioita, eivät asiakkaan hyväksymiä julkaisuja tai toteutuneita
+              tuloksia.
             </p>
           </div>
         </div>

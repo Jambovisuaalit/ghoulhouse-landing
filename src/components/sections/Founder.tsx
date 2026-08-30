@@ -6,7 +6,7 @@ export default function Founder() {
   const portrait = siteConfig.company.founderImage;
 
   return (
-    <section className="bg-paper py-20 md:py-28" aria-labelledby="founder-title">
+    <section className="bg-paper py-16 md:py-28" aria-labelledby="founder-title">
       <Container>
         <div className="grid gap-10 lg:grid-cols-12 lg:items-stretch">
           <div className="lg:col-span-5">
@@ -41,12 +41,15 @@ export default function Founder() {
               </h2>
             </div>
             <div className="mt-12 border-t border-ink pt-7">
-              <p className="text-2xl font-black uppercase tracking-[-0.03em] text-ink">{siteConfig.company.founder}</p>
+              <p className="text-2xl font-black uppercase tracking-[-0.03em] text-ink">
+                {siteConfig.company.founder}
+              </p>
               <p className="mt-5 type-editorial text-muted">
                 [TARKISTA: founder-esittely, tausta ja tarkka roolikuvaus ennen julkaisua.]
               </p>
               <p className="mt-6 text-sm font-bold text-ink">
-                Founder-kuva pysyy vaihdettavana ympäristömuuttujalla <code>NEXT_PUBLIC_FOUNDER_IMAGE</code>.
+                Founder-kuva pysyy vaihdettavana ympäristömuuttujalla{' '}
+                <code>NEXT_PUBLIC_FOUNDER_IMAGE</code>.
               </p>
             </div>
           </div>

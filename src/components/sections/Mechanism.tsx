@@ -58,14 +58,7 @@ export default function Mechanism() {
     const filmViewport = filmViewportRef.current;
     const filmTrack = filmTrackRef.current;
 
-    if (
-      !rawSection ||
-      !rawSticky ||
-      !filmSection ||
-      !filmSticky ||
-      !filmViewport ||
-      !filmTrack
-    ) {
+    if (!rawSection || !rawSticky || !filmSection || !filmSticky || !filmViewport || !filmTrack) {
       return;
     }
 
@@ -97,10 +90,7 @@ export default function Mechanism() {
       filmSection.style.setProperty('--film-progress', '0');
     };
 
-    const sectionProgress = (
-      section: HTMLElement,
-      sticky: HTMLElement
-    ) => {
+    const sectionProgress = (section: HTMLElement, sticky: HTMLElement) => {
       const sectionRect = section.getBoundingClientRect();
       const stickyTop = Number.parseFloat(sticky.style.top) || 0;
       const travel = Math.max(1, section.offsetHeight - sticky.offsetHeight);
@@ -121,18 +111,9 @@ export default function Mechanism() {
 
       rawSection.style.setProperty('--raw-progress', rawProgress.toFixed(4));
       rawSection.style.setProperty('--raw-cut', `${rawCut.toFixed(2)}%`);
-      rawSection.style.setProperty(
-        '--raw-left',
-        `${(rawProgress * 100).toFixed(2)}%`
-      );
-      rawSection.style.setProperty(
-        '--raw-shift',
-        `${(-36 * rawProgress).toFixed(2)}px`
-      );
-      rawSection.style.setProperty(
-        '--final-shift',
-        `${(36 * (1 - rawProgress)).toFixed(2)}px`
-      );
+      rawSection.style.setProperty('--raw-left', `${(rawProgress * 100).toFixed(2)}%`);
+      rawSection.style.setProperty('--raw-shift', `${(-36 * rawProgress).toFixed(2)}px`);
+      rawSection.style.setProperty('--final-shift', `${(36 * (1 - rawProgress)).toFixed(2)}px`);
       rawSection.style.setProperty(
         '--raw-opacity',
         Math.max(0.2, 1 - rawProgress * 1.08).toFixed(3)
@@ -141,25 +122,16 @@ export default function Mechanism() {
         '--final-opacity',
         Math.max(0.18, rawProgress * 1.15).toFixed(3)
       );
-      rawSection.style.setProperty(
-        '--raw-scale',
-        (1.035 - rawProgress * 0.018).toFixed(4)
-      );
-      rawSection.style.setProperty(
-        '--final-scale',
-        (1.012 + rawProgress * 0.012).toFixed(4)
-      );
+      rawSection.style.setProperty('--raw-scale', (1.035 - rawProgress * 0.018).toFixed(4));
+      rawSection.style.setProperty('--final-scale', (1.012 + rawProgress * 0.012).toFixed(4));
 
       const filmProgress = sectionProgress(filmSection, filmSticky);
-      const horizontalTravel = Math.max(
-        0,
-        filmTrack.scrollWidth - filmViewport.clientWidth
-      );
+      const horizontalTravel = Math.max(0, filmTrack.scrollWidth - filmViewport.clientWidth);
 
       filmSection.style.setProperty('--film-progress', filmProgress.toFixed(4));
-      filmTrack.style.transform = `translate3d(${(
-        -horizontalTravel * filmProgress
-      ).toFixed(2)}px, 0, 0)`;
+      filmTrack.style.transform = `translate3d(${(-horizontalTravel * filmProgress).toFixed(
+        2
+      )}px, 0, 0)`;
     };
 
     const scheduleRender = () => {
@@ -178,9 +150,7 @@ export default function Mechanism() {
       const header =
         document.querySelector<HTMLElement>('body > header') ??
         document.querySelector<HTMLElement>('header');
-      const headerHeight = Math.round(
-        header?.getBoundingClientRect().height ?? 68
-      );
+      const headerHeight = Math.round(header?.getBoundingClientRect().height ?? 68);
       const stickyHeight = Math.max(520, window.innerHeight - headerHeight);
 
       rawSticky.style.top = `${headerHeight}px`;
@@ -191,14 +161,8 @@ export default function Mechanism() {
       const rawTravel = Math.min(1500, Math.max(950, stickyHeight * 1.35));
       rawSection.style.height = `${stickyHeight + rawTravel}px`;
 
-      const horizontalTravel = Math.max(
-        0,
-        filmTrack.scrollWidth - filmViewport.clientWidth
-      );
-      const filmTravel = Math.min(
-        2800,
-        Math.max(horizontalTravel, stickyHeight * 1.2)
-      );
+      const horizontalTravel = Math.max(0, filmTrack.scrollWidth - filmViewport.clientWidth);
+      const filmTravel = Math.min(2800, Math.max(horizontalTravel, stickyHeight * 1.2));
       filmSection.style.height = `${stickyHeight + filmTravel}px`;
 
       render();
@@ -235,14 +199,11 @@ export default function Mechanism() {
       className="border-y border-ink bg-ink text-ghost"
       aria-labelledby="mechanism-title"
     >
-      <Container className="py-16 md:py-24">
+      <Container className="py-14 md:py-24">
         <div className="grid grid-cols-1 gap-7 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-8">
             <p className="type-label mb-4 text-signal">Työmaalta julkaisuun</p>
-            <h2
-              id="mechanism-title"
-              className="type-display max-w-[12ch] text-ghost"
-            >
+            <h2 id="mechanism-title" className="type-display max-w-[12ch] text-ghost">
               Sama työ.
               <span className="block text-signal">Parempi näyttö.</span>
             </h2>
@@ -252,8 +213,8 @@ export default function Mechanism() {
               Ei uutta kuvauspäivää.
             </p>
             <p className="type-editorial mt-3 max-w-md text-ghost/65">
-              Työmaalla jo syntyvä materiaali saa selkeän rajauksen, sisältökulman
-              ja julkaisuvalmiin muodon.
+              Työmaalla jo syntyvä materiaali saa selkeän rajauksen, sisältökulman ja
+              julkaisuvalmiin muodon.
             </p>
           </div>
         </div>
@@ -357,8 +318,7 @@ export default function Mechanism() {
           </div>
 
           <p className="type-caption mt-4 text-ghost/55">
-            Kuvareferenssit: Unsplash · konseptiesimerkkejä, ei GhoulHousen
-            asiakastöitä.
+            Kuvareferenssit: Unsplash · konseptiesimerkkejä, ei GhoulHousen asiakastöitä.
           </p>
         </div>
       </div>

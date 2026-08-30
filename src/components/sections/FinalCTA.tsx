@@ -4,7 +4,10 @@ import { siteConfig } from '@/config/site';
 
 export default function FinalCTA() {
   return (
-    <section className="hero-surface bg-black py-20 text-white md:py-28" aria-labelledby="final-cta-title">
+    <section
+      className="hero-surface bg-black py-16 text-white md:py-28"
+      aria-labelledby="final-cta-title"
+    >
       <Container>
         <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-8">
@@ -19,8 +22,12 @@ export default function FinalCTA() {
               Ei raskasta markkinointiprojektia. Selkeä sisältökuukausi kerrallaan.
             </p>
             <div className="mt-7 grid gap-3">
-              <ContactTrigger className="btn btn-primary w-full">{siteConfig.cta.primary}</ContactTrigger>
-              <ContactTrigger intent="photos" className="btn btn-inverse w-full">{siteConfig.cta.secondary}</ContactTrigger>
+              <ContactTrigger className="btn btn-primary w-full">
+                {siteConfig.cta.primary}
+              </ContactTrigger>
+              <ContactTrigger intent="photos" className="btn btn-inverse w-full">
+                {siteConfig.cta.secondary}
+              </ContactTrigger>
             </div>
             <p className="mt-4 text-xs font-bold uppercase tracking-[0.09em] text-white/45">
               Työkuvien toimituskanava: [TARKISTA]

@@ -1,11 +1,6 @@
 'use client';
 
-import {
-  FormEvent,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { siteConfig } from '@/config/site';
 import type { ContactIntent } from '@/components/contact/ContactProvider';
 import { trackEvent } from '@/lib/analytics';
@@ -25,6 +20,8 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
   const hasStarted = useRef(false);
   const firstInputRef = useRef<HTMLInputElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
+  const previousBodyOverflow = useRef('');
+  const previousHtmlOverflow = useRef('');
   const dialogRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -69,11 +66,15 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
     };
 
     document.addEventListener('keydown', handleKeyDown);
+    previousBodyOverflow.current = document.body.style.overflow;
+    previousHtmlOverflow.current = document.documentElement.style.overflow;
     document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
+      document.body.style.overflow = previousBodyOverflow.current;
+      document.documentElement.style.overflow = previousHtmlOverflow.current;
       previousFocus.current?.focus();
     };
   }, [onClose]);
@@ -89,9 +90,7 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
     if (!firstField) return;
 
     requestAnimationFrame(() => {
-      formRef.current
-        ?.querySelector<HTMLElement>(`[name="${firstField}"]`)
-        ?.focus();
+      formRef.current?.querySelector<HTMLElement>(`[name="${firstField}"]`)?.focus();
     });
   };
 
@@ -182,28 +181,28 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-ink/80 p-0 sm:items-center sm:p-4 md:p-6"
+      className="contact-modal-overlay fixed inset-0 z-50 flex items-end justify-center bg-ink/80 p-0 sm:items-center sm:p-4 md:p-6"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
     >
       <div
         ref={dialogRef}
-        className="max-h-[96svh] w-full overflow-y-auto border-t-2 border-ink bg-ghost sm:max-w-2xl sm:border-2"
+        className="contact-modal-dialog w-full overflow-y-auto border-t-2 border-ink bg-ghost sm:max-w-2xl sm:border-2"
         role="dialog"
         aria-modal="true"
         aria-labelledby="contact-modal-title"
         aria-describedby="contact-modal-description"
         aria-busy={status === 'submitting'}
       >
-        <div className="sticky top-0 z-10 flex items-start justify-between border-b-2 border-ink bg-ghost px-4 py-4 sm:p-6">
+        <div className="contact-modal-header sticky top-0 z-10 flex items-start justify-between border-b-2 border-ink bg-ghost px-4 py-4 sm:p-6">
           <div className="pr-4">
             <p className="type-label text-signal">
               {isBooking ? '20 min keskustelu' : 'Yksityinen konseptidemo'}
             </p>
             <h2
               id="contact-modal-title"
-              className="mt-2 text-[clamp(1.9rem,6vw,2.8rem)] font-extrabold uppercase leading-[0.95] tracking-[-0.035em] text-ink"
+              className="contact-modal-title mt-2 text-[clamp(1.9rem,6vw,2.8rem)] font-extrabold uppercase leading-[0.95] tracking-[-0.035em] text-ink"
             >
               {isBooking ? siteConfig.cta.primary : siteConfig.cta.secondary}
             </h2>
@@ -233,8 +232,8 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
                 <span className="type-label text-signal">01</span>
                 <p className="type-ui text-ink">
                   {isBooking
-                  ? 'Käymme läpi antamasi tiedot ja palaamme keskustelun sopimiseksi.'
-                  : 'Käymme läpi antamasi verkkosivun tai Instagram-profiilin.'}
+                    ? 'Käymme läpi antamasi tiedot ja palaamme keskustelun sopimiseksi.'
+                    : 'Käymme läpi antamasi verkkosivun tai Instagram-profiilin.'}
                 </p>
               </div>
               <div className="grid grid-cols-[42px_1fr] gap-3 border-b border-ink/20 py-4">
@@ -256,8 +255,8 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
             </div>
 
             <p className="type-caption mt-5 max-w-lg text-ink/65">
-              Mahdollinen materiaalipyyntö ja esimerkkien eteneminen
-              vahvistetaan erikseen sähköpostitse.
+              Mahdollinen materiaalipyyntö ja esimerkkien eteneminen vahvistetaan erikseen
+              sähköpostitse.
             </p>
 
             <button
@@ -271,15 +270,12 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
         ) : (
           <form
             ref={formRef}
-            className="p-4 sm:p-7"
+            className="contact-modal-form p-4 sm:p-7"
             onSubmit={handleSubmit}
             onChange={markStarted}
             noValidate
           >
-            <div
-              id="contact-modal-description"
-              className="border-b border-ink/20 pb-5"
-            >
+            <div id="contact-modal-description" className="border-b border-ink/20 pb-5">
               <p className="type-editorial max-w-xl text-ink/70">
                 {isBooking
                   ? 'Anna perustiedot, jotta voimme sopia 20 minuutin keskustelun. Varsinainen ajankohta vahvistetaan erikseen.'
@@ -295,31 +291,15 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
 
             <div className="sr-only" aria-hidden="true">
               <label htmlFor="fax">Jätä tämä kenttä tyhjäksi</label>
-              <input
-                id="fax"
-                name="fax"
-                type="text"
-                tabIndex={-1}
-                autoComplete="off"
-              />
+              <input id="fax" name="fax" type="text" tabIndex={-1} autoComplete="off" />
             </div>
 
             <input type="hidden" name="intent" value={intent} />
-            <fieldset
-              disabled={status === 'submitting'}
-              className="mt-6"
-            >
-              <legend className="type-label mb-4 text-signal">
-                Tarvitsemme nämä
-              </legend>
+            <fieldset disabled={status === 'submitting'} className="mt-6">
+              <legend className="type-label mb-4 text-signal">Tarvitsemme nämä</legend>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <Field
-                  id="company"
-                  label="Yritys"
-                  required
-                  error={fieldErrors.company}
-                >
+                <Field id="company" label="Yritys" required error={fieldErrors.company}>
                   <input
                     ref={firstInputRef}
                     id="company"
@@ -331,18 +311,11 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
                     enterKeyHint="next"
                     className="form-control"
                     aria-invalid={Boolean(fieldErrors.company)}
-                    aria-describedby={
-                      fieldErrors.company ? 'company-error' : undefined
-                    }
+                    aria-describedby={fieldErrors.company ? 'company-error' : undefined}
                   />
                 </Field>
 
-                <Field
-                  id="name"
-                  label="Nimi"
-                  required
-                  error={fieldErrors.name}
-                >
+                <Field id="name" label="Nimi" required error={fieldErrors.name}>
                   <input
                     id="name"
                     name="name"
@@ -353,20 +326,13 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
                     enterKeyHint="next"
                     className="form-control"
                     aria-invalid={Boolean(fieldErrors.name)}
-                    aria-describedby={
-                      fieldErrors.name ? 'name-error' : undefined
-                    }
+                    aria-describedby={fieldErrors.name ? 'name-error' : undefined}
                   />
                 </Field>
               </div>
 
               <div className="mt-4 grid gap-4">
-                <Field
-                  id="email"
-                  label="Email"
-                  required
-                  error={fieldErrors.email}
-                >
+                <Field id="email" label="Email" required error={fieldErrors.email}>
                   <input
                     id="email"
                     name="email"
@@ -380,9 +346,7 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
                     enterKeyHint="next"
                     className="form-control"
                     aria-invalid={Boolean(fieldErrors.email)}
-                    aria-describedby={
-                      fieldErrors.email ? 'email-error' : undefined
-                    }
+                    aria-describedby={fieldErrors.email ? 'email-error' : undefined}
                   />
                 </Field>
 
@@ -408,9 +372,7 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
                     className="form-control"
                     aria-invalid={Boolean(fieldErrors.profile)}
                     aria-describedby={
-                      fieldErrors.profile
-                        ? 'profile-hint profile-error'
-                        : 'profile-hint'
+                      fieldErrors.profile ? 'profile-hint profile-error' : 'profile-hint'
                     }
                   />
                 </Field>
@@ -419,17 +381,11 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
               <details className="group mt-5 border-y border-ink/20">
                 <summary className="type-ui flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 py-3 text-ink [&::-webkit-details-marker]:hidden">
                   <span>Puhelin tai viesti</span>
-                  <span className="type-label text-ink/65">
-                    valinnainen
-                  </span>
+                  <span className="type-label text-ink/65">valinnainen</span>
                 </summary>
 
                 <div className="grid gap-4 border-t border-ink/20 pb-4 pt-4">
-                  <Field
-                    id="phone"
-                    label="Puhelin"
-                    error={fieldErrors.phone}
-                  >
+                  <Field id="phone" label="Puhelin" error={fieldErrors.phone}>
                     <input
                       id="phone"
                       name="phone"
@@ -440,9 +396,7 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
                       enterKeyHint="next"
                       className="form-control"
                       aria-invalid={Boolean(fieldErrors.phone)}
-                      aria-describedby={
-                        fieldErrors.phone ? 'phone-error' : undefined
-                      }
+                      aria-describedby={fieldErrors.phone ? 'phone-error' : undefined}
                     />
                   </Field>
 
@@ -461,9 +415,7 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
                       placeholder="Valinnainen lisätieto"
                       aria-invalid={Boolean(fieldErrors.message)}
                       aria-describedby={
-                        fieldErrors.message
-                          ? 'message-hint message-error'
-                          : 'message-hint'
+                        fieldErrors.message ? 'message-hint message-error' : 'message-hint'
                       }
                     />
                   </Field>
@@ -494,18 +446,15 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
                       ? siteConfig.cta.primary
                       : siteConfig.cta.secondary}
                 </span>
-                <span
-                  aria-hidden="true"
-                  className={status === 'submitting' ? 'animate-spin' : ''}
-                >
+                <span aria-hidden="true" className={status === 'submitting' ? 'animate-spin' : ''}>
                   {status === 'submitting' ? '↻' : '→'}
                 </span>
               </button>
 
               <div className="type-caption mt-4 grid gap-2 text-ink/60 sm:grid-cols-[1fr_auto] sm:items-start sm:gap-6">
                 <p>
-                  Antamiasi tietoja käytetään tämän yhteydenottopyynnön
-                  käsittelyyn ja siihen liittyvään viestintään.
+                  Antamiasi tietoja käytetään tämän yhteydenottopyynnön käsittelyyn ja siihen
+                  liittyvään viestintään.
                   {siteConfig.legal.privacyPath && (
                     <>
                       {' '}
@@ -558,19 +507,13 @@ function Field({
       {children}
 
       {hint && (
-        <p
-          id={`${id}-hint`}
-          className="type-caption mt-1.5 text-ink/60"
-        >
+        <p id={`${id}-hint`} className="type-caption mt-1.5 text-ink/60">
           {hint}
         </p>
       )}
 
       {error && (
-        <p
-          id={`${id}-error`}
-          className="type-caption mt-1.5 font-bold text-signal"
-        >
+        <p id={`${id}-error`} className="type-caption mt-1.5 font-bold text-signal">
           {error}
         </p>
       )}
