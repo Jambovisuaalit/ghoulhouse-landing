@@ -12,9 +12,18 @@ export default function Hero() {
 
   useEffect(() => {
     const root = heroRef.current;
-    if (!root || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const prefersReducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
+    const supportsWebAnimations =
+      typeof Element !== 'undefined' &&
+      typeof Element.prototype.animate === 'function';
 
-    const nodes = Array.from(root.querySelectorAll<HTMLElement>('[data-hero-motion]'));
+    if (!root || prefersReducedMotion || !supportsWebAnimations) return;
+
+    const nodes = Array.from(
+      root.querySelectorAll<HTMLElement>('[data-hero-motion]')
+    );
     const animations = nodes.map((node, index) =>
       node.animate(
         [

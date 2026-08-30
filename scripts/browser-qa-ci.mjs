@@ -583,14 +583,75 @@ try {
       analyticsNames.includes('lead_form_open'),
     `CTA analytics events were not forwarded to Vercel Analytics: ${JSON.stringify(dialog.analyticsEvents)}.`
   );
+  const exceptionsBeforeNoWaapi = pageExceptions.length;
+  await client.send('Page.addScriptToEvaluateOnNewDocument', {
+    source: `
+      Object.defineProperty(Element.prototype, 'animate', {
+        configurable: true,
+        writable: true,
+        value: undefined,
+      });
+    `,
+  });
+  await client.send('Emulation.setDeviceMetricsOverride', {
+    width: 1440,
+    height: 900,
+    deviceScaleFactor: 1,
+    mobile: false,
+  });
+  await client.send('Emulation.setEmulatedMedia', {
+    media: '',
+    features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }],
+  });
+  await client.send('Page.navigate', { url: BASE_URL });
+  await waitForDocument(client);
+  await sleep(250);
+
+  const noWaapiFallback = await evaluate(
+    client,
+    `(() => {
+      const nodes = [...document.querySelectorAll('[data-hero-motion]')];
+      const visible = nodes.every((element) => {
+        const rect = element.getBoundingClientRect();
+        const style = getComputedStyle(element);
+        return (
+          rect.width > 0 &&
+          rect.height > 0 &&
+          Number(style.opacity) > 0.95 &&
+          style.visibility !== 'hidden' &&
+          style.display !== 'none'
+        );
+      });
+
+      return {
+        animateUnavailable: typeof Element.prototype.animate !== 'function',
+        nodeCount: nodes.length,
+        visible,
+      };
+    })()`
+  );
+
+  assert(
+    noWaapiFallback.animateUnavailable,
+    'WAAPI fallback test did not disable Element.prototype.animate.'
+  );
+  assert(
+    noWaapiFallback.nodeCount >= 4 && noWaapiFallback.visible,
+    'Hero must remain visible when the Web Animations API is unavailable.'
+  );
+  assert(
+    pageExceptions.length === exceptionsBeforeNoWaapi,
+    `Hero threw when WAAPI was unavailable: ${pageExceptions.slice(exceptionsBeforeNoWaapi).join(' | ')}`
+  );
+
   assert(pageExceptions.length === 0, `Page exceptions: ${pageExceptions.join(' | ')}`);
 
   await writeFile(
     `${SCREENSHOT_DIR}/results.json`,
-    JSON.stringify({ chromePath, results, heroMotion, stickyHeader, mobileHeader, reducedMotion, dialog }, null, 2)
+    JSON.stringify({ chromePath, results, heroMotion, stickyHeader, mobileHeader, reducedMotion, dialog, noWaapiFallback }, null, 2)
   );
 
-  console.log(JSON.stringify({ chromePath, results, heroMotion, stickyHeader, mobileHeader, reducedMotion, dialog }, null, 2));
+  console.log(JSON.stringify({ chromePath, results, heroMotion, stickyHeader, mobileHeader, reducedMotion, dialog, noWaapiFallback }, null, 2));
 } finally {
   client?.close();
 
