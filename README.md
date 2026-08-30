@@ -190,6 +190,17 @@ Production releases must use an exact validated `main` commit.
 
 The custom-domain migration is intentionally separate from application deployment. Do not modify DNS during a Vercel project cutover; move the existing project-domain assignments and validate apex/WWW routing before enabling indexing.
 
+### Temporary legacy-domain bridge
+
+Until `ghoulhouse.fi` and `www.ghoulhouse.fi` are moved from `ghoulhouse-landing-1ig9` to `ghoulhouse-oy`, Vercel's legacy project-level routing sends apex traffic to `www`. To prevent an application-level redirect loop, `src/lib/seo.ts` detects the legacy Vercel project from Vercel system environment URLs and temporarily allows `www.ghoulhouse.fi` to render there.
+
+This bridge:
+
+- does **not** change DNS;
+- does **not** enable indexing;
+- applies only to the legacy Vercel project;
+- automatically stops applying after the custom domains move to `ghoulhouse-oy`, where normal `www → apex` canonical routing remains active.
+
 ## Environment
 
 Copy `.env.example` and configure only the values required for the current environment. Never commit production secrets.
