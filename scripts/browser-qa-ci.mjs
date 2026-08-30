@@ -516,7 +516,7 @@ try {
   const sampleRawProof = async (fraction) => {
     const target = await evaluate(
       client,
-      \`(() => {
+      `(() => {
         document.documentElement.style.scrollBehavior = 'auto';
         const section = document.querySelector('[data-scroll-raw]');
         const sticky = section?.querySelector('.mechanism-raw__sticky');
@@ -524,16 +524,16 @@ try {
         const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0;
         const sectionTop = section.getBoundingClientRect().top + scrollY;
         const travel = Math.max(1, section.offsetHeight - sticky.offsetHeight);
-        window.scrollTo(0, sectionTop - stickyTop + travel * \${fraction});
+        window.scrollTo(0, sectionTop - stickyTop + travel * ${fraction});
         return { travel };
-      })()\`
+      })()`
     );
-    assert(target, \`RAW Proof Engine geometry missing at \${fraction}.\`);
+    assert(target, `RAW Proof Engine geometry missing at ${fraction}.`);
     await sleep(180);
 
     return evaluate(
       client,
-      \`(() => {
+      `(() => {
         const section = document.querySelector('[data-scroll-raw]');
         const divider = section?.querySelector('.mechanism-raw__divider');
         const finalImage = section?.querySelector('.mechanism-raw__image--final');
@@ -543,7 +543,7 @@ try {
           dividerLeft: parseFloat(getComputedStyle(divider).left) || 0,
           clipPath: getComputedStyle(finalImage).clipPath,
         };
-      })()\`
+      })()`
     );
   };
 
@@ -552,24 +552,24 @@ try {
   assert(rawQuarter && rawThreeQuarter, 'RAW Proof Engine metrics are missing.');
   assert(
     rawQuarter.progress > 0.15 && rawQuarter.progress < 0.35,
-    \`RAW quarter progress expected near 0.25, got \${rawQuarter.progress}.\`
+    `RAW quarter progress expected near 0.25, got ${rawQuarter.progress}.`
   );
   assert(
     rawThreeQuarter.progress > 0.65 && rawThreeQuarter.progress < 0.85,
-    \`RAW three-quarter progress expected near 0.75, got \${rawThreeQuarter.progress}.\`
+    `RAW three-quarter progress expected near 0.75, got ${rawThreeQuarter.progress}.`
   );
   assert(
     rawThreeQuarter.dividerLeft > rawQuarter.dividerLeft + 100,
-    \`RAW divider did not advance: \${rawQuarter.dividerLeft}px → \${rawThreeQuarter.dividerLeft}px.\`
+    `RAW divider did not advance: ${rawQuarter.dividerLeft}px → ${rawThreeQuarter.dividerLeft}px.`
   );
   assert(
     rawQuarter.clipPath !== rawThreeQuarter.clipPath,
-    \`RAW clip-path did not change: \${rawQuarter.clipPath} → \${rawThreeQuarter.clipPath}.\`
+    `RAW clip-path did not change: ${rawQuarter.clipPath} → ${rawThreeQuarter.clipPath}.`
   );
 
   const filmTarget = await evaluate(
     client,
-    \`(() => {
+    `(() => {
       const section = document.querySelector('[data-scroll-film]');
       const sticky = section?.querySelector('.mechanism-film__sticky');
       if (!section || !sticky) return null;
@@ -578,14 +578,14 @@ try {
       const travel = Math.max(1, section.offsetHeight - sticky.offsetHeight);
       window.scrollTo(0, sectionTop - stickyTop + travel * 0.5);
       return { travel };
-    })()\`
+    })()`
   );
   assert(filmTarget, 'Filmstrip Proof Engine geometry is missing.');
   await sleep(180);
 
   const filmMid = await evaluate(
     client,
-    \`(() => {
+    `(() => {
       const section = document.querySelector('[data-scroll-film]');
       const viewport = section?.querySelector('.mechanism-film__viewport');
       const track = section?.querySelector('.mechanism-film__track');
@@ -597,17 +597,17 @@ try {
         translateX: matrix.m41,
         horizontalTravel,
       };
-    })()\`
+    })()`
   );
   assert(filmMid, 'Filmstrip Proof Engine midpoint metrics are missing.');
-  assert(filmMid.horizontalTravel > 200, \`Filmstrip travel too small: \${filmMid.horizontalTravel}px.\`);
+  assert(filmMid.horizontalTravel > 200, `Filmstrip travel too small: ${filmMid.horizontalTravel}px.`);
   assert(
     filmMid.progress > 0.35 && filmMid.progress < 0.65,
-    \`Filmstrip progress expected near 0.5, got \${filmMid.progress}.\`
+    `Filmstrip progress expected near 0.5, got ${filmMid.progress}.`
   );
   assert(
     filmMid.translateX < 0 && Math.abs(filmMid.translateX) > filmMid.horizontalTravel * 0.3,
-    \`Filmstrip did not translate with scroll: \${filmMid.translateX}px of \${filmMid.horizontalTravel}px.\`
+    `Filmstrip did not translate with scroll: ${filmMid.translateX}px of ${filmMid.horizontalTravel}px.`
   );
 
   const proofShot = await client.send('Page.captureScreenshot', {
@@ -615,7 +615,7 @@ try {
     captureBeyondViewport: false,
   });
   await writeFile(
-    \`\${SCREENSHOT_DIR}/proof-engine-film-mid-1440x900.png\`,
+    `${SCREENSHOT_DIR}/proof-engine-film-mid-1440x900.png`,
     Buffer.from(proofShot.data, 'base64')
   );
 
