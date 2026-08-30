@@ -32,7 +32,7 @@ export default function Hero() {
               <p className="font-editorial-accent text-[clamp(1.75rem,3vw,2.55rem)] leading-[1.02] text-ink">
                 {positioning.supporting[0]}
               </p>
-              <p className="type-editorial mt-2 max-w-xl text-ink/72">
+              <p className="type-editorial mt-2 max-w-xl text-ink/70">
                 {positioning.supporting[1]}
               </p>
             </div>
@@ -67,7 +67,7 @@ export default function Hero() {
                 fill
                 priority
                 sizes="(max-width: 1099px) 50vw, 34vw"
-                className="object-cover grayscale contrast-110"
+                className="object-cover grayscale contrast-125"
               />
               <span className="absolute left-3 top-3 bg-ink px-2 py-1 type-label text-ghost">
                 RAAKA MATERIAALI
