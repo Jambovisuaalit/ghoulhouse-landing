@@ -12,8 +12,9 @@ export class LeadDeliveryError extends Error {
 
 function leadAsText(lead: LeadInput) {
   return [
-    'Uusi GhoulHouse sisältöesimerkkipyyntö',
+    lead.intent === 'booking' ? 'Uusi GhoulHouse 20 min keskustelupyyntö' : 'Uusi GhoulHouse konseptidemopyyntö',
     '',
+    `Intent: ${lead.intent}`,
     `Yritys: ${lead.company}`,
     `Nimi: ${lead.name}`,
     `Sähköposti: ${lead.email}`,
@@ -50,7 +51,7 @@ async function deliverToWebhook(lead: LeadInput) {
     headers,
     body: JSON.stringify({
       source: 'ghoulhouse.fi',
-      type: 'content_examples_request',
+      type: lead.intent === 'booking' ? 'booking_request' : 'photo_demo_request',
       lead,
       receivedAt: new Date().toISOString(),
     }),
@@ -84,7 +85,9 @@ async function deliverWithResend(lead: LeadInput) {
       from,
       to: [to],
       reply_to: lead.email,
-      subject: `GhoulHouse — 2 sisältöesimerkkiä — ${lead.company}`,
+      subject: lead.intent === 'booking'
+        ? `GhoulHouse — 20 min keskustelu — ${lead.company}`
+        : `GhoulHouse — konseptidemo — ${lead.company}`,
       text: leadAsText(lead),
     }),
     cache: 'no-store',
