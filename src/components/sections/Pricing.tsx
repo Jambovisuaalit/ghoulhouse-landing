@@ -7,7 +7,12 @@ export default function Pricing() {
   return (
     <section id="hinta" className="bg-paper py-20 md:py-28" aria-labelledby="pricing-title">
       <Container>
-        <div className="pricing-shell">
+        <div
+          className="pricing-shell"
+          data-offer-card
+          data-offer-name={siteConfig.offer.name}
+          data-offer-price={siteConfig.offer.price}
+        >
           <div className="bg-black p-6 text-white md:p-10">
             <p className="type-label text-signal">Yksi paketti / 30 päivää</p>
             <h2 id="pricing-title" className="type-display mt-5 max-w-[8ch] text-white">
