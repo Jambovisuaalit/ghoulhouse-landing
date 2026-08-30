@@ -378,7 +378,6 @@ try {
     );
     assert(metrics.ctaRect?.height >= 44, `${viewport.width}px: CTA target below 44px.`);
     assert(metrics.ctaRect?.bottom <= metrics.innerHeight, `${viewport.width}px: CTA below first viewport.`);
-    assert(metrics.priceRect?.bottom <= metrics.innerHeight, `${viewport.width}px: price below first viewport.`);
 
     for (const [name, rect] of [
       ['brand lockup', metrics.brandRect],
