@@ -3,12 +3,15 @@ const privacyPath =
   process.env.NEXT_PUBLIC_PRIVACY_PATH?.trim() || null;
 const termsPath =
   process.env.NEXT_PUBLIC_TERMS_PATH?.trim() || null;
+const founderImage =
+  process.env.NEXT_PUBLIC_FOUNDER_IMAGE?.trim() || null;
 
 export const siteConfig = {
   company: {
     brand: 'GhoulHouse',
     legalName: 'GhoulHouse Oy',
     founder: 'Hanna Nyholm',
+    founderImage,
     location: 'Helsinki, Finland',
     domain: canonicalSiteUrl,
   },
