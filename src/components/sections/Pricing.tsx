@@ -3,7 +3,7 @@ import ContactTrigger from '@/components/contact/ContactTrigger';
 import { siteConfig } from '@/config/site';
 
 const serviceSummary = [
-  ['CORE', '12 alkuperäistä sisältöä / 30 päivää'],
+  ['SISÄLTÖ', '12 alkuperäistä sisältöä / 30 päivää'],
   ['KANAVAT', 'Instagram + Facebook'],
   ['TUOTANTO', 'Suunnittelu · kuvankäsittely · grafiikka · copy'],
   ['JULKAISU', 'Ajastus ja julkaisu'],
@@ -25,7 +25,7 @@ export default function Pricing() {
   return (
     <section
       id="pricing"
-      className="border-y-2 border-ink bg-ghost py-14 md:py-20"
+      className="border-y border-ink bg-ghost py-14 md:py-20"
       aria-labelledby="pricing-title"
     >
       <Container>
