@@ -7,15 +7,18 @@ import {
   useState,
 } from 'react';
 import { siteConfig } from '@/config/site';
+import type { ContactIntent } from '@/components/contact/ContactProvider';
 import { trackEvent } from '@/lib/analytics';
 
 interface ContactModalProps {
   onClose: () => void;
+  intent: ContactIntent;
 }
 
 type SubmitState = 'idle' | 'submitting' | 'success' | 'error';
 
-export default function ContactModal({ onClose }: ContactModalProps) {
+export default function ContactModal({ onClose, intent }: ContactModalProps) {
+  const isBooking = intent === 'booking';
   const [status, setStatus] = useState<SubmitState>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -196,13 +199,13 @@ export default function ContactModal({ onClose }: ContactModalProps) {
         <div className="sticky top-0 z-10 flex items-start justify-between border-b-2 border-ink bg-ghost px-4 py-4 sm:p-6">
           <div className="pr-4">
             <p className="type-label text-signal">
-              2 yrityskohtaista sisältöesimerkkiä
+              {isBooking ? '20 min keskustelu' : 'Yksityinen konseptidemo'}
             </p>
             <h2
               id="contact-modal-title"
               className="mt-2 text-[clamp(1.9rem,6vw,2.8rem)] font-extrabold uppercase leading-[0.95] tracking-[-0.035em] text-ink"
             >
-              {siteConfig.cta.primary}
+              {isBooking ? siteConfig.cta.primary : siteConfig.cta.secondary}
             </h2>
           </div>
 
@@ -219,7 +222,7 @@ export default function ContactModal({ onClose }: ContactModalProps) {
         {status === 'success' ? (
           <div className="p-5 sm:p-8" aria-live="polite">
             <p className="type-label text-signal">
-              Pyyntö vastaanotettu
+              {isBooking ? 'Keskustelupyyntö vastaanotettu' : 'Demopyyntö vastaanotettu'}
             </p>
             <h3 className="mt-3 text-3xl font-extrabold uppercase leading-[0.95] tracking-[-0.03em] text-ink sm:text-4xl">
               Seuraavaksi.
@@ -229,7 +232,9 @@ export default function ContactModal({ onClose }: ContactModalProps) {
               <div className="grid grid-cols-[42px_1fr] gap-3 border-b border-ink/20 py-4">
                 <span className="type-label text-signal">01</span>
                 <p className="type-ui text-ink">
-                  Käymme läpi antamasi verkkosivun tai Instagram-profiilin.
+                  {isBooking
+                  ? 'Käymme läpi antamasi tiedot ja palaamme keskustelun sopimiseksi.'
+                  : 'Käymme läpi antamasi verkkosivun tai Instagram-profiilin.'}
                 </p>
               </div>
               <div className="grid grid-cols-[42px_1fr] gap-3 border-b border-ink/20 py-4">
@@ -274,9 +279,9 @@ export default function ContactModal({ onClose }: ContactModalProps) {
               className="border-b border-ink/20 pb-5"
             >
               <p className="type-editorial max-w-xl text-ink/70">
-                Anna neljä perustietoa. Verkkosivu tai Instagram toimii
-                ensimmäisenä lähdemateriaalina — työmaakuvia ei tarvitse
-                lähettää tässä vaiheessa.
+                {isBooking
+                  ? 'Anna perustiedot, jotta voimme sopia 20 minuutin keskustelun. Varsinainen ajankohta vahvistetaan erikseen.'
+                  : 'Anna perustiedot konseptidemoa varten. Työkuvien varsinainen toimituskanava vahvistetaan erikseen: [TARKISTA].'}
               </p>
 
               <div className="type-caption mt-4 grid grid-cols-1 gap-2 uppercase tracking-[0.05em] text-ink/60 sm:grid-cols-3">
@@ -297,6 +302,7 @@ export default function ContactModal({ onClose }: ContactModalProps) {
               />
             </div>
 
+            <input type="hidden" name="intent" value={intent} />
             <fieldset
               disabled={status === 'submitting'}
               className="mt-6"
