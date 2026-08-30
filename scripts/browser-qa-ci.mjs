@@ -319,6 +319,10 @@ try {
           offerPrice: offerCard?.getAttribute('data-offer-price') || '',
           proofRaw: Boolean(document.querySelector('[data-scroll-raw]')),
           proofFilm: Boolean(document.querySelector('[data-scroll-film]')),
+          viewportMeta: document.querySelector('meta[name="viewport"]')?.getAttribute('content') || '',
+          containerPaddingLeft: parseFloat(getComputedStyle(document.querySelector('.container-wide')).paddingLeft) || 0,
+          containerPaddingRight: parseFloat(getComputedStyle(document.querySelector('.container-wide')).paddingRight) || 0,
+          bodyOverflowX: getComputedStyle(document.body).overflowX,
           bodyText: document.body.innerText.replace(/\\s+/g, ' ').trim(),
           brandText: brand?.textContent?.replace(/\\s+/g, ' ').trim() || '',
           brandRect: rect(brand),
@@ -370,6 +374,18 @@ try {
     );
     assert(metrics.proofRaw, `${viewport.width}px: RAW → FINAL Proof Engine is not mounted.`);
     assert(metrics.proofFilm, `${viewport.width}px: filmstrip Proof Engine is not mounted.`);
+    assert(
+      metrics.viewportMeta.includes('viewport-fit=cover'),
+      `${viewport.width}px: viewport-fit=cover is missing from viewport metadata.`
+    );
+    assert(
+      metrics.containerPaddingLeft >= 15 && metrics.containerPaddingRight >= 15,
+      `${viewport.width}px: container-wide is missing mobile gutters.`
+    );
+    assert(
+      metrics.bodyOverflowX === 'clip' || metrics.bodyOverflowX === 'hidden',
+      `${viewport.width}px: body must suppress accidental page-level horizontal overflow.`
+    );
     assert(
       !metrics.bodyText.includes('790 €') &&
         !metrics.bodyText.includes('MANAGED') &&
