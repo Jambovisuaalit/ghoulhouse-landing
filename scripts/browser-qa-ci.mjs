@@ -326,6 +326,21 @@ try {
           innerWidth,
           innerHeight,
           scrollWidth: document.documentElement.scrollWidth,
+          overflowing: [...document.querySelectorAll('body *')]
+            .map((el) => {
+              const r = el.getBoundingClientRect();
+              return {
+                tag: el.tagName,
+                id: el.id || '',
+                className: typeof el.className === 'string' ? el.className : '',
+                text: (el.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 80),
+                left: Math.round(r.left),
+                right: Math.round(r.right),
+                width: Math.round(r.width),
+              };
+            })
+            .filter((item) => item.left < -1 || item.right > innerWidth + 1)
+            .slice(0, 12),
         };
       })()`
     );
@@ -359,7 +374,7 @@ try {
     );
     assert(
       metrics.scrollWidth <= metrics.innerWidth + 1,
-      `${viewport.width}px: horizontal overflow ${metrics.scrollWidth}px > ${metrics.innerWidth}px.`
+      `${viewport.width}px: horizontal overflow ${metrics.scrollWidth}px > ${metrics.innerWidth}px. Offenders: ${JSON.stringify(metrics.overflowing)}`
     );
     assert(metrics.ctaRect?.height >= 44, `${viewport.width}px: CTA target below 44px.`);
     assert(metrics.ctaRect?.bottom <= metrics.innerHeight, `${viewport.width}px: CTA below first viewport.`);
