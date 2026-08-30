@@ -182,7 +182,7 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-ink/80 p-0 sm:items-center sm:p-4 md:p-6"
+      className="contact-modal-backdrop fixed inset-0 z-50 flex items-end justify-center bg-ink/80 p-0 sm:items-center sm:p-4 md:p-6"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
