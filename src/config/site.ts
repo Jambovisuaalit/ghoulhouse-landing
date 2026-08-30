@@ -20,6 +20,13 @@ export const siteConfig = {
     price: 490,
     vatLabel: '+ ALV',
     period: '30 päivää',
+    start: {
+      name: 'SOME 12',
+      price: 490,
+      vatLabel: '+ ALV',
+      period: '30 päivää',
+      lifecycle: '30 päivän palvelujakso',
+    },
   },
   legal: {
     privacyPath,
