@@ -434,6 +434,9 @@ code {
     border-right: 0;
   }
 
+}
+
+@media (min-width: 1024px) {
   .pricing-shell {
     grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.45fr);
   }
