@@ -264,7 +264,7 @@ export default function Mechanism() {
           <div className="mechanism-raw__copy mechanism-raw__copy--raw">
             <span className="type-label text-signal">01 / RAAKA</span>
             <h3>Puhelimesta.</h3>
-            <p>Oikea työmaa. Materiaali sellaisena kuin se syntyy.</p>
+            <p>Työmaakuva. Materiaali sellaisena kuin se syntyy.</p>
           </div>
 
           <div
@@ -274,7 +274,7 @@ export default function Mechanism() {
             <div className="mechanism-raw__image mechanism-raw__image--source">
               <Image
                 src={rawPhoto}
-                alt="Oikea remonttityömaa ennen sisältökäsittelyä"
+                alt="Remonttityömaan kuvareferenssi ennen sisältökäsittelyä"
                 fill
                 sizes="(max-width: 1099px) 100vw, 58vw"
                 className="object-cover"

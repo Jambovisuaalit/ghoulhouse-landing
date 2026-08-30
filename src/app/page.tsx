@@ -3,6 +3,7 @@ import Footer from '@/components/layout/Footer';
 import Hero from '@/components/sections/Hero';
 import ProofStrip from '@/components/sections/ProofStrip';
 import ProblemSolution from '@/components/sections/ProblemSolution';
+import Mechanism from '@/components/sections/Mechanism';
 import Process from '@/components/sections/Process';
 import Pricing from '@/components/sections/Pricing';
 import ContentExamples from '@/components/sections/ContentExamples';
@@ -24,6 +25,7 @@ export default function Home() {
         <Hero />
         <ProofStrip />
         <ProblemSolution />
+        <Mechanism />
         <Process />
         <Pricing />
         <ContentExamples />
