@@ -4,22 +4,17 @@ import { siteConfig } from '@/config/site';
 
 export default function Footer() {
   return (
-    <footer className="border-t-2 border-signal bg-ink text-ghost">
+    <footer className="border-t border-signal bg-ink text-ghost">
       <Container className="py-12 md:py-16">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-12">
           <div className="md:col-span-6">
-            <div className="inline-flex items-center gap-3" aria-label="GhoulHouse">
-              <Image
-                src="/mark-white.svg"
-                alt=""
-                width={112}
-                height={112}
-                className="h-12 w-12 shrink-0 sm:h-14 sm:w-14"
-              />
-              <span className="font-display text-[2rem] uppercase leading-none tracking-[-0.025em] text-ghost sm:text-[2.35rem]">
-                GhoulHouse
-              </span>
-            </div>
+            <Image
+              src="/logo-horizontal-white.svg"
+              alt="GhoulHouse"
+              width={1400}
+              height={460}
+              className="h-auto w-[220px] sm:w-[260px]"
+            />
             <p className="type-caption mt-6 max-w-md text-ghost/70">
               Tuotteistettu sosiaalisen median sisällöntuotanto- ja
               ylläpitopalvelu Uudenmaan remontti- ja korjausrakentamisen
@@ -29,9 +24,7 @@ export default function Footer() {
           </div>
 
           <div className="md:col-span-3">
-            <p className="type-label mb-4 text-signal">
-              Sivusto
-            </p>
+            <p className="type-label mb-4 text-signal">Sivusto</p>
             <ul className="type-ui space-y-3 text-ghost/75">
               <li><a href="#kenelle">Kenelle</a></li>
               <li><a href="#mechanism">Näin toimii</a></li>
@@ -42,12 +35,10 @@ export default function Footer() {
           </div>
 
           <div className="md:col-span-3">
-            <p className="type-label mb-4 text-signal">
-              Yritys
-            </p>
+            <p className="type-label mb-4 text-signal">Yritys</p>
             <div className="type-ui space-y-2 text-ghost/75">
               <p>{siteConfig.company.legalName}</p>
-              <p>{siteConfig.company.founder} · Founder</p>
+              <p>{siteConfig.company.founder} · Perustaja</p>
               <p>{siteConfig.company.location}</p>
               <p>ghoulhouse.fi</p>
             </div>
