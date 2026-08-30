@@ -2,7 +2,6 @@ import Hero from '@/components/sections/Hero';
 import Problem from '@/components/sections/Problem';
 import Audience from '@/components/sections/Audience';
 import Mechanism from '@/components/sections/Mechanism';
-import Examples from '@/components/sections/Examples';
 import Deliverables from '@/components/sections/Deliverables';
 import Process from '@/components/sections/Process';
 import Pricing from '@/components/sections/Pricing';
@@ -27,7 +26,6 @@ export default function Home() {
         <Problem />
         <Audience />
         <Mechanism />
-        <Examples />
         <Deliverables />
         <Process />
         <Pricing />
