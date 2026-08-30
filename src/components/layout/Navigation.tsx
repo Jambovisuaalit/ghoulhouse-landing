@@ -30,6 +30,7 @@ export default function Navigation() {
         <Container>
           <nav className="flex min-h-[72px] items-center justify-between gap-5" aria-label="Päänavigaatio">
             <a href="#top" className="shrink-0" aria-label="GhoulHouse — sivun alku">
+              <span className="sr-only">GhoulHouse</span>
               <Image
                 src="/logo-horizontal.svg"
                 alt="GhoulHouse"
