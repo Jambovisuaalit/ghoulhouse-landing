@@ -17,20 +17,25 @@ const ContactModal = dynamic(() => import('@/components/ui/ContactModal'), {
   ssr: false,
 });
 
+export type ContactIntent = 'booking' | 'photos';
+
 interface ContactContextValue {
-  openContact: () => void;
+  openContact: (intent?: ContactIntent) => void;
   closeContact: () => void;
   isOpen: boolean;
+  intent: ContactIntent;
 }
 
 const ContactContext = createContext<ContactContextValue | null>(null);
 
 export function ContactProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [intent, setIntent] = useState<ContactIntent>('booking');
   const siteContentRef = useRef<HTMLDivElement>(null);
 
-  const openContact = useCallback(() => {
-    trackEvent('primary_cta_click');
+  const openContact = useCallback((nextIntent: ContactIntent = 'booking') => {
+    setIntent(nextIntent);
+    trackEvent(nextIntent === 'booking' ? 'booking_cta_click' : 'photo_demo_cta_click');
     trackEvent('lead_form_open');
     setIsOpen(true);
   }, []);
@@ -58,14 +63,14 @@ export function ContactProvider({ children }: { children: ReactNode }) {
   }, [isOpen]);
 
   const value = useMemo(
-    () => ({ openContact, closeContact, isOpen }),
-    [openContact, closeContact, isOpen]
+    () => ({ openContact, closeContact, isOpen, intent }),
+    [openContact, closeContact, isOpen, intent]
   );
 
   return (
     <ContactContext.Provider value={value}>
       <div ref={siteContentRef}>{children}</div>
-      {isOpen ? <ContactModal onClose={closeContact} /> : null}
+      {isOpen ? <ContactModal onClose={closeContact} intent={intent} /> : null}
     </ContactContext.Provider>
   );
 }
