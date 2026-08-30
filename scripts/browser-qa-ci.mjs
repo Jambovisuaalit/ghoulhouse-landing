@@ -448,6 +448,57 @@ try {
     `Mobile page overflows horizontally: ${mobileHeader.scrollWidth}px > ${mobileHeader.innerWidth}px.`
   );
 
+  // Before/after slider mobile affordance regression.
+  const mobileSlider = await evaluate(
+    client,
+    `(() => {
+      const slider = document.querySelector('.before-after-slider');
+      const handle = slider?.querySelector('.before-after-slider__handle');
+      const range = slider?.querySelector('input[type="range"]');
+      const divider = slider?.querySelector('.before-after-slider__divider');
+      const visible = (el) => {
+        if (!el) return false;
+        const r = el.getBoundingClientRect();
+        const s = getComputedStyle(el);
+        return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden';
+      };
+      const rect = (el) => {
+        if (!el) return null;
+        const r = el.getBoundingClientRect();
+        return { left:r.left, right:r.right, top:r.top, bottom:r.bottom, width:r.width, height:r.height };
+      };
+      return {
+        sliderVisible: visible(slider),
+        handleVisible: visible(handle),
+        handleText: handle?.textContent?.replace(/\\s+/g, ' ').trim() || '',
+        handleRect: rect(handle),
+        rangeExists: Boolean(range),
+        rangeLabel: range?.getAttribute('aria-label') || '',
+        rangeTouchAction: range ? getComputedStyle(range).touchAction : '',
+        dividerRect: rect(divider),
+      };
+    })()`
+  );
+  assert(mobileSlider.sliderVisible, 'Mobile before/after slider is missing.');
+  assert(mobileSlider.handleVisible, 'Mobile before/after drag handle is not visible.');
+  assert(
+    mobileSlider.handleText.includes('↔'),
+    `Mobile before/after handle lacks explicit drag arrows: "${mobileSlider.handleText}".`
+  );
+  assert(
+    mobileSlider.handleRect?.width >= 44 && mobileSlider.handleRect?.height >= 44,
+    `Mobile before/after handle target is below 44px: ${JSON.stringify(mobileSlider.handleRect)}.`
+  );
+  assert(mobileSlider.rangeExists, 'Before/after range control is missing.');
+  assert(
+    mobileSlider.rangeLabel === 'Vertaa ennen- ja jälkeen-kuvaa',
+    `Before/after range accessible label changed: "${mobileSlider.rangeLabel}".`
+  );
+  assert(
+    mobileSlider.rangeTouchAction === 'pan-y',
+    `Before/after mobile touch action should preserve vertical page pan, got "${mobileSlider.rangeTouchAction}".`
+  );
+
   // Desktop sticky-header + hero motion regression.
   await client.send('Emulation.setDeviceMetricsOverride', {
     width: 1440,
