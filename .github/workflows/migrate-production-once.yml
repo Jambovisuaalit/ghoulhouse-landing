@@ -42,7 +42,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh issue comment "${{ github.event.issue.number }}" --body "MIGRATION_STARTED sha=${GITHUB_SHA}"
+          gh issue comment "${{ github.event.issue.number }}" --repo "${GITHUB_REPOSITORY}" --body "MIGRATION_STARTED sha=${GITHUB_SHA}"
 
       - name: Checkout exact main
         uses: actions/checkout@v4
@@ -109,7 +109,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh issue comment "${{ github.event.issue.number }}" --body "LEGACY_GIT_FROZEN"
+          gh issue comment "${{ github.event.issue.number }}" --repo "${GITHUB_REPOSITORY}" --body "LEGACY_GIT_FROZEN"
 
       - name: Link target project and verify production environment
         shell: bash
@@ -207,7 +207,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh issue comment "${{ github.event.issue.number }}" --body "CANDIDATE_READY url=${{ steps.candidate.outputs.url }}"
+          gh issue comment "${{ github.event.issue.number }}" --repo "${GITHUB_REPOSITORY}" --body "CANDIDATE_READY url=${{ steps.candidate.outputs.url }}"
 
       - name: Move domains, validate live production, rollback on failure
         shell: bash
@@ -329,8 +329,8 @@ jobs:
         shell: bash
         run: |
           if [ "${{ job.status }}" = "success" ]; then
-            gh issue comment "${{ github.event.issue.number }}" --body "MIGRATION_SUCCESS sha=${GITHUB_SHA} project=${TARGET_PROJECT_ID} canonical=${CANONICAL_URL}"
-            gh issue close "${{ github.event.issue.number }}" --reason completed
+            gh issue comment "${{ github.event.issue.number }}" --repo "${GITHUB_REPOSITORY}" --body "MIGRATION_SUCCESS sha=${GITHUB_SHA} project=${TARGET_PROJECT_ID} canonical=${CANONICAL_URL}"
+            gh issue close "${{ github.event.issue.number }}" --repo "${GITHUB_REPOSITORY}" --reason completed
           else
-            gh issue comment "${{ github.event.issue.number }}" --body "MIGRATION_FAILED status=${{ job.status }} sha=${GITHUB_SHA}; custom-domain rollback is automatic if cutover had started."
+            gh issue comment "${{ github.event.issue.number }}" --repo "${GITHUB_REPOSITORY}" --body "MIGRATION_FAILED status=${{ job.status }} sha=${GITHUB_SHA}; custom-domain rollback is automatic if cutover had started."
           fi
