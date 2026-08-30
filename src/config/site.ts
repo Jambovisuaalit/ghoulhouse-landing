@@ -1,10 +1,7 @@
 const canonicalSiteUrl = 'https://ghoulhouse.fi';
-const privacyPath =
-  process.env.NEXT_PUBLIC_PRIVACY_PATH?.trim() || null;
-const termsPath =
-  process.env.NEXT_PUBLIC_TERMS_PATH?.trim() || null;
-const founderImage =
-  process.env.NEXT_PUBLIC_FOUNDER_IMAGE?.trim() || null;
+const privacyPath = process.env.NEXT_PUBLIC_PRIVACY_PATH?.trim() || null;
+const termsPath = process.env.NEXT_PUBLIC_TERMS_PATH?.trim() || null;
+const founderImage = process.env.NEXT_PUBLIC_FOUNDER_IMAGE?.trim() || null;
 
 export const siteConfig = {
   company: {
@@ -12,46 +9,24 @@ export const siteConfig = {
     legalName: 'GhoulHouse Oy',
     founder: 'Hanna Nyholm',
     founderImage,
-    location: 'Helsinki, Finland',
     domain: canonicalSiteUrl,
   },
-  positioning: {
-    headline: ['TYÖMAAKUVAT SISÄÄN.', 'VALMIS SOME ULOS.'],
-    supporting: [
-      'Teette hyvää työtä.',
-      'Me pidämme huolen, että asiakkaat myös näkevät sen.',
-    ],
-  },
   cta: {
-    primary: 'PYYDÄ 2 SISÄLTÖESIMERKKIÄ',
+    primary: 'VARAA 20 MIN KESKUSTELU',
+    secondary: 'LÄHETÄ KAKSI TYÖKUVAA',
   },
   offer: {
+    name: 'GHOULHOUSE SOME 12',
+    price: 490,
+    vatLabel: '+ ALV',
+    period: '30 päivää',
     start: {
       name: 'SOME 12',
       price: 490,
       vatLabel: '+ ALV',
       period: '30 päivää',
       lifecycle: '30 päivän palvelujakso',
-      includes: [
-        '12 alkuperäistä sisältöä / 30 päivää',
-        'Instagram + Facebook -sovitus',
-        'Sisältösuunnittelu',
-        'Kevyt kuvankäsittely',
-        'Graafinen suunnittelu',
-        'Copywriting',
-        'CTA:t',
-        'Ajastus ja julkaisu',
-        'Yksi koottu korjauskierros',
-        'WhatsApp-viestintä',
-        'Kuukausittainen tulosyhteenveto',
-        'Onboarding ja materiaaliohjeistus',
-      ],
     },
-  },
-  contact: {
-    email: null,
-    phone: null,
-    instagram: null,
   },
   legal: {
     privacyPath,

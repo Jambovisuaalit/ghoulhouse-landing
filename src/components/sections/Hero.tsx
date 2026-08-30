@@ -1,100 +1,89 @@
-import Image from 'next/image';
+'use client';
+
+import { useEffect, useRef } from 'react';
 import Container from '@/components/ui/Container';
 import ContactTrigger from '@/components/contact/ContactTrigger';
 import { siteConfig } from '@/config/site';
 
-const worksitePhoto =
-  'https://images.unsplash.com/photo-1768321917661-d4f1a89d2185?auto=format&fit=crop&fm=jpg&q=85&w=1800';
+const flow = ['TYÖMAAKUVAT', 'SUUNNITTELU', '12 SISÄLTÖÄ', 'JULKAISU'] as const;
 
 export default function Hero() {
-  const { positioning, offer, cta } = siteConfig;
+  const heroRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const root = heroRef.current;
+    if (!root || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const nodes = Array.from(root.querySelectorAll<HTMLElement>('[data-hero-motion]'));
+    const animations = nodes.map((node, index) =>
+      node.animate(
+        [
+          { opacity: 0, transform: 'translateY(24px)' },
+          { opacity: 1, transform: 'translateY(0)' },
+        ],
+        {
+          duration: 620,
+          delay: index * 95,
+          easing: 'cubic-bezier(.2,.8,.2,1)',
+          fill: 'both',
+        }
+      )
+    );
+
+    return () => animations.forEach((animation) => animation.cancel());
+  }, []);
 
   return (
-    <section
-      id="top"
-      className="overflow-hidden border-b border-ink bg-ghost"
-      aria-labelledby="hero-title"
-    >
-      <Container className="grid grid-cols-1 gap-8 py-7 sm:gap-10 sm:py-10 min-[1100px]:min-h-[calc(100svh-69px)] min-[1100px]:grid-cols-12 min-[1100px]:gap-12 min-[1100px]:py-12">
-        <div className="flex flex-col justify-between min-[1100px]:col-span-7 xl:col-span-8">
-          <div>
-            <p className="type-label text-signal">
-              12 sisältöä / 30 päivää · Instagram + Facebook
-            </p>
-            <h1 id="hero-title" className="type-display mt-5 max-w-[13ch] text-ink">
-              <span className="block">{positioning.headline[0]}</span>
-              <span className="mt-[0.08em] block text-signal">
-                {positioning.headline[1]}
-              </span>
-            </h1>
+    <section ref={heroRef} id="top" className="hero-surface overflow-hidden bg-black text-white" aria-labelledby="hero-title">
+      <Container className="relative py-16 md:py-24 lg:py-28">
+        <div className="hero-grid" aria-hidden="true" />
 
-            <div className="mt-7 max-w-2xl sm:mt-9">
-              <p className="font-editorial-accent text-[clamp(1.75rem,3vw,2.55rem)] leading-[1.02] text-ink">
-                {positioning.supporting[0]}
-              </p>
-              <p className="type-editorial mt-2 max-w-xl text-ink/70">
-                {positioning.supporting[1]}
-              </p>
+        <div className="relative grid gap-12 lg:grid-cols-12 lg:items-end">
+          <div className="lg:col-span-8">
+            <p data-hero-motion className="type-label text-signal">GhoulHouse / Social content system</p>
+            <h1 id="hero-title" data-hero-motion className="type-display mt-5 max-w-[10ch] text-white">
+              TYÖMAAKUVAT SISÄÄN.
+              <span className="block text-signal">VALMIS SOME ULOS.</span>
+            </h1>
+            <p data-hero-motion className="mt-7 max-w-2xl text-[clamp(1.05rem,2vw,1.4rem)] font-semibold leading-[1.45] text-white/75">
+              GhoulHouse tekee remontti- ja palveluyritysten työmaakuvista suunnitellun sisältökuukauden Instagramiin ja Facebookiin.
+            </p>
+
+            <div data-hero-motion className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <ContactTrigger className="btn btn-primary min-h-14 sm:min-w-[255px]">
+                {siteConfig.cta.primary}
+              </ContactTrigger>
+              <a href="#miten-toimii" className="btn btn-inverse min-h-14 sm:min-w-[255px]">
+                KATSO, MITEN PALVELU TOIMII
+              </a>
+            </div>
+
+            <div data-hero-motion className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-white/20 pt-5">
+              <strong className="font-display text-3xl uppercase tracking-[-0.025em] text-white">
+                490 € + ALV / 30 PÄIVÄÄ
+              </strong>
+              <span className="type-label text-white/55">Kuukausittain irtisanottava</span>
             </div>
           </div>
 
-          <div className="mt-9 sm:mt-11 min-[1100px]:mt-14">
-            <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:gap-8">
-              <div className="border-l-[3px] border-signal pl-4">
-                <p className="type-price text-ink">
-                  {offer.start.price} € {offer.start.vatLabel}
-                </p>
-                <p className="type-label mt-1 text-ink/60">/ {offer.start.period}</p>
+          <div data-hero-motion className="lg:col-span-4">
+            <div className="hero-proof">
+              <p className="type-label text-signal">Työmaa → julkaisu</p>
+              <div className="mt-5 grid gap-px bg-white/20">
+                {flow.map((item, index) => (
+                  <div key={item} className="grid grid-cols-[44px_1fr_auto] items-center bg-black px-4 py-4">
+                    <span className="type-label text-signal">{String(index + 1).padStart(2, '0')}</span>
+                    <span className="text-sm font-black uppercase tracking-[0.04em]">{item}</span>
+                    {index < flow.length - 1 ? <span aria-hidden="true" className="text-signal">↓</span> : <span aria-hidden="true">■</span>}
+                  </div>
+                ))}
               </div>
-              <ContactTrigger className="btn btn-primary min-h-14 w-full justify-between px-5 text-left sm:w-auto sm:min-w-[285px] sm:px-6">
-                <span>{cta.primary}</span>
-                <span aria-hidden="true">→</span>
-              </ContactTrigger>
+              <p className="mt-4 text-xs font-bold uppercase tracking-[0.1em] text-white/45">
+                Prosessi havainnollistettu — ei tuloslupaus
+              </p>
             </div>
-            <p className="type-caption mt-4 max-w-xl uppercase tracking-[0.08em] text-ink/60">
-              SOME 12 · 30 päivän palvelujakso · kuukausittain irtisanottava
-              sovittujen ehtojen mukaisesti
-            </p>
           </div>
         </div>
-
-        <figure className="min-[1100px]:col-span-5 xl:col-span-4">
-          <div className="grid h-[230px] grid-cols-2 overflow-hidden border border-ink/35 bg-bone sm:h-[320px] min-[1100px]:h-full min-[1100px]:min-h-[540px] min-[1100px]:grid-cols-1">
-            <div className="relative overflow-hidden bg-ink">
-              <Image
-                src={worksitePhoto}
-                alt="Remonttikohteen aitoa työmaamateriaalia havainnollistava valokuva"
-                fill
-                priority
-                sizes="(max-width: 1099px) 50vw, 34vw"
-                className="object-cover grayscale contrast-125"
-              />
-              <span className="absolute left-3 top-3 bg-ink px-2 py-1 type-label text-ghost">
-                RAAKA MATERIAALI
-              </span>
-            </div>
-
-            <div className="relative overflow-hidden border-l border-signal/70 bg-bone min-[1100px]:border-l-0 min-[1100px]:border-t">
-              <Image
-                src={worksitePhoto}
-                alt="Sama remonttikuva viimeisteltynä GhoulHouse-konseptijulkaisun osaksi"
-                fill
-                sizes="(max-width: 1099px) 50vw, 34vw"
-                className="object-cover"
-              />
-              <div className="absolute inset-x-0 bottom-0 bg-ghost/95 p-3 sm:p-4">
-                <span className="type-label text-signal">VALMIS JULKAISU</span>
-                <p className="mt-2 text-sm font-black uppercase leading-tight tracking-[-0.02em] text-ink sm:text-lg">
-                  Pohjatyö ratkaisee lopputuloksen.
-                </p>
-              </div>
-            </div>
-          </div>
-          <figcaption className="type-caption mt-3 flex flex-col gap-1 text-ink/60 sm:flex-row sm:items-center sm:justify-between">
-            <span>Oikea remonttivalokuva → sisältökonsepti</span>
-            <span>Kuvareferenssi · ei asiakastyö</span>
-          </figcaption>
-        </figure>
       </Container>
     </section>
   );

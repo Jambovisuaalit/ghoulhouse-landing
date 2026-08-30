@@ -1,4 +1,5 @@
 export interface LeadInput {
+  intent: 'booking' | 'photos';
   company: string;
   name: string;
   email: string;
@@ -93,6 +94,7 @@ export function validateLead(input: unknown): LeadValidationResult {
   const classifiedProfile = profile ? classifyProfile(profile) : null;
 
   const data: LeadInput = {
+    intent: source.intent === 'photos' ? 'photos' : 'booking',
     company: clean(source.company, limits.company),
     name: clean(source.name, limits.name),
     email: clean(source.email, limits.email).toLowerCase(),

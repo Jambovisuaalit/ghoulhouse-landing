@@ -6,18 +6,23 @@ const config: Config = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
     './src/config/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/data/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
       colors: {
-        ink: '#111111',
-        signal: '#C9282D',
-        ghost: '#F7F4EF',
-        bone: '#E6DFD5',
+        black: 'var(--color-black)',
+        ink: 'var(--color-black)',
+        paper: 'var(--color-paper)',
+        ghost: 'var(--color-paper)',
+        bone: 'var(--color-paper)',
+        signal: 'var(--color-red)',
+        white: 'var(--color-white)',
+        muted: 'var(--color-muted)',
       },
       fontFamily: {
-        sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
-        display: ['var(--font-display)', 'Impact', 'sans-serif'],
+        sans: ['var(--font-body)', 'sans-serif'],
+        display: ['var(--font-display)', 'sans-serif'],
       },
       spacing: {
         safe: 'max(1rem, env(safe-area-inset-bottom))',

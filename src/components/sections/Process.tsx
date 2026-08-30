@@ -1,62 +1,33 @@
 import Container from '@/components/ui/Container';
-
-const steps = [
-  {
-    number: '01',
-    owner: 'SINÄ',
-    title: 'Lähetät materiaalin ja faktat.',
-    body: 'Työmaakuvat, lyhyt kuvaus kohteesta ja olennaiset yksityiskohdat riittävät alkuun.',
-  },
-  {
-    number: '02',
-    owner: 'GHOULHOUSE',
-    title: 'Rakennamme sisältöbatchin.',
-    body: 'Suunnittelemme sisältökulmat, käsittelemme kuvat, kirjoitamme copyt ja rakennamme julkaisuvalmiit versiot.',
-  },
-  {
-    number: '03',
-    owner: 'YHDESSÄ',
-    title: 'Hyväksyt. Me julkaisemme.',
-    body: 'Tarkistat faktat. Yhden kootun korjauskierroksen jälkeen sisällöt ajastetaan ja julkaistaan.',
-  },
-] as const;
+import { processSteps } from '@/data/landing';
 
 export default function Process() {
   return (
-    <section id="process" className="bg-ink py-16 text-ghost md:py-24">
+    <section id="miten-toimii" className="border-y border-ink bg-white py-20 md:py-28" aria-labelledby="process-title">
       <Container>
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
-          <div className="lg:col-span-4">
-            <p className="type-label mb-4 text-signal">
-              Prosessi
-            </p>
-            <h2 className="type-section-title text-ghost">
-              Kolme askelta.
+        <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
+          <div className="lg:col-span-8">
+            <p className="type-label text-signal">Miten palvelu toimii</p>
+            <h2 id="process-title" className="type-section-title mt-4 max-w-[12ch] text-ink">
+              KOLME VAIHETTA. YKSI SELKEÄ RYTMI.
             </h2>
           </div>
-
-          <ol className="border-t border-ghost/35 lg:col-span-8">
-            {steps.map((step) => (
-              <li
-                key={step.number}
-                className="grid gap-4 border-b border-ghost/25 py-6 sm:grid-cols-[60px_110px_1fr]"
-              >
-                <span className="type-label text-signal">
-                  {step.number}
-                </span>
-                <span className="type-label text-ghost/60">
-                  {step.owner}
-                </span>
-                <div>
-                  <h3 className="text-lg font-extrabold leading-tight tracking-[-0.02em] text-ghost sm:text-xl">{step.title}</h3>
-                  <p className="mt-2 max-w-[58ch] text-[0.95rem] leading-[1.55] text-ghost/70">
-                    {step.body}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ol>
+          <p className="type-editorial text-muted lg:col-span-4">
+            Faktat ja kuvien julkaisuoikeudet vahvistetaan ennen tuotantoa. Sisältöä ei rakenneta arvailun varaan.
+          </p>
         </div>
+
+        <ol className="mt-12 grid gap-px border border-ink bg-ink lg:grid-cols-3">
+          {processSteps.map((step) => (
+            <li key={step.number} className="process-step bg-paper p-6 md:p-8">
+              <span className="font-display text-6xl leading-none text-signal">{step.number}</span>
+              <h3 className="mt-10 text-2xl font-black uppercase leading-[0.95] tracking-[-0.03em] text-ink">
+                {step.title}
+              </h3>
+              <p className="mt-5 text-sm leading-6 text-muted">{step.body}</p>
+            </li>
+          ))}
+        </ol>
       </Container>
     </section>
   );

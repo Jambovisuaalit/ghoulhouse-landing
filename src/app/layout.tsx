@@ -1,12 +1,7 @@
 import type { Metadata, Viewport } from 'next';
-import { Anton, Cormorant_Garamond } from 'next/font/google';
+import { Anton, Montserrat } from 'next/font/google';
 import { siteConfig } from '@/config/site';
-import {
-  SITE_URL,
-  isIndexingApproved,
-  isProductionDeployment,
-  productionUrl,
-} from '@/lib/seo';
+import { SITE_URL, isIndexingApproved, isProductionDeployment, productionUrl } from '@/lib/seo';
 import { faqItems } from '@/components/sections/FAQ';
 import VercelAnalytics from '@/components/analytics/VercelAnalytics';
 import './globals.css';
@@ -18,47 +13,29 @@ const anton = Anton({
   display: 'swap',
 });
 
-const cormorant = Cormorant_Garamond({
-  weight: ['500', '600'],
-  style: ['normal', 'italic'],
+const montserrat = Montserrat({
+  weight: ['400', '500', '600', '700', '800', '900'],
   subsets: ['latin'],
-  variable: '--font-editorial',
+  variable: '--font-body',
   display: 'swap',
 });
 
-const title = 'Somepalvelu remonttiyrityksille | GhoulHouse';
+const title = 'GhoulHouse | Työmaakuvista valmis some';
 const description =
-  'GhoulHouse muuttaa työmaa- ja referenssikuvat valmiiksi Instagram- ja Facebook-sisällöiksi. 12 sisältöä / 30 päivää, 490 € + ALV.';
-const socialDescription =
-  'Työmaakuvat sisään. Valmis some ulos. 12 sisältöä / 30 päivää Instagramiin ja Facebookiin.';
-const keywords = [
-  'somepalvelu remonttiyrityksille',
-  'sosiaalisen median sisällöntuotanto',
-  'somepalvelu yrityksille',
-  'Instagram sisällöntuotanto yritykselle',
-  'Facebook sisällöntuotanto yritykselle',
-  'sosiaalisen median ylläpito',
-  'somepalvelu Helsinki',
-  'somepalvelu Uusimaa',
-  'remonttiyrityksen some',
-];
-
+  'GhoulHouse tekee remontti- ja palveluyritysten työmaakuvista suunnitellun sisältökuukauden Instagramiin ja Facebookiin. SOME 12: 490 € + ALV / 30 päivää.';
 const indexable = isProductionDeployment() && isIndexingApproved();
 
 export const metadata: Metadata = {
   title,
   description,
-  keywords,
   applicationName: 'GhoulHouse',
   creator: siteConfig.company.legalName,
   publisher: siteConfig.company.legalName,
   metadataBase: new URL(SITE_URL),
-  alternates: {
-    canonical: '/',
-  },
+  alternates: { canonical: '/' },
   openGraph: {
     title,
-    description: socialDescription,
+    description,
     url: '/',
     siteName: 'GhoulHouse',
     locale: 'fi_FI',
@@ -68,38 +45,19 @@ export const metadata: Metadata = {
         url: '/opengraph-image',
         width: 1200,
         height: 630,
-        alt: 'GhoulHouse — Somepalvelu remonttiyrityksille',
+        alt: 'GhoulHouse — Työmaakuvat sisään. Valmis some ulos.',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
     title,
-    description: socialDescription,
+    description,
     images: ['/opengraph-image'],
   },
   robots: indexable
-    ? {
-        index: true,
-        follow: true,
-        googleBot: {
-          index: true,
-          follow: true,
-          'max-image-preview': 'large',
-          'max-snippet': -1,
-          'max-video-preview': -1,
-        },
-      }
-    : {
-        index: false,
-        follow: false,
-        nocache: true,
-        googleBot: {
-          index: false,
-          follow: false,
-          noimageindex: true,
-        },
-      },
+    ? { index: true, follow: true }
+    : { index: false, follow: false, nocache: true },
 };
 
 export const viewport: Viewport = {
@@ -110,21 +68,7 @@ export const viewport: Viewport = {
 };
 
 const organizationId = `${SITE_URL}/#organization`;
-const founderId = `${SITE_URL}/#founder`;
-const websiteId = `${SITE_URL}/#website`;
 const serviceId = `${SITE_URL}/#some-12`;
-const faqId = `${SITE_URL}/#faq`;
-
-const areaServed = [
-  {
-    '@type': 'AdministrativeArea',
-    name: 'Uusimaa',
-  },
-  {
-    '@type': 'Country',
-    name: 'Finland',
-  },
-];
 
 const structuredData = {
   '@context': 'https://schema.org',
@@ -136,51 +80,23 @@ const structuredData = {
       alternateName: siteConfig.company.brand,
       url: SITE_URL,
       logo: productionUrl('/icon'),
-      image: productionUrl('/opengraph-image'),
-      founder: {
-        '@id': founderId,
-      },
-      address: {
-        '@type': 'PostalAddress',
-        addressLocality: 'Helsinki',
-        addressCountry: 'FI',
-      },
-      areaServed,
       description:
-        'GhoulHouse on tuotteistettu somepalvelu remontti- ja korjausrakentamisen yrityksille. Palvelu muuttaa asiakkaan työmaa- ja referenssikuvat valmiiksi Instagram- ja Facebook-sisällöiksi.',
-      knowsAbout: [
-        'Sosiaalisen median sisällöntuotanto',
-        'Instagram-sisällöntuotanto',
-        'Facebook-sisällöntuotanto',
-        'Sosiaalisen median ylläpito',
-        'Remonttiyritysten referenssisisällöt',
-      ],
+        'GhoulHouse tuottaa asiakkaan työmaa- ja referenssikuvista suunnitelmallista Instagram- ja Facebook-sisältöä.',
     },
     {
       '@type': 'Service',
       '@id': serviceId,
-      name: 'GhoulHouse SOME 12',
-      serviceType: 'Sosiaalisen median sisällöntuotanto ja ylläpito remonttiyrityksille',
-      provider: {
-        '@id': organizationId,
-      },
-      areaServed,
-      audience: {
-        '@type': 'BusinessAudience',
-        audienceType:
-          'Uudenmaan pienet B2C-remontti- ja korjausrakentamisen yritykset',
-      },
+      name: siteConfig.offer.name,
+      provider: { '@id': organizationId },
       description:
-        'Asiakas toimittaa työmaa- ja referenssikuvat. GhoulHouse suunnittelee, käsittelee, kirjoittaa, ajastaa ja julkaisee 12 alkuperäistä sisältöä 30 päivän aikana Instagramiin ja Facebookiin.',
+        '12 sisältöä / 30 päivää Instagramiin ja Facebookiin asiakkaan toimittamasta materiaalista.',
       offers: {
         '@type': 'Offer',
-        url: productionUrl('/#pricing'),
-        price: '490',
+        price: String(siteConfig.offer.price),
         priceCurrency: 'EUR',
-        category: 'Sosiaalisen median sisällöntuotanto',
         priceSpecification: {
           '@type': 'UnitPriceSpecification',
-          price: 490,
+          price: siteConfig.offer.price,
           priceCurrency: 'EUR',
           unitText: '30 päivää',
           valueAddedTaxIncluded: false,
@@ -188,47 +104,20 @@ const structuredData = {
       },
     },
     {
-      '@type': 'Person',
-      '@id': founderId,
-      name: siteConfig.company.founder,
-      jobTitle: 'Founder',
-      worksFor: {
-        '@id': organizationId,
-      },
-    },
-    {
-      '@type': 'WebSite',
-      '@id': websiteId,
-      url: SITE_URL,
-      name: siteConfig.company.brand,
-      publisher: {
-        '@id': organizationId,
-      },
-      inLanguage: 'fi-FI',
-    },
-    {
       '@type': 'FAQPage',
-      '@id': faqId,
       mainEntity: faqItems.map((item) => ({
         '@type': 'Question',
         name: item.question,
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: item.answer,
-        },
+        acceptedAnswer: { '@type': 'Answer', text: item.answer },
       })),
     },
   ],
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fi">
-      <body className={`${anton.variable} ${cormorant.variable}`}>
+      <body className={`${anton.variable} ${montserrat.variable}`}>
         {children}
         <VercelAnalytics />
         <script

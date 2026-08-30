@@ -298,7 +298,7 @@ try {
           return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden';
         };
         const cta = [...(hero?.querySelectorAll('button') || [])].find(
-          (el) => visible(el) && el.textContent?.includes('PYYDÄ 2 SISÄLTÖESIMERKKIÄ')
+          (el) => visible(el) && el.textContent?.includes('VARAA 20 MIN KESKUSTELU')
         );
         const price = [...(hero?.querySelectorAll('*') || [])].find(
           (el) => visible(el) && el.children.length === 0 && el.textContent?.includes('490 €')
@@ -336,16 +336,16 @@ try {
       `${viewport.width}px: canonical headline missing.`
     );
     assert(
-      metrics.heroText.includes('Teette hyvää työtä.') &&
-        metrics.heroText.includes('Me pidämme huolen, että asiakkaat myös näkevät sen.'),
+      metrics.heroText.includes('GhoulHouse tekee remontti- ja palveluyritysten työmaakuvista') &&
+        metrics.heroText.includes('Instagramiin ja Facebookiin'),
       `${viewport.width}px: canonical value proposition missing.`
     );
     assert(metrics.brandText.toUpperCase() === 'GHOULHOUSE', `${viewport.width}px: full GhoulHouse wordmark is missing.`);
-    assert(metrics.ctaText.includes('PYYDÄ 2 SISÄLTÖESIMERKKIÄ'), `${viewport.width}px: CTA missing.`);
+    assert(metrics.ctaText.includes('VARAA 20 MIN KESKUSTELU'), `${viewport.width}px: CTA missing.`);
     assert(metrics.priceText.includes('490 €'), `${viewport.width}px: SOME 12 price missing.`);
     assert(
-      metrics.offerName === 'SOME 12',
-      `${viewport.width}px: pricing card offer name must be SOME 12, got "${metrics.offerName}".`
+      metrics.offerName === 'GHOULHOUSE SOME 12',
+      `${viewport.width}px: pricing card offer name must be GHOULHOUSE SOME 12, got "${metrics.offerName}".`
     );
     assert(
       metrics.offerPrice === '490',
@@ -395,7 +395,7 @@ try {
     });
   }
 
-  // Mobile navigation accessibility regression.
+  // Mobile navigation / responsive regression.
   await client.send('Emulation.setDeviceMetricsOverride', {
     width: 390,
     height: 844,
@@ -405,145 +405,36 @@ try {
   await client.send('Page.navigate', { url: BASE_URL });
   await waitForDocument(client);
 
-  const menuOpened = await evaluate(
+  const mobileHeader = await evaluate(
     client,
     `(() => {
-      const button = document.querySelector('button[aria-controls="mobile-navigation"]');
-      button?.click();
-      return Boolean(button);
-    })()`
-  );
-  assert(menuOpened, 'Mobile menu button was not found.');
-
-  const mobileMenuReady = await waitForCondition(
-    client,
-    'Boolean(document.querySelector(\'#mobile-navigation\'))',
-    2_000
-  );
-  assert(mobileMenuReady !== null, 'Mobile menu did not open.');
-
-  const mobileMenu = await evaluate(
-    client,
-    `(() => {
-      const firstLink = document.querySelector('#mobile-navigation a[href]');
-      const main = document.querySelector('main');
-      const footer = document.querySelector('footer');
-      const skipLink = document.querySelector('a.skip-link');
-      const button = document.querySelector('button[aria-controls="mobile-navigation"]');
-      const cta = document.querySelector('#mobile-navigation button');
+      const header = document.querySelector('header');
+      const brand = header?.querySelector('a[aria-label="GhoulHouse — sivun alku"]');
+      const cta = [...(header?.querySelectorAll('button') || [])].find((el) =>
+        el.textContent?.includes('20 MIN')
+      );
+      const rect = (el) => {
+        if (!el) return null;
+        const r = el.getBoundingClientRect();
+        return { left:r.left, right:r.right, top:r.top, bottom:r.bottom, width:r.width, height:r.height };
+      };
       return {
-        expanded: button?.getAttribute('aria-expanded'),
-        activeText: document.activeElement?.textContent?.replace(/\\s+/g, ' ').trim() || '',
-        firstText: firstLink?.textContent?.replace(/\\s+/g, ' ').trim() || '',
-        mainInert: main?.hasAttribute('inert') || false,
-        footerInert: footer?.hasAttribute('inert') || false,
-        skipInert: skipLink?.hasAttribute('inert') || false,
-        ctaText: cta?.textContent?.replace(/\\s+/g, ' ').trim() || '',
+        brand: rect(brand),
+        cta: rect(cta),
+        scrollWidth: document.documentElement.scrollWidth,
+        innerWidth,
       };
     })()`
   );
-
-  assert(mobileMenu.expanded === 'true', 'Mobile menu aria-expanded is not true.');
+  assert(mobileHeader.brand, 'Mobile brand lockup is missing.');
+  assert(mobileHeader.cta, 'Mobile booking CTA is missing.');
+  assert(mobileHeader.cta.height >= 44, 'Mobile booking CTA target is below 44px.');
   assert(
-    mobileMenu.activeText === mobileMenu.firstText,
-    `Mobile menu did not focus its first link: ${JSON.stringify(mobileMenu)}.`
-  );
-  assert(
-    mobileMenu.mainInert && mobileMenu.footerInert && mobileMenu.skipInert,
-    `Mobile menu background is not fully inert: ${JSON.stringify(mobileMenu)}.`
-  );
-  assert(
-    mobileMenu.ctaText.includes('PYYDÄ 2 SISÄLTÖESIMERKKIÄ'),
-    'Mobile menu CTA is missing.'
+    mobileHeader.scrollWidth <= mobileHeader.innerWidth + 1,
+    `Mobile page overflows horizontally: ${mobileHeader.scrollWidth}px > ${mobileHeader.innerWidth}px.`
   );
 
-  await evaluate(
-    client,
-    `(() => {
-      document.querySelector('button[aria-controls="mobile-navigation"]')?.focus();
-      return true;
-    })()`
-  );
-  await client.send('Input.dispatchKeyEvent', {
-    type: 'keyDown',
-    key: 'Tab',
-    code: 'Tab',
-    modifiers: 8,
-  });
-  await client.send('Input.dispatchKeyEvent', {
-    type: 'keyUp',
-    key: 'Tab',
-    code: 'Tab',
-    modifiers: 8,
-  });
-  await sleep(80);
-
-  const shiftTabTrap = await evaluate(
-    client,
-    `(() => ({
-      insideMenu: Boolean(document.activeElement?.closest?.('#mobile-navigation')),
-      activeText: document.activeElement?.textContent?.replace(/\\s+/g, ' ').trim() || '',
-    }))()`
-  );
-  assert(
-    shiftTabTrap.insideMenu &&
-      shiftTabTrap.activeText.includes('PYYDÄ 2 SISÄLTÖESIMERKKIÄ'),
-    `Shift+Tab escaped the mobile menu focus trap: ${JSON.stringify(shiftTabTrap)}.`
-  );
-
-  await client.send('Input.dispatchKeyEvent', {
-    type: 'keyDown',
-    key: 'Tab',
-    code: 'Tab',
-  });
-  await client.send('Input.dispatchKeyEvent', {
-    type: 'keyUp',
-    key: 'Tab',
-    code: 'Tab',
-  });
-  await sleep(80);
-
-  const tabTrap = await evaluate(
-    client,
-    `(() => ({
-      isMenuButton: document.activeElement?.getAttribute('aria-controls') === 'mobile-navigation',
-    }))()`
-  );
-  assert(tabTrap.isMenuButton, 'Tab did not wrap from mobile CTA back to menu button.');
-
-  await client.send('Input.dispatchKeyEvent', {
-    type: 'keyDown',
-    key: 'Escape',
-    code: 'Escape',
-  });
-  await client.send('Input.dispatchKeyEvent', {
-    type: 'keyUp',
-    key: 'Escape',
-    code: 'Escape',
-  });
-  await sleep(100);
-
-  const mobileMenuClosed = await evaluate(
-    client,
-    `(() => ({
-      exists: Boolean(document.querySelector('#mobile-navigation')),
-      focusReturned:
-        document.activeElement?.getAttribute('aria-controls') === 'mobile-navigation',
-      mainInert: document.querySelector('main')?.hasAttribute('inert') || false,
-      footerInert: document.querySelector('footer')?.hasAttribute('inert') || false,
-      skipInert: document.querySelector('a.skip-link')?.hasAttribute('inert') || false,
-    }))()`
-  );
-  assert(!mobileMenuClosed.exists, 'Escape did not close mobile menu.');
-  assert(mobileMenuClosed.focusReturned, 'Escape did not restore focus to mobile menu button.');
-  assert(
-    !mobileMenuClosed.mainInert &&
-      !mobileMenuClosed.footerInert &&
-      !mobileMenuClosed.skipInert,
-    `Mobile menu background inert state was not restored: ${JSON.stringify(mobileMenuClosed)}.`
-  );
-
-  // Desktop scroll-effect regression: progress must track actual geometry.
+  // Desktop sticky-header + hero motion regression.
   await client.send('Emulation.setDeviceMetricsOverride', {
     width: 1440,
     height: 900,
@@ -556,200 +447,38 @@ try {
   });
   await client.send('Page.navigate', { url: BASE_URL });
   await waitForDocument(client);
+  await sleep(900);
 
-  const sampleRawAt = async (fraction) => {
-    const target = await evaluate(
-      client,
-      `(() => {
-        document.documentElement.style.scrollBehavior = 'auto';
-        const section = document.querySelector('[data-scroll-raw]');
-        const sticky = section?.querySelector('.mechanism-raw__sticky');
-        if (!section || !sticky) return null;
-        const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0;
-        const sectionTop = section.getBoundingClientRect().top + scrollY;
-        const travel = Math.max(1, section.offsetHeight - sticky.offsetHeight);
-        const target = sectionTop - stickyTop + travel * ${fraction};
-        window.scrollTo(0, target);
-        return { target, travel };
-      })()`
-    );
-
-    assert(target, `Desktop RAW scroll geometry is missing at ${fraction}.`);
-    await sleep(180);
-
-    return evaluate(
-      client,
-      `(() => {
-        const section = document.querySelector('[data-scroll-raw]');
-        const sticky = section?.querySelector('.mechanism-raw__sticky');
-        const stage = section?.querySelector('.mechanism-raw__stage');
-        const finalImage = section?.querySelector('.mechanism-raw__image--final');
-        const divider = section?.querySelector('.mechanism-raw__divider');
-        if (!section || !sticky || !stage || !finalImage || !divider) return null;
-        const stickyRect = sticky.getBoundingClientRect();
-        const stageRect = stage.getBoundingClientRect();
-        return {
-          progress: parseFloat(getComputedStyle(section).getPropertyValue('--raw-progress')) || 0,
-          clipPath: getComputedStyle(finalImage).clipPath,
-          dividerLeft: parseFloat(getComputedStyle(divider).left) || 0,
-          stickyTop: stickyRect.top,
-          stickyBottom: stickyRect.bottom,
-          stageTop: stageRect.top,
-          stageBottom: stageRect.bottom,
-          stageHeight: stageRect.height,
-        };
-      })()`
-    );
-  };
-
-  const rawQuarter = await sampleRawAt(0.25);
-  const rawThreeQuarter = await sampleRawAt(0.75);
-
-  assert(rawQuarter, 'Desktop RAW quarter-point metrics are missing.');
-  assert(rawThreeQuarter, 'Desktop RAW three-quarter metrics are missing.');
-  assert(
-    rawQuarter.progress > 0.15 && rawQuarter.progress < 0.35,
-    `Desktop RAW quarter progress should be near 0.25, got ${rawQuarter.progress}.`
-  );
-  assert(
-    rawThreeQuarter.progress > 0.65 && rawThreeQuarter.progress < 0.85,
-    `Desktop RAW three-quarter progress should be near 0.75, got ${rawThreeQuarter.progress}.`
-  );
-  assert(
-    rawQuarter.clipPath &&
-      rawQuarter.clipPath !== 'none' &&
-      rawThreeQuarter.clipPath &&
-      rawThreeQuarter.clipPath !== 'none' &&
-      rawQuarter.clipPath !== rawThreeQuarter.clipPath,
-    `Desktop RAW clip-path did not change with scroll: ${rawQuarter.clipPath} → ${rawThreeQuarter.clipPath}.`
-  );
-  assert(
-    rawThreeQuarter.dividerLeft > rawQuarter.dividerLeft + 100,
-    `Desktop RAW divider did not advance with scroll: ${rawQuarter.dividerLeft}px → ${rawThreeQuarter.dividerLeft}px.`
-  );
-
-  for (const [label, sample] of [
-    ['quarter', rawQuarter],
-    ['three-quarter', rawThreeQuarter],
-  ]) {
-    assert(
-      sample.stickyTop >= 55 && sample.stickyTop <= 80,
-      `Desktop RAW ${label} sticky stage is not pinned below the header: top ${sample.stickyTop}px.`
-    );
-    assert(
-      sample.stickyBottom >= 860 && sample.stickyBottom <= 905,
-      `Desktop RAW ${label} sticky stage does not fill the usable viewport: bottom ${sample.stickyBottom}px.`
-    );
-    assert(
-      sample.stageHeight >= 400 &&
-        sample.stageTop >= sample.stickyTop &&
-        sample.stageBottom <= sample.stickyBottom + 1,
-      `Desktop RAW ${label} visual stage is clipped or outside sticky viewport: ${JSON.stringify(sample)}.`
-    );
-  }
-
-  const rawShot = await client.send('Page.captureScreenshot', {
-    format: 'png',
-    captureBeyondViewport: false,
-  });
-  await writeFile(
-    `${SCREENSHOT_DIR}/scroll-raw-three-quarter-1440x900.png`,
-    Buffer.from(rawShot.data, 'base64')
-  );
-
-  const filmTarget = await evaluate(
+  const heroMotion = await evaluate(
     client,
     `(() => {
-      const section = document.querySelector('[data-scroll-film]');
-      const sticky = section?.querySelector('.mechanism-film__sticky');
-      if (!section || !sticky) return null;
-      const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0;
-      const sectionTop = section.getBoundingClientRect().top + scrollY;
-      const travel = Math.max(1, section.offsetHeight - sticky.offsetHeight);
-      const target = sectionTop - stickyTop + travel * 0.5;
-      window.scrollTo(0, target);
-      return { target, travel };
+      const animated = [...document.querySelectorAll('[data-hero-motion]')];
+      const visible = animated.every((el) => {
+        const s = getComputedStyle(el);
+        return Number(s.opacity) > 0.95 && new DOMMatrixReadOnly(s.transform).m42 > -1;
+      });
+      window.scrollTo(0, 260);
+      return { count: animated.length, visible };
     })()`
   );
-  assert(filmTarget, 'Desktop filmstrip scroll geometry is missing.');
+  assert(heroMotion.count >= 4, `Expected hero motion sequence, got ${heroMotion.count} nodes.`);
+  assert(heroMotion.visible, 'Hero motion sequence did not settle to visible state.');
   await sleep(180);
 
-  const filmMid = await evaluate(
+  const stickyHeader = await evaluate(
     client,
     `(() => {
-      const section = document.querySelector('[data-scroll-film]');
-      const sticky = section?.querySelector('.mechanism-film__sticky');
-      const heading = section?.querySelector('.mechanism-film__header h3');
-      const viewport = section?.querySelector('.mechanism-film__viewport');
-      const track = section?.querySelector('.mechanism-film__track');
-      const frame = section?.querySelector('.mechanism-film__frame');
-      if (!section || !sticky || !heading || !viewport || !track || !frame) return null;
-      const matrix = new DOMMatrixReadOnly(getComputedStyle(track).transform);
-      const horizontalTravel = Math.max(0, track.scrollWidth - viewport.clientWidth);
-      const stickyRect = sticky.getBoundingClientRect();
-      const viewportRect = viewport.getBoundingClientRect();
-      const frameRect = frame.getBoundingClientRect();
+      const header = document.querySelector('header');
+      const r = header?.getBoundingClientRect();
       return {
-        progress: parseFloat(getComputedStyle(section).getPropertyValue('--film-progress')) || 0,
-        translateX: matrix.m41,
-        horizontalTravel,
-        stickyTop: stickyRect.top,
-        stickyBottom: stickyRect.bottom,
-        stickyHeight: stickyRect.height,
-        viewportTop: viewportRect.top,
-        viewportBottom: viewportRect.bottom,
-        frameTop: frameRect.top,
-        frameBottom: frameRect.bottom,
-        frameHeight: frameRect.height,
-        headingClientWidth: heading.clientWidth,
-        headingScrollWidth: heading.scrollWidth,
+        fixed: header ? getComputedStyle(header).position === 'fixed' : false,
+        top: r?.top ?? null,
+        width: r?.width ?? 0,
       };
     })()`
   );
-  assert(filmMid, 'Desktop filmstrip midpoint metrics are missing.');
-  assert(
-    filmMid.horizontalTravel > 200,
-    `Desktop filmstrip has insufficient horizontal travel: ${filmMid.horizontalTravel}px.`
-  );
-  assert(
-    filmMid.progress > 0.35 && filmMid.progress < 0.65,
-    `Desktop filmstrip progress should be near 0.5, got ${filmMid.progress}.`
-  );
-  assert(
-    filmMid.translateX < 0 &&
-      Math.abs(filmMid.translateX) > filmMid.horizontalTravel * 0.3 &&
-      Math.abs(filmMid.translateX) < filmMid.horizontalTravel * 0.7,
-    `Desktop filmstrip must translate left in sync with scroll: ${filmMid.translateX}px of ${filmMid.horizontalTravel}px.`
-  );
-  assert(
-    filmMid.stickyTop >= 55 && filmMid.stickyTop <= 80,
-    `Desktop filmstrip sticky stage is not pinned below the header: top ${filmMid.stickyTop}px.`
-  );
-  assert(
-    filmMid.stickyBottom >= 860 && filmMid.stickyBottom <= 905,
-    `Desktop filmstrip sticky stage does not fill the usable viewport: bottom ${filmMid.stickyBottom}px.`
-  );
-  assert(
-    filmMid.viewportTop >= filmMid.stickyTop &&
-      filmMid.viewportBottom <= filmMid.stickyBottom + 16 &&
-      filmMid.frameTop >= filmMid.stickyTop &&
-      filmMid.frameBottom <= filmMid.stickyBottom + 1 &&
-      filmMid.frameHeight >= 300,
-    `Desktop filmstrip content is clipped or outside sticky viewport: ${JSON.stringify(filmMid)}.`
-  );
-  assert(
-    filmMid.headingScrollWidth <= filmMid.headingClientWidth + 1,
-    `Desktop filmstrip heading overflows its box: ${filmMid.headingScrollWidth}px > ${filmMid.headingClientWidth}px.`
-  );
-
-  const filmShot = await client.send('Page.captureScreenshot', {
-    format: 'png',
-    captureBeyondViewport: false,
-  });
-  await writeFile(
-    `${SCREENSHOT_DIR}/scroll-film-mid-1440x900.png`,
-    Buffer.from(filmShot.data, 'base64')
-  );
+  assert(stickyHeader.fixed, 'Header did not become fixed after scroll.');
+  assert(stickyHeader.top !== null && Math.abs(stickyHeader.top) <= 1, `Sticky header top is ${stickyHeader.top}.`);
 
   await client.send('Emulation.setDeviceMetricsOverride', {
     width: 390,
@@ -798,7 +527,7 @@ try {
     `(() => {
       const hero = document.querySelector('#top');
       const button = [...(hero?.querySelectorAll('button') || [])].find((el) =>
-        el.textContent?.includes('PYYDÄ 2 SISÄLTÖESIMERKKIÄ')
+        el.textContent?.includes('VARAA 20 MIN KESKUSTELU')
       );
       button?.click();
       return Boolean(button);
@@ -836,7 +565,7 @@ try {
     .filter((entry) => entry?.command === 'event')
     .map((entry) => entry?.payload?.name);
   assert(
-    analyticsNames.includes('primary_cta_click') &&
+    analyticsNames.includes('booking_cta_click') &&
       analyticsNames.includes('lead_form_open'),
     `CTA analytics events were not forwarded to Vercel Analytics: ${JSON.stringify(dialog.analyticsEvents)}.`
   );
@@ -844,10 +573,10 @@ try {
 
   await writeFile(
     `${SCREENSHOT_DIR}/results.json`,
-    JSON.stringify({ chromePath, results, scrollEffects: { rawQuarter, rawThreeQuarter, filmMid }, reducedMotion, dialog }, null, 2)
+    JSON.stringify({ chromePath, results, heroMotion, stickyHeader, mobileHeader, reducedMotion, dialog }, null, 2)
   );
 
-  console.log(JSON.stringify({ chromePath, results, scrollEffects: { rawQuarter, rawThreeQuarter, filmMid }, reducedMotion, dialog }, null, 2));
+  console.log(JSON.stringify({ chromePath, results, heroMotion, stickyHeader, mobileHeader, reducedMotion, dialog }, null, 2));
 } finally {
   client?.close();
 
