@@ -730,3 +730,13 @@ a:hover {
     transform: none !important;
   }
 }
+
+
+/* P1 editorial layer: deliberately limited to short accents, never UI copy. */
+.font-editorial-accent {
+  font-family: var(--font-editorial), Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
