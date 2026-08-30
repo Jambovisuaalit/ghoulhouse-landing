@@ -36,6 +36,7 @@ export function isLegacyDomainBridge() {
   const deploymentHost = normalizeHost(process.env.VERCEL_URL);
 
   return (
+    productionHost === 'www.ghoulhouse.fi' ||
     productionHost === `${LEGACY_VERCEL_PROJECT}.vercel.app` ||
     deploymentHost.startsWith(`${LEGACY_VERCEL_PROJECT}-`)
   );
