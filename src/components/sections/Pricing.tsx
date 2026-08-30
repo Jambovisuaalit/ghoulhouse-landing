@@ -5,7 +5,7 @@ import { siteConfig } from '@/config/site';
 const serviceSummary = [
   ['SISÄLTÖ', '12 alkuperäistä sisältöä / 30 päivää'],
   ['KANAVAT', 'Instagram + Facebook'],
-  ['TUOTANTO', 'Suunnittelu · kuvankäsittely · grafiikka · copy'],
+  ['TUOTANTO', 'Suunnittelu · kuvankäsittely · grafiikka · tekstit'],
   ['JULKAISU', 'Ajastus ja julkaisu'],
   ['KORJAUS', '1 koottu korjauskierros'],
   ['RAPORTTI', 'Kuukausittainen tulosyhteenveto'],
@@ -13,9 +13,9 @@ const serviceSummary = [
 
 const excluded = [
   'Maksettu mainonta',
-  'Community management',
+  'Päivittäinen kommentti- ja viestihallinta',
   'Kuvauspäivät',
-  'Jatkuva video- tai Reels-tuotanto',
+  'Jatkuva video- tai Reels-videotuotanto',
   'Muut kanavat kuin Instagram + Facebook',
 ] as const;
 
