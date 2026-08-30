@@ -241,17 +241,7 @@ section[id],
 .nav-shell--stuck {
   position: fixed;
   inset: 0 0 auto 0;
-  animation: nav-in 180ms ease-out both;
   box-shadow: 0 8px 28px rgba(17, 17, 17, 0.08);
-}
-
-@keyframes nav-in {
-  from {
-    transform: translateY(-100%);
-  }
-  to {
-    transform: translateY(0);
-  }
 }
 
 .hero-surface {
