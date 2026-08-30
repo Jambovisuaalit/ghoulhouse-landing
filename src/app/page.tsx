@@ -1,15 +1,14 @@
+import Navigation from '@/components/layout/Navigation';
+import Footer from '@/components/layout/Footer';
 import Hero from '@/components/sections/Hero';
-import Problem from '@/components/sections/Problem';
-import Audience from '@/components/sections/Audience';
-import Mechanism from '@/components/sections/Mechanism';
-import Deliverables from '@/components/sections/Deliverables';
+import ProofStrip from '@/components/sections/ProofStrip';
+import ProblemSolution from '@/components/sections/ProblemSolution';
 import Process from '@/components/sections/Process';
 import Pricing from '@/components/sections/Pricing';
+import ContentExamples from '@/components/sections/ContentExamples';
 import Founder from '@/components/sections/Founder';
 import FAQ from '@/components/sections/FAQ';
 import FinalCTA from '@/components/sections/FinalCTA';
-import Footer from '@/components/layout/Footer';
-import Navigation from '@/components/layout/Navigation';
 import FunnelAnalytics from '@/components/analytics/FunnelAnalytics';
 import { ContactProvider } from '@/components/contact/ContactProvider';
 
@@ -21,14 +20,13 @@ export default function Home() {
       </a>
       <FunnelAnalytics />
       <Navigation />
-      <main id="main-content" className="min-h-screen bg-ghost">
+      <main id="main-content" className="min-h-screen bg-paper">
         <Hero />
-        <Problem />
-        <Audience />
-        <Mechanism />
-        <Deliverables />
+        <ProofStrip />
+        <ProblemSolution />
         <Process />
         <Pricing />
+        <ContentExamples />
         <Founder />
         <FAQ />
         <FinalCTA />
