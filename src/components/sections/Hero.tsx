@@ -35,13 +35,13 @@ export default function Hero() {
 
   return (
     <section ref={heroRef} id="top" className="hero-surface overflow-hidden bg-black text-white" aria-labelledby="hero-title">
-      <Container className="relative py-16 md:py-24 lg:py-28">
+      <Container className="relative py-14 md:py-16 lg:py-20 xl:py-24">
         <div className="hero-grid" aria-hidden="true" />
 
         <div className="relative grid gap-12 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-8">
             <p data-hero-motion className="type-label text-signal">GhoulHouse / Social content system</p>
-            <h1 id="hero-title" data-hero-motion className="type-display mt-5 max-w-[10ch] text-white">
+            <h1 id="hero-title" data-hero-motion className="type-display mt-5 max-w-[15ch] text-white">
               TYÖMAAKUVAT SISÄÄN.
               <span className="block text-signal">VALMIS SOME ULOS.</span>
             </h1>
