@@ -7,6 +7,7 @@ on:
     branches:
       - main
       - feat/p0-production-foundation
+      - feat/landing-complete-booking-v6
 
 permissions:
   contents: read
