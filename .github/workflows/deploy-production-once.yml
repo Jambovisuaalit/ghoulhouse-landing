@@ -79,7 +79,7 @@ jobs:
             html="$(vercel curl / --deployment "$url" --token="$VERCEL_TOKEN" 2>/dev/null || true)"
             if printf '%s' "$html" | grep -q "TYÖMAAKUVAT SISÄÄN" && \
                printf '%s' "$html" | grep -q "PYYDÄ 2 SISÄLTÖESIMERKKIÄ" && \
-               printf '%s' "$html" | grep -q "Yksi työmaa. Monta kulmaa."; then
+               printf '%s' "$html" | grep -q "Yksi materiaali. Useampi käyttö."; then
               break
             fi
 
@@ -206,7 +206,7 @@ jobs:
 
           printf '%s' "$html" | grep -q 'rel="canonical" href="https://ghoulhouse.fi'
           printf '%s' "$html" | grep -q "TYÖMAAKUVAT SISÄÄN"
-          printf '%s' "$html" | grep -q "Yksi työmaa. Monta kulmaa."
+          printf '%s' "$html" | grep -q "Yksi materiaali. Useampi käyttö."
           printf '%s' "$html" | grep -q "KONSEPTIESIMERKKI — EI ASIAKASTYÖ"
           printf '%s' "$html" | grep -q 'data-offer-name="SOME 12"'
           printf '%s' "$html" | grep -q 'data-offer-price="490"'
