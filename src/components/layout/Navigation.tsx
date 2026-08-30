@@ -91,25 +91,22 @@ export default function Navigation() {
     <header className="sticky top-0 z-40 border-b border-ink/20 bg-ghost">
       <Container>
         <nav
-          className="flex min-h-[60px] items-center justify-between gap-5 min-[1100px]:min-h-[66px]"
+          className="flex min-h-[68px] items-center justify-between gap-5"
           aria-label="Päänavigaatio"
         >
           <Link
             href="#top"
-            className="inline-flex shrink-0 items-center gap-2"
+            className="inline-flex shrink-0 items-center"
             aria-label="GhoulHouse — sivun alku"
           >
             <Image
-              src="/mark-color.svg"
-              alt=""
-              width={96}
-              height={96}
+              src="/logo-horizontal.svg"
+              alt="GhoulHouse"
+              width={1400}
+              height={460}
               priority
-              className="h-10 w-10 shrink-0 min-[1100px]:h-11 min-[1100px]:w-11"
+              className="h-[48px] w-auto"
             />
-            <span className="font-display text-[1.55rem] uppercase leading-none tracking-[-0.025em] text-ink min-[1100px]:text-[1.75rem]">
-              GhoulHouse
-            </span>
           </Link>
 
           <div className="hidden items-center gap-7 min-[1100px]:flex min-[1100px]:gap-9">
@@ -148,7 +145,7 @@ export default function Navigation() {
       {mobileMenuOpen && (
         <div
           id="mobile-navigation"
-          className="absolute inset-x-0 top-full max-h-[calc(100svh-60px)] overflow-y-auto border-y-2 border-ink bg-ghost min-[1100px]:hidden"
+          className="absolute inset-x-0 top-full max-h-[calc(100svh-68px)] overflow-y-auto border-y border-ink bg-ghost min-[1100px]:hidden"
         >
           <Container className="py-5">
             <div className="grid">

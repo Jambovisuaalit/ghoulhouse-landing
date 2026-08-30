@@ -3,9 +3,9 @@ import ContactTrigger from '@/components/contact/ContactTrigger';
 import { siteConfig } from '@/config/site';
 
 const serviceSummary = [
-  ['CORE', '12 alkuperäistä sisältöä / 30 päivää'],
+  ['SISÄLTÖ', '12 alkuperäistä sisältöä / 30 päivää'],
   ['KANAVAT', 'Instagram + Facebook'],
-  ['TUOTANTO', 'Suunnittelu · kuvankäsittely · grafiikka · copy'],
+  ['TUOTANTO', 'Suunnittelu · kuvankäsittely · grafiikka · tekstit'],
   ['JULKAISU', 'Ajastus ja julkaisu'],
   ['KORJAUS', '1 koottu korjauskierros'],
   ['RAPORTTI', 'Kuukausittainen tulosyhteenveto'],
@@ -13,9 +13,9 @@ const serviceSummary = [
 
 const excluded = [
   'Maksettu mainonta',
-  'Community management',
+  'Päivittäinen kommentti- ja viestihallinta',
   'Kuvauspäivät',
-  'Jatkuva video- tai Reels-tuotanto',
+  'Jatkuva video- tai Reels-videotuotanto',
   'Muut kanavat kuin Instagram + Facebook',
 ] as const;
 
@@ -25,7 +25,7 @@ export default function Pricing() {
   return (
     <section
       id="pricing"
-      className="border-y-2 border-ink bg-ghost py-14 md:py-20"
+      className="border-y border-ink bg-ghost py-14 md:py-20"
       aria-labelledby="pricing-title"
     >
       <Container>

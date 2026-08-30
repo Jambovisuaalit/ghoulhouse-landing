@@ -4,36 +4,37 @@ import Image from 'next/image';
 import { useEffect, useRef } from 'react';
 import Container from '@/components/ui/Container';
 
+const rawPhoto =
+  'https://images.unsplash.com/photo-1768321917661-d4f1a89d2185?auto=format&fit=crop&fm=jpg&q=85&w=1800';
+const finishedBathroom =
+  'https://images.unsplash.com/photo-1771929662486-f793e08f0f16?auto=format&fit=crop&fm=jpg&q=85&w=1800';
+const finishedBathroomAlt =
+  'https://images.unsplash.com/photo-1741282306943-2f2e4c4e0aa5?auto=format&fit=crop&fm=jpg&q=85&w=1800';
+
 const frames = [
   {
-    image: '/hero-renovation-clean.svg',
+    image: rawPhoto,
     index: '01',
-    label: 'RAW',
+    label: 'RAAKA',
     caption: 'Työmaalta sellaisenaan',
   },
   {
-    image: '/work-detail.svg',
+    image: rawPhoto,
     index: '02',
-    label: 'DETAIL',
-    caption: 'Osaaminen nostetaan esiin',
+    label: 'KULMA',
+    caption: 'Työvaiheesta asiantuntijasisältö',
   },
   {
-    image: '/finished-space.svg',
+    image: finishedBathroom,
     index: '03',
-    label: 'CRAFT',
-    caption: 'Työvaiheesta sisältökulma',
+    label: 'KOHDE',
+    caption: 'Valmis tila referenssiksi',
   },
   {
-    image: '/hero-renovation.svg',
+    image: finishedBathroomAlt,
     index: '04',
-    label: 'FINAL',
-    caption: 'Visuaalisesti viimeistelty',
-  },
-  {
-    image: '/finished-space.svg',
-    index: '05',
-    label: 'PUBLISH',
-    caption: 'Valmis julkaistavaksi',
+    label: 'JULKAISU',
+    caption: 'Kuva, rakenne ja viesti yhdessä',
   },
 ] as const;
 
@@ -102,10 +103,7 @@ export default function Mechanism() {
     ) => {
       const sectionRect = section.getBoundingClientRect();
       const stickyTop = Number.parseFloat(sticky.style.top) || 0;
-      const travel = Math.max(
-        1,
-        section.offsetHeight - sticky.offsetHeight
-      );
+      const travel = Math.max(1, section.offsetHeight - sticky.offsetHeight);
 
       return clamp((stickyTop - sectionRect.top) / travel);
     };
@@ -121,10 +119,7 @@ export default function Mechanism() {
       const rawProgress = sectionProgress(rawSection, rawSticky);
       const rawCut = 100 - rawProgress * 100;
 
-      rawSection.style.setProperty(
-        '--raw-progress',
-        rawProgress.toFixed(4)
-      );
+      rawSection.style.setProperty('--raw-progress', rawProgress.toFixed(4));
       rawSection.style.setProperty('--raw-cut', `${rawCut.toFixed(2)}%`);
       rawSection.style.setProperty(
         '--raw-left',
@@ -161,10 +156,7 @@ export default function Mechanism() {
         filmTrack.scrollWidth - filmViewport.clientWidth
       );
 
-      filmSection.style.setProperty(
-        '--film-progress',
-        filmProgress.toFixed(4)
-      );
+      filmSection.style.setProperty('--film-progress', filmProgress.toFixed(4));
       filmTrack.style.transform = `translate3d(${(
         -horizontalTravel * filmProgress
       ).toFixed(2)}px, 0, 0)`;
@@ -187,22 +179,16 @@ export default function Mechanism() {
         document.querySelector<HTMLElement>('body > header') ??
         document.querySelector<HTMLElement>('header');
       const headerHeight = Math.round(
-        header?.getBoundingClientRect().height ?? 66
+        header?.getBoundingClientRect().height ?? 68
       );
-      const stickyHeight = Math.max(
-        520,
-        window.innerHeight - headerHeight
-      );
+      const stickyHeight = Math.max(520, window.innerHeight - headerHeight);
 
       rawSticky.style.top = `${headerHeight}px`;
       rawSticky.style.height = `${stickyHeight}px`;
       filmSticky.style.top = `${headerHeight}px`;
       filmSticky.style.height = `${stickyHeight}px`;
 
-      const rawTravel = Math.min(
-        1500,
-        Math.max(950, stickyHeight * 1.35)
-      );
+      const rawTravel = Math.min(1500, Math.max(950, stickyHeight * 1.35));
       rawSection.style.height = `${stickyHeight + rawTravel}px`;
 
       const horizontalTravel = Math.max(
@@ -246,78 +232,72 @@ export default function Mechanism() {
   return (
     <section
       id="mechanism"
-      className="border-y-2 border-ink bg-ink text-ghost"
+      className="border-y border-ink bg-ink text-ghost"
       aria-labelledby="mechanism-title"
     >
-      <Container className="py-14 md:py-20">
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-end">
-          <div className="lg:col-span-9">
-            <p className="type-label mb-4 text-signal">
-              Signature / RAW → FINAL
-            </p>
+      <Container className="py-16 md:py-24">
+        <div className="grid grid-cols-1 gap-7 lg:grid-cols-12 lg:items-end">
+          <div className="lg:col-span-8">
+            <p className="type-label mb-4 text-signal">Työmaalta julkaisuun</p>
             <h2
               id="mechanism-title"
-              className="type-display max-w-[13ch] text-ghost"
+              className="type-display max-w-[12ch] text-ghost"
             >
-              Worksite material
-              <span className="block text-signal">→ GhoulHouse →</span>
-              ready social content.
+              Sama työ.
+              <span className="block text-signal">Parempi näyttö.</span>
             </h2>
           </div>
-
-          <p className="type-editorial max-w-sm text-ghost/65 lg:col-span-3 lg:pb-1">
-            Sama materiaali. Selkeämpi rajaus, rakenne ja viesti.
-          </p>
+          <div className="lg:col-span-4">
+            <p className="font-editorial-accent text-[clamp(1.55rem,2.4vw,2.15rem)] leading-[1.05] text-ghost">
+              Ei uutta kuvauspäivää.
+            </p>
+            <p className="type-editorial mt-3 max-w-md text-ghost/65">
+              Työmaalla jo syntyvä materiaali saa selkeän rajauksen, sisältökulman
+              ja julkaisuvalmiin muodon.
+            </p>
+          </div>
         </div>
       </Container>
 
-      <div
-        ref={rawSectionRef}
-        className="mechanism-raw"
-        data-scroll-raw
-      >
+      <div ref={rawSectionRef} className="mechanism-raw" data-scroll-raw>
         <div ref={rawStickyRef} className="mechanism-raw__sticky">
           <div className="mechanism-raw__copy mechanism-raw__copy--raw">
-            <span className="type-label text-signal">01 / RAW</span>
+            <span className="type-label text-signal">01 / RAAKA</span>
             <h3>Puhelimesta.</h3>
-            <p>
-              Oikea työmaa. Oikea hetki. Materiaali sellaisena kuin se syntyy.
-            </p>
+            <p>Oikea työmaa. Materiaali sellaisena kuin se syntyy.</p>
           </div>
 
           <div
             className="mechanism-raw__stage"
-            aria-label="RAW to FINAL -konseptitransformaatio"
+            aria-label="Raakamateriaalista valmiiksi somejulkaisuksi"
           >
             <div className="mechanism-raw__image mechanism-raw__image--source">
               <Image
-                src="/hero-renovation-clean.svg"
-                alt="Raaka työmaamateriaali ennen GhoulHouse-käsittelyä"
+                src={rawPhoto}
+                alt="Oikea remonttityömaa ennen sisältökäsittelyä"
                 fill
-                sizes="(max-width: 1023px) 100vw, 58vw"
+                sizes="(max-width: 1099px) 100vw, 58vw"
                 className="object-cover"
               />
               <div className="mechanism-raw__technical" aria-hidden="true">
-                <span>RAW / 01</span>
-                <span>WORKSITE MATERIAL</span>
-                <span>UNEDITED</span>
+                <span>RAAKA / 01</span>
+                <span>TYÖMAAMATERIAALI</span>
+                <span>KÄSITTELEMÄTÖN</span>
               </div>
             </div>
 
             <div className="mechanism-raw__image mechanism-raw__image--final">
               <Image
-                src="/finished-space.svg"
-                alt="GhoulHouse-käsittelyn jälkeen syntyvää valmista somejulkaisua havainnollistava konseptikuva"
+                src={rawPhoto}
+                alt="Sama remonttikuva osana viimeisteltyä GhoulHouse-sisältökonseptia"
                 fill
-                sizes="(max-width: 1023px) 100vw, 58vw"
+                sizes="(max-width: 1099px) 100vw, 58vw"
                 className="object-cover"
               />
               <div className="mechanism-raw__final-frame" aria-hidden="true" />
               <div className="mechanism-raw__final-copy">
-                <span className="type-label text-signal">
-                  GhoulHouse / final
-                </span>
-                <strong>Työ näyttää yhtä hyvältä kuin se on.</strong>
+                <span className="type-label text-signal">GHOULHOUSE / VALMIS</span>
+                <strong>Pohjatyö ratkaisee lopputuloksen.</strong>
                 <small>KONSEPTIESIMERKKI — EI ASIAKASTYÖ</small>
               </div>
             </div>
@@ -328,24 +308,18 @@ export default function Mechanism() {
           </div>
 
           <div className="mechanism-raw__copy mechanism-raw__copy--final">
-            <span className="type-label text-signal">02 / FINAL</span>
-            <h3>Julkaisuun.</h3>
-            <p>
-              Rajaus, rakenne, copy ja CTA — sama työ selkeämmässä muodossa.
-            </p>
+            <span className="type-label text-signal">02 / JULKAISU</span>
+            <h3>Näkyväksi.</h3>
+            <p>Rajaus, sisältökulma, teksti ja toimintakehotus valmiina.</p>
           </div>
         </div>
       </div>
 
-      <div
-        ref={filmSectionRef}
-        className="mechanism-film"
-        data-scroll-film
-      >
+      <div ref={filmSectionRef} className="mechanism-film" data-scroll-film>
         <div ref={filmStickyRef} className="mechanism-film__sticky">
           <div className="mechanism-film__header">
-            <p className="type-label text-signal">Filmstrip / prosessi</p>
-            <h3>Yksi työmaa. Monta kulmaa.</h3>
+            <p className="type-label text-signal">Sisältöesimerkit</p>
+            <h3>Yksi materiaali. Useampi käyttö.</h3>
           </div>
 
           <div
@@ -353,7 +327,7 @@ export default function Mechanism() {
             className="mechanism-film__viewport"
             tabIndex={0}
             role="region"
-            aria-label="Sisältöprosessin filmstrip"
+            aria-label="GhoulHouse-sisältöesimerkit"
           >
             <div ref={filmTrackRef} className="mechanism-film__track">
               {frames.map((frame) => (
@@ -364,7 +338,7 @@ export default function Mechanism() {
                       src={frame.image}
                       alt=""
                       fill
-                      sizes="(max-width: 1023px) 82vw, 38vw"
+                      sizes="(max-width: 1099px) 82vw, 38vw"
                       className="object-cover"
                     />
                     <span>{frame.label}</span>
@@ -381,6 +355,11 @@ export default function Mechanism() {
           <div className="mechanism-film__progress" aria-hidden="true">
             <span />
           </div>
+
+          <p className="type-caption mt-4 text-ghost/55">
+            Kuvareferenssit: Unsplash · konseptiesimerkkejä, ei GhoulHousen
+            asiakastöitä.
+          </p>
         </div>
       </div>
     </section>

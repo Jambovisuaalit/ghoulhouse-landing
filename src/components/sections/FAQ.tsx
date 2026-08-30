@@ -17,7 +17,7 @@ export const faqItems = [
       'Ei. SOME 12 -palvelu keskittyy orgaaniseen sisältöön ja sen julkaisemiseen. Maksettu mainonta ei sisälly palveluun.',
   },
   {
-    question: 'Sisältyykö kuvauspäivä tai jatkuva videotuotanto?',
+    question: 'Sisältyykö kuvauspäivä tai jatkuva video- ja Reels-videotuotanto?',
     answer:
       'Ei tähän palveluun. GhoulHouse työskentelee ensisijaisesti asiakkaan toimittaman materiaalin kanssa. Erilliset kuvauspäivät tai laajempi videotuotanto eivät kuulu peruspalveluun.',
   },
@@ -34,7 +34,7 @@ export const faqItems = [
   {
     question: 'Mitä palveluun ei kuulu?',
     answer:
-      'Maksettu mainonta, community management, jatkuva videotuotanto, kuvauspäivät ja Instagramin sekä Facebookin ulkopuoliset kanavat eivät sisälly SOME 12 -palveluun. Mahdolliset lisätyöt sovitaan aina erikseen.',
+      'Maksettu mainonta, päivittäinen kommentti- ja viestihallinta, jatkuva video- ja Reels-videotuotanto, kuvauspäivät ja Instagramin sekä Facebookin ulkopuoliset kanavat eivät sisälly SOME 12 -palveluun. Mahdolliset lisätyöt sovitaan aina erikseen.',
   },
   {
     question: 'Lupaako GhoulHouse liidejä tai myyntiä?',

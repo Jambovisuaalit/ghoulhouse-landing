@@ -4,7 +4,7 @@ import { siteConfig } from '@/config/site';
 
 export default function FinalCTA() {
   return (
-    <section className="overflow-hidden border-t-2 border-signal bg-ink py-16 text-ghost md:py-20">
+    <section className="overflow-hidden border-t border-signal bg-ink py-16 text-ghost md:py-20">
       <Container>
         <div className="grid grid-cols-1 gap-9 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
