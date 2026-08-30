@@ -20,7 +20,7 @@ export default function FinalCTA() {
             </p>
             <div className="mt-7 grid gap-3">
               <ContactTrigger className="btn btn-primary w-full">{siteConfig.cta.primary}</ContactTrigger>
-              <ContactTrigger className="btn btn-inverse w-full">{siteConfig.cta.secondary}</ContactTrigger>
+              <ContactTrigger intent="photos" className="btn btn-inverse w-full">{siteConfig.cta.secondary}</ContactTrigger>
             </div>
             <p className="mt-4 text-xs font-bold uppercase tracking-[0.09em] text-white/45">
               Työkuvien toimituskanava: [TARKISTA]
