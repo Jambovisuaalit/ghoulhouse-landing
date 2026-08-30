@@ -317,6 +317,8 @@ try {
           priceText: price?.textContent?.replace(/\\s+/g, ' ').trim() || '',
           offerName: offerCard?.getAttribute('data-offer-name') || '',
           offerPrice: offerCard?.getAttribute('data-offer-price') || '',
+          proofRaw: Boolean(document.querySelector('[data-scroll-raw]')),
+          proofFilm: Boolean(document.querySelector('[data-scroll-film]')),
           bodyText: document.body.innerText.replace(/\\s+/g, ' ').trim(),
           brandText: brand?.textContent?.replace(/\\s+/g, ' ').trim() || '',
           brandRect: rect(brand),
@@ -366,6 +368,8 @@ try {
       metrics.offerPrice === '490',
       `${viewport.width}px: pricing card offer price must be 490, got "${metrics.offerPrice}".`
     );
+    assert(metrics.proofRaw, `${viewport.width}px: RAW → FINAL Proof Engine is not mounted.`);
+    assert(metrics.proofFilm, `${viewport.width}px: filmstrip Proof Engine is not mounted.`);
     assert(
       !metrics.bodyText.includes('790 €') &&
         !metrics.bodyText.includes('MANAGED') &&
@@ -494,6 +498,127 @@ try {
   assert(stickyHeader.fixed, 'Header did not become fixed after scroll.');
   assert(stickyHeader.top !== null && Math.abs(stickyHeader.top) <= 1, `Sticky header top is ${stickyHeader.top}.`);
 
+  // Desktop Proof Engine scroll regression.
+  await client.send('Emulation.setDeviceMetricsOverride', {
+    width: 1440,
+    height: 900,
+    deviceScaleFactor: 1,
+    mobile: false,
+  });
+  await client.send('Emulation.setEmulatedMedia', {
+    media: '',
+    features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }],
+  });
+  await client.send('Page.navigate', { url: BASE_URL });
+  await waitForDocument(client);
+  await sleep(300);
+
+  const sampleRawProof = async (fraction) => {
+    const target = await evaluate(
+      client,
+      \`(() => {
+        document.documentElement.style.scrollBehavior = 'auto';
+        const section = document.querySelector('[data-scroll-raw]');
+        const sticky = section?.querySelector('.mechanism-raw__sticky');
+        if (!section || !sticky) return null;
+        const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0;
+        const sectionTop = section.getBoundingClientRect().top + scrollY;
+        const travel = Math.max(1, section.offsetHeight - sticky.offsetHeight);
+        window.scrollTo(0, sectionTop - stickyTop + travel * \${fraction});
+        return { travel };
+      })()\`
+    );
+    assert(target, \`RAW Proof Engine geometry missing at \${fraction}.\`);
+    await sleep(180);
+
+    return evaluate(
+      client,
+      \`(() => {
+        const section = document.querySelector('[data-scroll-raw]');
+        const divider = section?.querySelector('.mechanism-raw__divider');
+        const finalImage = section?.querySelector('.mechanism-raw__image--final');
+        if (!section || !divider || !finalImage) return null;
+        return {
+          progress: parseFloat(getComputedStyle(section).getPropertyValue('--raw-progress')) || 0,
+          dividerLeft: parseFloat(getComputedStyle(divider).left) || 0,
+          clipPath: getComputedStyle(finalImage).clipPath,
+        };
+      })()\`
+    );
+  };
+
+  const rawQuarter = await sampleRawProof(0.25);
+  const rawThreeQuarter = await sampleRawProof(0.75);
+  assert(rawQuarter && rawThreeQuarter, 'RAW Proof Engine metrics are missing.');
+  assert(
+    rawQuarter.progress > 0.15 && rawQuarter.progress < 0.35,
+    \`RAW quarter progress expected near 0.25, got \${rawQuarter.progress}.\`
+  );
+  assert(
+    rawThreeQuarter.progress > 0.65 && rawThreeQuarter.progress < 0.85,
+    \`RAW three-quarter progress expected near 0.75, got \${rawThreeQuarter.progress}.\`
+  );
+  assert(
+    rawThreeQuarter.dividerLeft > rawQuarter.dividerLeft + 100,
+    \`RAW divider did not advance: \${rawQuarter.dividerLeft}px → \${rawThreeQuarter.dividerLeft}px.\`
+  );
+  assert(
+    rawQuarter.clipPath !== rawThreeQuarter.clipPath,
+    \`RAW clip-path did not change: \${rawQuarter.clipPath} → \${rawThreeQuarter.clipPath}.\`
+  );
+
+  const filmTarget = await evaluate(
+    client,
+    \`(() => {
+      const section = document.querySelector('[data-scroll-film]');
+      const sticky = section?.querySelector('.mechanism-film__sticky');
+      if (!section || !sticky) return null;
+      const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0;
+      const sectionTop = section.getBoundingClientRect().top + scrollY;
+      const travel = Math.max(1, section.offsetHeight - sticky.offsetHeight);
+      window.scrollTo(0, sectionTop - stickyTop + travel * 0.5);
+      return { travel };
+    })()\`
+  );
+  assert(filmTarget, 'Filmstrip Proof Engine geometry is missing.');
+  await sleep(180);
+
+  const filmMid = await evaluate(
+    client,
+    \`(() => {
+      const section = document.querySelector('[data-scroll-film]');
+      const viewport = section?.querySelector('.mechanism-film__viewport');
+      const track = section?.querySelector('.mechanism-film__track');
+      if (!section || !viewport || !track) return null;
+      const matrix = new DOMMatrixReadOnly(getComputedStyle(track).transform);
+      const horizontalTravel = Math.max(0, track.scrollWidth - viewport.clientWidth);
+      return {
+        progress: parseFloat(getComputedStyle(section).getPropertyValue('--film-progress')) || 0,
+        translateX: matrix.m41,
+        horizontalTravel,
+      };
+    })()\`
+  );
+  assert(filmMid, 'Filmstrip Proof Engine midpoint metrics are missing.');
+  assert(filmMid.horizontalTravel > 200, \`Filmstrip travel too small: \${filmMid.horizontalTravel}px.\`);
+  assert(
+    filmMid.progress > 0.35 && filmMid.progress < 0.65,
+    \`Filmstrip progress expected near 0.5, got \${filmMid.progress}.\`
+  );
+  assert(
+    filmMid.translateX < 0 && Math.abs(filmMid.translateX) > filmMid.horizontalTravel * 0.3,
+    \`Filmstrip did not translate with scroll: \${filmMid.translateX}px of \${filmMid.horizontalTravel}px.\`
+  );
+
+  const proofShot = await client.send('Page.captureScreenshot', {
+    format: 'png',
+    captureBeyondViewport: false,
+  });
+  await writeFile(
+    \`\${SCREENSHOT_DIR}/proof-engine-film-mid-1440x900.png\`,
+    Buffer.from(proofShot.data, 'base64')
+  );
+
   await client.send('Emulation.setDeviceMetricsOverride', {
     width: 390,
     height: 844,
@@ -515,10 +640,15 @@ try {
         const style = getComputedStyle(el);
         return style.animationName !== 'none' && style.animationDuration !== '0s' && style.animationDuration !== '0.01ms';
       }).length,
+      rawPosition: getComputedStyle(document.querySelector('.mechanism-raw__sticky')).position,
+      filmPosition: getComputedStyle(document.querySelector('.mechanism-film__sticky')).position,
+      filmTransform: getComputedStyle(document.querySelector('.mechanism-film__track')).transform,
     }))()`
   );
   assert(reducedMotion.scrollBehavior === 'auto', 'Reduced motion must disable smooth scrolling.');
   assert(reducedMotion.animatedElements === 0, 'Reduced motion left persistent animation running.');
+  assert(reducedMotion.rawPosition !== 'sticky', 'Reduced motion must disable RAW sticky choreography.');
+  assert(reducedMotion.filmPosition !== 'sticky', 'Reduced motion must disable filmstrip sticky choreography.');
 
   await client.send('Emulation.setEmulatedMedia', {
     media: '',
@@ -587,10 +717,10 @@ try {
 
   await writeFile(
     `${SCREENSHOT_DIR}/results.json`,
-    JSON.stringify({ chromePath, results, heroMotion, stickyHeader, mobileHeader, reducedMotion, dialog }, null, 2)
+    JSON.stringify({ chromePath, results, heroMotion, stickyHeader, proofEngine: { rawQuarter, rawThreeQuarter, filmMid }, mobileHeader, reducedMotion, dialog }, null, 2)
   );
 
-  console.log(JSON.stringify({ chromePath, results, heroMotion, stickyHeader, mobileHeader, reducedMotion, dialog }, null, 2));
+  console.log(JSON.stringify({ chromePath, results, heroMotion, stickyHeader, proofEngine: { rawQuarter, rawThreeQuarter, filmMid }, mobileHeader, reducedMotion, dialog }, null, 2));
 } finally {
   client?.close();
 
