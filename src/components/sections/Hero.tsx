@@ -92,7 +92,7 @@ export default function Hero() {
           </div>
           <figcaption className="type-caption mt-3 flex flex-col gap-1 text-ink/60 sm:flex-row sm:items-center sm:justify-between">
             <span>Oikea remonttivalokuva → sisältökonsepti</span>
-            <span>Stock-referenssi · ei asiakastyö</span>
+            <span>Kuvareferenssi · ei asiakastyö</span>
           </figcaption>
         </figure>
       </Container>
