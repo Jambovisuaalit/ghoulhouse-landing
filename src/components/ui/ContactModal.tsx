@@ -240,15 +240,17 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
               <div className="grid grid-cols-[42px_1fr] gap-3 border-b border-ink/20 py-4">
                 <span className="type-label text-signal">02</span>
                 <p className="type-ui text-ink">
-                  Jos esimerkkien tekemiseen tarvitaan työmaakuvia, pyydämme ne
-                  erikseen antamaasi sähköpostiin.
+                  {isBooking
+                    ? 'Ehdotamme keskustelulle sopivaa etenemistapaa ja vahvistamme ajan erikseen.'
+                    : 'Työkuvien varsinainen toimituskanava vahvistetaan erikseen: [TARKISTA].'}
                 </p>
               </div>
               <div className="grid grid-cols-[42px_1fr] gap-3 py-4">
                 <span className="type-label text-signal">03</span>
                 <p className="type-ui text-ink">
-                  Saat kaksi yrityskohtaista konseptiesimerkkiä siitä, miltä
-                  GhoulHouse-sisältö voisi näyttää.
+                  {isBooking
+                    ? '20 minuutin keskustelussa käydään läpi tarve, materiaalit ja SOME 12 -palvelun sopivuus.'
+                    : 'Kun kuvat ja faktat on vahvistettu, konseptidemo voidaan rakentaa ilman oletuksia käyttöoikeuksista.'}
                 </p>
               </div>
             </div>
@@ -488,7 +490,9 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
                 <span>
                   {status === 'submitting'
                     ? 'PYYNTÖÄ LÄHETETÄÄN…'
-                    : siteConfig.cta.primary}
+                    : isBooking
+                      ? siteConfig.cta.primary
+                      : siteConfig.cta.secondary}
                 </span>
                 <span
                   aria-hidden="true"
@@ -500,8 +504,8 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
 
               <div className="type-caption mt-4 grid gap-2 text-ink/60 sm:grid-cols-[1fr_auto] sm:items-start sm:gap-6">
                 <p>
-                  Antamiasi tietoja käytetään sisältöesimerkkipyynnön
-                  käsittelyyn ja siihen liittyvään yhteydenottoon.
+                  Antamiasi tietoja käytetään tämän yhteydenottopyynnön
+                  käsittelyyn ja siihen liittyvään viestintään.
                   {siteConfig.legal.privacyPath && (
                     <>
                       {' '}
@@ -516,7 +520,9 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
                   )}
                 </p>
                 <p className="font-bold text-ink/70">
-                  Työmaakuvia pyydetään vain tarvittaessa.
+                  {isBooking
+                    ? 'Keskusteluaika vahvistetaan erikseen.'
+                    : 'Kuvien toimituskanava: [TARKISTA].'}
                 </p>
               </div>
             </div>
