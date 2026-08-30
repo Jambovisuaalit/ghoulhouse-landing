@@ -78,8 +78,8 @@ jobs:
           for i in {1..20}; do
             html="$(vercel curl / --deployment "$url" --token="$VERCEL_TOKEN" 2>/dev/null || true)"
             if printf '%s' "$html" | grep -q "TYÖMAAKUVAT SISÄÄN" && \
-               printf '%s' "$html" | grep -q "PYYDÄ 2 SISÄLTÖESIMERKKIÄ" && \
-               printf '%s' "$html" | grep -q "Yksi materiaali. Useampi käyttö."; then
+               printf '%s' "$html" | grep -q "VALMIS SOME ULOS" && \
+               printf '%s' "$html" | grep -q "VARAA 20 MIN KESKUSTELU"; then
               break
             fi
 
@@ -91,10 +91,10 @@ jobs:
             sleep 3
           done
 
-          printf '%s' "$html" | grep -q 'data-offer-name="SOME 12"'
+          printf '%s' "$html" | grep -q 'data-offer-name="GHOULHOUSE SOME 12"'
           printf '%s' "$html" | grep -q 'data-offer-price="490"'
 
-          if printf '%s' "$html" | grep -Eqi 'MANAGED|Palvelujaksosta 4'; then
+          if printf '%s' "$html" | grep -Eqi 'MANAGED|Palvelujaksosta 4|790 €'; then
             echo "::error::Preview contains obsolete pricing lifecycle."
             exit 1
           fi
@@ -161,10 +161,11 @@ jobs:
           for i in {1..20}; do
             html="$(vercel curl / --deployment "$url" --token="$VERCEL_TOKEN" 2>/dev/null || true)"
             if printf '%s' "$html" | grep -q "TYÖMAAKUVAT SISÄÄN" && \
-               printf '%s' "$html" | grep -q 'data-offer-name="SOME 12"' && \
-               printf '%s' "$html" | grep -q 'data-offer-price="490"' && \
-               printf '%s' "$html" | grep -q "KONSEPTIESIMERKKI — EI ASIAKASTYÖ"; then
-              if printf '%s' "$html" | grep -Eqi 'MANAGED|Palvelujaksosta 4'; then
+               printf '%s' "$html" | grep -q "VALMIS SOME ULOS" && \
+               printf '%s' "$html" | grep -q "VARAA 20 MIN KESKUSTELU" && \
+               printf '%s' "$html" | grep -q 'data-offer-name="GHOULHOUSE SOME 12"' && \
+               printf '%s' "$html" | grep -q 'data-offer-price="490"'; then
+              if printf '%s' "$html" | grep -Eqi 'MANAGED|Palvelujaksosta 4|790 €'; then
                 echo "::error::Production candidate contains obsolete pricing lifecycle."
                 exit 1
               fi
@@ -206,12 +207,12 @@ jobs:
 
           printf '%s' "$html" | grep -q 'rel="canonical" href="https://ghoulhouse.fi'
           printf '%s' "$html" | grep -q "TYÖMAAKUVAT SISÄÄN"
-          printf '%s' "$html" | grep -q "Yksi materiaali. Useampi käyttö."
-          printf '%s' "$html" | grep -q "KONSEPTIESIMERKKI — EI ASIAKASTYÖ"
-          printf '%s' "$html" | grep -q 'data-offer-name="SOME 12"'
+          printf '%s' "$html" | grep -q "VALMIS SOME ULOS"
+          printf '%s' "$html" | grep -q "VARAA 20 MIN KESKUSTELU"
+          printf '%s' "$html" | grep -q 'data-offer-name="GHOULHOUSE SOME 12"'
           printf '%s' "$html" | grep -q 'data-offer-price="490"'
 
-          if printf '%s' "$html" | grep -Eqi 'MANAGED|Palvelujaksosta 4'; then
+          if printf '%s' "$html" | grep -Eqi 'MANAGED|Palvelujaksosta 4|790 €'; then
             echo "::error::Canonical homepage contains obsolete pricing lifecycle."
             exit 1
           fi
@@ -239,7 +240,7 @@ jobs:
             --write-out '%{http_code}' \
             --request POST \
             --header 'content-type: application/json' \
-            --data '{"company":"GhoulHouse Release QA","name":"Release Gate","email":"release-qa@ghoulhouse.fi","profile":"https://ghoulhouse.fi","message":"Automated production release QA. No action required."}' \
+            --data '{"intent":"booking","company":"GhoulHouse Release QA","name":"Release Gate","email":"release-qa@ghoulhouse.fi","profile":"https://ghoulhouse.fi","message":"Automated production release QA. No action required."}' \
             "$CANONICAL_URL/api/leads")"
 
           if [ "$valid_status" != "201" ]; then
