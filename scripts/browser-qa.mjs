@@ -6,8 +6,8 @@ const SCREENSHOT_DIR = process.env.QA_SCREENSHOT_DIR || 'qa-artifacts';
 const USER_DATA_DIR = `/tmp/ghoulhouse-browser-qa-${process.pid}`;
 
 const viewports = [
-  { width: 320, height: 800 },
-  { width: 375, height: 812 },
+  { width: 320, height: 568 },
+  { width: 375, height: 667 },
   { width: 390, height: 844 },
   { width: 430, height: 932 },
   { width: 768, height: 1024 },
@@ -80,10 +80,7 @@ class CdpClient {
     if (this.ws.readyState === WebSocket.OPEN) return;
 
     await new Promise((resolve, reject) => {
-      const timer = setTimeout(
-        () => reject(new Error('CDP websocket open timeout.')),
-        10_000
-      );
+      const timer = setTimeout(() => reject(new Error('CDP websocket open timeout.')), 10_000);
 
       this.ws.addEventListener(
         'open',
@@ -265,9 +262,12 @@ try {
         const h1 = document.querySelector('h1');
         const offerCard = document.querySelector('[data-offer-card]');
         const heroButtons = [...(hero?.querySelectorAll('button') || [])].filter(visible);
-        const cta = heroButtons.find((element) => element.textContent?.includes('PYYDÄ 2 SISÄLTÖESIMERKKIÄ'));
-        const price = [...(hero?.querySelectorAll('p') || [])].find(
-          (element) => visible(element) && element.textContent?.includes('490 €')
+        const cta = heroButtons.find((element) => element.textContent?.includes('VARAA 20 MIN KESKUSTELU'));
+        const price = [...(hero?.querySelectorAll('*') || [])].find(
+          (element) =>
+            visible(element) &&
+            element.children.length === 0 &&
+            element.textContent?.includes('490 €')
         );
         const rect = (element) => {
           if (!element) return null;
@@ -333,12 +333,13 @@ try {
       `${viewport.width}px: canonical hero headline missing.`
     );
     assert(
-      metrics.heroText.includes('Teette hyvää työtä.') &&
-        metrics.heroText.includes('Me pidämme huolen, että asiakkaat myös näkevät sen.'),
+      metrics.heroText.includes('12 Instagram- ja Facebook-sisältöä') &&
+        metrics.heroText.includes('remontti- ja palveluyritysten') &&
+        metrics.heroText.includes('30 päivää'),
       `${viewport.width}px: canonical value proposition missing.`
     );
     assert(
-      metrics.ctaText.includes('PYYDÄ 2 SISÄLTÖESIMERKKIÄ'),
+      metrics.ctaText.includes('VARAA 20 MIN KESKUSTELU'),
       `${viewport.width}px: primary CTA missing from hero.`
     );
     assert(
@@ -346,8 +347,8 @@ try {
       `${viewport.width}px: SOME 12 price missing from hero.`
     );
     assert(
-      metrics.offerName === 'SOME 12',
-      `${viewport.width}px: pricing card offer name must be SOME 12, got "${metrics.offerName}".`
+      metrics.offerName === 'GHOULHOUSE SOME 12',
+      `${viewport.width}px: pricing card offer name must be GHOULHOUSE SOME 12, got "${metrics.offerName}".`
     );
     assert(
       metrics.offerPrice === '490',
@@ -376,10 +377,7 @@ try {
       );
     }
 
-    assert(
-      metrics.ctaRect.height >= 44,
-      `${viewport.width}px: primary CTA height is below 44px.`
-    );
+    assert(metrics.ctaRect.height >= 44, `${viewport.width}px: primary CTA height is below 44px.`);
     assert(
       metrics.ctaRect.bottom <= metrics.viewport.height,
       `${viewport.width}px: primary CTA is not visible in the first viewport.`
@@ -684,7 +682,7 @@ try {
       const button = [...(hero?.querySelectorAll('button') || [])].find(
         (element) =>
           element.getBoundingClientRect().width > 0 &&
-          element.textContent?.includes('PYYDÄ 2 SISÄLTÖESIMERKKIÄ')
+          element.textContent?.includes('VARAA 20 MIN KESKUSTELU')
       );
       button?.click();
       return Boolean(button);
@@ -762,10 +760,7 @@ try {
     'Lead form must surface a safe failure state when delivery is unavailable.'
   );
 
-  assert(
-    pageExceptions.length === 0,
-    `Browser exceptions detected: ${pageExceptions.join(' | ')}`
-  );
+  assert(pageExceptions.length === 0, `Browser exceptions detected: ${pageExceptions.join(' | ')}`);
 
   await writeFile(
     `${SCREENSHOT_DIR}/qa-results.json`,

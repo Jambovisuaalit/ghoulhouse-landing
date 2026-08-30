@@ -5,7 +5,7 @@ import { siteConfig } from '@/config/site';
 
 export default function Pricing() {
   return (
-    <section id="hinta" className="bg-paper py-20 md:py-28" aria-labelledby="pricing-title">
+    <section id="hinta" className="bg-paper py-16 md:py-28" aria-labelledby="pricing-title">
       <Container>
         <div
           className="pricing-shell"
@@ -15,7 +15,10 @@ export default function Pricing() {
         >
           <div className="bg-black p-6 text-white md:p-10">
             <p className="type-label text-signal">Yksi paketti / 30 päivää</p>
-            <h2 id="pricing-title" className="type-display mt-5 max-w-[8ch] text-white">
+            <h2
+              id="pricing-title"
+              className="pricing-title type-display mt-5 max-w-[8ch] text-white"
+            >
               GHOULHOUSE SOME 12
             </h2>
             <div className="mt-10 border-l-4 border-signal pl-5">
@@ -37,8 +40,13 @@ export default function Pricing() {
               <p className="type-label text-signal">Sisältyy</p>
               <ul className="mt-6 border-t border-ink/20">
                 {offerIncludes.map((item) => (
-                  <li key={item} className="grid grid-cols-[28px_1fr] border-b border-ink/15 py-3 text-sm font-bold text-ink">
-                    <span aria-hidden="true" className="text-signal">+</span>
+                  <li
+                    key={item}
+                    className="grid grid-cols-[28px_1fr] border-b border-ink/15 py-3 text-sm font-bold text-ink"
+                  >
+                    <span aria-hidden="true" className="text-signal">
+                      +
+                    </span>
                     <span>{item}</span>
                   </li>
                 ))}
@@ -48,8 +56,13 @@ export default function Pricing() {
               <p className="type-label text-signal">Ei sisälly</p>
               <ul className="mt-6 border-t border-ink/20">
                 {offerExcludes.map((item) => (
-                  <li key={item} className="grid grid-cols-[28px_1fr] border-b border-ink/15 py-3 text-sm font-bold text-ink">
-                    <span aria-hidden="true" className="text-signal">—</span>
+                  <li
+                    key={item}
+                    className="grid grid-cols-[28px_1fr] border-b border-ink/15 py-3 text-sm font-bold text-ink"
+                  >
+                    <span aria-hidden="true" className="text-signal">
+                      —
+                    </span>
                     <span>{item}</span>
                   </li>
                 ))}
