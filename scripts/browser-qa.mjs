@@ -406,6 +406,109 @@ try {
     });
   }
 
+  // Mobile RAW → FINAL direct-manipulation regression QA.
+  await client.send('Emulation.setDeviceMetricsOverride', {
+    width: 390,
+    height: 844,
+    deviceScaleFactor: 1,
+    mobile: false,
+  });
+  await client.send('Emulation.setEmulatedMedia', {
+    media: '',
+    features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }],
+  });
+  await client.send('Page.navigate', { url: BASE_URL });
+  await waitForDocument(client);
+  await new Promise((resolve) => setTimeout(resolve, 250));
+
+  const mobileDragInitial = await evaluate(
+    client,
+    `(() => {
+      const range = document.querySelector('.mechanism-raw__range');
+      const hint = document.querySelector('.mechanism-raw__drag-hint');
+      const section = document.querySelector('[data-scroll-raw]');
+      const visible = (element) => {
+        if (!element) return false;
+        const rect = element.getBoundingClientRect();
+        const style = getComputedStyle(element);
+        return rect.width > 0 && rect.height > 0 && style.display !== 'none' && style.visibility !== 'hidden';
+      };
+
+      return {
+        rangeVisible: visible(range),
+        hintVisible: visible(hint),
+        left: section
+          ? parseFloat(getComputedStyle(section).getPropertyValue('--raw-left')) || 0
+          : 0,
+      };
+    })()`
+  );
+
+  assert(
+    mobileDragInitial.rangeVisible,
+    '390px: before/after range control must be available.'
+  );
+  assert(
+    mobileDragInitial.hintVisible,
+    '390px: first-use drag affordance must be visible.'
+  );
+
+  await evaluate(
+    client,
+    `(() => {
+      const range = document.querySelector('.mechanism-raw__range');
+      if (!(range instanceof HTMLInputElement)) return false;
+      const setter = Object.getOwnPropertyDescriptor(
+        HTMLInputElement.prototype,
+        'value'
+      )?.set;
+      setter?.call(range, '72');
+      range.dispatchEvent(new Event('input', { bubbles: true }));
+      range.dispatchEvent(new Event('change', { bubbles: true }));
+      return true;
+    })()`
+  );
+  await new Promise((resolve) => setTimeout(resolve, 120));
+
+  const mobileDragAfter = await evaluate(
+    client,
+    `(() => {
+      const section = document.querySelector('[data-scroll-raw]');
+      const finalImage = document.querySelector('.mechanism-raw__image--final');
+      const hint = document.querySelector('.mechanism-raw__drag-hint');
+      const visible = (element) => {
+        if (!element) return false;
+        const rect = element.getBoundingClientRect();
+        const style = getComputedStyle(element);
+        return rect.width > 0 && rect.height > 0 && style.display !== 'none' && style.visibility !== 'hidden';
+      };
+
+      return {
+        left: section
+          ? parseFloat(getComputedStyle(section).getPropertyValue('--raw-left')) || 0
+          : 0,
+        clipPath: finalImage ? getComputedStyle(finalImage).clipPath : '',
+        hintVisible: visible(hint),
+        seen: localStorage.getItem('ghoulhouse:raw-drag-seen'),
+      };
+    })()`
+  );
+
+  assert(
+    mobileDragAfter.left > 70 && mobileDragAfter.left < 74,
+    `390px: before/after divider should move near 72%, got ${mobileDragAfter.left}%.`
+  );
+  assert(
+    mobileDragAfter.clipPath &&
+      mobileDragAfter.clipPath !== 'none' &&
+      mobileDragAfter.clipPath !== 'inset(0px 50% 0px 0px)',
+    `390px: before/after clip-path did not react to drag: ${mobileDragAfter.clipPath}.`
+  );
+  assert(
+    !mobileDragAfter.hintVisible && mobileDragAfter.seen === '1',
+    '390px: drag affordance must disappear and persist as seen after interaction.'
+  );
+
   // Desktop cinematic scroll regression QA.
   // This was previously covered, then lost during the server/client QA refactor.
   await client.send('Emulation.setDeviceMetricsOverride', {
