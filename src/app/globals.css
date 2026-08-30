@@ -914,11 +914,11 @@ code {
   }
 
   .mechanism-raw__image--final {
-    clip-path: inset(0 50% 0 0) !important;
+    clip-path: inset(0 var(--raw-cut) 0 0) !important;
   }
 
   .mechanism-raw__divider {
-    left: 50% !important;
+    left: var(--raw-left) !important;
   }
 
   .mechanism-film__viewport {
@@ -949,13 +949,16 @@ code {
   .mechanism-raw__range {
     position: absolute;
     z-index: 7;
-    inset: 0;
+    top: 50%;
+    right: 0;
+    left: 0;
     display: block;
     width: 100%;
-    height: 100%;
+    height: 72px;
     margin: 0;
     opacity: 0;
     cursor: ew-resize;
+    transform: translateY(-50%);
     touch-action: pan-y;
   }
 
