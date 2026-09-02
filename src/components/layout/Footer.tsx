@@ -21,7 +21,7 @@ export default function Footer() {
               <p>{siteConfig.company.legalName}</p>
               <p>Y-tunnus {siteConfig.company.businessId}</p>
               <p>Kotipaikka {siteConfig.company.domicile}</p>
-              <p className="text-white/45">{siteConfig.company.registrationStatus}</p>
+              <p className="text-white/65">{siteConfig.company.registrationStatus}</p>
             </div>
           </div>
           <div className="md:col-span-3">
@@ -33,7 +33,7 @@ export default function Footer() {
             </div>
           </div>
         </div>
-        <div className="mt-10 border-t border-white/20 pt-5 text-xs font-bold uppercase tracking-[0.1em] text-white/40">
+        <div className="mt-10 border-t border-white/20 pt-5 text-xs font-bold uppercase tracking-[0.1em] text-white/65">
           © {year} {siteConfig.company.legalName}
         </div>
       </Container>

@@ -1,10 +1,10 @@
 'use client';
 
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { AnchorHTMLAttributes, ReactNode } from 'react';
 import { useContact, type ContactIntent } from './ContactProvider';
 
 interface ContactTriggerProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'type' | 'onClick'> {
+  extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href' | 'onClick'> {
   children: ReactNode;
   intent?: ContactIntent;
   onBeforeOpen?: () => void;
@@ -19,15 +19,16 @@ export default function ContactTrigger({
   const { openContact } = useContact();
 
   return (
-    <button
-      type="button"
+    <a
+      href="#yhteydenotto"
       {...props}
-      onClick={() => {
+      onClick={(event) => {
+        event.preventDefault();
         onBeforeOpen?.();
-        openContact(intent);
+        openContact(intent, event.currentTarget);
       }}
     >
       {children}
-    </button>
+    </a>
   );
 }

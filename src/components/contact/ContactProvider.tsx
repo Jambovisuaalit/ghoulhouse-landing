@@ -20,7 +20,7 @@ const ContactModal = dynamic(() => import('@/components/ui/ContactModal'), {
 export type ContactIntent = 'booking' | 'photos';
 
 interface ContactContextValue {
-  openContact: (intent?: ContactIntent) => void;
+  openContact: (intent?: ContactIntent, trigger?: HTMLElement) => void;
   closeContact: () => void;
   isOpen: boolean;
   intent: ContactIntent;
@@ -32,8 +32,14 @@ export function ContactProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [intent, setIntent] = useState<ContactIntent>('booking');
   const siteContentRef = useRef<HTMLDivElement>(null);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
 
-  const openContact = useCallback((nextIntent: ContactIntent = 'booking') => {
+  const openContact = useCallback((
+    nextIntent: ContactIntent = 'booking',
+    trigger?: HTMLElement
+  ) => {
+    returnFocusRef.current =
+      trigger ?? (document.activeElement as HTMLElement | null);
     setIntent(nextIntent);
     trackEvent(nextIntent === 'booking' ? 'booking_cta_click' : 'photo_demo_cta_click');
     trackEvent('lead_form_open');
@@ -42,6 +48,14 @@ export function ContactProvider({ children }: { children: ReactNode }) {
 
   const closeContact = useCallback(() => {
     setIsOpen(false);
+
+    window.setTimeout(() => {
+      const returnTarget = returnFocusRef.current;
+
+      if (returnTarget?.isConnected) {
+        returnTarget.focus({ preventScroll: true });
+      }
+    }, 0);
   }, []);
 
   useEffect(() => {

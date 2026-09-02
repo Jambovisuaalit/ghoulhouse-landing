@@ -24,12 +24,10 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const hasStarted = useRef(false);
   const firstInputRef = useRef<HTMLInputElement>(null);
-  const previousFocus = useRef<HTMLElement | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
-    previousFocus.current = document.activeElement as HTMLElement | null;
     firstInputRef.current?.focus();
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -74,7 +72,6 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = '';
-      previousFocus.current?.focus();
     };
   }, [onClose]);
 
@@ -189,7 +186,7 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
     >
       <div
         ref={dialogRef}
-        className="max-h-[96svh] w-full overflow-y-auto border-t-2 border-ink bg-ghost sm:max-w-2xl sm:border-2"
+        className="max-h-[96dvh] w-full overflow-y-auto border-t-2 border-ink bg-ghost sm:max-w-2xl sm:border-2"
         role="dialog"
         aria-modal="true"
         aria-labelledby="contact-modal-title"

@@ -5,7 +5,9 @@
 :root {
   --color-black: #111111;
   --color-paper: #F5F2ED;
-  --color-red: #CF252D;
+  --color-ghost: #F7F4EF;
+  --color-bone: #E6DFD5;
+  --color-red: #C9282D;
   --color-white: #FFFFFF;
   --color-muted: #6F6A64;
 
@@ -36,6 +38,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
   background: var(--color-black);
 }
 
@@ -329,6 +332,36 @@ section[id],
   padding: 1.2rem;
 }
 
+/* Keep the booking action in the first view on short phones, laptops and
+   landscape devices. Width-only breakpoints made the display type grow while
+   the available vertical space stayed small. */
+@media (max-width: 639px) and (max-height: 650px) {
+  .hero-container {
+    padding-block: 2rem;
+  }
+
+  .hero-title {
+    margin-top: 0.75rem;
+    font-size: clamp(2.5rem, 12vw, 3rem);
+    line-height: 0.92;
+  }
+
+  .hero-description {
+    margin-top: 1rem;
+    font-size: 1rem;
+    line-height: 1.35;
+  }
+
+  .hero-actions,
+  .hero-price {
+    margin-top: 1.25rem;
+  }
+
+  .hero-price {
+    padding-top: 0.875rem;
+  }
+}
+
 .proof-strip {
   display: grid;
 }
@@ -581,9 +614,9 @@ code {
 }
 
 
-/* Proof Engine — RAW → FINAL + filmstrip.
-   Desktop scroll distance is measured in Mechanism.tsx from the sticky viewport
-   and actual horizontal track width. Mobile and reduced-motion modes remain static/directly scrollable. */
+/* Proof Engine — a compact, static RAW → FINAL comparison followed by a
+   directly scrollable filmstrip. It preserves the editorial mechanism without
+   delaying the offer behind several forced viewport-heights of scrolling. */
 
 .font-editorial-accent {
   font-family: Georgia, "Times New Roman", serif;
@@ -656,7 +689,7 @@ code {
 .mechanism-raw__stage {
   position: relative;
   order: 2;
-  min-height: 27rem;
+  min-height: 21rem;
   aspect-ratio: 4 / 5;
   overflow: hidden;
   border: 2px solid var(--color-black);
@@ -931,55 +964,107 @@ code {
   will-change: transform;
 }
 
-@media (min-width: 1100px) {
-  .mechanism-raw {
-    height: 240svh;
+@media (max-width: 639px) {
+  .mechanism-intro {
+    padding-block: 2rem;
+  }
+
+  .mechanism-intro__support .type-editorial,
+  .mechanism-raw__copy p {
+    display: none;
   }
 
   .mechanism-raw__sticky {
-    position: sticky;
-    top: calc(var(--nav-height) + var(--safe-top));
-    height: calc(100svh - var(--nav-height) - var(--safe-top));
-    grid-template-columns: minmax(11rem, 0.52fr) minmax(0, 1.75fr) minmax(11rem, 0.52fr);
-    align-items: center;
-    gap: clamp(1rem, 2.5vw, 2.75rem);
+    gap: 1rem;
     padding-block: 1.5rem;
-    padding-inline-start: var(--edge-start);
-    padding-inline-end: var(--edge-end);
-    overflow: hidden;
   }
 
-  .mechanism-raw__copy--raw {
-    opacity: var(--raw-opacity);
-    transform: translate3d(0, var(--raw-shift), 0);
-    will-change: transform, opacity;
-  }
-
-  .mechanism-raw__copy--final {
-    opacity: var(--final-opacity);
-    transform: translate3d(0, var(--final-shift), 0);
-    will-change: transform, opacity;
+  .mechanism-raw__copy h3 {
+    margin-top: 0.35rem;
+    font-size: 2rem;
   }
 
   .mechanism-raw__stage {
-    height: min(68svh, 48rem);
+    min-height: 0;
+    aspect-ratio: 4 / 3;
+  }
+
+  .mechanism-raw__final-copy {
+    right: 0.65rem;
+    bottom: 0.65rem;
+    left: 0.65rem;
+    padding: 0.65rem;
+  }
+
+  .mechanism-raw__final-copy strong {
+    margin-block: 0.35rem;
+    font-size: 1.3rem;
+  }
+
+  .mechanism-raw__final-copy small {
+    font-size: 0.56rem;
+  }
+
+  .mechanism-film__sticky {
+    padding: 2rem 0 1.5rem;
+  }
+
+  .mechanism-film__header {
+    gap: 0.5rem;
+  }
+
+  .mechanism-film__header h3 {
+    max-width: 12ch;
+    font-size: 2.25rem;
+  }
+
+  .mechanism-film__viewport {
+    padding: 1.25rem 0;
+  }
+
+  .mechanism-film__frame {
+    flex-basis: min(72vw, 17rem);
+    padding: 1.3rem 0.7rem 0.75rem;
+  }
+
+  .mechanism-film__frame figcaption {
+    grid-template-columns: 2.25rem 1fr;
+    gap: 0.5rem;
+    padding-top: 0.55rem;
+  }
+
+  .mechanism-film__frame figcaption strong {
+    font-size: 1.55rem;
+  }
+
+  .mechanism-film__frame figcaption p {
+    font-size: 0.75rem;
+    line-height: 1.3;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mechanism-raw__sticky {
+    grid-template-columns: minmax(11rem, 0.52fr) minmax(0, 1.75fr) minmax(11rem, 0.52fr);
+    align-items: center;
+    gap: clamp(1rem, 2.5vw, 2.75rem);
+    padding-block: 2rem;
+    padding-inline-start: var(--edge-start);
+    padding-inline-end: var(--edge-end);
+  }
+
+  .mechanism-raw__copy h3 {
+    font-size: clamp(2.8rem, 4vw, 4.75rem);
+  }
+
+  .mechanism-raw__stage {
+    height: min(52svh, 34rem);
     min-height: 0;
     aspect-ratio: auto;
   }
 
-  .mechanism-film {
-    height: 280svh;
-  }
-
   .mechanism-film__sticky {
-    position: sticky;
-    top: calc(var(--nav-height) + var(--safe-top));
-    height: calc(100svh - var(--nav-height) - var(--safe-top));
-    display: grid;
-    grid-template-rows: auto minmax(0, 1fr) auto auto;
-    align-items: center;
-    padding: 2rem 0 1.5rem;
-    overflow: hidden;
+    padding: 2.5rem 0 2rem;
   }
 
   .mechanism-film__header {
@@ -989,22 +1074,119 @@ code {
     gap: 3rem;
   }
 
+  .mechanism-film__header h3 {
+    font-size: clamp(2.8rem, 4.8vw, 5.6rem);
+  }
+
   .mechanism-film__viewport {
     width: 100%;
-    overflow: hidden;
-    padding: 1.75rem 0;
+    overflow-x: auto;
+    padding: 1.5rem 0;
   }
 
   .mechanism-film__track {
-    gap: clamp(1rem, 2vw, 2rem);
+    gap: clamp(0.75rem, 1.4vw, 1.25rem);
     padding-inline-start: var(--edge-start);
     padding-inline-end: var(--edge-end);
-    scroll-snap-type: none;
-    will-change: transform;
+    scroll-snap-type: x mandatory;
+    transform: none;
   }
 
   .mechanism-film__frame {
-    flex-basis: clamp(20rem, 38vw, 36rem);
+    flex-basis: clamp(15rem, 21vw, 19rem);
+  }
+}
+
+@media (min-width: 640px) and (max-height: 600px) and (orientation: landscape) {
+  .mechanism-intro {
+    padding-block: 1rem;
+  }
+
+  .mechanism-intro__support,
+  .mechanism-raw__copy p {
+    display: none;
+  }
+
+  .mechanism-intro h2 {
+    font-size: clamp(2.5rem, 5.2vw, 3.5rem);
+  }
+
+  .mechanism-raw__sticky {
+    grid-template-columns: minmax(8rem, 0.7fr) minmax(16rem, 1.4fr) minmax(8rem, 0.7fr);
+    align-items: center;
+    gap: 1rem;
+    padding-block: 1rem;
+  }
+
+  .mechanism-raw__copy h3 {
+    margin-top: 0.35rem;
+    font-size: 2rem;
+  }
+
+  .mechanism-raw__stage {
+    height: 11.25rem;
+    min-height: 0;
+    aspect-ratio: auto;
+  }
+
+  .mechanism-raw__final-copy {
+    right: 0.6rem;
+    bottom: 0.6rem;
+    left: 0.6rem;
+    padding: 0.6rem;
+  }
+
+  .mechanism-raw__final-copy strong {
+    margin-block: 0.3rem;
+    font-size: 1.25rem;
+  }
+
+  .mechanism-raw__final-copy small {
+    display: none;
+  }
+
+  .mechanism-film__sticky {
+    padding: 1rem 0;
+  }
+
+  .mechanism-film__header {
+    flex-direction: row;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .mechanism-film__header h3 {
+    max-width: none;
+    font-size: 2.25rem;
+  }
+
+  .mechanism-film__viewport {
+    padding: 0.75rem 0;
+  }
+
+  .mechanism-film__frame {
+    flex-basis: 13rem;
+    padding: 1.25rem 0.7rem 0.7rem;
+  }
+
+  .mechanism-film__frame figcaption {
+    grid-template-columns: 2rem 1fr;
+    padding-top: 0.5rem;
+  }
+
+  .mechanism-film__frame figcaption strong {
+    font-size: 1.5rem;
+  }
+
+  .mechanism-film__frame figcaption p {
+    font-size: 0.72rem;
+    line-height: 1.25;
+  }
+
+  .mechanism-film__sticky > .type-caption {
+    margin-top: 0.25rem;
+    padding-inline: var(--edge-start) var(--edge-end);
   }
 }
 
@@ -1062,5 +1244,70 @@ footer {
     padding-right: max(1rem, var(--safe-right));
     padding-bottom: max(1rem, var(--safe-bottom));
     padding-left: max(1rem, var(--safe-left));
+  }
+}
+
+/* Height-aware hero rules stay last so they win over the width-based display
+   scale at the same breakpoint. */
+@media (min-width: 1024px) and (max-height: 850px) {
+  .hero-container {
+    padding-block: clamp(2rem, 5vh, 3.25rem);
+  }
+
+  .hero-title {
+    margin-top: 0.875rem;
+    font-size: clamp(4.5rem, 5.4vw, 6.25rem);
+    line-height: 0.84;
+  }
+
+  .hero-description {
+    margin-top: 1.125rem;
+    max-width: 42rem;
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+
+  .hero-actions,
+  .hero-price {
+    margin-top: 1.25rem;
+  }
+
+  .hero-price {
+    padding-top: 0.875rem;
+  }
+
+  .hero-proof {
+    padding: 1rem;
+  }
+
+  .hero-proof__row {
+    padding-block: 0.7rem;
+  }
+}
+
+@media (min-width: 640px) and (max-height: 600px) and (orientation: landscape) {
+  .hero-container {
+    padding-block: 1rem;
+  }
+
+  .hero-title {
+    margin-top: 0;
+    font-size: clamp(2.75rem, 5.2vw, 4.75rem);
+    line-height: 0.84;
+  }
+
+  .hero-copy > .type-label,
+  .hero-description,
+  .hero-proof-column {
+    display: none;
+  }
+
+  .hero-actions,
+  .hero-price {
+    margin-top: 1rem;
+  }
+
+  .hero-price {
+    padding-top: 0.75rem;
   }
 }

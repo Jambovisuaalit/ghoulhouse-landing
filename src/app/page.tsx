@@ -24,10 +24,10 @@ export default function Home() {
       <main id="main-content" className="min-h-screen bg-paper">
         <Hero />
         <ProofStrip />
-        <ProblemSolution />
         <Mechanism />
-        <Process />
         <Pricing />
+        <ProblemSolution />
+        <Process />
         <ContentExamples />
         <Founder />
         <FAQ />
