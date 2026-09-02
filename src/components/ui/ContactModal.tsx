@@ -242,7 +242,7 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
                 <p className="type-ui text-ink">
                   {isBooking
                     ? 'Ehdotamme keskustelulle sopivaa etenemistapaa ja vahvistamme ajan erikseen.'
-                    : 'Työkuvien varsinainen toimituskanava vahvistetaan erikseen: [TARKISTA].'}
+                    : 'Sovimme työkuvien turvallisen toimitustavan kanssasi erikseen.'}
                 </p>
               </div>
               <div className="grid grid-cols-[42px_1fr] gap-3 py-4">
@@ -283,7 +283,7 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
               <p className="type-editorial max-w-xl text-ink/70">
                 {isBooking
                   ? 'Anna perustiedot, jotta voimme sopia 20 minuutin keskustelun. Varsinainen ajankohta vahvistetaan erikseen.'
-                  : 'Anna perustiedot konseptidemoa varten. Työkuvien varsinainen toimituskanava vahvistetaan erikseen: [TARKISTA].'}
+                  : 'Anna perustiedot konseptidemoa varten. Sovimme työkuvien toimitustavan yhteydenoton jälkeen.'}
               </p>
 
               <div className="type-caption mt-4 grid grid-cols-1 gap-2 uppercase tracking-[0.05em] text-ink/60 sm:grid-cols-3">
@@ -522,7 +522,7 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
                 <p className="font-bold text-ink/70">
                   {isBooking
                     ? 'Keskusteluaika vahvistetaan erikseen.'
-                    : 'Kuvien toimituskanava: [TARKISTA].'}
+                    : 'Kuvien toimitustapa sovitaan erikseen.'}
                 </p>
               </div>
             </div>

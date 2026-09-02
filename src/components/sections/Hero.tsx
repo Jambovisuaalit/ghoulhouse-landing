@@ -41,9 +41,11 @@ export default function Hero() {
         <div className="relative grid gap-12 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-8">
             <p data-hero-motion className="type-label text-signal">GhoulHouse / Social content system</p>
-            <h1 id="hero-title" data-hero-motion className="type-display mt-5 max-w-[15ch] text-white">
-              TYÖMAAKUVAT SISÄÄN.
-              <span className="block text-signal">VALMIS SOME ULOS.</span>
+            <h1 id="hero-title" data-hero-motion className="type-display hero-title mt-5 max-w-[15ch] text-white">
+              TYÖMAAKUVAT<br className="mobile-title-break" /> SISÄÄN.
+              <span className="block text-signal">
+                VALMIS SOME<br className="mobile-title-break" /> ULOS.
+              </span>
             </h1>
             <p data-hero-motion className="mt-7 max-w-2xl text-[clamp(1.05rem,2vw,1.4rem)] font-semibold leading-[1.45] text-white/75">
               GhoulHouse tekee remontti- ja palveluyritysten työmaakuvista suunnitellun sisältökuukauden Instagramiin ja Facebookiin.

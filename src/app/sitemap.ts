@@ -20,5 +20,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly',
       priority: 1,
     },
+    {
+      url: `${SITE_URL}/tietosuoja`,
+      changeFrequency: 'yearly',
+      priority: 0.3,
+    },
   ];
 }

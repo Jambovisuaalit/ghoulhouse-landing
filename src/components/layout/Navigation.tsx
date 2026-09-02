@@ -28,7 +28,7 @@ export default function Navigation() {
     <div className="nav-slot">
       <header className={`nav-shell ${stuck ? 'nav-shell--stuck' : ''}`}>
         <Container>
-          <nav className="flex min-h-[72px] items-center justify-between gap-5" aria-label="Päänavigaatio">
+          <nav className="flex min-h-[72px] items-center justify-between gap-3 sm:gap-5" aria-label="Päänavigaatio">
             <a href="#top" className="shrink-0" aria-label="GhoulHouse — sivun alku">
               <span className="sr-only">GhoulHouse</span>
               <Image
@@ -37,7 +37,7 @@ export default function Navigation() {
                 width={1400}
                 height={460}
                 priority
-                className="h-[44px] w-auto sm:h-[48px]"
+                className="h-[38px] w-auto sm:h-[48px]"
               />
             </a>
 
@@ -49,7 +49,7 @@ export default function Navigation() {
               ))}
             </div>
 
-            <ContactTrigger className="btn btn-primary min-h-11 px-4 text-[0.68rem] sm:px-5 sm:text-[0.72rem]">
+            <ContactTrigger className="nav-cta btn btn-primary min-h-11 px-4 text-[0.68rem] sm:px-5 sm:text-[0.72rem]">
               <span className="hidden sm:inline">{siteConfig.cta.primary}</span>
               <span className="sm:hidden">20 MIN</span>
             </ContactTrigger>

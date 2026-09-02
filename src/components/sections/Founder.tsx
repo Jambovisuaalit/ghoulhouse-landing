@@ -21,13 +21,13 @@ export default function Founder() {
                 />
               </figure>
             ) : (
-              <div className="founder-avatar min-h-[460px] border border-ink bg-white p-7 md:min-h-[600px] md:p-10">
-                <div className="flex h-28 w-28 items-center justify-center rounded-full border border-ink bg-paper font-display text-5xl">
+              <div className="founder-avatar founder-avatar--monogram min-h-[400px] border border-ink bg-white p-7 md:min-h-[600px] md:p-10">
+                <div className="flex h-28 w-28 items-center justify-center border-2 border-ink bg-paper font-display text-5xl">
                   HN
                 </div>
                 <div className="mt-auto">
-                  <p className="type-label text-signal">Vahvistettu kuva puuttuu</p>
-                  <p className="mt-3 font-bold text-ink">NEXT_PUBLIC_FOUNDER_IMAGE</p>
+                  <p className="type-label text-signal">Founder / CEO</p>
+                  <p className="mt-3 text-2xl font-black uppercase tracking-[-0.03em] text-ink">{siteConfig.company.founder}</p>
                 </div>
               </div>
             )}
@@ -43,10 +43,10 @@ export default function Founder() {
             <div className="mt-12 border-t border-ink pt-7">
               <p className="text-2xl font-black uppercase tracking-[-0.03em] text-ink">{siteConfig.company.founder}</p>
               <p className="mt-5 type-editorial text-muted">
-                [TARKISTA: founder-esittely, tausta ja tarkka roolikuvaus ennen julkaisua.]
+                Hanna vastaa GhoulHousen asiakastyöstä, sisältösuunnittelusta ja tuotannosta. Palvelu on rakennettu pienille palveluyrityksille, jotka haluavat tehdä jo dokumentoidusta työstään säännöllistä Instagram- ja Facebook-sisältöä.
               </p>
-              <p className="mt-6 text-sm font-bold text-ink">
-                Founder-kuva pysyy vaihdettavana ympäristömuuttujalla <code>NEXT_PUBLIC_FOUNDER_IMAGE</code>.
+              <p className="mt-6 border-l-2 border-signal pl-4 text-sm font-bold leading-6 text-ink">
+                Yksi yhteyshenkilö suunnittelusta julkaisuun.
               </p>
             </div>
           </div>

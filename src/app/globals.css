@@ -131,10 +131,10 @@ section[id],
 
 .type-display {
   font-family: var(--font-display), sans-serif;
-  font-size: clamp(3.15rem, 15vw, 5.3rem);
+  font-size: clamp(2.75rem, 12.6vw, 4rem);
   font-weight: 400;
-  line-height: 0.86;
-  letter-spacing: -0.035em;
+  line-height: 0.94;
+  letter-spacing: -0.02em;
   text-transform: uppercase;
 }
 
@@ -195,6 +195,30 @@ section[id],
     color 160ms ease,
     border-color 160ms ease,
     transform 160ms ease;
+}
+
+.nav-cta {
+  width: auto;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.mobile-title-break,
+.final-title-mobile {
+  display: block;
+}
+
+.final-title-desktop {
+  display: none;
+}
+
+.hero-title,
+.final-title {
+  text-wrap: initial;
+}
+
+.final-title {
+  max-width: 11ch;
 }
 
 .btn:hover {
@@ -431,6 +455,23 @@ section[id],
   flex-direction: column;
 }
 
+.founder-avatar--monogram {
+  background:
+    linear-gradient(135deg, transparent 0 49.7%, rgba(17, 17, 17, 0.12) 49.8% 50.2%, transparent 50.3%),
+    linear-gradient(var(--color-paper), var(--color-white));
+}
+
+.footer-link {
+  text-decoration: underline;
+  text-decoration-color: rgba(245, 242, 237, 0.35);
+  text-underline-offset: 0.25rem;
+}
+
+.footer-link:hover {
+  color: var(--color-white);
+  text-decoration-color: var(--color-red);
+}
+
 code {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 0.9em;
@@ -444,6 +485,16 @@ code {
   .type-display {
     font-size: clamp(3.4rem, 9.3vw, 9.5rem);
     line-height: 0.84;
+    letter-spacing: -0.035em;
+  }
+
+  .mobile-title-break,
+  .final-title-mobile {
+    display: none;
+  }
+
+  .final-title-desktop {
+    display: block;
   }
 
   .type-section-title {

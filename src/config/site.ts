@@ -6,7 +6,11 @@ const founderImage = process.env.NEXT_PUBLIC_FOUNDER_IMAGE?.trim() || null;
 export const siteConfig = {
   company: {
     brand: 'GhoulHouse',
-    legalName: 'GhoulHouse Oy',
+    legalName: 'Ghoulhouse Oy',
+    businessId: '3651127-5',
+    domicile: 'Helsinki',
+    registrationDate: '2026-08-30',
+    registrationStatus: 'Y-tunnus annettu 30.8.2026',
     founder: 'Hanna Nyholm',
     founderImage,
     domain: canonicalSiteUrl,
@@ -29,7 +33,7 @@ export const siteConfig = {
     },
   },
   legal: {
-    privacyPath,
+    privacyPath: privacyPath || '/tietosuoja',
     termsPath,
   },
 } as const;

@@ -79,6 +79,17 @@ const structuredData = {
       '@id': organizationId,
       name: siteConfig.company.legalName,
       alternateName: siteConfig.company.brand,
+      identifier: {
+        '@type': 'PropertyValue',
+        name: 'Y-tunnus',
+        value: siteConfig.company.businessId,
+      },
+      foundingDate: siteConfig.company.registrationDate,
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: siteConfig.company.domicile,
+        addressCountry: 'FI',
+      },
       url: SITE_URL,
       logo: productionUrl('/icon'),
       description:

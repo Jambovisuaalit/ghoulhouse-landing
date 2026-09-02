@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Container from '@/components/ui/Container';
+import { siteConfig } from '@/config/site';
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -17,21 +18,23 @@ export default function Footer() {
           <div className="md:col-span-3 md:col-start-7">
             <p className="type-label text-signal">Yritys</p>
             <div className="mt-4 space-y-2 text-sm font-bold text-white/70">
-              <p>GhoulHouse Oy</p>
-              <p>ghoulhouse.fi</p>
-              <p>Yhteystiedot: [TARKISTA]</p>
+              <p>{siteConfig.company.legalName}</p>
+              <p>Y-tunnus {siteConfig.company.businessId}</p>
+              <p>Kotipaikka {siteConfig.company.domicile}</p>
+              <p className="text-white/45">{siteConfig.company.registrationStatus}</p>
             </div>
           </div>
           <div className="md:col-span-3">
-            <p className="type-label text-signal">Juridinen</p>
+            <p className="type-label text-signal">Linkit</p>
             <div className="mt-4 space-y-2 text-sm font-bold text-white/70">
-              <p>Tietosuojaseloste: [TARKISTA URL]</p>
-              <p>Palveluehdot / scope: [TARKISTA URL]</p>
+              <p><a className="footer-link" href="/#yhteydenotto">Yhteydenotto</a></p>
+              <p><a className="footer-link" href="/#hinta">Palvelun sisältö ja hinta</a></p>
+              <p><a className="footer-link" href={siteConfig.legal.privacyPath}>Tietosuojaseloste</a></p>
             </div>
           </div>
         </div>
         <div className="mt-10 border-t border-white/20 pt-5 text-xs font-bold uppercase tracking-[0.1em] text-white/40">
-          © {year} GhoulHouse Oy
+          © {year} {siteConfig.company.legalName}
         </div>
       </Container>
     </footer>
