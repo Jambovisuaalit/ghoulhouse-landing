@@ -272,7 +272,7 @@ try {
         formAction: form?.getAttribute('action') || '',
         submitRect: rect(submit),
         requiredFields: ['company','name','email','profile'].every(
-          (name) => Boolean(form?.querySelector(`[name="${name}"][required]`))
+          (name) => Boolean(form?.querySelector('[name="' + name + '"][required]'))
         ),
         rawFinalExists: Boolean(rawFinal),
         rawFinalPanels: document.querySelectorAll('.raw-final-panel').length,
