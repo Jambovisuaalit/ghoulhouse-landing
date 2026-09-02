@@ -41,14 +41,25 @@ const html = execFileSync(
 );
 
 assert(/<h1\b[^>]*>[\s\S]*?<\/h1>/i.test(html), 'No-JS QA: H1 is missing.');
+assert(html.includes('TYÖMAAKUVA') && html.includes('VALMIS JULKAISU'), 'No-JS QA: V2 headline is missing.');
 assert(html.includes('490 €'), 'No-JS QA: 490 € price is missing.');
 assert(
   /<a\b[^>]*href=["']#laheta-kuvat["'][^>]*>/i.test(html),
   'No-JS QA: #laheta-kuvat anchor is missing.'
 );
 assert(
-  html.includes('LÄHETÄ 2 TYÖKUVAA') || html.includes('LÄHETÄ KUVAT'),
-  'No-JS QA: image-send CTA text is missing.'
+  html.includes('2 MAKSUTONTA SISÄLTÖESIMERKKIÄ') || html.includes('2 ESIMERKKIÄ'),
+  'No-JS QA: primary CTA copy is missing.'
 );
+assert(
+  /<form\b[^>]*method=["']POST["'][^>]*action=["']\/api\/leads["'][^>]*>/i.test(html) ||
+  /<form\b[^>]*action=["']\/api\/leads["'][^>]*method=["']POST["'][^>]*>/i.test(html),
+  'No-JS QA: native POST /api/leads form is missing.'
+);
+assert(html.includes('name="company"'), 'No-JS QA: company field is missing.');
+assert(html.includes('name="name"'), 'No-JS QA: name field is missing.');
+assert(html.includes('name="email"'), 'No-JS QA: email field is missing.');
+assert(html.includes('name="profile"'), 'No-JS QA: profile field is missing.');
+assert(html.includes('KONSEPTIESIMERKKI — EI ASIAKASTYÖ'), 'No-JS QA: concept disclosure is missing.');
 
-console.log('No-JS QA passed: HTTP 200, H1, 490 € price and #laheta-kuvat CTA are available with JavaScript disabled.');
+console.log('No-JS QA passed: HTTP 200, V2 hero, 490 € price, CTA, RAW → FINAL disclosure and native POST lead form are available with JavaScript disabled.');
