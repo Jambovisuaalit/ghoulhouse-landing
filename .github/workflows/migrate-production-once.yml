@@ -66,7 +66,7 @@ jobs:
         with:
           node-version: "24"
 
-      - name: Validate Landing v6 source
+      - name: Validate V2 release source
         shell: bash
         run: |
           set -euo pipefail
@@ -234,12 +234,12 @@ jobs:
 
           for i in {1..20}; do
             html="$(vercel curl / --deployment "${url}" --token="${VERCEL_TOKEN}" 2>/dev/null || true)"
-            if printf '%s' "${html}" | grep -q "TYÖMAAKUVAT SISÄÄN" &&                printf '%s' "${html}" | grep -q "VALMIS SOME ULOS" &&                printf '%s' "${html}" | grep -q "VARAA 20 MIN KESKUSTELU" &&                printf '%s' "${html}" | grep -q 'data-offer-name="GHOULHOUSE SOME 12"' &&                printf '%s' "${html}" | grep -q 'data-offer-price="490"'; then
+            if printf '%s' "${html}" | grep -q "TYÖMAAKUVA" &&                printf '%s' "${html}" | grep -q "VALMIS JULKAISU" &&                printf '%s' "${html}" | grep -q "PYYDÄ 2 MAKSUTONTA SISÄLTÖESIMERKKIÄ" &&                printf '%s' "${html}" | grep -q 'action="/api/leads"' &&                printf '%s' "${html}" | grep -q 'data-offer-name="GHOULHOUSE SOME 12"' &&                printf '%s' "${html}" | grep -q 'data-offer-price="490"'; then
               break
             fi
 
             if [ "${i}" -eq 20 ]; then
-              echo "::error::Candidate did not return Landing v6."
+              echo "::error::Candidate did not return GhoulHouse V2."
               exit 1
             fi
             sleep 3
@@ -253,7 +253,7 @@ jobs:
           invalid="$(vercel curl /api/leads             --deployment "${url}"             --token="${VERCEL_TOKEN}"             --             -X POST             -H 'content-type: application/json'             --data '{}' 2>/dev/null || true)"
           printf '%s' "${invalid}" | grep -q '"validation_error"'
 
-          valid="$(vercel curl /api/leads             --deployment "${url}"             --token="${VERCEL_TOKEN}"             --             -X POST             -H 'content-type: application/json'             --data '{"intent":"booking","company":"GhoulHouse Migration QA","name":"Migration Gate","email":"release-qa@ghoulhouse.fi","profile":"https://ghoulhouse.fi","message":"Pre-cutover candidate QA. No action required."}' 2>/dev/null || true)"
+          valid="$(vercel curl /api/leads             --deployment "${url}"             --token="${VERCEL_TOKEN}"             --             -X POST             -H 'content-type: application/json'             --data '{"intent":"photos","company":"GhoulHouse Migration QA","name":"Migration Gate","email":"release-qa@ghoulhouse.fi","profile":"https://ghoulhouse.fi","message":"Pre-cutover candidate QA. No action required."}' 2>/dev/null || true)"
           printf '%s' "${valid}" | grep -q '"ok":true'
 
           vercel logs --deployment "${url}" --level error --limit 50 --token="${VERCEL_TOKEN}" > /tmp/candidate-errors.log || true
@@ -330,9 +330,10 @@ jobs:
           headers="$(curl --silent --show-error --head "${CANONICAL_URL}/")"
 
           printf '%s' "${html}" | grep -q 'rel="canonical" href="https://ghoulhouse.fi'
-          printf '%s' "${html}" | grep -q "TYÖMAAKUVAT SISÄÄN"
-          printf '%s' "${html}" | grep -q "VALMIS SOME ULOS"
-          printf '%s' "${html}" | grep -q "VARAA 20 MIN KESKUSTELU"
+          printf '%s' "${html}" | grep -q "TYÖMAAKUVA"
+          printf '%s' "${html}" | grep -q "VALMIS JULKAISU"
+          printf '%s' "${html}" | grep -q "PYYDÄ 2 MAKSUTONTA SISÄLTÖESIMERKKIÄ"
+          printf '%s' "${html}" | grep -q 'action="/api/leads"'
           printf '%s' "${html}" | grep -q 'data-offer-name="GHOULHOUSE SOME 12"'
           printf '%s' "${html}" | grep -q 'data-offer-price="490"'
 
@@ -368,7 +369,10 @@ jobs:
           test "${invalid_status}" = "400"
           grep -q '"validation_error"' /tmp/live-lead-invalid.json
 
-          valid_status="$(curl --silent --show-error             --output /tmp/live-lead-valid.json             --write-out '%{http_code}'             --request POST             --header 'content-type: application/json'             --data '{"intent":"booking","company":"GhoulHouse Migration QA","name":"Migration Gate","email":"release-qa@ghoulhouse.fi","profile":"https://ghoulhouse.fi","message":"Post-cutover production QA. No action required."}'             "${CANONICAL_URL}/api/leads")"
+          form_status="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' --max-redirs 0             --request POST             --header 'content-type: application/x-www-form-urlencoded'             --data 'intent=photos&fax=migration-honeypot'             "${CANONICAL_URL}/api/leads")"
+          test "${form_status}" = "303"
+
+          valid_status="$(curl --silent --show-error             --output /tmp/live-lead-valid.json             --write-out '%{http_code}'             --request POST             --header 'content-type: application/json'             --data '{"intent":"photos","company":"GhoulHouse Migration QA","name":"Migration Gate","email":"release-qa@ghoulhouse.fi","profile":"https://ghoulhouse.fi","message":"Post-cutover production QA. No action required."}'             "${CANONICAL_URL}/api/leads")"
           test "${valid_status}" = "201"
           grep -q '"ok":true' /tmp/live-lead-valid.json
 
