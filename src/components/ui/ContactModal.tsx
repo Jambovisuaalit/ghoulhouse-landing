@@ -9,6 +9,7 @@ import {
 import { siteConfig } from '@/config/site';
 import type { ContactIntent } from '@/components/contact/ContactProvider';
 import { trackEvent } from '@/lib/analytics';
+import { validateLead } from '@/lib/lead';
 
 interface ContactModalProps {
   onClose: () => void;
@@ -92,29 +93,6 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
     });
   };
 
-  const getClientErrors = (data: Record<string, FormDataEntryValue>) => {
-    const errors: Record<string, string> = {};
-    const company = String(data.company || '').trim();
-    const name = String(data.name || '').trim();
-    const email = String(data.email || '').trim();
-    const profile = String(data.profile || '').trim();
-
-    if (!company) errors.company = 'Yritys on pakollinen.';
-    if (!name) errors.name = 'Nimi on pakollinen.';
-
-    if (!email) {
-      errors.email = 'Sähköposti on pakollinen.';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      errors.email = 'Tarkista sähköpostiosoite.';
-    }
-
-    if (!profile) {
-      errors.profile = 'Verkkosivu tai Instagram on pakollinen.';
-    }
-
-    return errors;
-  };
-
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setErrorMessage('');
@@ -122,9 +100,10 @@ export default function ContactModal({ onClose, intent }: ContactModalProps) {
 
     const formData = new FormData(event.currentTarget);
     const data = Object.fromEntries(formData.entries());
-    const clientErrors = getClientErrors(data);
+    const validation = validateLead(data);
 
-    if (Object.keys(clientErrors).length > 0) {
+    if (!validation.ok) {
+      const clientErrors = validation.errors || {};
       setStatus('error');
       setFieldErrors(clientErrors);
       setErrorMessage('Tarkista merkityt kentät.');

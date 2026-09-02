@@ -21,7 +21,7 @@ export function isIndexingApproved() {
   const configuredValue = process.env.SITE_INDEXABLE?.trim().toLowerCase();
 
   return (
-    configuredValue !== 'false' &&
+    configuredValue === 'true' &&
     Boolean(siteConfig.legal.privacyPath)
   );
 }

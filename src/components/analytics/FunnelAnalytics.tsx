@@ -8,7 +8,7 @@ const observedSections: Array<{
   event: FunnelEvent;
 }> = [
   { id: 'pricing', event: 'pricing_view' },
-  { id: 'examples', event: 'content_example_view' },
+  { id: 'esimerkit', event: 'content_example_view' },
 ];
 
 export default function FunnelAnalytics() {

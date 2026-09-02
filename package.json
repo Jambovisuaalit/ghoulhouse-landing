@@ -12,7 +12,6 @@
     "qa:browser": "node scripts/browser-qa-ci.mjs"
   },
   "dependencies": {
-    "clsx": "^2.1.1",
     "next": "15.5.24",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
@@ -22,7 +21,7 @@
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.1",
     "typescript": "^5.3.3",
-    "tailwindcss": "^3.4.1",
+    "tailwindcss": "^3.4.19",
     "postcss": "8.5.25",
     "autoprefixer": "^10.4.16",
     "eslint": "^8.56.0",
