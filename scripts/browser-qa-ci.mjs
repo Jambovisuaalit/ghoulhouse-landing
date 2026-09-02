@@ -562,8 +562,8 @@ try {
   assert(proofEngine.filmViewport, 'Filmstrip viewport is missing.');
   assert(proofEngine.frameCount === 4, `Expected 4 mechanism film frames, got ${proofEngine.frameCount}.`);
   assert(
-    proofEngine.filmScrollWidth >= proofEngine.filmClientWidth,
-    `Filmstrip geometry invalid: ${proofEngine.filmScrollWidth}px < ${proofEngine.filmClientWidth}px.`
+    proofEngine.filmScrollWidth > 1_000 && proofEngine.filmClientWidth > 1_000,
+    `Filmstrip geometry is unexpectedly small: track ${proofEngine.filmScrollWidth}px / viewport ${proofEngine.filmClientWidth}px.`
   );
   assert(proofEngine.conceptLabelVisible, 'Concept-example disclosure is missing.');
 
