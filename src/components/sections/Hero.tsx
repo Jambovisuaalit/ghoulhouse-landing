@@ -31,7 +31,7 @@ export default function Hero() {
                 <span className="sm:hidden">PYYDÄ 2 ESIMERKKIÄ</span>
                 <span className="hidden sm:inline">{siteConfig.cta.primary}</span>
               </a>
-              <a href="#miten-toimii" className="btn btn-inverse min-h-14 sm:min-w-[220px]">
+              <a href="#raw-final" className="btn btn-inverse min-h-14 sm:min-w-[220px]">
                 KATSO RAW → FINAL
               </a>
             </div>
