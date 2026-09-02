@@ -176,7 +176,13 @@ jobs:
           fi
 
           ensure_plain_default CSP_ENFORCE false
-          ensure_plain_default SITE_INDEXABLE false
+
+          if grep -Eq '^SITE_INDEXABLE=.+$' "${target_env}"; then
+            vercel env rm SITE_INDEXABLE production --yes \
+              --token="${VERCEL_TOKEN}"
+          fi
+          printf '%s' 'true' | vercel env add SITE_INDEXABLE production \
+            --token="${VERCEL_TOKEN}"
 
           rm -f "${target_env}"
           vercel env pull "${target_env}" \
@@ -184,7 +190,7 @@ jobs:
             --token="${VERCEL_TOKEN}"
 
           grep -Eq '^CSP_ENFORCE=.+$' "${target_env}"
-          grep -Eq '^SITE_INDEXABLE="?false"?$' "${target_env}"
+          grep -Eq '^SITE_INDEXABLE="?true"?$' "${target_env}"
 
           if grep -Eq '^LEAD_DELIVERY_MODE="?resend"?$' "${target_env}"; then
             grep -Eq '^RESEND_API_KEY=.+$' "${target_env}"
@@ -344,9 +350,17 @@ jobs:
 
           robots="$(curl --fail --silent --show-error "${CANONICAL_URL}/robots.txt")"
           sitemap="$(curl --fail --silent --show-error "${CANONICAL_URL}/sitemap.xml")"
-          printf '%s' "${robots}" | grep -q 'Disallow: /'
-          if printf '%s' "${sitemap}" | grep -q '<url>'; then
-            echo "::error::Prelaunch sitemap unexpectedly exposes indexable URLs."
+          printf '%s' "${robots}" | grep -q 'Allow: /'
+          if printf '%s' "${robots}" | grep -q 'Disallow: /'; then
+            echo "::error::Canonical robots.txt still blocks indexing."
+            exit 1
+          fi
+          printf '%s' "${sitemap}" | grep -q '<loc>https://ghoulhouse.fi</loc>'
+          printf '%s' "${sitemap}" | grep -q '<loc>https://ghoulhouse.fi/tietosuoja</loc>'
+
+          printf '%s' "${html}" | grep -q '<meta name="robots" content="index, follow"'
+          if printf '%s' "${headers}" | grep -Eqi '^x-robots-tag:.*noindex'; then
+            echo "::error::Canonical response still sends a noindex header."
             exit 1
           fi
 
