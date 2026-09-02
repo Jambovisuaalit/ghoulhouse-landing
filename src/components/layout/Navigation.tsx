@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Container from '@/components/ui/Container';
+import { siteConfig } from '@/config/site';
 
 const navItems = [
   ['Palvelu', '#palvelu'],
@@ -20,10 +21,10 @@ export default function Navigation() {
               <Image
                 src="/logo-horizontal.svg"
                 alt="GhoulHouse"
-                width={1400}
-                height={460}
+                width={1280}
+                height={260}
                 priority
-                className="h-[38px] w-auto sm:h-[48px]"
+                className="h-[34px] w-auto sm:h-[42px]"
               />
             </a>
 
@@ -35,9 +36,13 @@ export default function Navigation() {
               ))}
             </div>
 
-            <a className="nav-cta btn btn-primary min-h-11 px-4 text-[0.68rem] sm:px-5 sm:text-[0.72rem]" href="#laheta-kuvat">
-              <span className="hidden sm:inline">LÄHETÄ 2 TYÖKUVAA</span>
-              <span className="sm:hidden">LÄHETÄ KUVAT</span>
+            <a
+              className="nav-cta btn btn-primary min-h-11 px-3 text-[0.64rem] sm:px-4 sm:text-[0.7rem]"
+              href="#laheta-kuvat"
+              aria-label={siteConfig.cta.primary}
+            >
+              <span className="hidden md:inline">{siteConfig.cta.primary}</span>
+              <span className="md:hidden">2 ESIMERKKIÄ</span>
             </a>
           </nav>
         </Container>
