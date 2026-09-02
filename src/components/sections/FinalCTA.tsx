@@ -4,7 +4,7 @@ import { siteConfig } from '@/config/site';
 
 export default function FinalCTA() {
   return (
-    <section id="yhteydenotto" className="hero-surface bg-black py-20 text-white md:py-28" aria-labelledby="final-cta-title">
+    <section id="laheta-kuvat" className="hero-surface bg-black py-20 text-white md:py-28" aria-labelledby="final-cta-title">
       <Container>
         <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-8">
@@ -25,11 +25,11 @@ export default function FinalCTA() {
           </div>
           <div className="lg:col-span-4">
             <p className="type-editorial text-white/70">
-              Ei raskasta markkinointiprojektia. Selkeä sisältökuukausi kerrallaan.
+              Lähetä kaksi työkuvaa. Teemme niistä kaksi konkreettista sisältöesimerkkiä, jotta näet miltä GhoulHouse-toteutus voisi näyttää.
             </p>
             <div className="mt-7 grid gap-3">
-              <ContactTrigger className="btn btn-primary w-full">{siteConfig.cta.primary}</ContactTrigger>
-              <ContactTrigger intent="photos" className="btn btn-inverse w-full">{siteConfig.cta.secondary}</ContactTrigger>
+              <ContactTrigger intent="photos" className="btn btn-primary w-full">LÄHETÄ 2 TYÖKUVAA</ContactTrigger>
+              <ContactTrigger className="btn btn-inverse w-full">{siteConfig.cta.primary}</ContactTrigger>
             </div>
             <p className="mt-4 text-xs font-bold uppercase tracking-[0.09em] text-white/55">
               Työkuvien toimitustapa sovitaan yhteydenoton jälkeen.
