@@ -91,6 +91,17 @@ jobs:
           test "$cross_site_status" = "403"
           grep -q '"cross_site_request"' /tmp/lead-cross-site.json
 
+          form_headers="$(mktemp)"
+          form_status="$(curl --silent --output /dev/null --dump-header "$form_headers" --write-out '%{http_code}' \
+            --max-redirs 0 \
+            --request POST \
+            --header 'content-type: application/x-www-form-urlencoded' \
+            --data 'intent=photos&fax=qa-honeypot' \
+            http://127.0.0.1:3000/api/leads)"
+
+          test "$form_status" = "303"
+          grep -Eqi '^location: .*\/kiitos' "$form_headers"
+
       - name: SEO safety QA
         shell: bash
         run: |
@@ -115,6 +126,16 @@ jobs:
             echo "::error::CSP enforcement must remain off until Preview validation is complete."
             exit 1
           fi
+
+      - name: Logo QA
+        shell: bash
+        run: |
+          grep -q 'viewBox=' public/logo-horizontal.svg
+          if grep -qi '<text' public/logo-horizontal.svg; then
+            echo "::error::Logo wordmark must be path-only; live SVG text is not allowed."
+            exit 1
+          fi
+          grep -q '<path' public/logo-horizontal.svg
 
       - name: Browser QA
         run: node scripts/browser-qa-ci.mjs
