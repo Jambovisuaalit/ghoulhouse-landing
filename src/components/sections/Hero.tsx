@@ -12,7 +12,7 @@ export default function Hero() {
         <div className="hero-layout relative grid gap-8 lg:grid-cols-12 lg:items-end">
           <div className="hero-copy lg:col-span-8">
             <p className="type-label text-signal">GhoulHouse / Social content system</p>
-            <h1 id="hero-title" className="type-display hero-title mt-4 max-w-[15ch] text-white">
+            <h1 id="hero-title" className="type-display hero-title mt-6 max-w-[15ch] text-white">
               TYÖMAAKUVA<br className="mobile-title-break" /> SISÄÄN.
               <span className="block text-signal">
                 VALMIS JULKAISU<br className="mobile-title-break" /> ULOS.
