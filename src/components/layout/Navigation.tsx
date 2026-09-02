@@ -1,10 +1,5 @@
-'use client';
-
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
 import Container from '@/components/ui/Container';
-import ContactTrigger from '@/components/contact/ContactTrigger';
-import { siteConfig } from '@/config/site';
 
 const navItems = [
   ['Palvelu', '#palvelu'],
@@ -15,18 +10,9 @@ const navItems = [
 ] as const;
 
 export default function Navigation() {
-  const [stuck, setStuck] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setStuck(window.scrollY > 72);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
   return (
     <div className="nav-slot">
-      <header className={`nav-shell ${stuck ? 'nav-shell--stuck' : ''}`}>
+      <header className="nav-shell">
         <Container>
           <nav className="flex min-h-[72px] items-center justify-between gap-3 sm:gap-5" aria-label="Päänavigaatio">
             <a href="#top" className="shrink-0" aria-label="GhoulHouse — sivun alku">
@@ -49,10 +35,10 @@ export default function Navigation() {
               ))}
             </div>
 
-            <ContactTrigger className="nav-cta btn btn-primary min-h-11 px-4 text-[0.68rem] sm:px-5 sm:text-[0.72rem]">
-              <span className="hidden sm:inline">{siteConfig.cta.primary}</span>
-              <span className="sm:hidden">20 MIN</span>
-            </ContactTrigger>
+            <a className="nav-cta btn btn-primary min-h-11 px-4 text-[0.68rem] sm:px-5 sm:text-[0.72rem]" href="#laheta-kuvat">
+              <span className="hidden sm:inline">LÄHETÄ 2 TYÖKUVAA</span>
+              <span className="sm:hidden">LÄHETÄ KUVAT</span>
+            </a>
           </nav>
         </Container>
       </header>
