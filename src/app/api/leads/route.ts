@@ -24,6 +24,10 @@ function json(
   });
 }
 
+function redirect(request: NextRequest, destination: string) {
+  return NextResponse.redirect(new URL(destination, request.url), 303);
+}
+
 function getClientKey(request: NextRequest) {
   return (
     request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
@@ -65,6 +69,23 @@ function isCrossSiteRequest(request: NextRequest) {
   return Boolean(site && !['same-origin', 'same-site', 'none'].includes(site));
 }
 
+async function readBody(request: NextRequest) {
+  const contentType = request.headers.get('content-type') || '';
+
+  if (contentType.includes('application/json')) {
+    return {
+      htmlForm: false,
+      body: (await request.json()) as Record<string, unknown>,
+    };
+  }
+
+  const formData = await request.formData();
+  return {
+    htmlForm: true,
+    body: Object.fromEntries(formData.entries()),
+  };
+}
+
 export async function POST(request: NextRequest) {
   if (isCrossSiteRequest(request)) {
     return json({ ok: false, code: 'cross_site_request' }, 403);
@@ -72,14 +93,17 @@ export async function POST(request: NextRequest) {
 
   const contentLength = Number(request.headers.get('content-length') || 0);
 
-  if (contentLength > 20_000) {
+  if (contentLength > 50_000) {
     return json({ ok: false, code: 'payload_too_large' }, 413);
   }
 
   const clientKey = getClientKey(request);
   const rateLimit = checkRateLimit(clientKey);
+  const contentType = request.headers.get('content-type') || '';
+  const htmlForm = !contentType.includes('application/json');
 
   if (rateLimit.limited) {
+    if (htmlForm) return redirect(request, '/?lead=rate_limited#laheta-kuvat');
     return json(
       { ok: false, code: 'rate_limited' },
       429,
@@ -87,21 +111,26 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  let body: Record<string, unknown>;
+  let parsed: { htmlForm: boolean; body: Record<string, unknown> };
 
   try {
-    body = await request.json();
+    parsed = await readBody(request);
   } catch {
-    return json({ ok: false, code: 'invalid_json' }, 400);
+    if (htmlForm) return redirect(request, '/?lead=invalid#laheta-kuvat');
+    return json({ ok: false, code: 'invalid_payload' }, 400);
   }
 
-  if (typeof body.fax === 'string' && body.fax.trim()) {
-    return json({ ok: true }, 201);
+  if (typeof parsed.body.fax === 'string' && parsed.body.fax.trim()) {
+    return parsed.htmlForm ? redirect(request, '/kiitos') : json({ ok: true }, 201);
   }
 
-  const validation = validateLead(body);
+  const validation = validateLead(parsed.body);
 
   if (!validation.ok || !validation.data) {
+    if (parsed.htmlForm) {
+      return redirect(request, '/?lead=validation#laheta-kuvat');
+    }
+
     return json(
       {
         ok: false,
@@ -114,9 +143,15 @@ export async function POST(request: NextRequest) {
 
   try {
     await deliverLead(validation.data);
+
+    if (parsed.htmlForm) return redirect(request, '/kiitos');
     return json({ ok: true }, 201);
   } catch (error) {
     if (error instanceof LeadDeliveryError) {
+      if (parsed.htmlForm) {
+        return redirect(request, '/?lead=delivery#laheta-kuvat');
+      }
+
       const status = error.code === 'not_configured' ? 503 : 502;
 
       return json(
@@ -129,6 +164,10 @@ export async function POST(request: NextRequest) {
         },
         status
       );
+    }
+
+    if (parsed.htmlForm) {
+      return redirect(request, '/?lead=delivery#laheta-kuvat');
     }
 
     return json({ ok: false, code: 'delivery_failed' }, 502);

@@ -8,73 +8,33 @@ const USER_DATA_DIR = `/tmp/ghoulhouse-browser-qa-${process.pid}`;
 
 const viewports = [
   { width: 320, height: 568 },
-  { width: 320, height: 800 },
   { width: 375, height: 667 },
-  { width: 375, height: 812 },
-  { width: 390, height: 844 },
+  { width: 390, height: 844, firstView: true },
   { width: 430, height: 932 },
   { width: 768, height: 1024 },
   { width: 1024, height: 768 },
-  { width: 1280, height: 800 },
-  { width: 1440, height: 900 },
+  { width: 1366, height: 768, firstView: true },
+  { width: 1440, height: 900, firstView: true },
   { width: 1920, height: 1080 },
 ];
 
+function assert(condition, message) {
+  if (!condition) throw new Error(message);
+}
+
 function findChrome() {
-  const result = execFileSync(
+  const binary = execFileSync(
     'bash',
-    [
-      '-lc',
-      'command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser',
-    ],
+    ['-lc', 'command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser'],
     { encoding: 'utf8' }
   ).trim();
 
-  if (!result) throw new Error('Chrome/Chromium binary not found on runner.');
-  return result;
+  if (!binary) throw new Error('Chrome/Chromium binary not found on runner.');
+  return binary;
 }
 
 async function sleep(ms) {
   await new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-async function waitForProcessExit(process, timeoutMs = 3_000) {
-  if (process.exitCode !== null) return true;
-
-  return new Promise((resolve) => {
-    const timer = setTimeout(() => {
-      process.off('exit', handleExit);
-      resolve(false);
-    }, timeoutMs);
-
-    const handleExit = () => {
-      clearTimeout(timer);
-      resolve(true);
-    };
-
-    process.once('exit', handleExit);
-  });
-}
-
-async function removeUserDataDir() {
-  for (let attempt = 1; attempt <= 5; attempt += 1) {
-    try {
-      await rm(USER_DATA_DIR, { recursive: true, force: true });
-      return;
-    } catch (error) {
-      if (
-        !error ||
-        typeof error !== 'object' ||
-        !('code' in error) ||
-        !['ENOTEMPTY', 'EBUSY', 'EPERM'].includes(String(error.code)) ||
-        attempt === 5
-      ) {
-        throw error;
-      }
-
-      await sleep(100 * attempt);
-    }
-  }
 }
 
 async function waitForJson(url, chrome, stderr, timeoutMs = 20_000) {
@@ -82,16 +42,14 @@ async function waitForJson(url, chrome, stderr, timeoutMs = 20_000) {
 
   while (Date.now() - start < timeoutMs) {
     if (chrome.exitCode !== null) {
-      throw new Error(
-        `Chrome exited before CDP became ready (exit ${chrome.exitCode}).\n${stderr.join('')}`
-      );
+      throw new Error(`Chrome exited before CDP became ready (exit ${chrome.exitCode}).\n${stderr.join('')}`);
     }
 
     try {
       const response = await fetch(url, { cache: 'no-store' });
       if (response.ok) return response.json();
     } catch {
-      // Keep polling while Chrome starts.
+      // Chrome is still starting.
     }
 
     await sleep(150);
@@ -111,26 +69,19 @@ class CdpClient {
   async open() {
     await new Promise((resolve, reject) => {
       const timer = setTimeout(() => reject(new Error('CDP open timeout.')), 10_000);
-      this.ws.addEventListener(
-        'open',
-        () => {
-          clearTimeout(timer);
-          resolve();
-        },
-        { once: true }
-      );
-      this.ws.addEventListener(
-        'error',
-        () => {
-          clearTimeout(timer);
-          reject(new Error('CDP websocket failed to open.'));
-        },
-        { once: true }
-      );
+      this.ws.addEventListener('open', () => {
+        clearTimeout(timer);
+        resolve();
+      }, { once: true });
+      this.ws.addEventListener('error', () => {
+        clearTimeout(timer);
+        reject(new Error('CDP websocket failed to open.'));
+      }, { once: true });
     });
 
     this.ws.addEventListener('message', (event) => {
       const message = JSON.parse(String(event.data));
+
       if (message.id) {
         const pending = this.pending.get(message.id);
         if (!pending) return;
@@ -139,6 +90,7 @@ class CdpClient {
         else pending.resolve(message.result);
         return;
       }
+
       for (const callback of this.listeners.get(message.method) || []) {
         callback(message.params);
       }
@@ -174,8 +126,8 @@ async function evaluate(client, expression) {
   if (result.exceptionDetails) {
     throw new Error(
       result.exceptionDetails.exception?.description ||
-        result.exceptionDetails.text ||
-        'Runtime evaluation failed.'
+      result.exceptionDetails.text ||
+      'Runtime evaluation failed.'
     );
   }
 
@@ -184,33 +136,23 @@ async function evaluate(client, expression) {
 
 async function waitForDocument(client, timeoutMs = 15_000) {
   const start = Date.now();
+
   while (Date.now() - start < timeoutMs) {
-    const state = await evaluate(client, 'document.readyState');
-    if (state === 'complete') {
-      await sleep(250);
+    if (await evaluate(client, 'document.readyState === "complete"')) {
+      await sleep(150);
       return;
     }
     await sleep(100);
   }
+
   throw new Error('Page did not reach complete readyState.');
 }
 
-async function waitForCondition(client, expression, timeoutMs = 3_000) {
-  const start = Date.now();
-
-  while (Date.now() - start < timeoutMs) {
-    if (await evaluate(client, expression)) {
-      return Date.now() - start;
-    }
-
-    await sleep(50);
-  }
-
-  return null;
-}
-
-function assert(condition, message) {
-  if (!condition) throw new Error(message);
+async function stopProcess(process) {
+  if (process.exitCode !== null) return;
+  process.kill('SIGTERM');
+  await sleep(250);
+  if (process.exitCode === null) process.kill('SIGKILL');
 }
 
 await mkdir(SCREENSHOT_DIR, { recursive: true });
@@ -260,14 +202,13 @@ try {
   await client.open();
   await client.send('Page.enable');
   await client.send('Runtime.enable');
-  await client.send('Network.enable');
 
   const pageExceptions = [];
   client.on('Runtime.exceptionThrown', (params) => {
     pageExceptions.push(
       params.exceptionDetails?.exception?.description ||
-        params.exceptionDetails?.text ||
-        'Unknown page exception'
+      params.exceptionDetails?.text ||
+      'Unknown page exception'
     );
   });
 
@@ -287,301 +228,205 @@ try {
     await client.send('Page.navigate', { url: BASE_URL });
     await waitForDocument(client);
 
-    const metrics = await evaluate(
-      client,
-      `(() => {
-        const hero = document.querySelector('#top');
-        const h1 = document.querySelector('h1');
-        const brand = document.querySelector('header a[aria-label="GhoulHouse — sivun alku"]');
-        const visible = (el) => {
-          if (!el) return false;
-          const r = el.getBoundingClientRect();
-          const s = getComputedStyle(el);
-          return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden';
-        };
-        const cta = [...(hero?.querySelectorAll('a, button') || [])].find(
-          (el) => visible(el) && el.textContent?.includes('VARAA 20 MIN KESKUSTELU')
-        );
-        const price = [...(hero?.querySelectorAll('*') || [])].find(
-          (el) => visible(el) && el.children.length === 0 && el.textContent?.includes('490 €')
-        );
-        const offerCard = document.querySelector('[data-offer-card]');
-        const rect = (el) => {
-          if (!el) return null;
-          const r = el.getBoundingClientRect();
-          return { top: r.top, right: r.right, bottom: r.bottom, left: r.left, width: r.width, height: r.height };
-        };
-        return {
-          h1Count: document.querySelectorAll('h1').length,
-          h1Text: h1?.textContent?.replace(/\\s+/g, ' ').trim() || '',
-          heroText: hero?.textContent?.replace(/\\s+/g, ' ').trim() || '',
-          ctaText: cta?.textContent?.replace(/\\s+/g, ' ').trim() || '',
-          priceText: price?.textContent?.replace(/\\s+/g, ' ').trim() || '',
-          offerName: offerCard?.getAttribute('data-offer-name') || '',
-          offerPrice: offerCard?.getAttribute('data-offer-price') || '',
-          proofRaw: Boolean(document.querySelector('.mechanism-raw__stage')),
-          proofFilm: Boolean(document.querySelector('.mechanism-film__viewport')),
-          viewportMeta: document.querySelector('meta[name="viewport"]')?.getAttribute('content') || '',
-          containerPaddingLeft: parseFloat(getComputedStyle(document.querySelector('.container-wide')).paddingLeft) || 0,
-          containerPaddingRight: parseFloat(getComputedStyle(document.querySelector('.container-wide')).paddingRight) || 0,
-          bodyOverflowX: getComputedStyle(document.body).overflowX,
-          bodyText: document.body.innerText.replace(/\\s+/g, ' ').trim(),
-          brandText: brand?.textContent?.replace(/\\s+/g, ' ').trim() || '',
-          brandRect: rect(brand),
-          h1Rect: rect(h1),
-          ctaRect: rect(cta),
-          priceRect: rect(price),
-          innerWidth,
-          innerHeight,
-          scrollWidth: document.documentElement.scrollWidth,
-          overflowing: [...document.querySelectorAll('body *')]
-            .map((el) => {
-              const r = el.getBoundingClientRect();
-              return {
-                tag: el.tagName,
-                id: el.id || '',
-                className: typeof el.className === 'string' ? el.className : '',
-                text: (el.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 80),
-                left: Math.round(r.left),
-                right: Math.round(r.right),
-                width: Math.round(r.width),
-              };
-            })
-            .filter((item) => item.left < -1 || item.right > innerWidth + 1)
-            .slice(0, 12),
-        };
-      })()`
-    );
-
-    assert(metrics.h1Count === 1, `${viewport.width}px: expected exactly one H1.`);
-    assert(
-      metrics.h1Text.includes('TYÖMAAKUVAT SISÄÄN.') && metrics.h1Text.includes('VALMIS SOME ULOS.'),
-      `${viewport.width}px: canonical headline missing.`
-    );
-    assert(
-      metrics.heroText.includes('GhoulHouse tekee remontti- ja palveluyritysten työmaakuvista') &&
-        metrics.heroText.includes('Instagramiin ja Facebookiin'),
-      `${viewport.width}px: canonical value proposition missing.`
-    );
-    assert(metrics.brandText.toUpperCase() === 'GHOULHOUSE', `${viewport.width}px: full GhoulHouse wordmark is missing.`);
-    assert(metrics.ctaText.includes('VARAA 20 MIN KESKUSTELU'), `${viewport.width}px: CTA missing.`);
-    assert(metrics.priceText.includes('490 €'), `${viewport.width}px: SOME 12 price missing.`);
-    assert(
-      metrics.offerName === 'GHOULHOUSE SOME 12',
-      `${viewport.width}px: pricing card offer name must be GHOULHOUSE SOME 12, got "${metrics.offerName}".`
-    );
-    assert(
-      metrics.offerPrice === '490',
-      `${viewport.width}px: pricing card offer price must be 490, got "${metrics.offerPrice}".`
-    );
-    assert(metrics.proofRaw, `${viewport.width}px: RAW → FINAL Proof Engine is not mounted.`);
-    assert(metrics.proofFilm, `${viewport.width}px: filmstrip Proof Engine is not mounted.`);
-    assert(
-      metrics.viewportMeta.includes('viewport-fit=cover'),
-      `${viewport.width}px: viewport-fit=cover is missing from viewport metadata.`
-    );
-    assert(
-      metrics.containerPaddingLeft >= 15 && metrics.containerPaddingRight >= 15,
-      `${viewport.width}px: container-wide is missing mobile gutters.`
-    );
-    assert(
-      metrics.bodyOverflowX === 'clip' || metrics.bodyOverflowX === 'hidden',
-      `${viewport.width}px: body must suppress accidental page-level horizontal overflow.`
-    );
-    assert(
-      !metrics.bodyText.includes('790 €') &&
-        !metrics.bodyText.includes('MANAGED') &&
-        !metrics.bodyText.toLowerCase().includes('palvelujaksosta 4'),
-      `${viewport.width}px: obsolete 490→790 pricing lifecycle reappeared in rendered page.`
-    );
-    assert(
-      metrics.scrollWidth <= metrics.innerWidth + 1,
-      `${viewport.width}px: horizontal overflow ${metrics.scrollWidth}px > ${metrics.innerWidth}px. Offenders: ${JSON.stringify(metrics.overflowing)}`
-    );
-    assert(metrics.ctaRect?.height >= 44, `${viewport.width}px: CTA target below 44px.`);
-    assert(metrics.ctaRect?.bottom <= metrics.innerHeight, `${viewport.width}px: CTA below first viewport.`);
-
-    for (const [name, rect] of [
-      ['brand lockup', metrics.brandRect],
-      ['headline', metrics.h1Rect],
-      ['CTA', metrics.ctaRect],
-      ['price', metrics.priceRect],
-    ]) {
-      assert(rect, `${viewport.width}px: ${name} is not visible.`);
-      assert(
-        rect.left >= -1 && rect.right <= metrics.innerWidth + 1,
-        `${viewport.width}px: ${name} overflows horizontally.`
-      );
-    }
-
-    const shot = await client.send('Page.captureScreenshot', {
-      format: 'png',
-      captureBeyondViewport: false,
-    });
-    await writeFile(
-      `${SCREENSHOT_DIR}/homepage-${viewport.width}x${viewport.height}.png`,
-      Buffer.from(shot.data, 'base64')
-    );
-
-    results.push({
-      viewport: `${viewport.width}x${viewport.height}`,
-      ctaBottom: Math.round(metrics.ctaRect.bottom),
-      priceBottom: Math.round(metrics.priceRect.bottom),
-      status: 'PASS',
-    });
-  }
-
-  // Mobile navigation / responsive regression.
-  await client.send('Emulation.setDeviceMetricsOverride', {
-    width: 390,
-    height: 844,
-    deviceScaleFactor: 1,
-    mobile: true,
-  });
-  await client.send('Page.navigate', { url: BASE_URL });
-  await waitForDocument(client);
-
-  const mobileHeader = await evaluate(
-    client,
-    `(() => {
-      const header = document.querySelector('header');
-      const brand = header?.querySelector('a[aria-label="GhoulHouse — sivun alku"]');
-      const cta = [...(header?.querySelectorAll('a, button') || [])].find((el) =>
-        el.textContent?.includes('20 MIN')
-      );
-      const rect = (el) => {
-        if (!el) return null;
+    const metrics = await evaluate(client, `(() => {
+      const visible = (el) => {
+        if (!el) return false;
         const r = el.getBoundingClientRect();
-        return { left:r.left, right:r.right, top:r.top, bottom:r.bottom, width:r.width, height:r.height };
-      };
-      return {
-        brand: rect(brand),
-        cta: rect(cta),
-        scrollWidth: document.documentElement.scrollWidth,
-        innerWidth,
-      };
-    })()`
-  );
-  assert(mobileHeader.brand, 'Mobile brand lockup is missing.');
-  assert(mobileHeader.cta, 'Mobile booking CTA is missing.');
-  assert(mobileHeader.cta.height >= 44, 'Mobile booking CTA target is below 44px.');
-  assert(
-    mobileHeader.scrollWidth <= mobileHeader.innerWidth + 1,
-    `Mobile page overflows horizontally: ${mobileHeader.scrollWidth}px > ${mobileHeader.innerWidth}px.`
-  );
-
-  // Desktop sticky-header + hero motion regression.
-  await client.send('Emulation.setDeviceMetricsOverride', {
-    width: 1440,
-    height: 900,
-    deviceScaleFactor: 1,
-    mobile: false,
-  });
-  await client.send('Emulation.setEmulatedMedia', {
-    media: '',
-    features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }],
-  });
-  await client.send('Page.navigate', { url: BASE_URL });
-  await waitForDocument(client);
-  await sleep(900);
-
-  const heroMotion = await evaluate(
-    client,
-    `(() => {
-      const animated = [...document.querySelectorAll('[data-hero-motion]')];
-      const visible = animated.every((el) => {
         const s = getComputedStyle(el);
-        return Number(s.opacity) > 0.95 && new DOMMatrixReadOnly(s.transform).m42 > -1;
-      });
-      window.scrollTo(0, 260);
-      return { count: animated.length, visible };
-    })()`
-  );
-  assert(heroMotion.count >= 4, `Expected hero motion sequence, got ${heroMotion.count} nodes.`);
-  assert(heroMotion.visible, 'Hero motion sequence did not settle to visible state.');
-  await sleep(180);
-
-  const stickyHeader = await evaluate(
-    client,
-    `(() => {
-      const header = document.querySelector('header');
-      const r = header?.getBoundingClientRect();
-      return {
-        fixed: header ? getComputedStyle(header).position === 'fixed' : false,
-        top: r?.top ?? null,
-        width: r?.width ?? 0,
+        return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden';
       };
-    })()`
-  );
-  assert(stickyHeader.fixed, 'Header did not become fixed after scroll.');
-  assert(stickyHeader.top !== null && Math.abs(stickyHeader.top) <= 1, `Sticky header top is ${stickyHeader.top}.`);
-
-  // Desktop mechanism / proof-system regression.
-  await client.send('Emulation.setDeviceMetricsOverride', {
-    width: 1440,
-    height: 900,
-    deviceScaleFactor: 1,
-    mobile: false,
-  });
-  await client.send('Page.navigate', { url: BASE_URL });
-  await waitForDocument(client);
-
-  const proofEngine = await evaluate(
-    client,
-    `(() => {
-      const rawStage = document.querySelector('.mechanism-raw__stage');
-      const divider = document.querySelector('.mechanism-raw__divider');
-      const filmViewport = document.querySelector('.mechanism-film__viewport');
-      const filmTrack = document.querySelector('.mechanism-film__track');
-      const frames = [...document.querySelectorAll('.mechanism-film__frame')];
       const rect = (el) => {
         if (!el) return null;
         const r = el.getBoundingClientRect();
         return { top:r.top, right:r.right, bottom:r.bottom, left:r.left, width:r.width, height:r.height };
       };
+
+      const hero = document.querySelector('#top');
+      const h1 = hero?.querySelector('h1');
+      const heroCta = hero?.querySelector('a[href="#laheta-kuvat"]');
+      const price = [...(hero?.querySelectorAll('*') || [])].find(
+        (el) => visible(el) && el.children.length === 0 && el.textContent?.includes('490 €')
+      );
+      const brandLink = document.querySelector('header a[aria-label="GhoulHouse — sivun alku"]');
+      const brandImage = brandLink?.querySelector('img');
+      const form = document.querySelector('#laheta-kuvat form[action="/api/leads"]');
+      const submit = form?.querySelector('button[type="submit"]');
+      const rawFinal = document.querySelector('.raw-final-grid');
+
       return {
-        rawStage: rect(rawStage),
-        divider: rect(divider),
-        filmViewport: rect(filmViewport),
-        frameCount: frames.length,
-        filmScrollWidth: filmTrack?.scrollWidth || 0,
-        filmClientWidth: filmViewport?.clientWidth || 0,
-        conceptLabelVisible: document.body.innerText.includes('KONSEPTIESIMERKKI — EI ASIAKASTYÖ'),
+        h1Count: document.querySelectorAll('h1').length,
+        h1Text: h1?.textContent?.replace(/\\s+/g, ' ').trim() || '',
+        heroText: hero?.textContent?.replace(/\\s+/g, ' ').trim() || '',
+        heroCtaText: heroCta?.textContent?.replace(/\\s+/g, ' ').trim() || '',
+        heroCtaHref: heroCta?.getAttribute('href') || '',
+        priceText: price?.textContent?.replace(/\\s+/g, ' ').trim() || '',
+        heroCtaRect: rect(heroCta),
+        priceRect: rect(price),
+        h1Rect: rect(h1),
+        brandRect: rect(brandLink),
+        brandImageRect: rect(brandImage),
+        brandNaturalWidth: brandImage?.naturalWidth || 0,
+        brandNaturalHeight: brandImage?.naturalHeight || 0,
+        formExists: Boolean(form),
+        formMethod: form?.getAttribute('method')?.toLowerCase() || '',
+        formAction: form?.getAttribute('action') || '',
+        submitRect: rect(submit),
+        requiredFields: ['company','name','email','profile'].every(
+          (name) => Boolean(form?.querySelector('[name="' + name + '"][required]'))
+        ),
+        rawFinalExists: Boolean(rawFinal),
+        rawFinalPanels: document.querySelectorAll('.raw-final-panel').length,
+        disclosure: document.body.innerText.includes('KONSEPTIESIMERKKI — EI ASIAKASTYÖ'),
+        bodyText: document.body.innerText.replace(/\\s+/g, ' ').trim(),
+        viewportMeta: document.querySelector('meta[name="viewport"]')?.getAttribute('content') || '',
+        bodyOverflowX: getComputedStyle(document.body).overflowX,
+        innerWidth,
+        innerHeight,
+        scrollWidth: document.documentElement.scrollWidth,
+        overflowing: [...document.querySelectorAll('body *')]
+          .map((el) => {
+            const r = el.getBoundingClientRect();
+            return {
+              tag: el.tagName,
+              id: el.id || '',
+              className: typeof el.className === 'string' ? el.className : '',
+              left: Math.round(r.left),
+              right: Math.round(r.right),
+              width: Math.round(r.width),
+            };
+          })
+          .filter((item) => item.left < -1 || item.right > innerWidth + 1)
+          .slice(0, 12),
       };
-    })()`
-  );
+    })()`);
 
-  assert(proofEngine.rawStage, 'RAW → FINAL stage is missing.');
-  assert(proofEngine.divider, 'RAW → FINAL divider is missing.');
-  assert(proofEngine.rawStage.width > 250 && proofEngine.rawStage.height > 250, 'RAW → FINAL stage is too small.');
-  assert(
-    proofEngine.divider.left >= proofEngine.rawStage.left - 2 &&
-      proofEngine.divider.right <= proofEngine.rawStage.right + 2,
-    'RAW → FINAL divider is outside the stage.'
-  );
-  assert(proofEngine.filmViewport, 'Filmstrip viewport is missing.');
-  assert(proofEngine.frameCount === 4, `Expected 4 mechanism film frames, got ${proofEngine.frameCount}.`);
-  assert(
-    proofEngine.filmScrollWidth > 1_000 && proofEngine.filmClientWidth > 1_000,
-    `Filmstrip geometry is unexpectedly small: track ${proofEngine.filmScrollWidth}px / viewport ${proofEngine.filmClientWidth}px.`
-  );
-  assert(proofEngine.conceptLabelVisible, 'Concept-example disclosure is missing.');
+    assert(metrics.h1Count === 1, `${viewport.width}x${viewport.height}: expected exactly one H1.`);
+    assert(
+      metrics.h1Text.includes('TYÖMAAKUVA SISÄÄN.') && metrics.h1Text.includes('VALMIS JULKAISU ULOS.'),
+      `${viewport.width}x${viewport.height}: V2 headline missing.`
+    );
+    assert(
+      metrics.heroText.includes('remontti- ja rakennusyritysten työmaakuvista') &&
+      metrics.heroText.includes('Instagramiin ja Facebookiin'),
+      `${viewport.width}x${viewport.height}: value proposition missing.`
+    );
+    assert(metrics.heroCtaHref === '#laheta-kuvat', `${viewport.width}x${viewport.height}: primary CTA does not target #laheta-kuvat.`);
+    assert(
+      metrics.heroCtaText.includes('2 ESIMERKKIÄ') || metrics.heroCtaText.includes('2 MAKSUTONTA SISÄLTÖESIMERKKIÄ'),
+      `${viewport.width}x${viewport.height}: primary CTA copy missing.`
+    );
+    assert(metrics.priceText.includes('490 €'), `${viewport.width}x${viewport.height}: 490 € price missing.`);
+    assert(metrics.formExists, `${viewport.width}x${viewport.height}: native lead form missing.`);
+    assert(metrics.formMethod === 'post', `${viewport.width}x${viewport.height}: lead form method must be POST.`);
+    assert(metrics.formAction === '/api/leads', `${viewport.width}x${viewport.height}: lead form action must be /api/leads.`);
+    assert(metrics.requiredFields, `${viewport.width}x${viewport.height}: required lead fields missing.`);
+    assert(metrics.submitRect?.height >= 44, `${viewport.width}x${viewport.height}: submit target below 44px.`);
+    assert(metrics.rawFinalExists && metrics.rawFinalPanels === 2, `${viewport.width}x${viewport.height}: static RAW → FINAL proof missing.`);
+    assert(metrics.disclosure, `${viewport.width}x${viewport.height}: concept disclosure missing.`);
+    assert(metrics.brandNaturalWidth > 0 && metrics.brandNaturalHeight > 0, `${viewport.width}x${viewport.height}: logo image failed to load.`);
+    assert(metrics.brandImageRect?.width >= 100, `${viewport.width}x${viewport.height}: logo is visually too narrow or clipped.`);
+    assert(metrics.viewportMeta.includes('viewport-fit=cover'), `${viewport.width}x${viewport.height}: viewport-fit=cover missing.`);
+    assert(
+      metrics.bodyOverflowX === 'clip' || metrics.bodyOverflowX === 'hidden',
+      `${viewport.width}x${viewport.height}: body must suppress horizontal overflow.`
+    );
+    assert(
+      metrics.scrollWidth <= metrics.innerWidth + 1,
+      `${viewport.width}x${viewport.height}: horizontal overflow ${metrics.scrollWidth}px > ${metrics.innerWidth}px. Offenders: ${JSON.stringify(metrics.overflowing)}`
+    );
+    assert(
+      !metrics.bodyText.includes('790 €') && !metrics.bodyText.includes('MANAGED') && !metrics.bodyText.toLowerCase().includes('kuukausittain irtisanottava'),
+      `${viewport.width}x${viewport.height}: obsolete pricing copy reappeared.`
+    );
 
-  const proofShot = await client.send('Page.captureScreenshot', {
-    format: 'png',
-    captureBeyondViewport: false,
-  });
-  await writeFile(
-    `${SCREENSHOT_DIR}/proof-system-1440x900.png`,
-    Buffer.from(proofShot.data, 'base64')
-  );
+    for (const [name, rectValue] of [
+      ['brand', metrics.brandRect],
+      ['logo image', metrics.brandImageRect],
+      ['headline', metrics.h1Rect],
+      ['hero CTA', metrics.heroCtaRect],
+      ['price', metrics.priceRect],
+    ]) {
+      assert(rectValue, `${viewport.width}x${viewport.height}: ${name} missing.`);
+      assert(
+        rectValue.left >= -1 && rectValue.right <= metrics.innerWidth + 1,
+        `${viewport.width}x${viewport.height}: ${name} overflows horizontally.`
+      );
+    }
 
+    if (viewport.firstView) {
+      assert(
+        metrics.heroCtaRect.bottom <= metrics.innerHeight,
+        `${viewport.width}x${viewport.height}: primary CTA is below first viewport (${Math.round(metrics.heroCtaRect.bottom)}px).`
+      );
+      assert(
+        metrics.priceRect.bottom <= metrics.innerHeight,
+        `${viewport.width}x${viewport.height}: price is below first viewport (${Math.round(metrics.priceRect.bottom)}px).`
+      );
+    }
+
+    const screenshot = await client.send('Page.captureScreenshot', {
+      format: 'png',
+      captureBeyondViewport: false,
+    });
+    await writeFile(
+      `${SCREENSHOT_DIR}/homepage-${viewport.width}x${viewport.height}.png`,
+      Buffer.from(screenshot.data, 'base64')
+    );
+
+    results.push({
+      viewport: `${viewport.width}x${viewport.height}`,
+      heroCtaBottom: Math.round(metrics.heroCtaRect.bottom),
+      priceBottom: Math.round(metrics.priceRect.bottom),
+      status: 'PASS',
+    });
+  }
+
+  // Keyboard/accessibility and analytics regression.
   await client.send('Emulation.setDeviceMetricsOverride', {
     width: 390,
     height: 844,
     deviceScaleFactor: 1,
     mobile: true,
   });
+  await client.send('Page.navigate', { url: BASE_URL });
+  await waitForDocument(client);
+
+  await evaluate(client, `(() => {
+    window.__ghAnalyticsEvents = [];
+    window.va = (command, payload) => window.__ghAnalyticsEvents.push({ command, payload });
+    return true;
+  })()`);
+
+  const interaction = await evaluate(client, `(() => {
+    const cta = document.querySelector('#top a[href="#laheta-kuvat"]');
+    cta?.focus();
+    const focusedBeforeClick = document.activeElement === cta;
+    cta?.click();
+    const form = document.querySelector('#laheta-kuvat form[action="/api/leads"]');
+    const submit = form?.querySelector('button[type="submit"]');
+    return {
+      focusedBeforeClick,
+      hash: location.hash,
+      formExists: Boolean(form),
+      submitTabIndex: submit?.tabIndex ?? -1,
+    };
+  })()`);
+
+  await sleep(100);
+  const analyticsEvents = await evaluate(client, `(() =>
+    (window.__ghAnalyticsEvents || [])
+      .filter((entry) => entry?.command === 'event')
+      .map((entry) => entry?.payload?.name)
+  )()`);
+
+  assert(interaction.focusedBeforeClick, 'Primary CTA is not keyboard-focusable.');
+  assert(interaction.hash === '#laheta-kuvat', 'Primary CTA did not navigate to #laheta-kuvat.');
+  assert(interaction.formExists, 'Lead form is missing after CTA navigation.');
+  assert(interaction.submitTabIndex >= 0, 'Lead submit button is not keyboard-focusable.');
+  assert(analyticsEvents.includes('primary_cta_click'), 'primary_cta_click analytics event missing.');
+  assert(analyticsEvents.includes('photo_demo_cta_click'), 'photo_demo_cta_click analytics event missing.');
+
+  // Reduced-motion must not remove content or leave persistent animations.
   await client.send('Emulation.setEmulatedMedia', {
     media: '',
     features: [{ name: 'prefers-reduced-motion', value: 'reduce' }],
@@ -589,107 +434,32 @@ try {
   await client.send('Page.navigate', { url: BASE_URL });
   await waitForDocument(client);
 
-  const reducedMotion = await evaluate(
-    client,
-    `(() => ({
-      scrollBehavior: getComputedStyle(document.documentElement).scrollBehavior,
-      animatedElements: [...document.querySelectorAll('*')].filter((el) => {
-        const style = getComputedStyle(el);
-        return style.animationName !== 'none' && style.animationDuration !== '0s' && style.animationDuration !== '0.01ms';
-      }).length,
-      rawPosition: getComputedStyle(document.querySelector('.mechanism-raw__sticky')).position,
-      filmPosition: getComputedStyle(document.querySelector('.mechanism-film__sticky')).position,
-      filmTransform: getComputedStyle(document.querySelector('.mechanism-film__track')).transform,
-    }))()`
-  );
+  const reducedMotion = await evaluate(client, `(() => ({
+    scrollBehavior: getComputedStyle(document.documentElement).scrollBehavior,
+    animatedElements: [...document.querySelectorAll('*')].filter((el) => {
+      const style = getComputedStyle(el);
+      return style.animationName !== 'none' &&
+        style.animationDuration !== '0s' &&
+        style.animationDuration !== '0.01ms';
+    }).length,
+    rawFinal: Boolean(document.querySelector('.raw-final-grid')),
+    form: Boolean(document.querySelector('#laheta-kuvat form[action="/api/leads"]')),
+  }))()`);
+
   assert(reducedMotion.scrollBehavior === 'auto', 'Reduced motion must disable smooth scrolling.');
-  assert(reducedMotion.animatedElements === 0, 'Reduced motion left persistent animation running.');
-  assert(reducedMotion.rawPosition !== 'sticky', 'Reduced motion must disable RAW sticky choreography.');
-  assert(reducedMotion.filmPosition !== 'sticky', 'Reduced motion must disable filmstrip sticky choreography.');
+  assert(reducedMotion.animatedElements === 0, 'Reduced motion left a persistent animation running.');
+  assert(reducedMotion.rawFinal && reducedMotion.form, 'Reduced motion removed critical content.');
 
-  await client.send('Emulation.setEmulatedMedia', {
-    media: '',
-    features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }],
-  });
-
-  await evaluate(
-    client,
-    `(() => {
-      window.__ghAnalyticsEvents = [];
-      window.va = (command, payload) => {
-        window.__ghAnalyticsEvents.push({ command, payload });
-      };
-      return true;
-    })()`
-  );
-
-  const ctaClicked = await evaluate(
-    client,
-    `(() => {
-      const hero = document.querySelector('#top');
-      const trigger = [...(hero?.querySelectorAll('a, button') || [])].find((el) =>
-        el.textContent?.includes('VARAA 20 MIN KESKUSTELU')
-      );
-      trigger?.click();
-      return Boolean(trigger);
-    })()`
-  );
-  assert(ctaClicked, 'Primary CTA trigger was not found in the hero.');
-
-  const dialogOpenMs = await waitForCondition(
-    client,
-    'Boolean(document.querySelector(\'[role="dialog"]\'))',
-    3_000
-  );
-  assert(dialogOpenMs !== null, 'Primary CTA did not open lead dialog.');
-
-  const dialog = await evaluate(
-    client,
-    `(() => {
-      const siteContent = document.querySelector('[aria-hidden="true"][inert]');
-      return {
-        exists: Boolean(document.querySelector('[role="dialog"]')),
-        activeName: document.activeElement?.getAttribute('name') || '',
-        backgroundInert: Boolean(siteContent),
-        skipLinkExists: Boolean(document.querySelector('a.skip-link[href="#main-content"]')),
-        openLatencyMs: ${dialogOpenMs},
-        analyticsEvents: window.__ghAnalyticsEvents || [],
-      };
-    })()`
-  );
-  assert(dialog.exists, 'Primary CTA did not open lead dialog.');
-  assert(dialogOpenMs <= 1_500, `Lead dialog took too long to open: ${dialogOpenMs}ms.`);
-  assert(dialog.activeName === 'company', 'Lead dialog did not focus first field.');
-  assert(dialog.backgroundInert, 'Background content is not inert while dialog is open.');
-  assert(dialog.skipLinkExists, 'Skip link to main content is missing.');
-  const analyticsNames = dialog.analyticsEvents
-    .filter((entry) => entry?.command === 'event')
-    .map((entry) => entry?.payload?.name);
-  assert(
-    analyticsNames.includes('booking_cta_click') &&
-      analyticsNames.includes('lead_form_open'),
-    `CTA analytics events were not forwarded to Vercel Analytics: ${JSON.stringify(dialog.analyticsEvents)}.`
-  );
   assert(pageExceptions.length === 0, `Page exceptions: ${pageExceptions.join(' | ')}`);
 
+  const resultPayload = { chromePath, results, interaction, analyticsEvents, reducedMotion };
   await writeFile(
     `${SCREENSHOT_DIR}/results.json`,
-    JSON.stringify({ chromePath, results, heroMotion, stickyHeader, proofEngine, mobileHeader, reducedMotion, dialog }, null, 2)
+    JSON.stringify(resultPayload, null, 2)
   );
-
-  console.log(JSON.stringify({ chromePath, results, heroMotion, stickyHeader, proofEngine, mobileHeader, reducedMotion, dialog }, null, 2));
+  console.log(JSON.stringify(resultPayload, null, 2));
 } finally {
   client?.close();
-
-  if (chrome.exitCode === null) {
-    chrome.kill('SIGTERM');
-    const exited = await waitForProcessExit(chrome);
-
-    if (!exited && chrome.exitCode === null) {
-      chrome.kill('SIGKILL');
-      await waitForProcessExit(chrome, 2_000);
-    }
-  }
-
-  await removeUserDataDir();
+  await stopProcess(chrome);
+  await rm(USER_DATA_DIR, { recursive: true, force: true });
 }

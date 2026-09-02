@@ -1,5 +1,4 @@
 import Container from '@/components/ui/Container';
-import ContactTrigger from '@/components/contact/ContactTrigger';
 import { offerExcludes, offerIncludes } from '@/data/landing';
 import { siteConfig } from '@/config/site';
 
@@ -24,12 +23,12 @@ export default function Pricing() {
               </p>
               <p className="mt-3 type-label text-white/60">+ ALV / 30 PÄIVÄÄ</p>
             </div>
-            <p className="mt-8 max-w-md text-sm leading-6 text-white/65">
-              Kuukausittain irtisanottava. Asiakas toimittaa kuvat ja tarvittavat faktat.
+            <p className="mt-8 max-w-md text-sm font-semibold leading-6 text-white/70">
+              Ensimmäiset 30 päivää 490 € + ALV. Ei sitoumusta jatkosta.
             </p>
-            <ContactTrigger className="btn btn-primary mt-8 w-full md:w-auto md:min-w-[280px]">
+            <a href="#laheta-kuvat" className="btn btn-primary mt-8 w-full md:w-auto md:min-w-[320px]">
               {siteConfig.cta.primary}
-            </ContactTrigger>
+            </a>
           </div>
 
           <div className="grid bg-white lg:grid-cols-2">

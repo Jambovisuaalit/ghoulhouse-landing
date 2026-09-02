@@ -7,7 +7,7 @@ const observedSections: Array<{
   id: string;
   event: FunnelEvent;
 }> = [
-  { id: 'pricing', event: 'pricing_view' },
+  { id: 'hinta', event: 'pricing_view' },
   { id: 'esimerkit', event: 'content_example_view' },
 ];
 
@@ -15,7 +15,24 @@ export default function FunnelAnalytics() {
   useEffect(() => {
     trackEvent('page_view');
 
-    if (!('IntersectionObserver' in window)) return;
+    const handleClick = (event: MouseEvent) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+
+      const link = target.closest<HTMLAnchorElement>('a[href="#laheta-kuvat"]');
+      if (!link) return;
+
+      trackEvent('primary_cta_click', {
+        location: link.closest('header') ? 'navigation' : link.closest('#top') ? 'hero' : 'page',
+      });
+      trackEvent('photo_demo_cta_click');
+    };
+
+    document.addEventListener('click', handleClick);
+
+    if (!('IntersectionObserver' in window)) {
+      return () => document.removeEventListener('click', handleClick);
+    }
 
     const seen = new Set<string>();
     const observer = new IntersectionObserver(
@@ -42,7 +59,10 @@ export default function FunnelAnalytics() {
       if (element) observer.observe(element);
     }
 
-    return () => observer.disconnect();
+    return () => {
+      document.removeEventListener('click', handleClick);
+      observer.disconnect();
+    };
   }, []);
 
   return null;

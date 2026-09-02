@@ -20,9 +20,9 @@ const montserrat = Montserrat({
   display: 'swap',
 });
 
-const title = 'GhoulHouse | Työmaakuvista valmis some';
+const title = 'GhoulHouse | Työmaakuvasta valmis julkaisu';
 const description =
-  'GhoulHouse tekee remontti- ja palveluyritysten työmaakuvista suunnitellun sisältökuukauden Instagramiin ja Facebookiin. SOME 12: 490 € + ALV / 30 päivää.';
+  'GhoulHouse tekee remontti- ja rakennusyritysten työmaakuvista valmista Instagram- ja Facebook-sisältöä. Ensimmäiset 30 päivää 490 € + ALV. Ei sitoumusta jatkosta.';
 const indexable = isProductionDeployment() && isIndexingApproved();
 
 export const metadata: Metadata = {
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
         url: '/opengraph-image',
         width: 1200,
         height: 630,
-        alt: 'GhoulHouse — Työmaakuvat sisään. Valmis some ulos.',
+        alt: 'GhoulHouse — Työmaakuva sisään. Valmis julkaisu ulos.',
       },
     ],
   },
@@ -93,7 +93,7 @@ const structuredData = {
       url: SITE_URL,
       logo: productionUrl('/icon'),
       description:
-        'GhoulHouse tuottaa asiakkaan työmaa- ja referenssikuvista suunnitelmallista Instagram- ja Facebook-sisältöä.',
+        'GhoulHouse tuottaa remontti- ja rakennusyritysten työmaa- ja referenssikuvista julkaisuvalmista Instagram- ja Facebook-sisältöä.',
     },
     {
       '@type': 'Service',

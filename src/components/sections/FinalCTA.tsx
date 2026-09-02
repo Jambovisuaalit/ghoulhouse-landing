@@ -1,39 +1,31 @@
 import Container from '@/components/ui/Container';
-import ContactTrigger from '@/components/contact/ContactTrigger';
-import { siteConfig } from '@/config/site';
+import LeadForm from '@/components/contact/LeadForm';
 
 export default function FinalCTA() {
   return (
-    <section id="yhteydenotto" className="hero-surface bg-black py-20 text-white md:py-28" aria-labelledby="final-cta-title">
+    <section
+      id="laheta-kuvat"
+      className="hero-surface scroll-mt-6 bg-black py-16 text-white md:py-24"
+      aria-labelledby="final-cta-title"
+    >
       <Container>
-        <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
-          <div className="lg:col-span-8">
-            <p className="type-label text-signal">Seuraava askel</p>
+        <div className="grid gap-10 lg:grid-cols-12 lg:items-start">
+          <div className="lg:col-span-6">
+            <p className="type-label text-signal">Kaksi maksutonta sisältöesimerkkiä</p>
             <h2 id="final-cta-title" className="type-display final-title mt-5 text-white">
-              <span className="final-title-mobile">
-                <span className="block">TYÖT ON JO</span>
-                <span className="block">TEHTY.</span>
-                <span className="mt-[0.08em] block text-signal">TEHDÄÄN NE</span>
-                <span className="block text-signal">MYÖS</span>
-                <span className="block text-signal">NÄKYVIKSI.</span>
-              </span>
-              <span className="final-title-desktop">
-                TYÖT ON JO TEHTY.
-                <span className="block text-signal">TEHDÄÄN NE MYÖS NÄKYVIKSI.</span>
-              </span>
+              NÄE OMA TYÖSI
+              <span className="block text-signal">VALMIINA JULKAISUNA.</span>
             </h2>
+            <p className="type-editorial mt-6 max-w-xl text-white/70">
+              Lähetä yrityksesi perustiedot. Sovimme vastausviestissä kahden työkuvan toimitustavan ja teemme niistä kaksi GhoulHouse-konseptiesimerkkiä.
+            </p>
+            <p className="mt-5 text-xs font-bold uppercase tracking-[0.09em] text-white/50">
+              Konseptiesimerkit eivät sido jatkoon.
+            </p>
           </div>
-          <div className="lg:col-span-4">
-            <p className="type-editorial text-white/70">
-              Ei raskasta markkinointiprojektia. Selkeä sisältökuukausi kerrallaan.
-            </p>
-            <div className="mt-7 grid gap-3">
-              <ContactTrigger className="btn btn-primary w-full">{siteConfig.cta.primary}</ContactTrigger>
-              <ContactTrigger intent="photos" className="btn btn-inverse w-full">{siteConfig.cta.secondary}</ContactTrigger>
-            </div>
-            <p className="mt-4 text-xs font-bold uppercase tracking-[0.09em] text-white/55">
-              Työkuvien toimitustapa sovitaan yhteydenoton jälkeen.
-            </p>
+
+          <div className="lg:col-span-6">
+            <LeadForm />
           </div>
         </div>
       </Container>

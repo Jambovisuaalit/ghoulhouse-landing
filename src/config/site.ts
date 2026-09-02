@@ -16,8 +16,8 @@ export const siteConfig = {
     domain: canonicalSiteUrl,
   },
   cta: {
-    primary: 'VARAA 20 MIN KESKUSTELU',
-    secondary: 'LÄHETÄ KAKSI TYÖKUVAA',
+    primary: 'PYYDÄ 2 MAKSUTONTA SISÄLTÖESIMERKKIÄ',
+    secondary: 'LÄHETÄ 2 TYÖKUVAA',
   },
   offer: {
     name: 'GHOULHOUSE SOME 12',
@@ -29,7 +29,7 @@ export const siteConfig = {
       price: 490,
       vatLabel: '+ ALV',
       period: '30 päivää',
-      lifecycle: '30 päivän palvelujakso',
+      lifecycle: 'Ensimmäiset 30 päivää',
     },
   },
   legal: {
