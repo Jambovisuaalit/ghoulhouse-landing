@@ -110,21 +110,22 @@ export default function LeadForm() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field id="lead-company" label="Yritys" error={fieldErrors.company}>
+        <Field id="lead-company" label="Yritys" required error={fieldErrors.company}>
           <input id="lead-company" name="company" required maxLength={120} autoComplete="organization" className="form-control" />
         </Field>
-        <Field id="lead-name" label="Nimi" error={fieldErrors.name}>
+        <Field id="lead-name" label="Nimi" required error={fieldErrors.name}>
           <input id="lead-name" name="name" required maxLength={120} autoComplete="name" className="form-control" />
         </Field>
       </div>
 
-      <Field id="lead-email" label="Sähköposti" error={fieldErrors.email}>
+      <Field id="lead-email" label="Sähköposti" required error={fieldErrors.email}>
         <input id="lead-email" name="email" type="email" required maxLength={254} autoComplete="email" className="form-control" />
       </Field>
 
       <Field
         id="lead-profile"
         label="Verkkosivu tai Instagram"
+        required
         error={fieldErrors.profile}
         hint="Esim. yritys.fi tai @yritys"
       >
@@ -174,12 +175,14 @@ export default function LeadForm() {
 function Field({
   id,
   label,
+  required = false,
   error,
   hint,
   children,
 }: {
   id: string;
   label: string;
+  required?: boolean;
   error?: string;
   hint?: string;
   children: React.ReactNode;
@@ -187,7 +190,7 @@ function Field({
   return (
     <div>
       <label htmlFor={id} className="type-ui mb-1.5 block text-white">
-        {label} *
+        {label}{required ? ' *' : ''}
       </label>
       {children}
       {hint && <p className="type-caption mt-1.5 text-white/50">{hint}</p>}
