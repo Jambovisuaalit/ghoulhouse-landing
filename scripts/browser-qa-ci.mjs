@@ -7,7 +7,9 @@ const CDP_PORT = Number(process.env.QA_CDP_PORT || 9222);
 const USER_DATA_DIR = `/tmp/ghoulhouse-browser-qa-${process.pid}`;
 
 const viewports = [
+  { width: 320, height: 568 },
   { width: 320, height: 800 },
+  { width: 375, height: 667 },
   { width: 375, height: 812 },
   { width: 390, height: 844 },
   { width: 430, height: 932 },
@@ -297,7 +299,7 @@ try {
           const s = getComputedStyle(el);
           return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden';
         };
-        const cta = [...(hero?.querySelectorAll('button') || [])].find(
+        const cta = [...(hero?.querySelectorAll('a, button') || [])].find(
           (el) => visible(el) && el.textContent?.includes('VARAA 20 MIN KESKUSTELU')
         );
         const price = [...(hero?.querySelectorAll('*') || [])].find(
@@ -317,8 +319,8 @@ try {
           priceText: price?.textContent?.replace(/\\s+/g, ' ').trim() || '',
           offerName: offerCard?.getAttribute('data-offer-name') || '',
           offerPrice: offerCard?.getAttribute('data-offer-price') || '',
-          proofRaw: Boolean(document.querySelector('[data-scroll-raw]')),
-          proofFilm: Boolean(document.querySelector('[data-scroll-film]')),
+          proofRaw: Boolean(document.querySelector('.mechanism-raw__stage')),
+          proofFilm: Boolean(document.querySelector('.mechanism-film__viewport')),
           viewportMeta: document.querySelector('meta[name="viewport"]')?.getAttribute('content') || '',
           containerPaddingLeft: parseFloat(getComputedStyle(document.querySelector('.container-wide')).paddingLeft) || 0,
           containerPaddingRight: parseFloat(getComputedStyle(document.querySelector('.container-wide')).paddingRight) || 0,
@@ -444,7 +446,7 @@ try {
     `(() => {
       const header = document.querySelector('header');
       const brand = header?.querySelector('a[aria-label="GhoulHouse — sivun alku"]');
-      const cta = [...(header?.querySelectorAll('button') || [])].find((el) =>
+      const cta = [...(header?.querySelectorAll('a, button') || [])].find((el) =>
         el.textContent?.includes('20 MIN')
       );
       const rect = (el) => {
@@ -514,124 +516,63 @@ try {
   assert(stickyHeader.fixed, 'Header did not become fixed after scroll.');
   assert(stickyHeader.top !== null && Math.abs(stickyHeader.top) <= 1, `Sticky header top is ${stickyHeader.top}.`);
 
-  // Desktop Proof Engine scroll regression.
+  // Desktop mechanism / proof-system regression.
   await client.send('Emulation.setDeviceMetricsOverride', {
     width: 1440,
     height: 900,
     deviceScaleFactor: 1,
     mobile: false,
   });
-  await client.send('Emulation.setEmulatedMedia', {
-    media: '',
-    features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }],
-  });
   await client.send('Page.navigate', { url: BASE_URL });
   await waitForDocument(client);
-  await sleep(300);
 
-  const sampleRawProof = async (fraction) => {
-    const target = await evaluate(
-      client,
-      `(() => {
-        document.documentElement.style.scrollBehavior = 'auto';
-        const section = document.querySelector('[data-scroll-raw]');
-        const sticky = section?.querySelector('.mechanism-raw__sticky');
-        if (!section || !sticky) return null;
-        const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0;
-        const sectionTop = section.getBoundingClientRect().top + scrollY;
-        const travel = Math.max(1, section.offsetHeight - sticky.offsetHeight);
-        window.scrollTo(0, sectionTop - stickyTop + travel * ${fraction});
-        return { travel };
-      })()`
-    );
-    assert(target, `RAW Proof Engine geometry missing at ${fraction}.`);
-    await sleep(180);
-
-    return evaluate(
-      client,
-      `(() => {
-        const section = document.querySelector('[data-scroll-raw]');
-        const divider = section?.querySelector('.mechanism-raw__divider');
-        const finalImage = section?.querySelector('.mechanism-raw__image--final');
-        if (!section || !divider || !finalImage) return null;
-        return {
-          progress: parseFloat(getComputedStyle(section).getPropertyValue('--raw-progress')) || 0,
-          dividerLeft: parseFloat(getComputedStyle(divider).left) || 0,
-          clipPath: getComputedStyle(finalImage).clipPath,
-        };
-      })()`
-    );
-  };
-
-  const rawQuarter = await sampleRawProof(0.25);
-  const rawThreeQuarter = await sampleRawProof(0.75);
-  assert(rawQuarter && rawThreeQuarter, 'RAW Proof Engine metrics are missing.');
-  assert(
-    rawQuarter.progress > 0.15 && rawQuarter.progress < 0.35,
-    `RAW quarter progress expected near 0.25, got ${rawQuarter.progress}.`
-  );
-  assert(
-    rawThreeQuarter.progress > 0.65 && rawThreeQuarter.progress < 0.85,
-    `RAW three-quarter progress expected near 0.75, got ${rawThreeQuarter.progress}.`
-  );
-  assert(
-    rawThreeQuarter.dividerLeft > rawQuarter.dividerLeft + 100,
-    `RAW divider did not advance: ${rawQuarter.dividerLeft}px → ${rawThreeQuarter.dividerLeft}px.`
-  );
-  assert(
-    rawQuarter.clipPath !== rawThreeQuarter.clipPath,
-    `RAW clip-path did not change: ${rawQuarter.clipPath} → ${rawThreeQuarter.clipPath}.`
-  );
-
-  const filmTarget = await evaluate(
+  const proofEngine = await evaluate(
     client,
     `(() => {
-      const section = document.querySelector('[data-scroll-film]');
-      const sticky = section?.querySelector('.mechanism-film__sticky');
-      if (!section || !sticky) return null;
-      const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0;
-      const sectionTop = section.getBoundingClientRect().top + scrollY;
-      const travel = Math.max(1, section.offsetHeight - sticky.offsetHeight);
-      window.scrollTo(0, sectionTop - stickyTop + travel * 0.5);
-      return { travel };
-    })()`
-  );
-  assert(filmTarget, 'Filmstrip Proof Engine geometry is missing.');
-  await sleep(180);
-
-  const filmMid = await evaluate(
-    client,
-    `(() => {
-      const section = document.querySelector('[data-scroll-film]');
-      const viewport = section?.querySelector('.mechanism-film__viewport');
-      const track = section?.querySelector('.mechanism-film__track');
-      if (!section || !viewport || !track) return null;
-      const matrix = new DOMMatrixReadOnly(getComputedStyle(track).transform);
-      const horizontalTravel = Math.max(0, track.scrollWidth - viewport.clientWidth);
+      const rawStage = document.querySelector('.mechanism-raw__stage');
+      const divider = document.querySelector('.mechanism-raw__divider');
+      const filmViewport = document.querySelector('.mechanism-film__viewport');
+      const filmTrack = document.querySelector('.mechanism-film__track');
+      const frames = [...document.querySelectorAll('.mechanism-film__frame')];
+      const rect = (el) => {
+        if (!el) return null;
+        const r = el.getBoundingClientRect();
+        return { top:r.top, right:r.right, bottom:r.bottom, left:r.left, width:r.width, height:r.height };
+      };
       return {
-        progress: parseFloat(getComputedStyle(section).getPropertyValue('--film-progress')) || 0,
-        translateX: matrix.m41,
-        horizontalTravel,
+        rawStage: rect(rawStage),
+        divider: rect(divider),
+        filmViewport: rect(filmViewport),
+        frameCount: frames.length,
+        filmScrollWidth: filmTrack?.scrollWidth || 0,
+        filmClientWidth: filmViewport?.clientWidth || 0,
+        conceptLabelVisible: document.body.innerText.includes('KONSEPTIESIMERKKI — EI ASIAKASTYÖ'),
       };
     })()`
   );
-  assert(filmMid, 'Filmstrip Proof Engine midpoint metrics are missing.');
-  assert(filmMid.horizontalTravel > 200, `Filmstrip travel too small: ${filmMid.horizontalTravel}px.`);
+
+  assert(proofEngine.rawStage, 'RAW → FINAL stage is missing.');
+  assert(proofEngine.divider, 'RAW → FINAL divider is missing.');
+  assert(proofEngine.rawStage.width > 250 && proofEngine.rawStage.height > 250, 'RAW → FINAL stage is too small.');
   assert(
-    filmMid.progress > 0.35 && filmMid.progress < 0.65,
-    `Filmstrip progress expected near 0.5, got ${filmMid.progress}.`
+    proofEngine.divider.left >= proofEngine.rawStage.left - 2 &&
+      proofEngine.divider.right <= proofEngine.rawStage.right + 2,
+    'RAW → FINAL divider is outside the stage.'
   );
+  assert(proofEngine.filmViewport, 'Filmstrip viewport is missing.');
+  assert(proofEngine.frameCount === 4, `Expected 4 mechanism film frames, got ${proofEngine.frameCount}.`);
   assert(
-    filmMid.translateX < 0 && Math.abs(filmMid.translateX) > filmMid.horizontalTravel * 0.3,
-    `Filmstrip did not translate with scroll: ${filmMid.translateX}px of ${filmMid.horizontalTravel}px.`
+    proofEngine.filmScrollWidth >= proofEngine.filmClientWidth,
+    `Filmstrip geometry invalid: ${proofEngine.filmScrollWidth}px < ${proofEngine.filmClientWidth}px.`
   );
+  assert(proofEngine.conceptLabelVisible, 'Concept-example disclosure is missing.');
 
   const proofShot = await client.send('Page.captureScreenshot', {
     format: 'png',
     captureBeyondViewport: false,
   });
   await writeFile(
-    `${SCREENSHOT_DIR}/proof-engine-film-mid-1440x900.png`,
+    `${SCREENSHOT_DIR}/proof-system-1440x900.png`,
     Buffer.from(proofShot.data, 'base64')
   );
 
@@ -686,14 +627,14 @@ try {
     client,
     `(() => {
       const hero = document.querySelector('#top');
-      const button = [...(hero?.querySelectorAll('button') || [])].find((el) =>
+      const trigger = [...(hero?.querySelectorAll('a, button') || [])].find((el) =>
         el.textContent?.includes('VARAA 20 MIN KESKUSTELU')
       );
-      button?.click();
-      return Boolean(button);
+      trigger?.click();
+      return Boolean(trigger);
     })()`
   );
-  assert(ctaClicked, 'Primary CTA button was not found in the hero.');
+  assert(ctaClicked, 'Primary CTA trigger was not found in the hero.');
 
   const dialogOpenMs = await waitForCondition(
     client,
@@ -733,10 +674,10 @@ try {
 
   await writeFile(
     `${SCREENSHOT_DIR}/results.json`,
-    JSON.stringify({ chromePath, results, heroMotion, stickyHeader, proofEngine: { rawQuarter, rawThreeQuarter, filmMid }, mobileHeader, reducedMotion, dialog }, null, 2)
+    JSON.stringify({ chromePath, results, heroMotion, stickyHeader, proofEngine, mobileHeader, reducedMotion, dialog }, null, 2)
   );
 
-  console.log(JSON.stringify({ chromePath, results, heroMotion, stickyHeader, proofEngine: { rawQuarter, rawThreeQuarter, filmMid }, mobileHeader, reducedMotion, dialog }, null, 2));
+  console.log(JSON.stringify({ chromePath, results, heroMotion, stickyHeader, proofEngine, mobileHeader, reducedMotion, dialog }, null, 2));
 } finally {
   client?.close();
 
