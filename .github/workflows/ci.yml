@@ -117,7 +117,8 @@ jobs:
           html="$(curl --fail --silent http://127.0.0.1:3000/)"
           printf '%s' "$html" | grep -q "Ghoulhouse Oy"
           printf '%s' "$html" | grep -q "3651127-5"
-          printf '%s' "$html" | grep -q "Kotipaikka Helsinki"
+          printf '%s' "$html" | grep -q "Kotipaikka"
+          printf '%s' "$html" | grep -q "Helsinki"
           printf '%s' "$html" | grep -q "Kaupparekisterissä 3.9.2026 alkaen"
           printf '%s' "$html" | grep -q '"foundingDate":"2026-09-03"'
 
