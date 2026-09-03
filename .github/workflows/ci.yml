@@ -129,6 +129,9 @@ jobs:
 
           privacy="$(curl --fail --silent http://127.0.0.1:3000/tietosuoja)"
           printf '%s' "$privacy" | grep -q "Kaupparekisterissä 3.9.2026 alkaen"
+          printf '%s' "$privacy" | grep -q "c/o Hanna Nyholm"
+          printf '%s' "$privacy" | grep -q "Maasälväntie 2 A 33"
+          printf '%s' "$privacy" | grep -q "00710"
 
       - name: Security headers QA
         shell: bash
