@@ -37,7 +37,7 @@ async function sleep(ms) {
   await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function waitForJson(url, chrome, stderr, timeoutMs = 20_000) {
+async function waitForJson(url, chrome, stderr, timeoutMs = 40_000) {
   const start = Date.now();
 
   while (Date.now() - start < timeoutMs) {
@@ -180,7 +180,13 @@ const chrome = spawn(
     `--user-data-dir=${USER_DATA_DIR}`,
     'about:blank',
   ],
-  { stdio: ['ignore', 'ignore', 'pipe'] }
+  {
+    stdio: ['ignore', 'ignore', 'pipe'],
+    env: {
+      ...process.env,
+      DBUS_SYSTEM_BUS_ADDRESS: 'unix:path=/run/dbus/system_bus_socket',
+    },
+  }
 );
 
 chrome.stderr?.on('data', (chunk) => stderr.push(String(chunk)));
