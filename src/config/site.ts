@@ -11,6 +11,12 @@ export const siteConfig = {
     domicile: 'Helsinki',
     registrationDate: '2026-09-03',
     registrationStatus: 'Kaupparekisterissä 3.9.2026 alkaen',
+    postalAddress: {
+      careOf: 'c/o Hanna Nyholm',
+      street: 'Maasälväntie 2 A 33',
+      postalCode: '00710',
+      city: 'Helsinki',
+    },
     founder: 'Hanna Nyholm',
     founderImage,
     domain: canonicalSiteUrl,

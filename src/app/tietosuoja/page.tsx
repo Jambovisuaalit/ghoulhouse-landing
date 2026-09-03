@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 const sections = [
   {
     title: '1. Rekisterinpitäjä',
-    content: `${siteConfig.company.legalName}, Y-tunnus ${siteConfig.company.businessId}, kotipaikka ${siteConfig.company.domicile}. ${siteConfig.company.registrationStatus}. Tietosuoja-asioissa voit ottaa yhteyttä verkkosivun yhteydenottolomakkeella.`,
+    content: `${siteConfig.company.legalName}, Y-tunnus ${siteConfig.company.businessId}, kotipaikka ${siteConfig.company.domicile}. Postiosoite: ${siteConfig.company.postalAddress.careOf}, ${siteConfig.company.postalAddress.street}, ${siteConfig.company.postalAddress.postalCode} ${siteConfig.company.postalAddress.city}. ${siteConfig.company.registrationStatus}. Tietosuoja-asioissa voit ottaa yhteyttä verkkosivun yhteydenottolomakkeella.`,
   },
   {
     title: '2. Käsittelyn tarkoitus ja peruste',
