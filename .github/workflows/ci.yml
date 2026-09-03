@@ -111,6 +111,24 @@ jobs:
           robots="$(curl --fail --silent http://127.0.0.1:3000/robots.txt)"
           printf '%s\n' "$robots" | grep -q "Disallow: /"
 
+      - name: Company master data QA
+        shell: bash
+        run: |
+          html="$(curl --fail --silent http://127.0.0.1:3000/)"
+          printf '%s' "$html" | grep -q "Ghoulhouse Oy"
+          printf '%s' "$html" | grep -q "3651127-5"
+          printf '%s' "$html" | grep -q "Kotipaikka Helsinki"
+          printf '%s' "$html" | grep -q "Kaupparekisterissä 3.9.2026 alkaen"
+          printf '%s' "$html" | grep -q '"foundingDate":"2026-09-03"'
+
+          if printf '%s' "$html" | grep -Eq "Y-tunnus annettu 30\.8\.2026|perustamisvaiheessa|vireillä|rekisteröimätön|rekisteröitymätön"; then
+            echo "::error::Obsolete company registration wording found in rendered site."
+            exit 1
+          fi
+
+          privacy="$(curl --fail --silent http://127.0.0.1:3000/tietosuoja)"
+          printf '%s' "$privacy" | grep -q "Kaupparekisterissä 3.9.2026 alkaen"
+
       - name: Security headers QA
         shell: bash
         run: |
