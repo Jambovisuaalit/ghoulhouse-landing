@@ -15,7 +15,7 @@ export function middleware(request: NextRequest) {
     canonicalUrl.hostname = SITE_HOST;
     canonicalUrl.port = '';
 
-    return NextResponse.redirect(canonicalUrl, 301);
+    return NextResponse.redirect(canonicalUrl, 308);
   }
 
   const response = NextResponse.next();
@@ -32,6 +32,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|robots.txt|sitemap.xml|opengraph-image|icon|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
+    '/((?!_next/static|_next/image|robots.txt|sitemap.xml|opengraph-image|icon|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)'
   ],
 };
