@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 const sections = [
   {
     title: '1. Rekisterinpitäjä',
-    content: `${siteConfig.company.legalName}, Y-tunnus ${siteConfig.company.businessId}, kotipaikka ${siteConfig.company.domicile}. Tietosuoja-asioissa voit ottaa yhteyttä verkkosivun yhteydenottolomakkeella.`,
+    content: `${siteConfig.company.legalName}, Y-tunnus ${siteConfig.company.businessId}, kotipaikka ${siteConfig.company.domicile}. ${siteConfig.company.registrationStatus}. Tietosuoja-asioissa voit ottaa yhteyttä verkkosivun yhteydenottolomakkeella.`,
   },
   {
     title: '2. Käsittelyn tarkoitus ja peruste',
@@ -52,7 +52,7 @@ export default function PrivacyPage() {
       <main className="bg-paper py-14 text-ink md:py-20">
         <Container>
           <div className="max-w-3xl">
-            <p className="type-label text-signal">Juridinen / päivitetty 2.9.2026</p>
+            <p className="type-label text-signal">Juridinen / päivitetty 3.9.2026</p>
             <h1 className="type-section-title mt-4 text-ink">Tietosuojaseloste</h1>
             <p className="type-editorial mt-6 text-muted">Tämä seloste koskee ghoulhouse.fi-sivuston yhteydenotto- ja demopyyntöjä.</p>
             <div className="mt-10 border-t border-ink">
