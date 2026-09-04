@@ -22,11 +22,17 @@ export default function PrivacyPage() {
           <section>
             <h2>1. Rekisterinpitäjä</h2>
             <p>
-              <strong>Ghoulhouse Oy</strong>
+              <strong>{company.legalName}</strong>
               <br />
               Y-tunnus: {company.businessId}
               <br />
-              Katuosoite: {company.postalAddress.street}
+              Kotipaikka: {company.domicile}
+              <br />
+              {company.registrationStatus}
+              <br />
+              Postiosoite: {company.postalAddress.careOf}
+              <br />
+              {company.postalAddress.street}
               <br />
               {company.postalAddress.postalCode} {company.postalAddress.city}
               <br />
