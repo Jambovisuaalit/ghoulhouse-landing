@@ -1,0 +1,34 @@
+name: GhoulHouse runtime QA probe
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    if: github.head_ref == 'ci-verify-00504d0'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Probe QA production runtime
+        shell: bash
+        run: |
+          BASE='https://ghoulhouse-v5-runtime-qa.vercel.app'
+          curl --fail --silent --show-error "$BASE/" -o /tmp/home.html
+          grep -q 'https://ghoulhouse.fi' /tmp/home.html
+          grep -q 'PYYDÄ 2 SISÄLTÖESIMERKKIÄ' /tmp/home.html
+
+          status="$(curl --silent --show-error \
+            --output /tmp/lead.json \
+            --write-out '%{http_code}' \
+            --request POST \
+            --header 'content-type: application/json' \
+            --data '{"company":"GhoulHouse Release QA 2026-08-29","name":"Runtime Gate","email":"release-qa@ghoulhouse.fi","profile":"https://ghoulhouse.fi","message":"Automated QA lead. No action required."}' \
+            "$BASE/api/leads")"
+          echo "HTTP_STATUS=$status"
+          cat /tmp/lead.json
+          test "$status" = "201"
+          grep -q '"ok":true' /tmp/lead.json

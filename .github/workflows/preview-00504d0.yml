@@ -1,0 +1,85 @@
+name: Verify exact GhoulHouse preview
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ghoulhouse-exact-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-preview:
+    if: github.head_ref == 'ci-verify-00504d0'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      VERCEL_ORG_ID: team_zwsvoePoiBeskRuyl2Iar883
+      VERCEL_PROJECT_ID: prj_LDmPUItb4oGQlzU2ZZAgyjs7rfLw
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+    steps:
+      - name: Checkout verification branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify application source equals 00504d0
+        shell: bash
+        run: |
+          git diff --exit-code 00504d06ab5c87a27a73ac2d9493414095ee39a3 -- \
+            src public package.json package-lock.json next.config.js \
+            postcss.config.js tailwind.config.ts tsconfig.json
+          echo "Application source matches 00504d0 exactly."
+
+      - name: Verify Vercel credentials
+        shell: bash
+        run: |
+          test -n "$VERCEL_TOKEN"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull Preview settings
+        run: vercel pull --yes --environment=preview --token="$VERCEL_TOKEN"
+
+      - name: Build Preview candidate
+        run: vercel build --token="$VERCEL_TOKEN"
+
+      - name: Deploy Preview candidate
+        id: preview
+        shell: bash
+        run: |
+          url="$(vercel deploy --prebuilt --token="$VERCEL_TOKEN")"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "PREVIEW_URL=$url"
+
+      - name: Preview smoke QA
+        shell: bash
+        run: |
+          url="${{ steps.preview.outputs.url }}"
+          html="$(vercel curl / --deployment "$url" --token="$VERCEL_TOKEN")"
+          printf '%s' "$html" | grep -q "TYÖMAAKUVAT SISÄÄN"
+          printf '%s' "$html" | grep -q "PYYDÄ 2 SISÄLTÖESIMERKKIÄ"
+          printf '%s' "$html" | grep -q "Yksi työmaa. Monta kulmaa."
+          printf '%s' "$html" | grep -q 'data-offer-name="SOME 12"'
+          printf '%s' "$html" | grep -q 'data-offer-price="490"'
+
+          api="$(vercel curl /api/leads --deployment "$url" --token="$VERCEL_TOKEN" -- -X POST -H 'content-type: application/json' --data '{}')"
+          printf '%s' "$api" | grep -q '"validation_error"'
+
+      - name: Release candidate summary
+        run: |
+          echo "SOURCE_SHA=00504d06ab5c87a27a73ac2d9493414095ee39a3"
+          echo "PREVIEW_URL=${{ steps.preview.outputs.url }}"
