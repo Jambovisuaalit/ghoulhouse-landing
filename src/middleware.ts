@@ -15,7 +15,7 @@ export function middleware(request: NextRequest) {
     canonicalUrl.hostname = SITE_HOST;
     canonicalUrl.port = '';
 
-    return NextResponse.redirect(canonicalUrl, 308);
+    return NextResponse.redirect(canonicalUrl, 301);
   }
 
   const response = NextResponse.next();
