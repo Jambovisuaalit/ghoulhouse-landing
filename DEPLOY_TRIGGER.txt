@@ -1,0 +1,6 @@
+One-time Vercel production deploy and project-domain move trigger.
+Target project: ghoulhouse-oy
+Target project id: prj_Xf2QTX7hkMQhdhGdcyQyMTv78weK
+Source domains project: ghoulhouse
+Domains: ghoulhouse.fi, www.ghoulhouse.fi
+Registrar DNS: unchanged
