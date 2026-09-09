@@ -134,7 +134,7 @@ export const faqItems: FaqItem[] = [
   {
     question: 'Saako palvelun lopettaa kuukauden jälkeen?',
     answer:
-      'Kyllä. SOME 12 on 30 päivän palvelujakso ja kuukausittain irtisanottava sovittujen ehtojen mukaisesti.',
+      'Ensimmäiset 30 päivää 490 € + ALV. Ei sitoumusta jatkosta.',
   },
   {
     question: 'Sisältyykö maksettu mainonta?',
