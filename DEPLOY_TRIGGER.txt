@@ -4,3 +4,4 @@ Target project id: prj_Xf2QTX7hkMQhdhGdcyQyMTv78weK
 Source domains project: ghoulhouse
 Domains: ghoulhouse.fi, www.ghoulhouse.fi
 Registrar DNS: unchanged
+Trigger: active via CI deploy_cutover job
