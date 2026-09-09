@@ -1,0 +1,5 @@
+One-time Vercel project-domain move.
+Target project: ghoulhouse-oy
+Apex: ghoulhouse.fi
+Alias: www.ghoulhouse.fi -> ghoulhouse.fi (308)
+Registrar DNS: unchanged
