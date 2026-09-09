@@ -339,8 +339,12 @@ try {
         const s = getComputedStyle(el);
         return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden';
       };
+      const unavailableInsideClosedDetails = (el) => {
+        const details = el.closest('details:not([open])');
+        return Boolean(details && el.tagName !== 'SUMMARY');
+      };
       const nodes = [...document.querySelectorAll(selector)]
-        .filter((el) => visible(el) && el.tabIndex >= 0);
+        .filter((el) => visible(el) && el.tabIndex >= 0 && !unavailableInsideClosedDetails(el));
       nodes.forEach((el, index) => { el.dataset.qaTabId = String(index); });
       const positiveTabIndex = nodes.filter((el) => el.tabIndex > 0).map((el) => ({
         tag: el.tagName,
