@@ -2,293 +2,110 @@ name: Deploy GhoulHouse production once
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "DOMAIN_MOVE_TRIGGER.txt"
 
 permissions:
   contents: read
 
 concurrency:
-  group: ghoulhouse-production
+  group: ghoulhouse-production-domain-move
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  move-domains:
     runs-on: ubuntu-24.04
     env:
       VERCEL_ORG_ID: team_zwsvoePoiBeskRuyl2Iar883
-      VERCEL_PROJECT_ID: prj_Xf2QTX7hkMQhdhGdcyQyMTv78weK
+      SOURCE_PROJECT_ID: prj_EXsZg5RrTkEfIbs30VLHmWmjJlxL
+      TARGET_PROJECT_ID: prj_Xf2QTX7hkMQhdhGdcyQyMTv78weK
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      CANONICAL_URL: https://ghoulhouse.fi
-      WWW_URL: https://www.ghoulhouse.fi
+      APEX_DOMAIN: ghoulhouse.fi
+      WWW_DOMAIN: www.ghoulhouse.fi
 
     steps:
-      - name: Checkout validated main
+      - name: Checkout main
         uses: actions/checkout@v4
-
-      - name: Verify release source
-        shell: bash
-        run: |
-          test "${GITHUB_REF_NAME}" = "main"
-          echo "Releasing commit ${GITHUB_SHA}"
 
       - name: Verify Vercel credentials
         shell: bash
         run: |
-          if [ -z "$VERCEL_TOKEN" ]; then
-            echo "::error::VERCEL_TOKEN secret is not available to this repository."
-            exit 1
-          fi
+          set -euo pipefail
+          test -n "$VERCEL_TOKEN" || { echo "::error::VERCEL_TOKEN secret missing"; exit 1; }
+          echo "Moving domains from $SOURCE_PROJECT_ID to $TARGET_PROJECT_ID"
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-
-      - name: Install locked dependencies
-        run: npm ci --no-audit --no-fund
-
-      - name: Re-run source validation
-        run: |
-          npm audit --omit=dev --audit-level=high
-          npm run typecheck
-          npm run lint
-          npm run build
-
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
-
-      - name: Pull Preview project settings
-        run: vercel pull --yes --environment=preview --token="$VERCEL_TOKEN"
-
-      - name: Build Preview candidate
-        run: vercel build --token="$VERCEL_TOKEN"
-
-      - name: Deploy Preview candidate
-        id: preview
+      - name: Verify source domains before move
         shell: bash
         run: |
-          url="$(vercel deploy --prebuilt --token="$VERCEL_TOKEN")"
-          echo "url=$url" >> "$GITHUB_OUTPUT"
-          echo "Preview deployment: $url"
+          set -euo pipefail
+          curl --fail-with-body --silent --show-error \
+            --header "Authorization: Bearer $VERCEL_TOKEN" \
+            "https://api.vercel.com/v9/projects/$SOURCE_PROJECT_ID/domains?teamId=$VERCEL_ORG_ID" \
+            | tee /tmp/source-domains.json
+          grep -q '"name":"ghoulhouse.fi"' /tmp/source-domains.json
+          grep -q '"name":"www.ghoulhouse.fi"' /tmp/source-domains.json
 
-      - name: Preview smoke QA
+      - name: Move apex domain to ghoulhouse-oy
         shell: bash
         run: |
-          url="${{ steps.preview.outputs.url }}"
+          set -euo pipefail
+          curl --fail-with-body --silent --show-error \
+            --request POST \
+            --header "Authorization: Bearer $VERCEL_TOKEN" \
+            --header "Content-Type: application/json" \
+            --data "{\"projectId\":\"$TARGET_PROJECT_ID\",\"gitBranch\":null}" \
+            "https://api.vercel.com/v1/projects/$SOURCE_PROJECT_ID/domains/$APEX_DOMAIN/move?teamId=$VERCEL_ORG_ID" \
+            | tee /tmp/apex-move.json
 
+      - name: Move www domain and redirect to apex
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail-with-body --silent --show-error \
+            --request POST \
+            --header "Authorization: Bearer $VERCEL_TOKEN" \
+            --header "Content-Type: application/json" \
+            --data "{\"projectId\":\"$TARGET_PROJECT_ID\",\"gitBranch\":null,\"redirect\":\"$APEX_DOMAIN\",\"redirectStatusCode\":308}" \
+            "https://api.vercel.com/v1/projects/$SOURCE_PROJECT_ID/domains/$WWW_DOMAIN/move?teamId=$VERCEL_ORG_ID" \
+            | tee /tmp/www-move.json
+
+      - name: Verify target domains after move
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail-with-body --silent --show-error \
+            --header "Authorization: Bearer $VERCEL_TOKEN" \
+            "https://api.vercel.com/v9/projects/$TARGET_PROJECT_ID/domains?teamId=$VERCEL_ORG_ID" \
+            | tee /tmp/target-domains.json
+          grep -q '"name":"ghoulhouse.fi"' /tmp/target-domains.json
+          grep -q '"name":"www.ghoulhouse.fi"' /tmp/target-domains.json
+
+      - name: Verify live routing
+        shell: bash
+        run: |
+          set -euo pipefail
           for i in {1..20}; do
-            html="$(vercel curl / --deployment "$url" --token="$VERCEL_TOKEN" 2>/dev/null || true)"
-            if printf '%s' "$html" | grep -q "TYÖMAAKUVAT SISÄÄN" && \
-               printf '%s' "$html" | grep -q "VALMIS SOME ULOS" && \
-               printf '%s' "$html" | grep -q "VARAA 20 MIN KESKUSTELU"; then
+            apex_code="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' https://ghoulhouse.fi/ || true)"
+            if [ "$apex_code" = "200" ]; then
               break
             fi
-
-            if [ "$i" -eq 20 ]; then
-              echo "::error::Preview did not return the validated GhoulHouse homepage."
-              exit 1
-            fi
-
             sleep 3
           done
+          test "$apex_code" = "200"
 
-          printf '%s' "$html" | grep -q 'data-offer-name="GHOULHOUSE SOME 12"'
-          printf '%s' "$html" | grep -q 'data-offer-price="490"'
+          curl --silent --show-error --head https://ghoulhouse.fi/ | tee /tmp/apex-headers.txt
+          curl --silent --show-error --head https://www.ghoulhouse.fi/ | tee /tmp/www-headers.txt
 
-          if printf '%s' "$html" | grep -Eqi 'MANAGED|Palvelujaksosta 4|790 €'; then
-            echo "::error::Preview contains obsolete pricing lifecycle."
-            exit 1
-          fi
+          grep -qi '^HTTP/.* 200' /tmp/apex-headers.txt
+          grep -qi '^HTTP/.* 308' /tmp/www-headers.txt
+          grep -qi '^location: https://ghoulhouse.fi/' /tmp/www-headers.txt
 
-          api_response="$(vercel curl /api/leads \
-            --deployment "$url" \
-            --token="$VERCEL_TOKEN" \
-            -- \
-            -X POST \
-            -H 'content-type: application/json' \
-            --data '{}' 2>/dev/null || true)"
-
-          printf '%s' "$api_response" | grep -q '"validation_error"'
-
-          vercel logs --deployment "$url" --level error --limit 50 --token="$VERCEL_TOKEN" > /tmp/preview-errors.log || true
-
-          if [ -s /tmp/preview-errors.log ]; then
-            echo "::error::Preview deployment emitted runtime errors."
-            cat /tmp/preview-errors.log
-            exit 1
-          fi
-
-      - name: Pull Production project settings
-        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
-
-      - name: Verify Production lead delivery config
+      - name: Summary
         shell: bash
         run: |
-          env_file="/tmp/ghoulhouse-production.env"
-          rm -f "$env_file"
-          vercel env pull "$env_file" --environment=production --token="$VERCEL_TOKEN"
-
-          if grep -Eq '^LEAD_DELIVERY_MODE="?resend"?$' "$env_file"; then
-            grep -Eq '^RESEND_API_KEY=.+$' "$env_file"
-            grep -Eq '^LEAD_TO_EMAIL=.+$' "$env_file"
-            grep -Eq '^LEAD_FROM_EMAIL=.+$' "$env_file"
-            echo "Production lead delivery config: resend"
-          elif grep -Eq '^LEAD_DELIVERY_MODE="?webhook"?$' "$env_file"; then
-            grep -Eq '^LEAD_WEBHOOK_URL="?https://.+' "$env_file"
-            echo "Production lead delivery config: webhook"
-          else
-            echo "::error::Production lead delivery is not configured."
-            exit 1
-          fi
-
-          rm -f "$env_file"
-
-      - name: Build Production candidate
-        run: vercel build --prod --token="$VERCEL_TOKEN"
-
-      - name: Deploy Production candidate
-        id: production
-        shell: bash
-        run: |
-          url="$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN")"
-          echo "url=$url" >> "$GITHUB_OUTPUT"
-          echo "Production deployment: $url"
-
-      - name: Verify Production deployment URL
-        shell: bash
-        run: |
-          url="${{ steps.production.outputs.url }}"
-
-          for i in {1..20}; do
-            html="$(vercel curl / --deployment "$url" --token="$VERCEL_TOKEN" 2>/dev/null || true)"
-            if printf '%s' "$html" | grep -q "TYÖMAAKUVAT SISÄÄN" && \
-               printf '%s' "$html" | grep -q "VALMIS SOME ULOS" && \
-               printf '%s' "$html" | grep -q "VARAA 20 MIN KESKUSTELU" && \
-               printf '%s' "$html" | grep -q 'data-offer-name="GHOULHOUSE SOME 12"' && \
-               printf '%s' "$html" | grep -q 'data-offer-price="490"'; then
-              if printf '%s' "$html" | grep -Eqi 'MANAGED|Palvelujaksosta 4|790 €'; then
-                echo "::error::Production candidate contains obsolete pricing lifecycle."
-                exit 1
-              fi
-              exit 0
-            fi
-            sleep 3
-          done
-
-          echo "::error::Production deployment URL did not return the validated application."
-          exit 1
-
-      - name: Custom-domain routing QA
-        shell: bash
-        run: |
-          curl --silent --show-error --head "$CANONICAL_URL/" > /tmp/apex.txt
-          grep -qi '^HTTP/.* 200' /tmp/apex.txt
-
-          if grep -qi '^location:' /tmp/apex.txt; then
-            echo "::error::Canonical apex host redirects unexpectedly."
-            cat /tmp/apex.txt
-            exit 1
-          fi
-
-          curl --silent --show-error --head "$WWW_URL/" > /tmp/www.txt
-          grep -qi '^HTTP/.* 301' /tmp/www.txt
-          grep -qi '^location: https://ghoulhouse.fi/' /tmp/www.txt
-
-          redirect_result="$(curl --silent --show-error --location --max-redirs 1 \
-            --output /dev/null \
-            --write-out '%{http_code} %{num_redirects} %{url_effective}' \
-            "$WWW_URL/")"
-          test "$redirect_result" = "200 1 https://ghoulhouse.fi/"
-
-      - name: Canonical and security QA
-        shell: bash
-        run: |
-          html="$(curl --fail --silent --show-error "$CANONICAL_URL/")"
-          headers="$(curl --silent --show-error --head "$CANONICAL_URL/")"
-
-          printf '%s' "$html" | grep -q 'rel="canonical" href="https://ghoulhouse.fi'
-          printf '%s' "$html" | grep -q "TYÖMAAKUVAT SISÄÄN"
-          printf '%s' "$html" | grep -q "VALMIS SOME ULOS"
-          printf '%s' "$html" | grep -q "VARAA 20 MIN KESKUSTELU"
-          printf '%s' "$html" | grep -q 'data-offer-name="GHOULHOUSE SOME 12"'
-          printf '%s' "$html" | grep -q 'data-offer-price="490"'
-
-          if printf '%s' "$html" | grep -Eqi 'MANAGED|Palvelujaksosta 4|790 €'; then
-            echo "::error::Canonical homepage contains obsolete pricing lifecycle."
-            exit 1
-          fi
-
-          printf '%s' "$headers" | grep -qi '^content-security-policy-report-only:'
-          printf '%s' "$headers" | grep -qi '^cross-origin-opener-policy: same-origin'
-          printf '%s' "$headers" | grep -qi '^x-content-type-options: nosniff'
-
-      - name: Lead API live QA
-        shell: bash
-        run: |
-          invalid_status="$(curl --silent --show-error \
-            --output /tmp/lead-invalid.json \
-            --write-out '%{http_code}' \
-            --request POST \
-            --header 'content-type: application/json' \
-            --data '{}' \
-            "$CANONICAL_URL/api/leads")"
-
-          test "$invalid_status" = "400"
-          grep -q '"validation_error"' /tmp/lead-invalid.json
-
-          valid_status="$(curl --silent --show-error \
-            --output /tmp/lead-valid.json \
-            --write-out '%{http_code}' \
-            --request POST \
-            --header 'content-type: application/json' \
-            --data '{"intent":"booking","company":"GhoulHouse Release QA","name":"Release Gate","email":"release-qa@ghoulhouse.fi","profile":"https://ghoulhouse.fi","message":"Automated production release QA. No action required."}' \
-            "$CANONICAL_URL/api/leads")"
-
-          if [ "$valid_status" != "201" ]; then
-            echo "::error::Valid production lead was not delivered successfully (HTTP $valid_status)."
-            cat /tmp/lead-valid.json
-            exit 1
-          fi
-
-          grep -q '"ok":true' /tmp/lead-valid.json
-
-      - name: Robots and sitemap live QA
-        shell: bash
-        run: |
-          robots="$(curl --fail --silent --show-error "$CANONICAL_URL/robots.txt")"
-          sitemap="$(curl --fail --silent --show-error "$CANONICAL_URL/sitemap.xml")"
-
-          printf '%s' "$robots" | grep -q 'Disallow: /'
-          printf '%s' "$sitemap" | grep -q '<urlset'
-          if printf '%s' "$sitemap" | grep -q '<url>'; then
-            echo "::error::Pre-launch sitemap unexpectedly exposes indexable URLs."
-            exit 1
-          fi
-
-      - name: Analytics bootstrap QA
-        shell: bash
-        run: |
-          html="$(curl --fail --silent --show-error "$CANONICAL_URL/")"
-
-          if printf '%s' "$html" | grep -q '/_vercel/insights/script.js'; then
-            echo "Vercel Analytics bootstrap detected."
-          else
-            echo "::warning::Vercel Analytics is not enabled in the Production build yet."
-          fi
-
-      - name: Production runtime error QA
-        shell: bash
-        run: |
-          vercel logs --environment production --level error --since 5m --limit 50 --token="$VERCEL_TOKEN" > /tmp/prod-errors.log || true
-
-          if [ -s /tmp/prod-errors.log ]; then
-            echo "::error::Production emitted runtime errors after deployment."
-            cat /tmp/prod-errors.log
-            exit 1
-          fi
-
-      - name: Release summary
-        run: |
-          echo "Validated source: $GITHUB_SHA"
-          echo "Preview: ${{ steps.preview.outputs.url }}"
-          echo "Production: ${{ steps.production.outputs.url }}"
-          echo "Canonical: $CANONICAL_URL"
+          echo "Target project: ghoulhouse-oy ($TARGET_PROJECT_ID)"
+          echo "Apex: https://ghoulhouse.fi"
+          echo "WWW: https://www.ghoulhouse.fi -> https://ghoulhouse.fi (308)"
+          echo "Registrar DNS: unchanged"
