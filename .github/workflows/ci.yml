@@ -176,3 +176,129 @@ jobs:
           path: qa-artifacts/
           if-no-files-found: warn
           retention-days: 7
+
+  deploy_cutover:
+    if: github.event_name == 'push' && github.event.head_commit.message == 'ops: deploy ghoulhouse-oy and move domains'
+    needs: validate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      VERCEL_ORG_ID: team_zwsvoePoiBeskRuyl2Iar883
+      VERCEL_PROJECT_ID: prj_Xf2QTX7hkMQhdhGdcyQyMTv78weK
+      SOURCE_PROJECT_ID: prj_EXsZg5RrTkEfIbs30VLHmWmjJlxL
+      TARGET_PROJECT_ID: prj_Xf2QTX7hkMQhdhGdcyQyMTv78weK
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+    steps:
+      - name: Checkout validated main
+        uses: actions/checkout@v4
+
+      - name: Verify Vercel credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$VERCEL_TOKEN" || { echo "::error::VERCEL_TOKEN secret missing"; exit 1; }
+          echo "Deploying $GITHUB_SHA to ghoulhouse-oy"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull Production settings
+        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+
+      - name: Build Production candidate
+        run: vercel build --prod --token="$VERCEL_TOKEN"
+
+      - name: Deploy Production candidate
+        id: deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN")"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Production deployment: $url"
+
+      - name: Smoke-test deployment URL
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="${{ steps.deploy.outputs.url }}"
+          for i in {1..20}; do
+            html="$(vercel curl / --deployment "$url" --token="$VERCEL_TOKEN" 2>/dev/null || true)"
+            if printf '%s' "$html" | grep -q "TYÖMAAKUVAT" && printf '%s' "$html" | grep -q "490 €"; then
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "::error::Production deployment did not pass smoke QA"
+          exit 1
+
+      - name: Move ghoulhouse.fi to ghoulhouse-oy
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail-with-body --silent --show-error \
+            --request POST \
+            --header "Authorization: Bearer $VERCEL_TOKEN" \
+            --header "Content-Type: application/json" \
+            --data "{\"projectId\":\"$TARGET_PROJECT_ID\",\"gitBranch\":null}" \
+            "https://api.vercel.com/v1/projects/$SOURCE_PROJECT_ID/domains/ghoulhouse.fi/move?teamId=$VERCEL_ORG_ID" \
+            | tee /tmp/apex-move.json
+
+      - name: Move www.ghoulhouse.fi and redirect to apex
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail-with-body --silent --show-error \
+            --request POST \
+            --header "Authorization: Bearer $VERCEL_TOKEN" \
+            --header "Content-Type: application/json" \
+            --data "{\"projectId\":\"$TARGET_PROJECT_ID\",\"gitBranch\":null,\"redirect\":\"ghoulhouse.fi\",\"redirectStatusCode\":308}" \
+            "https://api.vercel.com/v1/projects/$SOURCE_PROJECT_ID/domains/www.ghoulhouse.fi/move?teamId=$VERCEL_ORG_ID" \
+            | tee /tmp/www-move.json
+
+      - name: Verify domains and live routing
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail-with-body --silent --show-error \
+            --header "Authorization: Bearer $VERCEL_TOKEN" \
+            "https://api.vercel.com/v9/projects/$TARGET_PROJECT_ID/domains?teamId=$VERCEL_ORG_ID" \
+            | tee /tmp/domains.json
+
+          grep -q '"name":"ghoulhouse.fi"' /tmp/domains.json
+          grep -q '"name":"www.ghoulhouse.fi"' /tmp/domains.json
+
+          for i in {1..20}; do
+            apex_code="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' https://ghoulhouse.fi/ || true)"
+            if [ "$apex_code" = "200" ]; then
+              break
+            fi
+            sleep 3
+          done
+          test "$apex_code" = "200"
+
+          curl --silent --show-error --head https://ghoulhouse.fi/ | tee /tmp/apex-headers.txt
+          curl --silent --show-error --head https://www.ghoulhouse.fi/ | tee /tmp/www-headers.txt
+          grep -qi '^HTTP/.* 200' /tmp/apex-headers.txt
+          grep -qi '^HTTP/.* 308' /tmp/www-headers.txt
+          grep -qi '^location: https://ghoulhouse.fi/' /tmp/www-headers.txt
+
+      - name: Release summary
+        shell: bash
+        run: |
+          echo "Source commit: $GITHUB_SHA"
+          echo "Project: ghoulhouse-oy ($TARGET_PROJECT_ID)"
+          echo "Production: ${{ steps.deploy.outputs.url }}"
+          echo "Apex: https://ghoulhouse.fi"
+          echo "WWW: https://www.ghoulhouse.fi -> https://ghoulhouse.fi (308)"
+          echo "Registrar DNS: unchanged"
