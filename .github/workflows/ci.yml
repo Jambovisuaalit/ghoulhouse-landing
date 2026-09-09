@@ -162,6 +162,9 @@ jobs:
       - name: Browser QA
         run: node scripts/browser-qa-ci.mjs
 
+      - name: Launch visual and accessibility QA
+        run: node scripts/launch-visual-a11y-qa.mjs
+
       - name: No-JS QA
         run: node scripts/no-js-qa-ci.mjs
 
