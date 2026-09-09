@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/vercel-domain-cutover-once.yml"
+      - "DEPLOY_TRIGGER.txt"
 
 permissions:
   contents: read
