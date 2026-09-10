@@ -13,7 +13,7 @@ export default function Pricing() {
           data-offer-price={siteConfig.offer.price}
         >
           <div className="bg-black p-6 text-white md:p-10">
-            <p className="type-label text-signal">Yksi paketti / 30 päivää</p>
+            <p className="type-label text-signal">PALVELU / 30 PÄIVÄÄ</p>
             <h2 id="pricing-title" className="type-display mt-5 max-w-[8ch] text-white">
               GHOULHOUSE SOME 12
             </h2>
@@ -33,7 +33,7 @@ export default function Pricing() {
 
           <div className="grid bg-white lg:grid-cols-2">
             <div className="p-6 md:p-9">
-              <p className="type-label text-signal">Sisältyy</p>
+              <p className="type-label text-signal">SISÄLTYY</p>
               <ul className="mt-6 border-t border-ink/20">
                 {offerIncludes.map((item) => (
                   <li key={item} className="grid grid-cols-[28px_1fr] border-b border-ink/15 py-3 text-sm font-bold text-ink">
@@ -44,7 +44,7 @@ export default function Pricing() {
               </ul>
             </div>
             <div className="border-t border-ink/20 p-6 md:p-9 lg:border-l lg:border-t-0">
-              <p className="type-label text-signal">Ei sisälly</p>
+              <p className="type-label text-signal">EI SISÄLLY</p>
               <ul className="mt-6 border-t border-ink/20">
                 {offerExcludes.map((item) => (
                   <li key={item} className="grid grid-cols-[28px_1fr] border-b border-ink/15 py-3 text-sm font-bold text-ink">
