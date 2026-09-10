@@ -7,7 +7,7 @@ export default function ContentExamples() {
       <Container>
         <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-8">
-            <p className="type-label text-signal">Sisältösuunnat</p>
+            <p className="type-label text-signal">SISÄLTÖSUUNNAT / 06</p>
             <h2 id="examples-title" className="type-section-title mt-4 max-w-[13ch] text-white">
               KUUSI TAPAA TEHDÄ TYÖSTÄ SISÄLTÖÄ.
             </h2>
