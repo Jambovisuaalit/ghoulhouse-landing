@@ -6,6 +6,7 @@ import { faqItems } from '@/components/sections/FAQ';
 import PlausibleAnalytics from '@/components/analytics/PlausibleAnalytics';
 import './globals.css';
 import './ui-polish.css';
+import './ui-viewport.css';
 
 const anton = Anton({
   weight: '400',
