@@ -14,14 +14,14 @@ export default function Mechanism() {
       <Container>
         <div className="grid gap-6 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-8">
-            <p className="type-label text-signal">RAW → FINAL</p>
+            <p className="type-label text-signal">RAW → VALMIS</p>
             <h2 id="mechanism-title" className="type-display mt-4 max-w-[11ch] text-ghost">
               SAMA TYÖ.
               <span className="block text-signal">PAREMPI JULKAISU.</span>
             </h2>
           </div>
           <p className="type-editorial max-w-md text-ghost/65 lg:col-span-4">
-            Työmaalla jo syntyvä kuva saa rajauksen, sisältökulman, copytekstin ja julkaisuvalmiin esityksen.
+            Työmaalla jo syntyvä kuva saa rajauksen, sisältökulman, tekstin ja julkaisuvalmiin esityksen.
           </p>
         </div>
 
@@ -50,7 +50,7 @@ export default function Mechanism() {
 
           <figure className="raw-final-panel">
             <div className="flex items-center justify-between border-b border-ghost/20 px-4 py-3">
-              <span className="type-label text-signal">FINAL / READY TO PUBLISH</span>
+              <span className="type-label text-signal">VALMIS / JULKAISUVALMIS</span>
               <span className="type-caption text-ghost/45">GHOULHOUSE</span>
             </div>
             <div className="relative aspect-[4/3] overflow-hidden">
@@ -70,7 +70,7 @@ export default function Mechanism() {
               </div>
             </div>
             <figcaption className="flex flex-wrap items-center justify-between gap-2 p-4">
-              <span className="text-sm font-semibold text-ghost/65">Rajaus + sisältökulma + copy + formaatti.</span>
+              <span className="text-sm font-semibold text-ghost/65">Rajaus + sisältökulma + teksti + formaatti.</span>
               <strong className="type-caption text-signal">KONSEPTIESIMERKKI — EI ASIAKASTYÖ</strong>
             </figcaption>
           </figure>
@@ -79,7 +79,7 @@ export default function Mechanism() {
         <ol className="mt-8 grid gap-px border border-ghost/20 bg-ghost/20 md:grid-cols-3">
           {[
             ['01', 'LÄHETÄ', 'Työkuvat ja olennaiset faktat.'],
-            ['02', 'GHOULHOUSE', 'Valinta, editointi, sisältökulma ja copy.'],
+            ['02', 'GHOULHOUSE', 'Valinta, editointi, sisältökulma ja teksti.'],
             ['03', 'JULKAISE', 'Valmis sisältö Instagramiin ja Facebookiin.'],
           ].map(([number, title, copy]) => (
             <li key={number} className="bg-ink p-5">
@@ -89,10 +89,6 @@ export default function Mechanism() {
             </li>
           ))}
         </ol>
-
-        <p className="type-caption mt-4 text-ghost/45">
-          Nykyinen kuva on konseptireferenssi. V2:n lopulliseen proof-osioon lukitaan neljä aitoa RAW → FINAL -kuvaparia.
-        </p>
       </Container>
     </section>
   );
