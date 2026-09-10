@@ -183,21 +183,59 @@ section[id],
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  width: 100%;
   border: 2px solid transparent;
   border-radius: 0;
   padding: 0.9rem 1.35rem;
+  cursor: pointer;
   font-size: 0.74rem;
   font-weight: 900;
   line-height: 1.1;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  width: 100%;
-  cursor: pointer;
   transition:
     background-color 160ms ease,
     color 160ms ease,
     border-color 160ms ease,
     transform 160ms ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  border-color: var(--color-red);
+  background: var(--color-red);
+  color: var(--color-white);
+}
+
+.btn-primary:hover {
+  border-color: var(--color-white);
+  background: var(--color-black);
+}
+
+.btn-inverse {
+  border-color: rgba(255, 255, 255, 0.75);
+  background: transparent;
+  color: var(--color-white);
+}
+
+.btn-inverse:hover {
+  border-color: var(--color-white);
+  background: var(--color-white);
+  color: var(--color-black);
+}
+
+.btn-secondary {
+  border-color: var(--color-black);
+  background: transparent;
+  color: var(--color-black);
+}
+
+.btn-secondary:hover {
+  background: var(--color-black);
+  color: var(--color-white);
 }
 
 .nav-cta {
@@ -206,13 +244,8 @@ section[id],
   white-space: nowrap;
 }
 
-.mobile-title-break,
-.final-title-mobile {
+.mobile-title-break {
   display: block;
-}
-
-.final-title-desktop {
-  display: none;
 }
 
 .hero-title,
@@ -222,44 +255,6 @@ section[id],
 
 .final-title {
   max-width: 11ch;
-}
-
-.btn:hover {
-  transform: translateY(-1px);
-}
-
-.btn-primary {
-  background: var(--color-red);
-  border-color: var(--color-red);
-  color: var(--color-white);
-}
-
-.btn-primary:hover {
-  background: var(--color-black);
-  border-color: var(--color-white);
-}
-
-.btn-inverse {
-  background: transparent;
-  border-color: rgba(255, 255, 255, 0.75);
-  color: var(--color-white);
-}
-
-.btn-inverse:hover {
-  background: var(--color-white);
-  border-color: var(--color-white);
-  color: var(--color-black);
-}
-
-.btn-secondary {
-  background: transparent;
-  border-color: var(--color-black);
-  color: var(--color-black);
-}
-
-.btn-secondary:hover {
-  background: var(--color-black);
-  color: var(--color-white);
 }
 
 .form-control {
@@ -297,11 +292,10 @@ section[id],
   padding-top: var(--safe-top);
 }
 
-
 .hero-surface {
   position: relative;
-  padding-bottom: var(--safe-bottom);
   isolation: isolate;
+  padding-bottom: var(--safe-bottom);
   background:
     radial-gradient(circle at 75% 12%, rgba(207, 37, 45, 0.18), transparent 32%),
     linear-gradient(115deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
@@ -311,8 +305,8 @@ section[id],
 
 .hero-grid {
   position: absolute;
-  inset: 0;
   z-index: -1;
+  inset: 0;
   opacity: 0.18;
   background:
     linear-gradient(to right, rgba(255, 255, 255, 0.2) 1px, transparent 1px),
@@ -325,60 +319,6 @@ section[id],
   border: 1px solid rgba(255, 255, 255, 0.35);
   background: rgba(17, 17, 17, 0.72);
   padding: 1.2rem;
-}
-
-/* Keep the booking action in the first view on short phones, laptops and
-   landscape devices. Width-only breakpoints made the display type grow while
-   the available vertical space stayed small. */
-@media (max-width: 639px) and (max-height: 650px) {
-  .hero-container {
-    padding-block: 2rem;
-  }
-
-  .hero-title {
-    margin-top: 0.75rem;
-    font-size: clamp(2.5rem, 12vw, 3rem);
-    line-height: 0.92;
-  }
-
-  .hero-description {
-    margin-top: 1rem;
-    font-size: 1rem;
-    line-height: 1.35;
-  }
-
-  .hero-actions,
-  .hero-price {
-    margin-top: 1.25rem;
-  }
-
-  .hero-price {
-    padding-top: 0.875rem;
-  }
-}
-
-.proof-strip {
-  display: grid;
-}
-
-.proof-strip__item {
-  display: grid;
-  grid-template-columns: 40px 1fr;
-  gap: 0.75rem;
-  align-items: center;
-  padding: 1rem 0;
-  border-bottom: 1px solid rgba(17, 17, 17, 0.16);
-}
-
-.proof-strip__item:last-child {
-  border-bottom: 0;
-}
-
-.proof-strip__number {
-  font-family: var(--font-display), sans-serif;
-  font-size: 1.8rem;
-  line-height: 1;
-  color: var(--color-black);
 }
 
 .content-system {
@@ -414,16 +354,16 @@ section[id],
   letter-spacing: 0.12em;
 }
 
-.content-system__photo--1 { transform: rotate(-7deg); top: 24px; left: 0; }
-.content-system__photo--2 { transform: rotate(5deg); top: 10px; left: 8%; }
-.content-system__photo--3 { transform: rotate(-2deg); top: 50px; left: 15%; }
-.content-system__photo--4 { transform: rotate(2deg); top: 80px; left: 22%; }
+.content-system__photo--1 { top: 24px; left: 0; transform: rotate(-7deg); }
+.content-system__photo--2 { top: 10px; left: 8%; transform: rotate(5deg); }
+.content-system__photo--3 { top: 50px; left: 15%; transform: rotate(-2deg); }
+.content-system__photo--4 { top: 80px; left: 22%; transform: rotate(2deg); }
 
 .content-system__arrow {
   display: none;
+  color: var(--color-red);
   font-family: var(--font-display), sans-serif;
   font-size: 4rem;
-  color: var(--color-red);
   text-align: center;
 }
 
@@ -505,6 +445,37 @@ code {
   font-size: 0.9em;
 }
 
+footer {
+  padding-bottom: max(3rem, calc(3rem + var(--safe-bottom)));
+}
+
+@media (max-width: 639px) and (max-height: 650px) {
+  .hero-container {
+    padding-block: 2rem;
+  }
+
+  .hero-title {
+    margin-top: 0.75rem;
+    font-size: clamp(2.5rem, 12vw, 3rem);
+    line-height: 0.92;
+  }
+
+  .hero-description {
+    margin-top: 1rem;
+    font-size: 1rem;
+    line-height: 1.35;
+  }
+
+  .hero-actions,
+  .hero-price {
+    margin-top: 1.25rem;
+  }
+
+  .hero-price {
+    padding-top: 0.875rem;
+  }
+}
+
 @media (min-width: 640px) {
   :root {
     --page-gutter: 1.5rem;
@@ -516,13 +487,8 @@ code {
     letter-spacing: -0.035em;
   }
 
-  .mobile-title-break,
-  .final-title-mobile {
+  .mobile-title-break {
     display: none;
-  }
-
-  .final-title-desktop {
-    display: block;
   }
 
   .type-section-title {
@@ -557,26 +523,6 @@ code {
     font-size: clamp(3.4rem, 8.75vw, 9.5rem);
   }
 
-  .proof-strip {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
-
-  .proof-strip__item {
-    min-height: 118px;
-    border-right: 1px solid rgba(17, 17, 17, 0.16);
-    border-bottom: 0;
-    padding: 1rem;
-    min-width: 0;
-  }
-
-  .proof-strip__item:first-child {
-    padding-left: 0;
-  }
-
-  .proof-strip__item:last-child {
-    border-right: 0;
-  }
-
   .pricing-shell {
     grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.45fr);
   }
@@ -599,50 +545,6 @@ code {
   }
 }
 
-
-/* Proof Engine — a compact, static RAW → FINAL comparison followed by a
-   directly scrollable filmstrip. It preserves the editorial mechanism without
-   delaying the offer behind several forced viewport-heights of scrolling. */
-
-.font-editorial-accent {
-  font-family: Georgia, "Times New Roman", serif;
-  font-style: italic;
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  text-wrap: balance;
-}
-
-
-
-
-
-
-
-
-
-/* Device safe areas — iOS notch / Dynamic Island / home indicator. */
-.contact-modal-backdrop {
-  padding-top: var(--safe-top);
-  padding-left: var(--safe-left);
-  padding-right: var(--safe-right);
-  padding-bottom: var(--safe-bottom);
-}
-
-footer {
-  padding-bottom: max(3rem, calc(3rem + var(--safe-bottom)));
-}
-
-@media (min-width: 640px) {
-  .contact-modal-backdrop {
-    padding-top: max(1rem, var(--safe-top));
-    padding-right: max(1rem, var(--safe-right));
-    padding-bottom: max(1rem, var(--safe-bottom));
-    padding-left: max(1rem, var(--safe-left));
-  }
-}
-
-/* Height-aware hero rules stay last so they win over the width-based display
-   scale at the same breakpoint. */
 @media (min-width: 1024px) and (max-height: 850px) {
   .hero-container {
     padding-block: clamp(2rem, 5vh, 3.25rem);
@@ -706,8 +608,6 @@ footer {
   }
 }
 
-
-/* V2: first-view conversion contract for short mobile and laptop viewports. */
 @media (max-height: 850px) {
   .hero-container {
     padding-block: clamp(1.5rem, 4vh, 2.75rem);
@@ -739,8 +639,6 @@ footer {
   }
 }
 
-/* Aggressive compression for 1280px and wider viewports with max-height 800px.
-   Ensures price element fits within viewport at 1280×800. */
 @media (min-width: 1280px) and (max-height: 800px) {
   .hero-container {
     padding-block: clamp(1rem, 2.5vh, 1.75rem);
@@ -764,8 +662,8 @@ footer {
   }
 
   .hero-price {
-    padding-top: 0.5rem;
     gap-y: 0.5rem;
+    padding-top: 0.5rem;
   }
 
   .hero-price strong {
