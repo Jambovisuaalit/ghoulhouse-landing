@@ -11,7 +11,7 @@ export default function FinalCTA() {
       <Container>
         <div className="grid gap-10 lg:grid-cols-12 lg:items-start">
           <div className="lg:col-span-6">
-            <p className="type-label text-signal">Kaksi maksutonta sisältöesimerkkiä</p>
+            <p className="type-label text-signal">MAKSUTON DEMO / 02 ESIMERKKIÄ</p>
             <h2 id="final-cta-title" className="type-display final-title mt-5 text-white">
               NÄE OMA TYÖSI
               <span className="block text-signal">VALMIINA JULKAISUNA.</span>
