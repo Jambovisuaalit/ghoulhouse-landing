@@ -1,0 +1,6 @@
+@import './site-v3-refine.css';
+
+.v3-cta .form-control:focus-visible {
+  outline: 3px solid var(--color-red);
+  outline-offset: 2px;
+}
