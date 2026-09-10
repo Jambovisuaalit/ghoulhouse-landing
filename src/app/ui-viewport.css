@@ -1,42 +1,37 @@
-/* Low-height viewport composition.
-   Keeps the primary offer and CTA inside the first desktop viewport without
-   collapsing the normal taller-desktop presentation. */
+/* Laptop-height composition.
+   Reduce vertical chrome, not the brand typography. The previous version
+   over-compressed 1280–1440px laptops and made the whole first view feel tiny. */
 
 @media (min-width: 1024px) and (max-height: 920px) {
   .hero-container {
-    padding-block: 5rem 5.5rem !important;
-  }
-}
-
-@media (min-width: 1024px) and (max-height: 850px) {
-  .hero-container {
-    padding-block: 3.5rem 3.75rem !important;
+    min-height: calc(100svh - var(--nav-height));
+    padding-block: 3.25rem 3.5rem !important;
   }
 
   .hero-title {
-    margin-top: 0.75rem !important;
-    font-size: clamp(4.9rem, 6.25vw, 6.5rem) !important;
-    line-height: 0.84 !important;
+    margin-top: 0.8rem !important;
+    font-size: clamp(5.8rem, 7vw, 6.8rem) !important;
+    line-height: 0.83 !important;
   }
 
   .hero-description {
     margin-top: 1rem !important;
-    max-width: 40rem !important;
+    max-width: 39rem !important;
     font-size: 1rem !important;
     line-height: 1.42 !important;
   }
 
   .hero-actions {
-    margin-top: 1.25rem !important;
+    margin-top: 1.2rem !important;
   }
 
   .hero-price {
-    margin-top: 1.1rem !important;
+    margin-top: 1rem !important;
     padding-top: 0.75rem !important;
   }
 
   .hero-price strong {
-    font-size: 2rem !important;
+    font-size: 2.05rem !important;
   }
 
   .hero-proof {
@@ -44,26 +39,69 @@
   }
 
   .hero-proof__row {
-    padding-block: 0.7rem !important;
+    min-height: 44px;
+    padding-block: 0.68rem !important;
   }
 }
 
-@media (min-width: 1280px) and (max-height: 760px) {
+@media (min-width: 1024px) and (max-height: 760px) {
   .hero-container {
-    padding-block: 2.75rem 3rem !important;
+    min-height: calc(100svh - var(--nav-height));
+    padding-block: 2.15rem 2.4rem !important;
   }
 
   .hero-title {
-    font-size: clamp(4.5rem, 5.7vw, 5.9rem) !important;
+    font-size: clamp(5.3rem, 6.6vw, 6.2rem) !important;
   }
 
   .hero-description {
     margin-top: 0.8rem !important;
-    font-size: 0.95rem !important;
+    font-size: 0.96rem !important;
+    line-height: 1.38 !important;
   }
 
-  .hero-actions,
+  .hero-actions {
+    margin-top: 0.95rem !important;
+  }
+
+  .hero-actions .btn {
+    min-height: 48px !important;
+  }
+
   .hero-price {
-    margin-top: 0.9rem !important;
+    margin-top: 0.85rem !important;
+    padding-top: 0.65rem !important;
+  }
+
+  .hero-price strong {
+    font-size: 1.9rem !important;
+  }
+
+  .hero-proof__row {
+    min-height: 40px;
+    padding-block: 0.55rem !important;
+  }
+}
+
+@media (min-width: 1280px) and (max-height: 700px) {
+  .hero-container {
+    padding-block: 1.6rem 1.8rem !important;
+  }
+
+  .hero-title {
+    font-size: clamp(4.9rem, 6vw, 5.75rem) !important;
+  }
+
+  .hero-description {
+    max-width: 37rem !important;
+    font-size: 0.93rem !important;
+  }
+
+  .hero-proof-column {
+    display: none !important;
+  }
+
+  .hero-copy {
+    grid-column: span 10 / span 10 !important;
   }
 }
