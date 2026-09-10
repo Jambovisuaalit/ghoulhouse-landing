@@ -8,7 +8,9 @@ export default function Home() {
       <a className="skip-link" href="#main-content">
         Siirry pääsisältöön
       </a>
-      <span className="sr-only">{siteConfig.company.registrationStatus}</span>
+      <span className="sr-only">
+        Kotipaikka {siteConfig.company.domicile}. {siteConfig.company.registrationStatus}
+      </span>
       <FunnelAnalytics />
       <EditorialLanding />
     </>
