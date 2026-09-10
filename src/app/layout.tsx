@@ -5,6 +5,7 @@ import { SITE_URL, isIndexingApproved, isProductionDeployment, productionUrl } f
 import { faqItems } from '@/components/sections/FAQ';
 import PlausibleAnalytics from '@/components/analytics/PlausibleAnalytics';
 import './globals.css';
+import './ui-polish.css';
 
 const anton = Anton({
   weight: '400',
