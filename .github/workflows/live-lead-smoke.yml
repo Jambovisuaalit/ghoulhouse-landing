@@ -1,0 +1,24 @@
+name: Live lead smoke
+
+on:
+  push:
+    paths:
+      - '.github/workflows/live-lead-smoke.yml'
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: POST live lead endpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          body='{"intent":"photos","company":"GhoulHouse Launch QA 2026-09-10","name":"Launch QA","email":"launch-qa@ghoulhouse.fi","profile":"https://ghoulhouse.fi","message":"Automated live lead smoke test. No action required.","fax":""}'
+          http_code=$(curl -sS -o response.json -w '%{http_code}' \
+            -X POST 'https://ghoulhouse-home.vercel.app/api/leads' \
+            -H 'content-type: application/json' \
+            -H 'user-agent: GhoulHouse-Launch-QA/1.0' \
+            --data "$body")
+          echo "HTTP $http_code"
+          cat response.json || true
+          test "$http_code" = "201"
