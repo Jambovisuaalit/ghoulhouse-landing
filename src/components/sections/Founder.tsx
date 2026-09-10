@@ -14,7 +14,7 @@ export default function Founder() {
               <figure className="relative min-h-[460px] overflow-hidden border border-ink bg-white md:min-h-[600px]">
                 <Image
                   src={portrait}
-                  alt="GhoulHousen perustajan vahvistettu kuva"
+                  alt={`${siteConfig.company.founder}, GhoulHousen perustaja`}
                   fill
                   sizes="(max-width: 1023px) 100vw, 42vw"
                   className="object-cover"
@@ -26,7 +26,7 @@ export default function Founder() {
                   HN
                 </div>
                 <div className="mt-auto">
-                  <p className="type-label text-signal">Founder / CEO</p>
+                  <p className="type-label text-signal">PERUSTAJA / TOIMITUSJOHTAJA</p>
                   <p className="mt-3 text-2xl font-black uppercase tracking-[-0.03em] text-ink">{siteConfig.company.founder}</p>
                 </div>
               </div>
@@ -35,7 +35,7 @@ export default function Founder() {
 
           <div className="flex flex-col justify-between lg:col-span-6 lg:col-start-7">
             <div>
-              <p className="type-label text-signal">Tekijä sisällön takana</p>
+              <p className="type-label text-signal">PERUSTAJA / GHOULHOUSE</p>
               <h2 id="founder-title" className="type-section-title mt-4 max-w-[10ch] text-ink">
                 TEKIJÄ SISÄLLÖN TAKANA
               </h2>
