@@ -7,7 +7,7 @@ export default function Process() {
       <Container>
         <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-8">
-            <p className="type-label text-signal">Miten palvelu toimii</p>
+            <p className="type-label text-signal">PROSESSI / 03 VAIHETTA</p>
             <h2 id="process-title" className="type-section-title mt-4 max-w-[12ch] text-ink">
               KOLME VAIHETTA. YKSI SELKEÄ RYTMI.
             </h2>
