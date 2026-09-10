@@ -10,7 +10,13 @@ export default function Footer() {
       <Container>
         <div className="grid gap-10 md:grid-cols-12">
           <div className="md:col-span-5">
-            <Image src="/logo-horizontal-white.svg" alt="GhoulHouse" width={1400} height={460} className="h-auto w-[220px]" />
+            <Image
+              src="/logo-horizontal-white.svg"
+              alt="GhoulHouse"
+              width={1400}
+              height={460}
+              className="h-auto w-[220px]"
+            />
             <p className="mt-6 max-w-md text-sm leading-6 text-white/55">
               Työmaakuvista suunnitelmallinen ja julkaisuvalmis sisältökuukausi Instagramiin ja Facebookiin.
             </p>
@@ -27,7 +33,7 @@ export default function Footer() {
           <div className="md:col-span-3">
             <p className="type-label text-signal">Linkit</p>
             <div className="mt-4 space-y-2 text-sm font-bold text-white/70">
-              <p><a className="footer-link" href="/#yhteydenotto">Yhteydenotto</a></p>
+              <p><a className="footer-link" href="/#laheta-kuvat">Yhteydenotto</a></p>
               <p><a className="footer-link" href="/#hinta">Palvelun sisältö ja hinta</a></p>
               <p><a className="footer-link" href={siteConfig.legal.privacyPath}>Tietosuojaseloste</a></p>
             </div>
