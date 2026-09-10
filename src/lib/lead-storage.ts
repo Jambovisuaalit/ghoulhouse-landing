@@ -1,5 +1,9 @@
 import type { LeadInput } from './lead';
 
+const DEFAULT_SUPABASE_URL = 'https://qkmyzbqhepapiowrttpz.supabase.co';
+const DEFAULT_SUPABASE_PUBLISHABLE_KEY =
+  'sb_publishable_b4zwfIhyyo-wdnqcxXRCgA_TxMl3puZ';
+
 export class LeadStorageError extends Error {
   constructor(
     public readonly code: 'not_configured' | 'rate_limited' | 'storage_failed',
@@ -12,11 +16,13 @@ export class LeadStorageError extends Error {
 
 function getSupabaseConfig() {
   const url =
-    process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    process.env.SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    DEFAULT_SUPABASE_URL;
   const publishableKey =
     process.env.SUPABASE_PUBLISHABLE_KEY ||
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
-    '';
+    DEFAULT_SUPABASE_PUBLISHABLE_KEY;
 
   if (!url || !publishableKey) {
     throw new LeadStorageError(
