@@ -63,7 +63,8 @@ export default function EditorialLanding() {
 
               <div className="v3-hero__actions">
                 <a href="#laheta-kuvat" className="v3-button v3-button--primary" aria-label={siteConfig.cta.primary}>
-                  PYYDÄ 2 MAKSUTONTA SISÄLTÖESIMERKKIÄ
+                  <span className="v3-hero__cta-long">PYYDÄ 2 MAKSUTONTA SISÄLTÖESIMERKKIÄ</span>
+                  <span className="v3-hero__cta-short">PYYDÄ 2 ESIMERKKIÄ</span>
                 </a>
                 <a href="#raw-final" className="v3-text-link">Katso miten se toimii <span aria-hidden="true">↓</span></a>
               </div>
@@ -74,16 +75,27 @@ export default function EditorialLanding() {
               </div>
             </div>
 
-            <aside className="v3-hero__poster" aria-label="GhoulHouse SOME 12 -palvelu">
-              <div className="v3-hero__poster-top">
-                <span>GHOULHOUSE</span>
-                <span>SOME 12</span>
+            <aside className="v3-hero__visual" aria-label="GhoulHouse sisältökonsepti">
+              <div className="v3-hero__visual-media">
+                <Image
+                  src={conceptPhoto}
+                  alt="Remonttityömaan konseptikuva GhoulHouse-sisältöä varten"
+                  fill
+                  priority
+                  sizes="(max-width: 1023px) 0px, 42vw"
+                  className="object-cover"
+                />
+                <div className="v3-hero__visual-shade" aria-hidden="true" />
+                <div className="v3-hero__visual-badge">KONSEPTIESIMERKKI — EI ASIAKASTYÖ</div>
+                <div className="v3-hero__visual-copy">
+                  <span>RAW → VALMIS</span>
+                  <strong>TYÖMAAMATERIAALI JULKAISUVALMIIKSI.</strong>
+                </div>
               </div>
-              <div className="v3-hero__poster-number" aria-hidden="true">12</div>
-              <div className="v3-hero__poster-bottom">
-                <div><strong>30</strong><span>PÄIVÄÄ</span></div>
-                <div><strong>02</strong><span>KANAVAA</span></div>
-                <div><strong>01</strong><span>TEKIJÄ</span></div>
+              <div className="v3-hero__visual-foot">
+                <span><strong>12</strong> sisältöä</span>
+                <span><strong>30</strong> päivää</span>
+                <span><strong>IG + FB</strong></span>
               </div>
             </aside>
           </div>
