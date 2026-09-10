@@ -13,11 +13,10 @@ export type FunnelEvent =
 
 type AnalyticsProperties = Record<string, string | number | boolean>;
 
-type VercelAnalyticsFn = (
-  command: 'event',
-  payload: {
-    name: string;
-    data?: AnalyticsProperties;
+type PlausibleAnalyticsFn = (
+  event: string,
+  options?: {
+    props?: AnalyticsProperties;
   }
 ) => void;
 
@@ -29,18 +28,12 @@ export function trackEvent(
 
   const payload = { event, ...properties };
   const target = window as Window & {
-    dataLayer?: Array<Record<string, unknown>>;
-    va?: VercelAnalyticsFn;
+    plausible?: PlausibleAnalyticsFn;
   };
 
-  if (Array.isArray(target.dataLayer)) {
-    target.dataLayer.push(payload);
-  }
-
-  if (typeof target.va === 'function') {
-    target.va('event', {
-      name: event,
-      ...(Object.keys(properties).length > 0 ? { data: properties } : {}),
+  if (event !== 'page_view' && typeof target.plausible === 'function') {
+    target.plausible(event, {
+      ...(Object.keys(properties).length > 0 ? { props: properties } : {}),
     });
   }
 
