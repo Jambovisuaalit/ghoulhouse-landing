@@ -46,15 +46,15 @@ CI additionally verifies launch visual/accessibility and no-JavaScript behavior.
 
 Required:
 
-- [ ] final CI run green after the latest design/code cleanup
-- [ ] 390 px: no horizontal overflow
-- [ ] 768 px: no horizontal overflow
-- [ ] 1440 px+: no horizontal overflow
-- [ ] all CTA targets at least 44×44 px
-- [ ] logical keyboard tab order
-- [ ] visible Signal focus ring
-- [ ] `prefers-reduced-motion: reduce` removes animations/transitions
-- [ ] OG image renders correctly
+- [x] final cleanup CI run green
+- [x] 390 px: no horizontal overflow
+- [x] 768 px: no horizontal overflow
+- [x] 1440 px+: no horizontal overflow
+- [x] all CTA targets at least 44×44 px
+- [x] logical keyboard tab order
+- [x] visible Signal focus ring
+- [x] `prefers-reduced-motion: reduce` removes animations/transitions
+- [x] OG image renders correctly
 
 ## 4. Production environment
 
@@ -108,11 +108,11 @@ Before indexing:
 - [ ] production CSP header is enforced and contains only required sources
 - [ ] `X-Content-Type-Options: nosniff`
 - [ ] `Cross-Origin-Opener-Policy: same-origin`
-- [ ] privacy page content matches the active technical stack
-- [ ] while `SITE_INDEXABLE=false`, `X-Robots-Tag` is noindex
-- [ ] while `SITE_INDEXABLE=false`, robots disallows crawling and sitemap exposes no indexable URLs
+- [x] privacy page content matches the Plausible/Resend/Vercel technical stack in source
+- [ ] while `SITE_INDEXABLE=false`, production `X-Robots-Tag` is noindex
+- [ ] while `SITE_INDEXABLE=false`, production robots disallows crawling and sitemap exposes no indexable URLs
 
-Final index flip only after all launch gates pass:
+Final index flip only after all production launch gates pass:
 
 ```env
 SITE_INDEXABLE=true
@@ -130,13 +130,13 @@ After the flip:
 ## Final sign-off
 
 ```text
-Code/CI:             [ ] PASS
-Visual/A11y:         [ ] PASS
-Verified trust media:[ ] PASS or explicitly accepted concept fallback
-Lead delivery:       [ ] PASS
-Plausible:           [ ] PASS
-Vercel domains:      [ ] PASS
-Security/privacy:    [ ] PASS
+Code/CI:             [x] PASS
+Visual/A11y:         [x] PASS
+Verified trust media:[ ] pending verified source assets
+Lead delivery:       [ ] production E2E pending
+Plausible:           [ ] production E2E pending
+Vercel domains:      [ ] pending
+Security/privacy:    [ ] production verification pending
 DNS cutover:         [ ] separate approved action
 Indexing:            [ ] enable only after all above
 ```
