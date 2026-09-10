@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateLead } from '@/lib/lead';
-import { deliverLead, LeadDeliveryError } from '@/lib/lead-delivery';
+import { storeLead, LeadStorageError } from '@/lib/lead-storage';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -142,17 +142,22 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    await deliverLead(validation.data);
+    await storeLead(validation.data);
 
     if (parsed.htmlForm) return redirect(request, '/kiitos');
     return json({ ok: true }, 201);
   } catch (error) {
-    if (error instanceof LeadDeliveryError) {
+    if (error instanceof LeadStorageError) {
+      if (error.code === 'rate_limited') {
+        if (parsed.htmlForm) {
+          return redirect(request, '/?lead=rate_limited#laheta-kuvat');
+        }
+        return json({ ok: false, code: 'rate_limited' }, 429);
+      }
+
       if (parsed.htmlForm) {
         return redirect(request, '/?lead=delivery#laheta-kuvat');
       }
-
-      const status = error.code === 'not_configured' ? 503 : 502;
 
       return json(
         {
@@ -162,7 +167,7 @@ export async function POST(request: NextRequest) {
               ? 'delivery_unavailable'
               : 'delivery_failed',
         },
-        status
+        error.code === 'not_configured' ? 503 : 502
       );
     }
 
