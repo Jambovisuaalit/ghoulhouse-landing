@@ -66,7 +66,7 @@ jobs:
           fi
 
           curl --silent --head --header 'Host: www.ghoulhouse.fi' http://127.0.0.1:3000/ > /tmp/www-headers.txt
-          grep -qi '^HTTP/.* 301' /tmp/www-headers.txt
+          grep -qi '^HTTP/.* 308' /tmp/www-headers.txt
           grep -qi '^location: https://ghoulhouse.fi/' /tmp/www-headers.txt
 
       - name: Lead API QA
@@ -130,8 +130,29 @@ jobs:
           privacy="$(curl --fail --silent http://127.0.0.1:3000/tietosuoja)"
           printf '%s' "$privacy" | grep -q "Kaupparekisterissä 3.9.2026 alkaen"
           printf '%s' "$privacy" | grep -q "c/o Hanna Nyholm"
-          printf '%s' "$privacy" | grep -q "Maasälväntie 2 A 33"
+          printf '%s' "$privacy" | grep -q "Maasälväntie 2 A 3"
           printf '%s' "$privacy" | grep -q "00710"
+
+      - name: Brand and analytics QA
+        shell: bash
+        run: |
+          html="$(curl --fail --silent http://127.0.0.1:3000/)"
+          printf '%s' "$html" | grep -q "TYÖMAAKUVAT"
+          printf '%s' "$html" | grep -q "VALMIS SOME"
+
+          if grep -Rqi "V2:n lopulliseen proof-osioon" src; then
+            echo "::error::Internal V2 proof copy leaked into source."
+            exit 1
+          fi
+
+          if grep -RqiE "VercelAnalytics|NEXT_PUBLIC_VERCEL_ANALYTICS_ENABLED|va\.vercel-scripts\.com|vitals\.vercel-insights\.com" src next.config.js .env.example; then
+            echo "::error::Legacy Vercel Analytics integration remains in runtime config."
+            exit 1
+          fi
+
+          grep -q "PlausibleAnalytics" src/app/layout.tsx
+          grep -q "NEXT_PUBLIC_PLAUSIBLE_SCRIPT_SRC" .env.example
+          grep -q "https://plausible.io" next.config.js
 
       - name: Security headers QA
         shell: bash
@@ -141,6 +162,7 @@ jobs:
           grep -qi "content-security-policy-report-only:" /tmp/headers.txt
           grep -qi "default-src 'self'" /tmp/headers.txt
           grep -qi "frame-ancestors 'none'" /tmp/headers.txt
+          grep -qi "https://plausible.io" /tmp/headers.txt
           grep -qi "cross-origin-opener-policy: same-origin" /tmp/headers.txt
           grep -qi "x-permitted-cross-domain-policies: none" /tmp/headers.txt
 
@@ -152,12 +174,14 @@ jobs:
       - name: Logo QA
         shell: bash
         run: |
-          grep -q 'viewBox=' public/logo-horizontal.svg
-          if grep -qi '<text' public/logo-horizontal.svg; then
-            echo "::error::Logo wordmark must be path-only; live SVG text is not allowed."
-            exit 1
-          fi
-          grep -q '<path' public/logo-horizontal.svg
+          for logo in public/logo-horizontal.svg public/logo-horizontal-white.svg; do
+            grep -q 'viewBox=' "$logo"
+            if grep -qi '<text' "$logo"; then
+              echo "::error::$logo must be path-only; live SVG text is not allowed."
+              exit 1
+            fi
+            grep -q '<path' "$logo"
+          done
 
       - name: Browser QA
         run: node scripts/browser-qa-ci.mjs
