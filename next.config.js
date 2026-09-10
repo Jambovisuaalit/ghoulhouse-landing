@@ -9,8 +9,8 @@ const contentSecurityPolicy = [
   "img-src 'self' data: blob:",
   "font-src 'self'",
   "style-src 'self' 'unsafe-inline'",
-  "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com",
-  "connect-src 'self' https://vitals.vercel-insights.com https://va.vercel-scripts.com",
+  "script-src 'self' 'unsafe-inline' https://plausible.io",
+  "connect-src 'self' https://plausible.io",
   "upgrade-insecure-requests",
 ].join('; ');
 
