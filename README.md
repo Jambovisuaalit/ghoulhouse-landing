@@ -1,49 +1,37 @@
-# GhoulHouse Oy Landing Page
+# GhoulHouse Landing Page
 
-Official website for GhoulHouse Oy — a productized social media content service for Finnish renovation and local service businesses.
+Official GhoulHouse website source.
 
-## Source of Truth
+## Source of truth
 
 - Repository: `Jambovisuaalit/ghoulhouse-landing`
-- Canonical branch: `main`
-- Canonical public host: `https://ghoulhouse.fi`
-- Canonical Vercel target project: `ghoulhouse-oy`
-- Legacy domain-owning Vercel project during infrastructure migration: `ghoulhouse-landing-1ig9`
+- Production branch: `main`
+- Canonical host: `https://ghoulhouse.fi`
+- Target Vercel project: `ghoulhouse-oy`
+- Canonical message: **TYÖMAAKUVAT SISÄÄN. VALMIS SOME ULOS.**
+- Offer: **490 € + ALV / 30 päivää. Ei sitoumusta jatkosta.**
 
-Do not treat old previews, legacy Vercel projects, or `vido-social/ghoulhouse-landing` as source code.
+Do not treat old previews, archived projects or previous GhoulHouse brand variants as source code.
 
-## Tech Stack
+## Stack
 
-- **Framework:** Next.js 15.5.24 / App Router
-- **Runtime:** React 18.3
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS + `src/app/globals.css`
-- **Motion:** native Web Animations API + scroll-driven DOM/CSS in `Mechanism.tsx`
-- **Deployment:** Vercel
-- **Analytics:** Vercel Analytics integration
+- Next.js 15 / App Router
+- React 18
+- TypeScript
+- Tailwind CSS + `src/app/globals.css`
+- Anton + Montserrat through `next/font`
+- Vercel
+- Plausible Analytics
+- Resend or webhook lead delivery
 
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18.17.0 or later
-- npm 9 or later
-
-### Installation
+## Local development
 
 ```bash
 npm ci
-```
-
-### Development
-
-```bash
 npm run dev
 ```
 
-Open `http://localhost:3000`.
-
-### Validation
+Validation:
 
 ```bash
 npm run typecheck
@@ -52,9 +40,9 @@ npm run build
 npm run qa:browser
 ```
 
-The browser QA requires Chrome/Chromium and validates the supported viewport matrix, first-viewport CTA visibility, responsive overflow, modal behavior, analytics events, reduced-motion behavior, and the Proof Engine scroll geometry.
+CI additionally runs launch visual/accessibility and no-JavaScript QA.
 
-## Landing Architecture
+## Application structure
 
 ```text
 src/
@@ -66,141 +54,103 @@ src/
     robots.ts
     sitemap.ts
     opengraph-image.tsx
-
+    tietosuoja/page.tsx
   components/
     analytics/
     contact/
     layout/
     sections/
-      Hero.tsx
-      ProofStrip.tsx
-      ProblemSolution.tsx
-      Mechanism.tsx
-      Process.tsx
-      Pricing.tsx
-      ContentExamples.tsx
-      Founder.tsx
-      FAQ.tsx
-      FinalCTA.tsx
     ui/
-
-  config/
-    site.ts
-
+  config/site.ts
+  data/landing.ts
   lib/
     analytics.ts
     lead.ts
     lead-delivery.ts
     seo.ts
-
   middleware.ts
 ```
 
-Current landing composition:
+Homepage composition:
 
 ```text
 Hero
-→ ProofStrip
-→ ProblemSolution
-→ Mechanism
-   ├─ RAW → FINAL
-   └─ filmstrip workflow
+→ RAW / VALMIS mechanism
+→ Problem / Solution
 → Process
+→ Content Examples
 → Pricing
-→ ContentExamples
 → Founder
 → FAQ
-→ FinalCTA
+→ Final CTA
 ```
 
-## Proof Engine
+## Brand system
 
-`src/components/sections/Mechanism.tsx` is the visual transformation engine.
+Use the existing design tokens only:
 
-It renders:
+- Ink `#111111`
+- Signal Red `#C9282D`
+- Ghost `#F7F4EF`
+- Bone `#E6DFD5`
+- Anton for display typography
+- Montserrat for body/UI typography
 
-1. a RAW → FINAL worksite-material transformation;
-2. a horizontal four-frame workflow;
-3. desktop sticky/scroll choreography at `>= 1100px`;
-4. direct mobile scrolling below the desktop breakpoint;
-5. a static fallback when `prefers-reduced-motion: reduce`.
+Official logo SVG artwork lives in `public/logo-horizontal.svg` and `public/logo-horizontal-white.svg`. Both wordmarks are path-only and must not depend on runtime fonts.
 
-The homepage also uses:
+## Proof policy
 
-- `ProofStrip.tsx` for immediate service facts;
-- `ContentExamples.tsx` for conceptual content directions.
+Never present stock, generated or unverified material as customer work.
 
-Reference imagery is not customer work and must remain explicitly labelled as concept/reference material.
+Until verified customer RAW → FINAL material is available, `Mechanism.tsx` must remain explicitly labelled:
 
-## Commercial Source of Truth
+`KONSEPTIESIMERKKI — EI ASIAKASTYÖ`
 
-Critical offer data is centralized in `src/config/site.ts`.
+A founder portrait may be enabled only with a verified local asset via `NEXT_PUBLIC_FOUNDER_IMAGE`. The HN fallback is intentional until that asset exists.
 
-Current offer:
-
-```text
-CTA: VARAA 20 MIN KESKUSTELU
-Offer: GHOULHOUSE SOME 12
-Price: 490 € + ALV / 30 päivää
-```
-
-The obsolete `MANAGED` / `790 €` lifecycle must not reappear.
-
-## Lead Delivery
+## Lead delivery
 
 `POST /api/leads` validates requests and delegates delivery through `src/lib/lead-delivery.ts`.
 
-Supported production delivery modes:
+Supported modes:
 
-- `LEAD_DELIVERY_MODE=resend`
-- `LEAD_DELIVERY_MODE=webhook`
-
-See `.env.example` for the required variables.
-
-## SEO Launch Gate
-
-Indexing is intentionally disabled by default.
-
-- local development: noindex
-- Vercel Preview: noindex
-- non-canonical Vercel production aliases: noindex
-- `www.ghoulhouse.fi`: exactly one permanent `301` redirect to `https://ghoulhouse.fi`
-- `ghoulhouse.fi`: indexable only when **all** conditions are true:
-  1. deployment environment is Vercel Production;
-  2. request host is `ghoulhouse.fi`;
-  3. `SITE_INDEXABLE=true`;
-  4. an approved `NEXT_PUBLIC_PRIVACY_PATH` is configured.
-
-Keep `SITE_INDEXABLE=false` until final domain cutover and privacy-page QA are complete.
-
-## Production Release
-
-Standard validation gates:
-
-```bash
-npm ci
-npm audit --omit=dev --audit-level=high
-npm run typecheck
-npm run lint
-npm run build
-npm run qa:browser
+```text
+LEAD_DELIVERY_MODE=resend
+LEAD_DELIVERY_MODE=webhook
 ```
 
-Production releases must use an exact validated `main` commit.
+See `.env.example` for environment variables. Never commit production secrets.
 
-The custom-domain migration is intentionally separate from application deployment. Do not modify DNS during a Vercel project cutover; move the existing project-domain assignments and validate apex/WWW routing before enabling indexing.
+## Plausible Analytics
 
-### Temporary legacy-domain bridge
+Create/configure `ghoulhouse.fi` in Plausible and set the exact site-specific tracker URL in Production:
 
-Until `ghoulhouse.fi` and `www.ghoulhouse.fi` are moved from `ghoulhouse-landing-1ig9` to `ghoulhouse-oy`, Vercel's legacy project-level routing sends apex traffic to `www`. To prevent an application-level redirect loop, `src/lib/seo.ts` detects the legacy Vercel project from Vercel system environment URLs and temporarily allows `www.ghoulhouse.fi` to render there.
+```text
+NEXT_PUBLIC_PLAUSIBLE_SCRIPT_SRC=<Plausible site-specific script URL>
+```
 
-This bridge:
+Do not reintroduce Vercel Analytics into the runtime stack.
 
-- does **not** change DNS;
-- does **not** enable indexing;
-- applies only to the legacy Vercel project;
-- automatically stops applying after the custom domains move to `ghoulhouse-oy`, where normal `www → apex` canonical routing remains active.
+## SEO and canonical routing
 
-## Environment
+- `ghoulhouse.fi` is canonical.
+- `www.ghoulhouse.fi` redirects permanently to apex with **308**.
+- local, Preview and non-canonical deployments remain `noindex`.
+- indexing requires Vercel Production, canonical host, `SITE_INDEXABLE=true`, and explicit `NEXT_PUBLIC_PRIVACY_PATH=/tietosuoja`.
 
-Copy `.env.example` and configure only the values required for the current environment. Never commit production secrets.
+Keep `SITE_INDEXABLE=false` until the complete production launch gate has passed.
+
+## Production release gate
+
+Before enabling indexing:
+
+1. CI is green on the exact `main` commit.
+2. `ghoulhouse-oy` has all required Production environment variables.
+3. Plausible tracker is configured and verified.
+4. lead delivery reaches the real inbox.
+5. `ghoulhouse.fi` is attached to the intended Vercel project and returns 200.
+6. `www.ghoulhouse.fi` returns 308 to apex.
+7. privacy, robots, sitemap, CSP and browser QA pass.
+8. only then set `SITE_INDEXABLE=true`.
+
+Domain/DNS operations are separate from application source changes.
