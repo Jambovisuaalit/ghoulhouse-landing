@@ -27,7 +27,7 @@ export default function ProblemSolution() {
       <Container>
         <div className="grid gap-12 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-8">
-            <p className="type-label text-signal">Ongelma / ratkaisu</p>
+            <p className="type-label text-signal">ONGELMA / RATKAISU</p>
             <h2 id="problem-solution-title" className="type-section-title mt-4 max-w-[15ch] text-ink">
               HYVÄ TYÖ EI MYY, JOS SITÄ EI NÄYTETÄ.
             </h2>
@@ -39,7 +39,7 @@ export default function ProblemSolution() {
 
         <div className="mt-12 grid gap-px border border-ink bg-ink lg:grid-cols-2">
           <article className="bg-black p-6 text-white md:p-9">
-            <p className="type-label text-signal">Ilman järjestelmää</p>
+            <p className="type-label text-signal">ILMAN JÄRJESTELMÄÄ</p>
             <ol className="mt-8 space-y-0">
               {problemItems.map((item, index) => (
                 <li key={item} className="grid grid-cols-[44px_1fr] border-t border-white/20 py-4">
@@ -51,7 +51,7 @@ export default function ProblemSolution() {
           </article>
 
           <article className="bg-white p-6 md:p-9">
-            <p className="type-label text-signal">GhoulHouse-järjestelmä</p>
+            <p className="type-label text-signal">GHOULHOUSE / JÄRJESTELMÄ</p>
             <ol className="mt-8">
               {solutionItems.map((item, index) => (
                 <li key={item} className="grid grid-cols-[44px_1fr] border-t border-ink/20 py-4">
