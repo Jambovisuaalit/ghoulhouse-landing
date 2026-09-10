@@ -1,0 +1,26 @@
+/* Final GhoulHouse brand lock.
+   This layer exists only for canonical brand constraints that must win over
+   responsive composition overrides. */
+
+:root {
+  /* Canonical warm light background from the Full Logo Pack source of truth. */
+  --color-paper: #F7F4EF;
+}
+
+/* Horizontal lockup must never render below its 140 px digital minimum. */
+.nav-shell nav > a:first-child img {
+  width: 144px !important;
+  height: auto !important;
+}
+
+@media (max-width: 639px) {
+  .nav-shell nav > a:first-child img {
+    width: 140px !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .nav-shell nav > a:first-child img {
+    width: 156px !important;
+  }
+}
