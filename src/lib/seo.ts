@@ -4,6 +4,7 @@ export const SITE_URL = siteConfig.company.domain;
 export const SITE_HOST = new URL(SITE_URL).hostname;
 
 const MANAGED_HOSTS = new Set(['ghoulhouse.fi', 'www.ghoulhouse.fi']);
+const APPROVED_PRIVACY_PATH = '/tietosuoja';
 
 function normalizeHost(value: string | null | undefined) {
   return (value || '')
@@ -19,10 +20,11 @@ export function isProductionDeployment() {
 
 export function isIndexingApproved() {
   const configuredValue = process.env.SITE_INDEXABLE?.trim().toLowerCase();
+  const configuredPrivacyPath = process.env.NEXT_PUBLIC_PRIVACY_PATH?.trim();
 
   return (
     configuredValue === 'true' &&
-    Boolean(siteConfig.legal.privacyPath)
+    configuredPrivacyPath === APPROVED_PRIVACY_PATH
   );
 }
 
