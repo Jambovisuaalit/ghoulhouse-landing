@@ -1,8 +1,3 @@
-export type ProofItem = {
-  label: string;
-  value: string;
-};
-
 export type ProcessStep = {
   number: `0${1 | 2 | 3}`;
   title: string;
@@ -19,14 +14,6 @@ export type FaqItem = {
   question: string;
   answer: string;
 };
-
-export const proofItems: ProofItem[] = [
-  { label: 'Sisältö', value: '12 sisältöä / 30 päivää' },
-  { label: 'Kanavat', value: 'Instagram + Facebook' },
-  { label: 'Korjaukset', value: 'Yksi koottu korjauskierros' },
-  { label: 'Raportointi', value: 'Kevyt kuukausiraportti' },
-  { label: 'Lähtömateriaali', value: 'Asiakas toimittaa kuvat ja faktat' },
-];
 
 export const problemItems = [
   'Kuvat jäävät puhelimeen.',
@@ -109,8 +96,8 @@ export const contentExamples: ContentExample[] = [
     copy: 'Palvelun toimintatapa, työn huolellisuus ja faktat tuodaan näkyviin ilman keksittyjä tuloksia.',
   },
   {
-    eyebrow: '06 / FAQ',
-    title: 'Myynti ja FAQ',
+    eyebrow: '06 / UKK',
+    title: 'Myynti ja UKK',
     copy: 'Palvelun ostamista hidastava kysymys vastataan suoraan ja konkreettisesti.',
   },
 ];
