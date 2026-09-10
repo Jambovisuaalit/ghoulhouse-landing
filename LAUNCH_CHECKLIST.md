@@ -1,237 +1,142 @@
-# 🚀 GhoulHouse Landing: Launch Checklist
+# GhoulHouse Launch Checklist
 
-**Status:** Ready for production deployment  
-**Last Updated:** 2026-09-03  
-**Target:** `ghoulhouse.fi` (apex domain)
+**Canonical:** `https://ghoulhouse.fi`  
+**Source:** `Jambovisuaalit/ghoulhouse-landing` / `main`  
+**Target Vercel project:** `ghoulhouse-oy`  
+**Indexing gate:** `SITE_INDEXABLE=false` until every production gate below passes.
 
----
+## 1. Code and brand
 
-## 📋 Pre-Launch Critical Path (Must Complete Before DNS Cutover)
+- [x] Company master data uses `Maasälväntie 2 A 3`
+- [x] Canonical message: `TYÖMAAKUVAT SISÄÄN. VALMIS SOME ULOS.`
+- [x] Offer: `490 € + ALV / 30 päivää`
+- [x] No continuation commitment
+- [x] `www.ghoulhouse.fi` application redirect uses 308
+- [x] `/tietosuoja` exists and is excluded from middleware redirect/index header matcher
+- [x] `opengraph-image` and `icon` are excluded from middleware matcher
+- [x] White and dark horizontal logos are path-only SVG artwork
+- [x] Internal V2/staging copy removed from customer-facing sections
+- [x] Footer contact anchor targets `#laheta-kuvat`
+- [x] Vercel Analytics removed from runtime source
+- [x] Plausible integration and CSP allow-list implemented
+- [x] obsolete one-off deployment/migration workflows removed
+- [x] dead proof data and unused public concept assets removed
 
-### ✅ Code Deployment (COMPLETE)
+## 2. Trust assets
 
-- [x] **Fix 308 Redirect Status** - Changed middleware.ts line 18 from `301` to `308`
-- [x] **Create GDPR Privacy Page** - Added `/tietosuoja` with complete compliance disclosures
-- [x] **Commit deployed** - Commit: `05b78feace9f56de1d90e5325de3db219a85c41e`
+- [ ] Add a verified Hanna Nyholm founder portrait as a local asset and set `NEXT_PUBLIC_FOUNDER_IMAGE`
+- [ ] Replace the concept RAW → VALMIS image with verified, publication-approved real worksite material when available
+- [x] Until verified material exists, concept imagery is explicitly labelled `KONSEPTIESIMERKKI — EI ASIAKASTYÖ`
+- [x] Do not use stock/generated material as customer proof
 
-### ⏳ Vercel Configuration (Must Complete)
+## 3. CI and visual/accessibility QA
 
-#### 1. **Connect GitHub Repository to Vercel Project**
-- [ ] Link `Jambovisuaalit/ghoulhouse-landing` → `ghoulhouse-oy`
-- [ ] Verify Vercel Project ID: `prj_Xf2QTX7hkMQhdhGdcyQyMTv78weK`
-- [ ] Confirm Preview deployment is running latest main commit
+Run on the exact release commit:
 
-#### 2. **Configure Production Environment Variables**
+```bash
+npm ci
+npm audit --omit=dev --audit-level=high
+npm run typecheck
+npm run lint
+npm run build
+npm run qa:browser
+```
 
-Set these in **Vercel Production Environment Variables** (not Preview):
+CI additionally verifies launch visual/accessibility and no-JavaScript behavior.
+
+Required:
+
+- [ ] final CI run green after the latest design/code cleanup
+- [ ] 390 px: no horizontal overflow
+- [ ] 768 px: no horizontal overflow
+- [ ] 1440 px+: no horizontal overflow
+- [ ] all CTA targets at least 44×44 px
+- [ ] logical keyboard tab order
+- [ ] visible Signal focus ring
+- [ ] `prefers-reduced-motion: reduce` removes animations/transitions
+- [ ] OG image renders correctly
+
+## 4. Production environment
+
+Set in **Production only** unless explicitly required elsewhere:
 
 ```env
-# Lead Delivery - Choose ONE mode:
 LEAD_DELIVERY_MODE=resend
-RESEND_API_KEY=<your-resend-api-key>
+RESEND_API_KEY=<secret>
 LEAD_TO_EMAIL=hello@ghoulhouse.fi
 LEAD_FROM_EMAIL=noreply@ghoulhouse.fi
-
-# OR for webhook mode:
-# LEAD_DELIVERY_MODE=webhook
-# LEAD_WEBHOOK_URL=https://your-webhook-endpoint.com
-# LEAD_WEBHOOK_TOKEN=<optional-bearer-token>
-
-# Privacy & Indexing Gate
 NEXT_PUBLIC_PRIVACY_PATH=/tietosuoja
-SITE_INDEXABLE=true
-
-# Analytics
-NEXT_PUBLIC_VERCEL_ANALYTICS_ENABLED=true
-
-# Security
+NEXT_PUBLIC_PLAUSIBLE_SCRIPT_SRC=<exact Plausible site-specific script URL>
 CSP_ENFORCE=true
+SITE_INDEXABLE=false
 ```
 
-#### 3. **Enable Vercel Web Analytics**
-- [ ] Go to Vercel Project Settings → Analytics
-- [ ] Enable Web Analytics
-- [ ] Verify `/_vercel/insights/script.js` returns 200 OK
+- [ ] Resend API key configured as a secret
+- [ ] lead delivery variables configured
+- [ ] exact Plausible site-specific script URL configured
+- [ ] CSP enforcement verified in production
+- [ ] `SITE_INDEXABLE=false` confirmed before cutover
 
-#### 4. **Attach Custom Domains**
-- [ ] Add `ghoulhouse.fi` (apex) to `ghoulhouse-oy` project
-- [ ] Add `www.ghoulhouse.fi` as alias
-- [ ] **DO NOT change DNS yet** — verify Vercel assignment first
+## 5. Vercel project and custom domains
 
-#### 5. **Test Lead Delivery E2E**
-- [ ] Submit test lead from production Preview
-- [ ] Verify lead arrives at `hello@ghoulhouse.fi`
-- [ ] Test both form variants (desktop/mobile)
-- [ ] Check error handling with rate-limit test
+- [ ] `Jambovisuaalit/ghoulhouse-landing` connected to `ghoulhouse-oy`
+- [ ] Production Branch = `main`
+- [ ] latest validated `main` commit deployed to `ghoulhouse-oy`
+- [ ] `ghoulhouse.fi` attached to `ghoulhouse-oy`
+- [ ] `www.ghoulhouse.fi` attached to `ghoulhouse-oy`
+- [ ] apex domain reports valid configuration
+- [ ] www domain reports valid configuration
+- [ ] apex returns HTTP 200
+- [ ] www returns HTTP 308 to apex
 
-#### 6. **Verify Redirects**
-- [ ] Test: `https://www.ghoulhouse.fi` → `https://ghoulhouse.fi` (308 response)
-- [ ] Confirm apex responds with 200 OK
-- [ ] Check `X-Robots-Tag` header (should be `noindex` until SITE_INDEXABLE=true)
+**Do not change registrar DNS as part of the code/deploy step.** DNS cutover is a separate controlled operation.
 
-#### 7. **Robots & Sitemap QA**
-- [ ] Visit `/robots.txt` → Should show `Disallow: /` (prelaunch state)
-- [ ] Visit `/sitemap.xml` → Should be empty `<urlset/>`
-- [ ] After SITE_INDEXABLE flip: robots should show `Allow: /`
+## 6. Analytics and lead delivery E2E
 
-#### 8. **Visual & Accessibility QA (Production Preview)**
-- [ ] Test all viewports: 390px, 768px, 1440px+
-- [ ] Verify no horizontal overflow
-- [ ] Check CTA buttons ≥ 44×44 px
-- [ ] Test keyboard navigation
-- [ ] Test with `prefers-reduced-motion: reduce`
-- [ ] Verify OG image renders on social shares
+- [ ] Plausible tracker request succeeds on production
+- [ ] pageview appears in Plausible
+- [ ] primary CTA custom event appears in Plausible
+- [ ] pricing/content-view events appear in Plausible
+- [ ] valid lead POST returns success
+- [ ] test lead arrives at `hello@ghoulhouse.fi`
+- [ ] missing lead-delivery configuration returns controlled JSON error, not an unhandled 500
 
----
+## 7. Security, privacy and SEO
 
-## 🌐 DNS Cutover (Only After All Above Pass)
+Before indexing:
 
-### Prerequisites Checklist
-- [ ] Custom domains assigned to `ghoulhouse-oy` in Vercel
-- [ ] Preview deployment fully green
-- [ ] Lead delivery tested end-to-end
-- [ ] Apex & www redirect verified
-- [ ] All Vercel env vars set
+- [ ] production CSP header is enforced and contains only required sources
+- [ ] `X-Content-Type-Options: nosniff`
+- [ ] `Cross-Origin-Opener-Policy: same-origin`
+- [ ] privacy page content matches the active technical stack
+- [ ] while `SITE_INDEXABLE=false`, `X-Robots-Tag` is noindex
+- [ ] while `SITE_INDEXABLE=false`, robots disallows crawling and sitemap exposes no indexable URLs
 
-### DNS Update Instructions
+Final index flip only after all launch gates pass:
 
-**Current DNS Target:** (old Vercel project or staging)  
-**New DNS Target:** Vercel Production (`ghoulhouse-oy`)
-
-**Step 1: Update A Record (Apex)**
-```
-Domain:  ghoulhouse.fi
-Type:    A
-Value:   76.76.21.21  (Vercel Production IP)
-TTL:     3600
+```env
+SITE_INDEXABLE=true
 ```
 
-**Step 2: Update CNAME Record (www)**
+After the flip:
+
+- [ ] apex remains HTTP 200
+- [ ] www remains a single 308 redirect to apex
+- [ ] noindex header is absent on canonical production pages
+- [ ] robots allows crawling
+- [ ] sitemap contains approved canonical pages
+- [ ] canonical metadata points to `https://ghoulhouse.fi`
+
+## Final sign-off
+
+```text
+Code/CI:             [ ] PASS
+Visual/A11y:         [ ] PASS
+Verified trust media:[ ] PASS or explicitly accepted concept fallback
+Lead delivery:       [ ] PASS
+Plausible:           [ ] PASS
+Vercel domains:      [ ] PASS
+Security/privacy:    [ ] PASS
+DNS cutover:         [ ] separate approved action
+Indexing:            [ ] enable only after all above
 ```
-Domain:  www.ghoulhouse.fi
-Type:    CNAME
-Value:   cname.vercel-dns.com.
-TTL:     3600
-```
-
-**OR** verify Vercel-assigned nameservers if using Vercel DNS management.
-
-### Post-DNS Cutover Verification (30 min after DNS propagation)
-
-- [ ] `curl -I https://ghoulhouse.fi` → HTTP 200
-- [ ] `curl -I https://www.ghoulhouse.fi` → HTTP 308 to apex
-- [ ] `dig ghoulhouse.fi` resolves to `76.76.21.21`
-- [ ] SSL certificate valid (no warnings)
-- [ ] `X-Robots-Tag` header is absent (indexing approved)
-- [ ] robots.txt shows `Allow: /`
-- [ ] sitemap.xml contains `/` and `/tietosuoja`
-
----
-
-## 📱 Launch Day Timeline
-
-### Morning (Before Cutover)
-- [ ] **Jami:** Final Preview QA (all devices, all browsers)
-- [ ] **Hanna:** Content & visual spot-check
-- [ ] **Jami:** Verify all Vercel settings locked
-- [ ] **Jami:** Tag release: `git tag -a v1.0.0-release -m "Production launch"`
-
-### Afternoon (DNS Cutover)
-- [ ] **Jami:** Update DNS A/CNAME records
-- [ ] **Jami:** Wait 5-10 min for propagation
-- [ ] **Jami:** Verify production apex (200 OK)
-- [ ] **Hanna:** Test booking CTA link works
-- [ ] **Hanna:** Submit test lead → confirm inbox receipt
-- [ ] **Jami:** Verify SSL certificate valid
-- [ ] **Jami:** Check Vercel error logs (should be clean)
-
-### Post-Launch (Next 24 Hours)
-- [ ] Monitor Vercel Analytics for traffic spike
-- [ ] Check Google Search Console for crawl errors
-- [ ] Verify Plausible Analytics events firing
-- [ ] Monitor error logs hourly
-- [ ] Spot-check booking flow on multiple devices
-
----
-
-## 🔄 Post-Launch Monitoring (Week 1)
-
-### Daily Checklist
-- [ ] Check Vercel error logs
-- [ ] Monitor Core Web Vitals (LCP < 2.5s, CLS = 0, INP < 200ms)
-- [ ] Monitor bounce rate and session duration
-- [ ] Verify CTA click events in Plausible
-
-### Weekly Metrics
-- [ ] Total visits
-- [ ] Top landing pages
-- [ ] Conversion funnel (CTA clicks → leads → bookings)
-- [ ] Mobile vs desktop split
-- [ ] Geographic breakdown
-
-### SEO Monitoring
-- [ ] Google Search Console: Check for indexing errors
-- [ ] Bing Webmaster Tools: Submit sitemap
-- [ ] Monitor organic search impressions (take 2-4 weeks to appear)
-
----
-
-## 🚨 Rollback Plan (If Critical Issue Found)
-
-### Immediate Rollback (< 5 min)
-1. **Revert DNS A record** to previous IP
-2. **Revert Vercel domain assignment** to previous project
-3. Verify traffic back on old system
-
-### Investigation
-1. Review Vercel build logs
-2. Check error logs for runtime issues
-3. Test on local production build: `npm run build && npm start`
-
-### Rollback PR
-If code issue found, create `feature/hotfix-*` PR and merge after quick review.
-
----
-
-## 📞 Contacts & Resources
-
-**Jami (Tech Lead)**
-- DNS updates
-- Vercel configuration
-- SSL certificates
-- Error logs & monitoring
-
-**Hanna (Product Lead)**
-- Visual QA
-- Content verification
-- Booking flow testing
-- User feedback
-
-**Critical Contact for Issues:**
-- Email: hello@ghoulhouse.fi
-- Vercel Support: https://vercel.com/support
-
----
-
-## ✅ Final Sign-Off
-
-```
-Codebase Ready:    ✅ Yes
-Vercel Configured: ⏳ Awaiting completion
-DNS Ready:         ⏳ Awaiting completion
-QA Complete:       ⏳ Awaiting completion
-
-Approved by:  ________________  Date: __________
-Deployed by:  ________________  Date: __________
-```
-
----
-
-## 📚 Reference Links
-
-- **Repository:** https://github.com/Jambovisuaalit/ghoulhouse-landing
-- **Vercel Project:** `ghoulhouse-oy`
-- **Production URL:** https://ghoulhouse.fi
-- **Privacy Page:** https://ghoulhouse.fi/tietosuoja (post-launch)
-- **Plausible Dashboard:** [link to setup]
-- **Google Search Console:** [link to verify ownership]
