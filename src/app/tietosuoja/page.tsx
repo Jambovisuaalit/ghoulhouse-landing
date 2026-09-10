@@ -90,7 +90,7 @@ export default function PrivacyPage() {
               <li>verkkosivu- tai sosiaalisen median profiili</li>
               <li>yhteydenoton tai tilauksen sisältö</li>
               <li>asiakassuhteen hoitamiseen tarvittavat projekti- ja laskutustiedot</li>
-              <li>verkkosivun tekniset ja anonyymit käyttötilastot</li>
+              <li>verkkosivun tekniset ja anonyymit käyttötilastot silloin, kun analytiikka on käytössä</li>
             </ul>
           </PrivacySection>
 
@@ -113,18 +113,19 @@ export default function PrivacyPage() {
             <p>GhoulHouse käyttää palvelun toteuttamiseen rajattua joukkoa teknisiä palveluntarjoajia:</p>
             <ul className="list-disc space-y-2 pl-5 marker:text-signal">
               <li><strong className="text-ink">Vercel:</strong> verkkosivun hosting ja tekninen infrastruktuuri.</li>
-              <li><strong className="text-ink">Resend:</strong> verkkosivun kautta lähetettävien yhteydenottojen sähköpostitoimitus.</li>
-              <li><strong className="text-ink">Plausible Analytics:</strong> verkkosivun anonyymi käyttötilastointi.</li>
+              <li><strong className="text-ink">Supabase:</strong> verkkosivun yhteydenottojen tietokantatallennus ja tekninen käsittely.</li>
+              <li><strong className="text-ink">Resend:</strong> yhteydenotoista syntyvien sähköposti-ilmoitusten toimitus.</li>
+              <li><strong className="text-ink">Plausible Analytics:</strong> anonyymi käyttötilastointi silloin, kun analytiikka on tuotantoympäristössä aktivoitu.</li>
             </ul>
             <p>Palveluntarjoajat käsittelevät tietoja vain palvelun tuottamisen kannalta tarpeellisessa laajuudessa.</p>
           </PrivacySection>
 
           <PrivacySection number="07" title="Kansainväliset siirrot">
             <p>
-              Hosting- ja sähköpostipalveluihin voi niiden palvelurakenteesta riippuen liittyä henkilötietojen käsittelyä EU/ETA-alueen ulkopuolella. Tällöin käsittely perustuu sovellettavan tietosuojalainsäädännön mukaisiin siirtoperusteisiin ja suojatoimiin.
+              Hosting-, tietokanta- ja sähköpostipalveluihin voi niiden palvelurakenteesta riippuen liittyä henkilötietojen käsittelyä EU/ETA-alueen ulkopuolella. Tällöin käsittely perustuu sovellettavan tietosuojalainsäädännön mukaisiin siirtoperusteisiin ja suojatoimiin.
             </p>
             <p>
-              Plausible Analyticsin pilvipalvelun analytiikkadata käsitellään ja säilytetään EU:ssa. Plausible ei käytä analytiikkaan evästeitä tai pysyviä käyttäjätunnisteita.
+              Plausible Analyticsin pilvipalvelun analytiikkadata käsitellään ja säilytetään EU:ssa silloin, kun palvelu on käytössä. Plausible ei käytä analytiikkaan evästeitä tai pysyviä käyttäjätunnisteita.
             </p>
           </PrivacySection>
 
@@ -145,7 +146,7 @@ export default function PrivacyPage() {
 
           <PrivacySection number="09" title="Evästeet ja analytiikka">
             <p>
-              GhoulHouse käyttää Plausible Analyticsia verkkosivun yleisen käytön mittaamiseen. Plausible toimii ilman analytiikkaevästeitä ja ilman pysyviä käyttäjätunnisteita. Analytiikkaa ei käytetä yksittäisten kävijöiden profilointiin tai mainonnan kohdentamiseen.
+              GhoulHouse ei käytä analytiikkaevästeitä. Jos Plausible Analytics aktivoidaan tuotantoympäristössä, sitä käytetään verkkosivun yleisen käytön mittaamiseen ilman analytiikkaevästeitä ja pysyviä käyttäjätunnisteita. Analytiikkaa ei käytetä yksittäisten kävijöiden profilointiin tai mainonnan kohdentamiseen.
             </p>
             <p>
               Verkkosivun hosting- tai tietoturvatoiminnot voivat käyttää teknisesti välttämättömiä mekanismeja palvelun suojaamiseen ja toimittamiseen.
@@ -154,7 +155,7 @@ export default function PrivacyPage() {
 
           <PrivacySection number="10" title="Tietoturva ja muutokset">
             <p>
-              Tietoja suojataan asianmukaisin teknisin ja organisatorisin toimin, kuten salatulla HTTPS-yhteydellä, käyttöoikeuksien rajaamisella ja palveluntarjoajien hallinnalla.
+              Tietoja suojataan asianmukaisin teknisin ja organisatorisin toimin, kuten salatulla HTTPS-yhteydellä, käyttöoikeuksien rajaamisella, Supabasen tietokantatason käyttörajoituksilla ja palveluntarjoajien hallinnalla.
             </p>
             <p>
               Selostetta päivitetään, jos käsittelytavat tai käytetyt palvelut muuttuvat olennaisesti. Ajantasainen versio julkaistaan tällä sivulla.
