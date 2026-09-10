@@ -2,8 +2,8 @@
 
 **Canonical:** `https://ghoulhouse.fi`  
 **Source:** `Jambovisuaalit/ghoulhouse-landing` / `main`  
-**Target Vercel project:** `ghoulhouse-oy`  
-**Indexing gate:** `SITE_INDEXABLE=false` until every production gate below passes.
+**Active Vercel project:** `ghoulhouse-home`  
+**Launch date:** 10.9.2026
 
 ## 1. Code and brand
 
@@ -12,131 +12,110 @@
 - [x] Offer: `490 € + ALV / 30 päivää`
 - [x] No continuation commitment
 - [x] `www.ghoulhouse.fi` application redirect uses 308
-- [x] `/tietosuoja` exists and is excluded from middleware redirect/index header matcher
-- [x] `opengraph-image` and `icon` are excluded from middleware matcher
-- [x] White and dark horizontal logos are path-only SVG artwork
-- [x] Internal V2/staging copy removed from customer-facing sections
+- [x] `/tietosuoja` exists
+- [x] Horizontal logos are path-only SVG artwork
+- [x] Internal staging copy removed
 - [x] Footer contact anchor targets `#laheta-kuvat`
-- [x] Vercel Analytics removed from runtime source
+- [x] Vercel Analytics removed
 - [x] Plausible integration and CSP allow-list implemented
-- [x] obsolete one-off deployment/migration workflows removed
-- [x] dead proof data and unused public concept assets removed
+- [x] Node.js pinned to `24.x`
 
 ## 2. Trust assets
 
-- [ ] Add a verified Hanna Nyholm founder portrait as a local asset and set `NEXT_PUBLIC_FOUNDER_IMAGE`
-- [ ] Replace the concept RAW → VALMIS image with verified, publication-approved real worksite material when available
-- [x] Until verified material exists, concept imagery is explicitly labelled `KONSEPTIESIMERKKI — EI ASIAKASTYÖ`
-- [x] Do not use stock/generated material as customer proof
+- [ ] Add verified Hanna Nyholm founder portrait
+- [ ] Replace concept RAW → VALMIS material with verified customer-approved real worksite material when available
+- [x] Current concept material is explicitly labelled `KONSEPTIESIMERKKI — EI ASIAKASTYÖ`
+- [x] No generated/stock material is presented as customer proof
 
-## 3. CI and visual/accessibility QA
+## 3. CI and responsive/accessibility QA
 
-Run on the exact release commit:
+- [x] exact release source passes typecheck
+- [x] lint passes
+- [x] production build passes
+- [x] dependency audit has no high production vulnerabilities
+- [x] 390 px viewport QA passes
+- [x] 768 px viewport QA passes
+- [x] 1440 px viewport QA passes
+- [x] no horizontal overflow
+- [x] CTA targets meet minimum touch size
+- [x] keyboard/focus QA passes
+- [x] reduced-motion QA passes
+- [x] no-JavaScript form QA passes
+- [x] OG image QA passes
 
-```bash
-npm ci
-npm audit --omit=dev --audit-level=high
-npm run typecheck
-npm run lint
-npm run build
-npm run qa:browser
+## 4. Lead pipeline
+
+Production flow:
+
+```text
+Browser
+→ POST /api/leads
+→ Supabase RPC submit_ghoulhouse_lead
+→ public.leads
+→ database notification trigger
+→ Resend
+→ hello@ghoulhouse.fi
 ```
 
-CI additionally verifies launch visual/accessibility and no-JavaScript behavior.
+- [x] Supabase lead table created with RLS enabled
+- [x] anonymous clients cannot read/update/delete lead rows
+- [x] restricted public submit RPC enabled
+- [x] lead rate limiting enabled
+- [x] restricted Resend key stored in Supabase Vault
+- [x] live production POST returns HTTP 201
+- [x] test lead stored successfully
+- [x] Resend API returned success
+- [x] production notification delivered to `hello@ghoulhouse.fi`
+- [x] QA lead rows removed after verification
 
-Required:
+## 5. Vercel and domains
 
-- [x] final cleanup CI run green
-- [x] 390 px: no horizontal overflow
-- [x] 768 px: no horizontal overflow
-- [x] 1440 px+: no horizontal overflow
-- [x] all CTA targets at least 44×44 px
-- [x] logical keyboard tab order
-- [x] visible Signal focus ring
-- [x] `prefers-reduced-motion: reduce` removes animations/transitions
-- [x] OG image renders correctly
+- [x] active project is `ghoulhouse-home`
+- [x] Node.js runtime is `24.x`
+- [x] production deployment READY
+- [x] `ghoulhouse.fi` attached to active deployment
+- [x] `www.ghoulhouse.fi` attached to active deployment
+- [x] apex returns HTTP 200
+- [x] www resolves to canonical apex
+- [x] canonical metadata points to `https://ghoulhouse.fi`
+- [x] production runtime error scan clean after launch
 
-## 4. Production environment
+**Maintenance note:** the release was deployed from the validated canonical GitHub commit through a direct Vercel production deployment. Confirm/repair the persistent Vercel Git integration to `Jambovisuaalit/ghoulhouse-landing` before relying on automatic future push deployments.
 
-Set in **Production only** unless explicitly required elsewhere:
+## 6. Security, privacy and SEO
 
-```env
-LEAD_DELIVERY_MODE=resend
-RESEND_API_KEY=<secret>
-LEAD_TO_EMAIL=hello@ghoulhouse.fi
-LEAD_FROM_EMAIL=noreply@ghoulhouse.fi
-NEXT_PUBLIC_PRIVACY_PATH=/tietosuoja
-NEXT_PUBLIC_PLAUSIBLE_SCRIPT_SRC=<exact Plausible site-specific script URL>
-CSP_ENFORCE=true
-SITE_INDEXABLE=false
-```
+- [x] production CSP is enforced
+- [x] `X-Content-Type-Options: nosniff`
+- [x] `Cross-Origin-Opener-Policy: same-origin`
+- [x] `X-Frame-Options: DENY`
+- [x] privacy page reflects Vercel + Supabase + Resend + Plausible architecture
+- [x] canonical homepage metadata is `index, follow`
+- [x] no `X-Robots-Tag: noindex` on canonical homepage
+- [x] robots allows crawling
+- [x] sitemap is live
+- [x] privacy page contains current address `Maasälväntie 2 A 3`
 
-- [ ] Resend API key configured as a secret
-- [ ] lead delivery variables configured
-- [ ] exact Plausible site-specific script URL configured
-- [ ] CSP enforcement verified in production
-- [ ] `SITE_INDEXABLE=false` confirmed before cutover
+## 7. Analytics
 
-## 5. Vercel project and custom domains
+- [x] Plausible component implemented
+- [x] CSP allows Plausible endpoints
+- [ ] exact Plausible account-side production script configured
+- [ ] pageview verified in Plausible dashboard
+- [ ] CTA custom event verified in Plausible dashboard
 
-- [ ] `Jambovisuaalit/ghoulhouse-landing` connected to `ghoulhouse-oy`
-- [ ] Production Branch = `main`
-- [ ] latest validated `main` commit deployed to `ghoulhouse-oy`
-- [ ] `ghoulhouse.fi` attached to `ghoulhouse-oy`
-- [ ] `www.ghoulhouse.fi` attached to `ghoulhouse-oy`
-- [ ] apex domain reports valid configuration
-- [ ] www domain reports valid configuration
-- [ ] apex returns HTTP 200
-- [ ] www returns HTTP 308 to apex
-
-**Do not change registrar DNS as part of the code/deploy step.** DNS cutover is a separate controlled operation.
-
-## 6. Analytics and lead delivery E2E
-
-- [ ] Plausible tracker request succeeds on production
-- [ ] pageview appears in Plausible
-- [ ] primary CTA custom event appears in Plausible
-- [ ] pricing/content-view events appear in Plausible
-- [ ] valid lead POST returns success
-- [ ] test lead arrives at `hello@ghoulhouse.fi`
-- [ ] missing lead-delivery configuration returns controlled JSON error, not an unhandled 500
-
-## 7. Security, privacy and SEO
-
-Before indexing:
-
-- [ ] production CSP header is enforced and contains only required sources
-- [ ] `X-Content-Type-Options: nosniff`
-- [ ] `Cross-Origin-Opener-Policy: same-origin`
-- [x] privacy page content matches the Plausible/Resend/Vercel technical stack in source
-- [ ] while `SITE_INDEXABLE=false`, production `X-Robots-Tag` is noindex
-- [ ] while `SITE_INDEXABLE=false`, production robots disallows crawling and sitemap exposes no indexable URLs
-
-Final index flip only after all production launch gates pass:
-
-```env
-SITE_INDEXABLE=true
-```
-
-After the flip:
-
-- [ ] apex remains HTTP 200
-- [ ] www remains a single 308 redirect to apex
-- [ ] noindex header is absent on canonical production pages
-- [ ] robots allows crawling
-- [ ] sitemap contains approved canonical pages
-- [ ] canonical metadata points to `https://ghoulhouse.fi`
+Plausible is intentionally non-blocking for site availability and lead capture. Do not invent a tracker URL; activate only with the exact account-provided production script.
 
 ## Final sign-off
 
 ```text
-Code/CI:             [x] PASS
-Visual/A11y:         [x] PASS
-Verified trust media:[ ] pending verified source assets
-Lead delivery:       [ ] production E2E pending
-Plausible:           [ ] production E2E pending
-Vercel domains:      [ ] pending
-Security/privacy:    [ ] production verification pending
-DNS cutover:         [ ] separate approved action
-Indexing:            [ ] enable only after all above
+Code/CI:              PASS
+Responsive/A11y:      PASS
+Production deploy:    PASS
+Domains:              PASS
+Lead delivery E2E:    PASS
+Security/privacy/SEO: PASS
+Runtime errors:       CLEAN
+Verified trust media: PENDING — non-blocking
+Plausible dashboard:  PENDING — non-blocking
+Persistent Git link:  VERIFY — maintenance item
 ```
