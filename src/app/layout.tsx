@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Anton, Montserrat } from 'next/font/google';
 import { siteConfig } from '@/config/site';
-import { SITE_URL, isIndexingApproved, isProductionDeployment, productionUrl } from '@/lib/seo';
+import { SITE_URL, isProductionDeployment, productionUrl } from '@/lib/seo';
 import { faqItems } from '@/components/sections/FAQ';
 import PlausibleAnalytics from '@/components/analytics/PlausibleAnalytics';
 import './globals.css';
@@ -25,7 +25,7 @@ const montserrat = Montserrat({
 const title = 'GhoulHouse | Työmaakuvat sisään. Valmis some ulos.';
 const description =
   'GhoulHouse tekee remontti- ja rakennusyritysten työmaakuvista valmista Instagram- ja Facebook-sisältöä. Ensimmäiset 30 päivää 490 € + ALV. Ei sitoumusta jatkosta.';
-const indexable = isProductionDeployment() && isIndexingApproved();
+const indexable = isProductionDeployment();
 
 export const metadata: Metadata = {
   title,
