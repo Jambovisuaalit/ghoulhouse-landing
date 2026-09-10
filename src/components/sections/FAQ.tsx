@@ -9,7 +9,7 @@ export default function FAQ() {
       <Container>
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <p className="type-label text-signal">Vastaväitteet / UKK</p>
+            <p className="type-label text-signal">UKK / OSTOPÄÄTÖS</p>
             <h2 id="faq-title" className="type-section-title mt-4 max-w-[9ch] text-ink">
               KYSY ENNEN KUIN OSTAT.
             </h2>
