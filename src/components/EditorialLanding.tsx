@@ -53,8 +53,8 @@ export default function EditorialLanding() {
             <div className="v3-hero__copy">
               <p className="v3-kicker">SISÄLTÖPALVELU REMONTTI- JA RAKENNUSYRITYKSILLE</p>
               <h1 id="hero-title" className="v3-hero__title">
-                <span>TYÖMAAKUVAT</span>
-                <span>SISÄÄN.</span>
+                <span>TYÖMAAKUVAT </span>
+                <span>SISÄÄN. </span>
                 <span className="v3-signal">VALMIS SOME ULOS.</span>
               </h1>
               <p className="v3-hero__lead">
@@ -300,7 +300,8 @@ export default function EditorialLanding() {
           <div>
             <strong>{siteConfig.company.legalName}</strong>
             <span>Y-tunnus {siteConfig.company.businessId}</span>
-            <span>{siteConfig.company.domicile}</span>
+            <span>Kotipaikka {siteConfig.company.domicile}</span>
+            <span>{siteConfig.company.registrationStatus}</span>
           </div>
           <div>
             <a href="#hinta">Palvelu ja hinta</a>
