@@ -308,8 +308,8 @@ try {
 
     assert(metrics.h1Count === 1, `${viewport.width}x${viewport.height}: expected exactly one H1.`);
     assert(
-      metrics.h1Text.includes('TYÖMAAKUVA SISÄÄN.') && metrics.h1Text.includes('VALMIS JULKAISU ULOS.'),
-      `${viewport.width}x${viewport.height}: V2 headline missing.`
+      metrics.h1Text.includes('TYÖMAAKUVAT SISÄÄN.') && metrics.h1Text.includes('VALMIS SOME ULOS.'),
+      `${viewport.width}x${viewport.height}: canonical headline missing.`
     );
     assert(
       metrics.heroText.includes('remontti- ja rakennusyritysten työmaakuvista') &&
@@ -399,7 +399,7 @@ try {
 
   await evaluate(client, `(() => {
     window.__ghAnalyticsEvents = [];
-    window.va = (command, payload) => window.__ghAnalyticsEvents.push({ command, payload });
+    window.plausible = (event, options) => window.__ghAnalyticsEvents.push({ event, options });
     return true;
   })()`);
 
@@ -420,9 +420,7 @@ try {
 
   await sleep(100);
   const analyticsEvents = await evaluate(client, `(() =>
-    (window.__ghAnalyticsEvents || [])
-      .filter((entry) => entry?.command === 'event')
-      .map((entry) => entry?.payload?.name)
+    (window.__ghAnalyticsEvents || []).map((entry) => entry?.event)
   )()`);
 
   assert(interaction.focusedBeforeClick, 'Primary CTA is not keyboard-focusable.');
