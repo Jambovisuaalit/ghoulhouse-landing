@@ -12,13 +12,22 @@ export type FunnelEvent =
   | 'content_example_view';
 
 type AnalyticsProperties = Record<string, string | number | boolean>;
+type PlausibleArguments = [event: string, options?: { props?: AnalyticsProperties }];
+type PlausibleAnalyticsFn = (...args: PlausibleArguments) => void;
+type QueuedPlausibleAnalyticsFn = PlausibleAnalyticsFn & {
+  q?: PlausibleArguments[];
+};
 
-type PlausibleAnalyticsFn = (
-  event: string,
-  options?: {
-    props?: AnalyticsProperties;
-  }
-) => void;
+function getPlausible(target: Window & { plausible?: QueuedPlausibleAnalyticsFn }) {
+  if (typeof target.plausible === 'function') return target.plausible;
+
+  const queue: QueuedPlausibleAnalyticsFn = (...args) => {
+    (queue.q ||= []).push(args);
+  };
+
+  target.plausible = queue;
+  return queue;
+}
 
 export function trackEvent(
   event: FunnelEvent,
@@ -28,11 +37,11 @@ export function trackEvent(
 
   const payload = { event, ...properties };
   const target = window as Window & {
-    plausible?: PlausibleAnalyticsFn;
+    plausible?: QueuedPlausibleAnalyticsFn;
   };
 
-  if (event !== 'page_view' && typeof target.plausible === 'function') {
-    target.plausible(event, {
+  if (event !== 'page_view') {
+    getPlausible(target)(event, {
       ...(Object.keys(properties).length > 0 ? { props: properties } : {}),
     });
   }
