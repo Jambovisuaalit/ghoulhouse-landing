@@ -14,6 +14,8 @@ Official GhoulHouse website source.
 
 Do not treat old previews, archived projects or previous GhoulHouse brand variants as source code.
 
+> Production provenance note: the live `ghoulhouse-home` Vercel project has historically carried a Git integration to the private `vido-social/ghoulhouse-home` clone. That clone is **not** the source of truth. Production releases must use this repository/`main` until the Vercel Git integration itself has been relinked to `Jambovisuaalit/ghoulhouse-landing`. Do not trigger a Git-based redeploy from the old clone, because it can restore stale UI/code.
+
 ## Stack
 
 - Next.js 15 / App Router
@@ -112,6 +114,8 @@ A founder portrait may be enabled only with a verified local asset via `NEXT_PUB
 
 `POST /api/leads` validates the request and calls the restricted Supabase RPC `submit_ghoulhouse_lead` using the public Supabase publishable key. Row-level security prevents anonymous table reads or edits.
 
+The RPC is an intentional anonymous **ingest-only** boundary. `anon` has no direct `SELECT`/`INSERT` access to `public.leads`, no access to the private rate-limit table, and cannot use the `private` schema. The RPC validates all input lengths, rejects unsafe line breaks in identity fields, uses an empty `search_path`, and applies a database transaction advisory lock plus a 5 submissions / 10 minutes per-IP rate limit so concurrent requests cannot race around the limiter.
+
 The database stores the lead and sends the notification through Resend with a restricted Resend API key stored in Supabase Vault. Production does not require a Supabase service-role key, database password, JWT secret or Resend API key in the browser bundle.
 
 Production flow:
@@ -157,5 +161,7 @@ Verified on the active `ghoulhouse-home` Vercel project:
 - lead is stored in Supabase
 - Resend notification reaches `hello@ghoulhouse.fi`
 - no Vercel runtime errors observed after launch smoke tests
+- responsive/browser QA passes from 320px mobile through 1920px desktop, including 1366×768 and 1440×900 laptop viewports
+- lead RPC hardening verified with an `anon` execution smoke test and Resend `delivered` status
 
-Remaining non-blocking launch assets: verified Hanna Nyholm founder portrait, verified real customer RAW → FINAL material, and Plausible account-side tracker activation.
+Remaining non-blocking launch assets: verified Hanna Nyholm founder portrait, verified real customer RAW → FINAL material, Plausible account-side tracker activation, and permanent Vercel Git relinking from the stale private clone to this canonical repository.
