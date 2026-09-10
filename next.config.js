@@ -15,7 +15,7 @@ const contentSecurityPolicy = [
 ].join('; ');
 
 const cspHeader =
-  process.env.CSP_ENFORCE === 'true'
+  process.env.VERCEL_ENV === 'production' || process.env.CSP_ENFORCE === 'true'
     ? 'Content-Security-Policy'
     : 'Content-Security-Policy-Report-Only';
 
