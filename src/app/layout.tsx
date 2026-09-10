@@ -5,9 +5,7 @@ import { SITE_URL, isProductionDeployment, productionUrl } from '@/lib/seo';
 import { faqItems } from '@/components/sections/FAQ';
 import PlausibleAnalytics from '@/components/analytics/PlausibleAnalytics';
 import './globals.css';
-import './ui-polish.css';
-import './ui-viewport.css';
-import './brand-final.css';
+import './site-v3.css';
 
 const anton = Anton({
   weight: '400',
