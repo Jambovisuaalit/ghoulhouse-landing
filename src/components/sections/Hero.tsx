@@ -11,11 +11,11 @@ export default function Hero() {
 
         <div className="hero-layout relative grid gap-8 lg:grid-cols-12 lg:items-end">
           <div className="hero-copy lg:col-span-8">
-            <p className="type-label text-signal">GhoulHouse / Social content system</p>
+            <p className="type-label text-signal">GHOULHOUSE / SISÄLTÖJÄRJESTELMÄ</p>
             <h1 id="hero-title" className="type-display hero-title mt-6 max-w-[15ch] text-white">
-              TYÖMAAKUVA<br className="mobile-title-break" /> SISÄÄN.
+              TYÖMAAKUVAT<br className="mobile-title-break" /> SISÄÄN.
               <span className="block text-signal">
-                VALMIS JULKAISU<br className="mobile-title-break" /> ULOS.
+                VALMIS SOME<br className="mobile-title-break" /> ULOS.
               </span>
             </h1>
             <p className="hero-description mt-5 max-w-2xl text-[clamp(1rem,1.8vw,1.3rem)] font-semibold leading-[1.4] text-white/75">
@@ -32,7 +32,7 @@ export default function Hero() {
                 <span className="hidden sm:inline">{siteConfig.cta.primary}</span>
               </a>
               <a href="#raw-final" className="btn btn-inverse min-h-14 sm:min-w-[220px]">
-                KATSO RAW → FINAL
+                KATSO RAW → VALMIS
               </a>
             </div>
 
@@ -46,7 +46,7 @@ export default function Hero() {
 
           <div className="hero-proof-column hidden lg:col-span-4 lg:block">
             <div className="hero-proof">
-              <p className="type-label text-signal">Työmaa → julkaisu</p>
+              <p className="type-label text-signal">TYÖMAA → JULKAISU</p>
               <div className="mt-4 grid gap-px bg-white/20">
                 {flow.map((item, index) => (
                   <div key={item} className="hero-proof__row grid grid-cols-[44px_1fr_auto] items-center bg-black px-4 py-3">
