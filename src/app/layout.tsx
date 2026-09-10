@@ -3,7 +3,7 @@ import { Anton, Montserrat } from 'next/font/google';
 import { siteConfig } from '@/config/site';
 import { SITE_URL, isIndexingApproved, isProductionDeployment, productionUrl } from '@/lib/seo';
 import { faqItems } from '@/components/sections/FAQ';
-import VercelAnalytics from '@/components/analytics/VercelAnalytics';
+import PlausibleAnalytics from '@/components/analytics/PlausibleAnalytics';
 import './globals.css';
 
 const anton = Anton({
@@ -20,7 +20,7 @@ const montserrat = Montserrat({
   display: 'swap',
 });
 
-const title = 'GhoulHouse | Työmaakuvasta valmis julkaisu';
+const title = 'GhoulHouse | Työmaakuvat sisään. Valmis some ulos.';
 const description =
   'GhoulHouse tekee remontti- ja rakennusyritysten työmaakuvista valmista Instagram- ja Facebook-sisältöä. Ensimmäiset 30 päivää 490 € + ALV. Ei sitoumusta jatkosta.';
 const indexable = isProductionDeployment() && isIndexingApproved();
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
         url: '/opengraph-image',
         width: 1200,
         height: 630,
-        alt: 'GhoulHouse — Työmaakuva sisään. Valmis julkaisu ulos.',
+        alt: 'GhoulHouse — Työmaakuvat sisään. Valmis some ulos.',
       },
     ],
   },
@@ -131,12 +131,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="fi">
       <body className={`${anton.variable} ${montserrat.variable}`}>
         {children}
-        <VercelAnalytics />
-        <script
-          id="ghoulhouse-structured-data"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-        />
+        <PlausibleAnalytics />
+        <script id="ghoulhouse-structured-data" type="application/ld+json">
+          {JSON.stringify(structuredData)}
+        </script>
       </body>
     </html>
   );
