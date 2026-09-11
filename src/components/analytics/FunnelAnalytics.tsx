@@ -19,7 +19,7 @@ export default function FunnelAnalytics() {
       const target = event.target;
       if (!(target instanceof Element)) return;
 
-      const link = target.closest<HTMLAnchorElement>('a[href="#laheta-kuvat"]');
+      const link = target.closest<HTMLAnchorElement>('a[href="#yhteys"]');
       if (!link) return;
 
       trackEvent('primary_cta_click', {
