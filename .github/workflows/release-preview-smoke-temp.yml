@@ -29,14 +29,14 @@ jobs:
           set -euo pipefail
           echo 'check: metadata'
           html="$(curl --fail --silent "$QA_BASE_URL/")"
-          printf '%s' "$html" | grep -q '<title>GhoulHouse | Työmaakuvat sisään. Valmis some ulos.</title>'
-          printf '%s' "$html" | grep -q 'rel="canonical" href="https://ghoulhouse.fi"'
-          printf '%s' "$html" | grep -q '<meta name="robots" content="noindex, nofollow, nocache"'
-          printf '%s' "$html" | grep -q 'property="og:title"'
-          printf '%s' "$html" | grep -q 'twitter:card'
-          printf '%s' "$html" | grep -q 'application/ld+json'
-          printf '%s' "$html" | grep -q '"url":"https://ghoulhouse.fi"'
-          if printf '%s' "$html" | grep -q 'rel="canonical" href="https://ghoulhouse-home-'; then
+          grep -q '<title>GhoulHouse | Työmaakuvat sisään. Valmis some ulos.</title>' <<<"$html"
+          grep -q 'rel="canonical" href="https://ghoulhouse.fi"' <<<"$html"
+          grep -q '<meta name="robots" content="noindex, nofollow, nocache"' <<<"$html"
+          grep -q 'property="og:title"' <<<"$html"
+          grep -q 'twitter:card' <<<"$html"
+          grep -q 'application/ld+json' <<<"$html"
+          grep -q '"url":"https://ghoulhouse.fi"' <<<"$html"
+          if grep -q 'rel="canonical" href="https://ghoulhouse-home-' <<<"$html"; then
             echo '::error::Preview URL leaked into canonical.'
             exit 1
           fi
