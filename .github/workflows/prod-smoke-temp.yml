@@ -1,0 +1,118 @@
+name: Production smoke (temporary)
+
+on:
+  push:
+    branches: [qa/prod-smoke-97b804d]
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      QA_BASE_URL: https://ghoulhouse.fi
+      QA_SCREENSHOT_DIR: qa-artifacts/production-smoke
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Production HTTP, SEO and API smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          apex_headers="$(mktemp)"
+          curl --silent --head https://ghoulhouse.fi/ > "$apex_headers"
+          grep -qi '^HTTP/.* 200' "$apex_headers"
+          if grep -qi '^x-robots-tag:.*noindex' "$apex_headers"; then
+            echo '::error::Production apex still sends x-robots-tag noindex.'
+            exit 1
+          fi
+
+          www_headers="$(mktemp)"
+          curl --silent --head --max-redirs 0 https://www.ghoulhouse.fi/ > "$www_headers"
+          grep -qi '^HTTP/.* 308' "$www_headers"
+          grep -qi '^location: https://ghoulhouse.fi/' "$www_headers"
+
+          html="$(curl --fail --silent https://ghoulhouse.fi/)"
+          printf '%s' "$html" | grep -q '<title>GhoulHouse | Työmaakuvat sisään. Valmis some ulos.</title>'
+          printf '%s' "$html" | grep -q '<meta name="robots" content="index, follow"'
+          printf '%s' "$html" | grep -q 'rel="canonical" href="https://ghoulhouse.fi"'
+          printf '%s' "$html" | grep -q 'property="og:title"'
+          printf '%s' "$html" | grep -q 'property="og:image"'
+          printf '%s' "$html" | grep -q 'twitter:card'
+          printf '%s' "$html" | grep -q 'srcSet='
+          printf '%s' "$html" | grep -q 'sizes="(min-width: 1024px) 22vw, (min-width: 768px) 25vw, 50vw"'
+
+          robots="$(curl --fail --silent https://ghoulhouse.fi/robots.txt)"
+          printf '%s\n' "$robots" | grep -q 'Allow: /'
+          printf '%s\n' "$robots" | grep -q 'Sitemap: https://ghoulhouse.fi/sitemap.xml'
+
+          sitemap="$(curl --fail --silent https://ghoulhouse.fi/sitemap.xml)"
+          printf '%s' "$sitemap" | grep -q '<loc>https://ghoulhouse.fi</loc>'
+          printf '%s' "$sitemap" | grep -q '<loc>https://ghoulhouse.fi/tietosuoja</loc>'
+
+          og_headers="$(mktemp)"
+          curl --fail --silent --head https://ghoulhouse.fi/opengraph-image > "$og_headers"
+          grep -qi '^content-type: image/png' "$og_headers"
+
+          api_get_status="$(curl --silent --output /dev/null --write-out '%{http_code}' https://ghoulhouse.fi/api/leads)"
+          test "$api_get_status" = '405'
+
+          invalid_status="$(curl --silent --output /tmp/lead-invalid.json --write-out '%{http_code}' \
+            --request POST \
+            --header 'content-type: application/json' \
+            --data '{}' \
+            https://ghoulhouse.fi/api/leads)"
+          test "$invalid_status" = '400'
+          grep -q '"validation_error"' /tmp/lead-invalid.json
+
+          valid_status="$(curl --silent --output /tmp/lead-valid.json --write-out '%{http_code}' \
+            --request POST \
+            --header 'content-type: application/json' \
+            --data '{"intent":"photos","company":"GhoulHouse Production QA 2026-09-11","name":"Production QA","email":"launch-qa@ghoulhouse.fi","profile":"https://ghoulhouse.fi","message":"Automated production launch smoke test. No action required.","fax":""}' \
+            https://ghoulhouse.fi/api/leads)"
+          echo "valid lead status=$valid_status"
+          cat /tmp/lead-valid.json || true
+          test "$valid_status" = '201'
+          grep -q '"ok":true' /tmp/lead-valid.json
+
+      - name: Production desktop and mobile browser smoke
+        run: node scripts/browser-qa-ci.mjs
+
+      - name: Production keyboard, focus, reduced-motion and visual smoke
+        run: node scripts/launch-visual-a11y-qa.mjs
+
+      - name: Production no-JS smoke
+        run: node scripts/no-js-qa-ci.mjs
+
+      - name: Analytics runtime smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          "$chrome" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=5000 --dump-dom https://ghoulhouse.fi/ > /tmp/prod-dom.html
+          if grep -q 'id="plausible-analytics"' /tmp/prod-dom.html; then
+            grep -q 'data-domain="ghoulhouse.fi"' /tmp/prod-dom.html
+            grep -Eq 'src="https://[^\"]*plausible[^\"]*"' /tmp/prod-dom.html
+            echo 'Plausible runtime script present.'
+          else
+            echo '::error::Plausible runtime script is not present in production DOM.'
+            exit 1
+          fi
+
+      - name: Upload production smoke artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-smoke
+          path: qa-artifacts/production-smoke/
+          if-no-files-found: warn
+          retention-days: 2
