@@ -5,6 +5,7 @@ import PlausibleAnalytics from '@/components/analytics/PlausibleAnalytics';
 import './globals.css';
 import './brand-v5.css';
 import './design-system-1-1-1.css';
+import './a11y-v1-1-1.css';
 
 const anton = Anton({ weight: '400', subsets: ['latin'], variable: '--font-display', display: 'swap' });
 const montserrat = Montserrat({ weight: ['400', '500', '600', '700', '800', '900'], subsets: ['latin'], variable: '--font-body', display: 'swap' });
