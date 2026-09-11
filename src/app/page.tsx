@@ -1,7 +1,8 @@
+import Image from 'next/image';
 import LeadForm from '@/components/LeadForm';
 
 const workPhoto =
-  'https://images.unsplash.com/photo-1768321917661-d4f1a89d2185?auto=format&fit=crop&fm=jpg&q=86&w=1800';
+  'https://images.unsplash.com/photo-1768321917661-d4f1a89d2185?auto=format&fit=crop&q=86&w=1800';
 
 const outcomes = [
   ['01', 'VALMIS RYTMI', '12 sisältöä / 30 päivää. Julkaiseminen ei jää työpäivän jälkeen tehtäväksi.'],
@@ -87,12 +88,24 @@ export default function Home() {
             <figure className="proofStage" aria-labelledby="proof-caption">
               <div className="proofFrame proofFrame--raw">
                 <span className="statusLabel">RAW</span>
-                <img src={workPhoto} alt="Remonttityömaan konseptikuva ennen sisältökäsittelyä" width="900" height="1100" />
+                <Image
+                  src={workPhoto}
+                  alt="Remonttityömaan konseptikuva ennen sisältökäsittelyä"
+                  fill
+                  priority
+                  sizes="(min-width: 1024px) 22vw, (min-width: 768px) 25vw, 50vw"
+                />
               </div>
               <div className="editSeam" aria-hidden="true" />
               <div className="proofFrame proofFrame--final">
                 <span className="statusLabel statusLabel--final">FINAL</span>
-                <img src={workPhoto} alt="Sama remonttityömaan konseptikuva viimeisteltynä somejulkaisun esimerkkikäsittelyssä" width="900" height="1100" />
+                <Image
+                  src={workPhoto}
+                  alt="Sama remonttityömaan konseptikuva viimeisteltynä somejulkaisun esimerkkikäsittelyssä"
+                  fill
+                  priority
+                  sizes="(min-width: 1024px) 22vw, (min-width: 768px) 25vw, 50vw"
+                />
                 <div className="finalOverlay">
                   <small>TYÖMAA / 01</small>
                   <strong>POHJATYÖ<br />RATKAISEE<br />LOPPUTULOKSEN.</strong>
