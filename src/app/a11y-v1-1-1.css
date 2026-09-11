@@ -20,6 +20,12 @@
   box-shadow: 0 0 0 2px rgba(200, 56, 48, 0.18);
 }
 
+.leadForm input:focus-visible,
+.leadForm textarea:focus-visible {
+  outline: 3px solid var(--signal);
+  outline-offset: 4px;
+}
+
 .mobileNav summary {
   min-width: 44px;
   min-height: 44px;
