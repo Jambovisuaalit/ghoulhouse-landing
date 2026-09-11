@@ -1,0 +1,85 @@
+name: Release preview smoke (temporary)
+
+on:
+  push:
+    branches: [qa/release-6c5538]
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      QA_BASE_URL: https://ghoulhouse-home-d9ve60eoj-info-32533854s-projects.vercel.app
+      QA_SCREENSHOT_DIR: qa-artifacts/release-preview
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Preview HTTP SEO security and image-format preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          html="$(curl --fail --silent "$QA_BASE_URL/")"
+          printf '%s' "$html" | grep -q '<title>GhoulHouse | Työmaakuvat sisään. Valmis some ulos.</title>'
+          printf '%s' "$html" | grep -q 'rel="canonical" href="https://ghoulhouse.fi"'
+          printf '%s' "$html" | grep -q '<meta name="robots" content="noindex, nofollow, nocache"'
+          printf '%s' "$html" | grep -q 'property="og:title"'
+          printf '%s' "$html" | grep -q 'twitter:card'
+          printf '%s' "$html" | grep -q 'application/ld+json'
+          printf '%s' "$html" | grep -q '"url":"https://ghoulhouse.fi"'
+          if printf '%s' "$html" | grep -q 'rel="canonical" href="https://ghoulhouse-home-'; then
+            echo '::error::Preview URL leaked into canonical.'
+            exit 1
+          fi
+
+          headers="$(mktemp)"
+          curl --silent --head "$QA_BASE_URL/" > "$headers"
+          grep -qi '^x-robots-tag:.*noindex' "$headers"
+          grep -qi '^x-content-type-options: nosniff' "$headers"
+          grep -qi '^x-frame-options: DENY' "$headers"
+          grep -qi '^referrer-policy: strict-origin-when-cross-origin' "$headers"
+          grep -qi '^permissions-policy:' "$headers"
+          grep -qi '^cross-origin-opener-policy: same-origin' "$headers"
+          grep -qi '^content-security-policy-report-only:' "$headers"
+
+          image_path='/_next/image?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1768321917661-d4f1a89d2185%3Fauto%3Dformat%26fit%3Dcrop%26q%3D86%26w%3D1800&w=640&q=75'
+          avif_headers="$(mktemp)"
+          webp_headers="$(mktemp)"
+          curl --fail --silent --head -H 'Accept: image/avif' "$QA_BASE_URL$image_path" > "$avif_headers"
+          curl --fail --silent --head -H 'Accept: image/webp' "$QA_BASE_URL$image_path" > "$webp_headers"
+          grep -qi '^content-type: image/avif' "$avif_headers"
+          grep -qi '^content-type: image/webp' "$webp_headers"
+
+          invalid_status="$(curl --silent --output /tmp/lead-invalid.json --write-out '%{http_code}' \
+            --request POST --header 'content-type: application/json' --data '{}' "$QA_BASE_URL/api/leads")"
+          test "$invalid_status" = '400'
+          grep -q '"validation_error"' /tmp/lead-invalid.json
+
+      - name: Canonical browser smoke
+        run: node scripts/browser-qa-ci.mjs
+
+      - name: Visual and accessibility smoke
+        run: node scripts/launch-visual-a11y-qa.mjs
+
+      - name: No-JS smoke
+        run: node scripts/no-js-qa-ci.mjs
+
+      - name: Boundary navigation form and reduced-motion smoke
+        run: node scripts/release-preview-smoke-temp.mjs
+
+      - name: Upload release smoke artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-preview-smoke
+          path: qa-artifacts/release-preview/
+          if-no-files-found: warn
+          retention-days: 2
