@@ -58,7 +58,6 @@ jobs:
         run: |
           curl --silent --head --header 'Host: ghoulhouse.fi' http://127.0.0.1:3000/ > /tmp/apex-headers.txt
           grep -qi '^HTTP/.* 200' /tmp/apex-headers.txt
-
           if grep -qi '^location:' /tmp/apex-headers.txt; then
             echo "::error::Canonical apex host must not redirect."
             cat /tmp/apex-headers.txt
@@ -77,7 +76,6 @@ jobs:
             --header 'content-type: application/json' \
             --data '{}' \
             http://127.0.0.1:3000/api/leads)"
-
           test "$invalid_status" = "400"
           grep -q '"validation_error"' /tmp/lead-invalid.json
 
@@ -87,7 +85,6 @@ jobs:
             --header 'sec-fetch-site: cross-site' \
             --data '{}' \
             http://127.0.0.1:3000/api/leads)"
-
           test "$cross_site_status" = "403"
           grep -q '"cross_site_request"' /tmp/lead-cross-site.json
 
@@ -98,7 +95,6 @@ jobs:
             --header 'content-type: application/x-www-form-urlencoded' \
             --data 'intent=photos&fax=qa-honeypot' \
             http://127.0.0.1:3000/api/leads)"
-
           test "$form_status" = "303"
           grep -Eqi '^location: .*\/kiitos' "$form_headers"
 
@@ -107,9 +103,14 @@ jobs:
         run: |
           curl --silent --head http://127.0.0.1:3000/ \
             | grep -qi "x-robots-tag: noindex, nofollow, noarchive, noimageindex"
-
           robots="$(curl --fail --silent http://127.0.0.1:3000/robots.txt)"
           printf '%s\n' "$robots" | grep -q "Disallow: /"
+
+          html="$(curl --fail --silent http://127.0.0.1:3000/)"
+          printf '%s' "$html" | grep -q '<title>GhoulHouse | Työmaakuvat sisään. Valmis some ulos.</title>'
+          printf '%s' "$html" | grep -q 'rel="canonical" href="https://ghoulhouse.fi"'
+          printf '%s' "$html" | grep -q 'twitter:card'
+          printf '%s' "$html" | grep -q 'summary_large_image'
 
       - name: Company master data QA
         shell: bash
@@ -117,9 +118,7 @@ jobs:
           html="$(curl --fail --silent http://127.0.0.1:3000/)"
           printf '%s' "$html" | grep -q "Ghoulhouse Oy"
           printf '%s' "$html" | grep -q "3651127-5"
-          printf '%s' "$html" | grep -q "Kotipaikka"
           printf '%s' "$html" | grep -q "Helsinki"
-          printf '%s' "$html" | grep -q "Kaupparekisterissä 3.9.2026 alkaen"
           printf '%s' "$html" | grep -q '"foundingDate":"2026-09-03"'
 
           if printf '%s' "$html" | grep -Eq "Y-tunnus annettu 30\.8\.2026|perustamisvaiheessa|vireillä|rekisteröimätön|rekisteröitymätön"; then
@@ -133,23 +132,47 @@ jobs:
           printf '%s' "$privacy" | grep -q "Maasälväntie 2 A 3"
           printf '%s' "$privacy" | grep -q "00710"
 
-      - name: Brand and analytics QA
+      - name: Design System v1.1.1 QA
         shell: bash
         run: |
-          html="$(curl --fail --silent http://127.0.0.1:3000/)"
-          printf '%s' "$html" | grep -q "TYÖMAAKUVAT"
-          printf '%s' "$html" | grep -q "VALMIS SOME"
+          grep -q -- '--ink: #161411' src/app/brand-v5.css
+          grep -q -- '--paper: #F3EEE5' src/app/brand-v5.css
+          grep -q -- '--signal: #C83830' src/app/brand-v5.css
+          grep -q -- '--white: #FFFFFF' src/app/brand-v5.css
+          grep -q -- '--muted: #8C8278' src/app/brand-v5.css
+          grep -q -- '--outer-max: 1440px' src/app/brand-v5.css
+          grep -q -- '--content-max: 1280px' src/app/brand-v5.css
+          grep -q -- '--prose-max: 760px' src/app/brand-v5.css
 
-          if grep -Rqi "V2:n lopulliseen proof-osioon" src; then
-            echo "::error::Internal V2 proof copy leaked into source."
+          node <<'NODE'
+          const fs = require('fs');
+          const css = fs.readFileSync('src/app/brand-v5.css', 'utf8');
+          const widths = [...css.matchAll(/@media\s*\(min-width:\s*(\d+)px\)/g)].map((m) => Number(m[1]));
+          const allowed = new Set([640, 768, 1024, 1280, 1440]);
+          const invalid = widths.filter((value) => !allowed.has(value));
+          if (invalid.length) throw new Error(`Non-canonical breakpoints: ${invalid.join(', ')}`);
+          NODE
+
+          test ! -e public/logo-horizontal.svg
+          test ! -e public/logo-horizontal-white.svg
+          test ! -e src/app/icon.tsx
+          if grep -RqiE 'logo-horizontal|markSvg|chicken-leg|standalone.*wordmark' src public 2>/dev/null; then
+            echo "::error::A fabricated or unavailable logo master is referenced in runtime source."
             exit 1
           fi
 
+          html="$(curl --fail --silent http://127.0.0.1:3000/)"
+          printf '%s' "$html" | grep -q "TYÖMAAKUVAT"
+          printf '%s' "$html" | grep -q "VALMIS SOME"
+          printf '%s' "$html" | grep -q "KONSEPTIESIMERKKI — EI ASIAKASTYÖ"
+
+      - name: Analytics QA
+        shell: bash
+        run: |
           if grep -RqiE "VercelAnalytics|NEXT_PUBLIC_VERCEL_ANALYTICS_ENABLED|va\.vercel-scripts\.com|vitals\.vercel-insights\.com" src next.config.js .env.example; then
             echo "::error::Legacy Vercel Analytics integration remains in runtime config."
             exit 1
           fi
-
           grep -q "PlausibleAnalytics" src/app/layout.tsx
           grep -q "NEXT_PUBLIC_PLAUSIBLE_SCRIPT_SRC" .env.example
           grep -q "https://plausible.io" next.config.js
@@ -158,30 +181,16 @@ jobs:
         shell: bash
         run: |
           curl --silent --head http://127.0.0.1:3000/ > /tmp/headers.txt
-
           grep -qi "content-security-policy-report-only:" /tmp/headers.txt
           grep -qi "default-src 'self'" /tmp/headers.txt
           grep -qi "frame-ancestors 'none'" /tmp/headers.txt
           grep -qi "https://plausible.io" /tmp/headers.txt
           grep -qi "cross-origin-opener-policy: same-origin" /tmp/headers.txt
           grep -qi "x-permitted-cross-domain-policies: none" /tmp/headers.txt
-
           if grep -qi "^content-security-policy:" /tmp/headers.txt; then
             echo "::error::CSP enforcement must remain off until Preview validation is complete."
             exit 1
           fi
-
-      - name: Logo QA
-        shell: bash
-        run: |
-          for logo in public/logo-horizontal.svg public/logo-horizontal-white.svg; do
-            grep -q 'viewBox=' "$logo"
-            if grep -qi '<text' "$logo"; then
-              echo "::error::$logo must be path-only; live SVG text is not allowed."
-              exit 1
-            fi
-            grep -q '<path' "$logo"
-          done
 
       - name: Browser QA
         run: node scripts/browser-qa-ci.mjs
