@@ -43,3 +43,21 @@
 .toast--error a {
   color: var(--white);
 }
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .button:hover,
+  .btn:hover {
+    transform: none;
+  }
+}
