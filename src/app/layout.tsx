@@ -1,12 +1,9 @@
 import type { Metadata, Viewport } from 'next';
 import { Anton, Montserrat } from 'next/font/google';
 import { siteConfig } from '@/config/site';
-import { SITE_URL, isProductionDeployment, productionUrl } from '@/lib/seo';
-import { faqItems } from '@/components/sections/FAQ';
 import PlausibleAnalytics from '@/components/analytics/PlausibleAnalytics';
 import './globals.css';
-import './site-v3.css';
-import './site-v3-a11y.css';
+import './brand-v5.css';
 
 const anton = Anton({
   weight: '400',
@@ -24,17 +21,20 @@ const montserrat = Montserrat({
 
 const title = 'GhoulHouse | Työmaakuvat sisään. Valmis some ulos.';
 const description =
-  'GhoulHouse tekee remontti- ja rakennusyritysten työmaakuvista valmista Instagram- ja Facebook-sisältöä. Ensimmäiset 30 päivää 490 € + ALV. Ei sitoumusta jatkosta.';
-const indexable = isProductionDeployment();
+  'GhoulHouse tekee remontti- ja rakennusyritysten työmaakuvista valmista Instagram- ja Facebook-sisältöä. Ensimmäiset 30 päivää 490 € + ALV.';
+const indexable = process.env.VERCEL_ENV === 'production';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://ghoulhouse.fi'),
   title,
   description,
   applicationName: 'GhoulHouse',
   creator: siteConfig.company.legalName,
   publisher: siteConfig.company.legalName,
-  metadataBase: new URL(SITE_URL),
   alternates: { canonical: '/' },
+  robots: indexable
+    ? { index: true, follow: true }
+    : { index: false, follow: false, nocache: true },
   openGraph: {
     title,
     description,
@@ -42,24 +42,8 @@ export const metadata: Metadata = {
     siteName: 'GhoulHouse',
     locale: 'fi_FI',
     type: 'website',
-    images: [
-      {
-        url: '/opengraph-image',
-        width: 1200,
-        height: 630,
-        alt: 'GhoulHouse — Työmaakuvat sisään. Valmis some ulos.',
-      },
-    ],
   },
-  twitter: {
-    card: 'summary_large_image',
-    title,
-    description,
-    images: ['/opengraph-image'],
-  },
-  robots: indexable
-    ? { index: true, follow: true }
-    : { index: false, follow: false, nocache: true },
+  twitter: { card: 'summary', title, description },
 };
 
 export const viewport: Viewport = {
@@ -70,62 +54,18 @@ export const viewport: Viewport = {
   colorScheme: 'light',
 };
 
-const organizationId = `${SITE_URL}/#organization`;
-const serviceId = `${SITE_URL}/#some-12`;
-
 const structuredData = {
   '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'Organization',
-      '@id': organizationId,
-      name: siteConfig.company.legalName,
-      alternateName: siteConfig.company.brand,
-      identifier: {
-        '@type': 'PropertyValue',
-        name: 'Y-tunnus',
-        value: siteConfig.company.businessId,
-      },
-      foundingDate: siteConfig.company.registrationDate,
-      address: {
-        '@type': 'PostalAddress',
-        addressLocality: siteConfig.company.domicile,
-        addressCountry: 'FI',
-      },
-      url: SITE_URL,
-      logo: productionUrl('/icon'),
-      description:
-        'GhoulHouse tuottaa remontti- ja rakennusyritysten työmaa- ja referenssikuvista julkaisuvalmista Instagram- ja Facebook-sisältöä.',
-    },
-    {
-      '@type': 'Service',
-      '@id': serviceId,
-      name: siteConfig.offer.name,
-      provider: { '@id': organizationId },
-      description:
-        '12 sisältöä / 30 päivää Instagramiin ja Facebookiin asiakkaan toimittamasta materiaalista.',
-      offers: {
-        '@type': 'Offer',
-        price: String(siteConfig.offer.price),
-        priceCurrency: 'EUR',
-        priceSpecification: {
-          '@type': 'UnitPriceSpecification',
-          price: siteConfig.offer.price,
-          priceCurrency: 'EUR',
-          unitText: '30 päivää',
-          valueAddedTaxIncluded: false,
-        },
-      },
-    },
-    {
-      '@type': 'FAQPage',
-      mainEntity: faqItems.map((item) => ({
-        '@type': 'Question',
-        name: item.question,
-        acceptedAnswer: { '@type': 'Answer', text: item.answer },
-      })),
-    },
-  ],
+  '@type': 'Organization',
+  name: siteConfig.company.legalName,
+  alternateName: siteConfig.company.brand,
+  url: 'https://ghoulhouse.fi',
+  foundingDate: siteConfig.company.registrationDate,
+  identifier: {
+    '@type': 'PropertyValue',
+    name: 'Y-tunnus',
+    value: siteConfig.company.businessId,
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -134,9 +74,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${anton.variable} ${montserrat.variable}`}>
         {children}
         <PlausibleAnalytics />
-        <script id="ghoulhouse-structured-data" type="application/ld+json">
-          {JSON.stringify(structuredData)}
-        </script>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
       </body>
     </html>
   );
