@@ -1,0 +1,73 @@
+name: Preview smoke (temporary)
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    if: github.head_ref == 'redesign/brand-v5'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      QA_BASE_URL: https://ghoulhouse-v5-runtime-qa.vercel.app
+      QA_SCREENSHOT_DIR: qa-artifacts/preview-smoke
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: HTTP metadata, responsive images and lead API smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          html="$(curl --fail --silent "$QA_BASE_URL/")"
+          printf '%s' "$html" | grep -q '<title>GhoulHouse | Työmaakuvat sisään. Valmis some ulos.</title>'
+          printf '%s' "$html" | grep -q 'rel="canonical" href="https://ghoulhouse.fi"'
+          printf '%s' "$html" | grep -q 'property="og:title"'
+          printf '%s' "$html" | grep -q 'property="og:image"'
+          printf '%s' "$html" | grep -q 'srcSet='
+          printf '%s' "$html" | grep -q 'sizes="(min-width: 1024px) 22vw, (min-width: 768px) 25vw, 50vw"'
+
+          invalid_status="$(curl --silent --output /tmp/lead-invalid.json --write-out '%{http_code}' \
+            --request POST \
+            --header 'content-type: application/json' \
+            --data '{}' \
+            "$QA_BASE_URL/api/leads")"
+          test "$invalid_status" = "400"
+          grep -q '"validation_error"' /tmp/lead-invalid.json
+
+          form_headers="$(mktemp)"
+          form_status="$(curl --silent --output /dev/null --dump-header "$form_headers" --write-out '%{http_code}' \
+            --max-redirs 0 \
+            --request POST \
+            --header 'content-type: application/x-www-form-urlencoded' \
+            --data 'intent=photos&fax=qa-honeypot' \
+            "$QA_BASE_URL/api/leads")"
+          test "$form_status" = "303"
+          grep -Eqi '^location: .*\/kiitos' "$form_headers"
+
+      - name: Desktop and mobile browser smoke
+        run: node scripts/browser-qa-ci.mjs
+
+      - name: Keyboard, reduced-motion and deployed visual smoke
+        run: node scripts/launch-visual-a11y-qa.mjs
+
+      - name: No-JS deployed smoke
+        run: node scripts/no-js-qa-ci.mjs
+
+      - name: Upload deployed smoke artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: preview-smoke
+          path: qa-artifacts/preview-smoke/
+          if-no-files-found: warn
+          retention-days: 2
