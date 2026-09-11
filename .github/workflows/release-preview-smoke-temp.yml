@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
-      QA_BASE_URL: https://ghoulhouse-home-d9ve60eoj-info-32533854s-projects.vercel.app
+      QA_BASE_URL: https://ghoulhouse-v5-runtime-qa.vercel.app
       QA_SCREENSHOT_DIR: qa-artifacts/release-preview
     steps:
       - name: Checkout
@@ -27,22 +27,21 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          echo 'check: metadata'
+          echo 'check: production-oriented metadata + QA host noindex safety'
           html="$(curl --fail --silent "$QA_BASE_URL/")"
-          grep -q '<title>GhoulHouse | Työmaakuvat sisään. Valmis some ulos.</title>' <<<"$html" && echo 'metadata: title PASS'
-          grep -q 'rel="canonical" href="https://ghoulhouse.fi"' <<<"$html" && echo 'metadata: canonical PASS'
-          grep -q '<meta name="robots" content="noindex, nofollow, nocache"' <<<"$html" && echo 'metadata: robots PASS'
-          grep -q 'property="og:title"' <<<"$html" && echo 'metadata: og PASS'
-          grep -q 'twitter:card' <<<"$html" && echo 'metadata: twitter PASS'
-          grep -q 'application/ld+json' <<<"$html" && echo 'metadata: jsonld element PASS'
-          grep -q 'https://ghoulhouse.fi' <<<"$html" && echo 'metadata: production URL PASS'
-          if grep -q 'rel="canonical" href="https://ghoulhouse-home-' <<<"$html"; then
-            echo '::error::Preview URL leaked into canonical.'
+          grep -q '<title>GhoulHouse | Työmaakuvat sisään. Valmis some ulos.</title>' <<<"$html"
+          grep -q 'rel="canonical" href="https://ghoulhouse.fi"' <<<"$html"
+          grep -q '<meta name="robots" content="index, follow"' <<<"$html"
+          grep -q 'property="og:title"' <<<"$html"
+          grep -q 'twitter:card' <<<"$html"
+          grep -q 'application/ld+json' <<<"$html"
+          grep -q '"url":"https://ghoulhouse.fi"' <<<"$html"
+          if grep -Eq 'rel="canonical" href="https://ghoulhouse-v5-runtime|"url":"https://ghoulhouse-v5-runtime' <<<"$html"; then
+            echo '::error::QA runtime URL leaked into canonical or structured data.'
             exit 1
           fi
-          echo 'metadata: no preview canonical leak PASS'
 
-          echo 'check: headers'
+          echo 'check: QA safety and security headers'
           headers="$(mktemp)"
           curl --silent --head "$QA_BASE_URL/" > "$headers"
           grep -qi '^x-robots-tag:.*noindex' "$headers"
@@ -51,7 +50,7 @@ jobs:
           grep -qi '^referrer-policy: strict-origin-when-cross-origin' "$headers"
           grep -qi '^permissions-policy:' "$headers"
           grep -qi '^cross-origin-opener-policy: same-origin' "$headers"
-          grep -qi '^content-security-policy-report-only:' "$headers"
+          grep -qi '^content-security-policy:' "$headers"
 
           echo 'check: responsive image negotiation'
           image_path='/_next/image?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1768321917661-d4f1a89d2185%3Fauto%3Dformat%26fit%3Dcrop%26q%3D86%26w%3D1800&w=640&q=75'
@@ -59,8 +58,6 @@ jobs:
           webp_headers="$(mktemp)"
           curl --fail --silent --output /dev/null --dump-header "$avif_headers" -H 'Accept: image/avif' "$QA_BASE_URL$image_path"
           curl --fail --silent --output /dev/null --dump-header "$webp_headers" -H 'Accept: image/webp' "$QA_BASE_URL$image_path"
-          grep -i '^content-type:' "$avif_headers"
-          grep -i '^content-type:' "$webp_headers"
           grep -qi '^content-type: image/avif' "$avif_headers"
           grep -qi '^content-type: image/webp' "$webp_headers"
 
