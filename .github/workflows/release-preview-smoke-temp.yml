@@ -27,6 +27,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          echo 'check: metadata'
           html="$(curl --fail --silent "$QA_BASE_URL/")"
           printf '%s' "$html" | grep -q '<title>GhoulHouse | Työmaakuvat sisään. Valmis some ulos.</title>'
           printf '%s' "$html" | grep -q 'rel="canonical" href="https://ghoulhouse.fi"'
@@ -40,6 +41,7 @@ jobs:
             exit 1
           fi
 
+          echo 'check: headers'
           headers="$(mktemp)"
           curl --silent --head "$QA_BASE_URL/" > "$headers"
           grep -qi '^x-robots-tag:.*noindex' "$headers"
@@ -50,14 +52,18 @@ jobs:
           grep -qi '^cross-origin-opener-policy: same-origin' "$headers"
           grep -qi '^content-security-policy-report-only:' "$headers"
 
+          echo 'check: responsive image negotiation'
           image_path='/_next/image?url=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1768321917661-d4f1a89d2185%3Fauto%3Dformat%26fit%3Dcrop%26q%3D86%26w%3D1800&w=640&q=75'
           avif_headers="$(mktemp)"
           webp_headers="$(mktemp)"
-          curl --fail --silent --head -H 'Accept: image/avif' "$QA_BASE_URL$image_path" > "$avif_headers"
-          curl --fail --silent --head -H 'Accept: image/webp' "$QA_BASE_URL$image_path" > "$webp_headers"
+          curl --fail --silent --output /dev/null --dump-header "$avif_headers" -H 'Accept: image/avif' "$QA_BASE_URL$image_path"
+          curl --fail --silent --output /dev/null --dump-header "$webp_headers" -H 'Accept: image/webp' "$QA_BASE_URL$image_path"
+          grep -i '^content-type:' "$avif_headers"
+          grep -i '^content-type:' "$webp_headers"
           grep -qi '^content-type: image/avif' "$avif_headers"
           grep -qi '^content-type: image/webp' "$webp_headers"
 
+          echo 'check: lead validation API'
           invalid_status="$(curl --silent --output /tmp/lead-invalid.json --write-out '%{http_code}' \
             --request POST --header 'content-type: application/json' --data '{}' "$QA_BASE_URL/api/leads")"
           test "$invalid_status" = '400'
