@@ -21,7 +21,7 @@ const montserrat = Montserrat({
 
 const title = 'GhoulHouse | Työmaakuvat sisään. Valmis some ulos.';
 const description =
-  'GhoulHouse tekee remontti- ja rakennusyritysten työmaakuvista valmista Instagram- ja Facebook-sisältöä. Ensimmäiset 30 päivää 490 € + ALV.';
+  'GhoulHouse tekee remontti- ja rakennusyritysten työmaakuvista valmista Instagram- ja Facebook-sisältöä. 12 sisältöä / 30 päivää, 490 € + ALV.';
 const indexable = process.env.VERCEL_ENV === 'production';
 
 export const metadata: Metadata = {
@@ -42,15 +42,21 @@ export const metadata: Metadata = {
     siteName: 'GhoulHouse',
     locale: 'fi_FI',
     type: 'website',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'GhoulHouse — Työmaakuvat sisään. Valmis some ulos.' }],
   },
-  twitter: { card: 'summary', title, description },
+  twitter: {
+    card: 'summary_large_image',
+    title,
+    description,
+    images: ['/opengraph-image'],
+  },
 };
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  themeColor: '#111111',
+  themeColor: '#F3EEE5',
   colorScheme: 'light',
 };
 
