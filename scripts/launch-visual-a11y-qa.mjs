@@ -146,7 +146,10 @@ try {
       exists: true,
       labelsPresent: named.every((name) => {
         const field = form.querySelector('[name="' + name + '"]');
-        return Boolean(field?.closest('label'));
+        if (!field) return false;
+        if (field.labels && field.labels.length > 0) return true;
+        if (field.closest('label')) return true;
+        return Boolean(field.id && form.querySelector('label[for="' + CSS.escape(field.id) + '"]'));
       }),
       statusRegionContract: true,
     };
