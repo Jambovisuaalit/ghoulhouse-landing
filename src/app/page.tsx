@@ -90,7 +90,7 @@ export default function Home() {
               </div>
             </div>
 
-            <figure className="proofStage" id="esimerkit" aria-labelledby="proof-caption">
+            <figure className="proofStage" id="esimerkit" aria-labelledby="proof-caption" style={{ gridTemplateColumns: '210fr 265fr' }}>
               <div className="proofFrame proofFrame--raw" style={{ aspectRatio: '210 / 380', minHeight: 0 }}>
                 <Image
                   src="/proof-before.webp"
@@ -102,7 +102,7 @@ export default function Home() {
                 />
               </div>
               <div className="editSeam" aria-hidden="true" style={{ display: 'none' }} />
-              <div className="proofFrame proofFrame--final" style={{ aspectRatio: '210 / 380', minHeight: 0 }}>
+              <div className="proofFrame proofFrame--final" style={{ aspectRatio: '265 / 380', minHeight: 0 }}>
                 <Image
                   src="/proof-after.webp"
                   alt="Sama konseptitila viimeisteltynä julkaisukelpoisen sisältöesimerkin kuvaksi"
