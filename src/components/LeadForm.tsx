@@ -3,7 +3,7 @@
 import { FormEvent, useRef, useState } from 'react';
 import { trackEvent } from '@/lib/analytics';
 
-type Toast = { tone: 'error' | 'status'; message: string } | null;
+type Toast = { message: string } | null;
 type FieldErrors = Record<string, string>;
 
 function FieldError({ name, errors }: { name: string; errors: FieldErrors }) {
@@ -47,7 +47,6 @@ export default function LeadForm() {
       });
 
       if (response.ok) {
-        setToast({ tone: 'status', message: 'Kiitos. Pyyntö on vastaanotettu.' });
         trackEvent('lead_form_success');
         window.location.assign('/kiitos');
         return;
@@ -60,15 +59,15 @@ export default function LeadForm() {
         const first = Object.entries(errors)[0];
         const field = form.elements.namedItem(first[0]);
         if (field instanceof HTMLElement) field.focus();
-        setToast({ tone: 'error', message: `Tarkista lomake: ${first[1]}` });
+        setToast({ message: `Tarkista lomake: ${first[1]}` });
         trackEvent('lead_form_error');
         return;
       }
 
-      setToast({ tone: 'error', message: 'Lähetys ei onnistunut. Yritä uudelleen tai lähetä sähköpostia osoitteeseen hello@ghoulhouse.fi.' });
+      setToast({ message: 'Lähetys ei onnistunut. Yritä uudelleen tai lähetä sähköpostia osoitteeseen hello@ghoulhouse.fi.' });
       trackEvent('lead_form_error');
     } catch {
-      setToast({ tone: 'error', message: 'Yhteys katkesi. Yritä uudelleen.' });
+      setToast({ message: 'Yhteys katkesi. Yritä uudelleen.' });
       trackEvent('lead_form_error');
     } finally {
       setSubmitting(false);
@@ -92,9 +91,9 @@ export default function LeadForm() {
     <>
       {toast ? (
         <div
-          className={`toast toast--${toast.tone}`}
-          role={toast.tone === 'error' ? 'alert' : 'status'}
-          aria-live={toast.tone === 'error' ? 'assertive' : 'polite'}
+          className="toast toast--error"
+          role="alert"
+          aria-live="assertive"
           aria-atomic="true"
         >
           <p>{toast.message}</p>
