@@ -131,6 +131,11 @@ jobs:
           printf '%s' "$privacy" | grep -q "c/o Hanna Nyholm"
           printf '%s' "$privacy" | grep -q "Maasälväntie 2 A 3"
           printf '%s' "$privacy" | grep -q "00710"
+          printf '%s' "$privacy" | grep -q "Google Analytics 4"
+          if printf '%s' "$privacy" | grep -qi "Plausible"; then
+            echo "::error::Stale Plausible privacy disclosure remains after GA4 migration."
+            exit 1
+          fi
 
       - name: Design System v1.1.1 QA
         shell: bash
@@ -169,13 +174,18 @@ jobs:
       - name: Analytics QA
         shell: bash
         run: |
-          if grep -RqiE "VercelAnalytics|NEXT_PUBLIC_VERCEL_ANALYTICS_ENABLED|va\.vercel-scripts\.com|vitals\.vercel-insights\.com" src next.config.js .env.example; then
-            echo "::error::Legacy Vercel Analytics integration remains in runtime config."
+          if grep -RqiE "VercelAnalytics|NEXT_PUBLIC_VERCEL_ANALYTICS_ENABLED|va\.vercel-scripts\.com|vitals\.vercel-insights\.com|PlausibleAnalytics|NEXT_PUBLIC_PLAUSIBLE_SCRIPT_SRC|plausible\.io" src next.config.js .env.example; then
+            echo "::error::Legacy analytics integration remains in runtime config."
             exit 1
           fi
-          grep -q "PlausibleAnalytics" src/app/layout.tsx
-          grep -q "NEXT_PUBLIC_PLAUSIBLE_SCRIPT_SRC" .env.example
-          grep -q "https://plausible.io" next.config.js
+          grep -q "GoogleAnalytics" src/app/layout.tsx
+          grep -q "G-43VQ8505YL" src/components/analytics/GoogleAnalytics.tsx
+          grep -q "www.googletagmanager.com/gtag/js" src/components/analytics/GoogleAnalytics.tsx
+          grep -q "gtag('config', '\${GA_MEASUREMENT_ID}')" src/components/analytics/GoogleAnalytics.tsx
+          grep -q "getGtag(target)('event'" src/lib/analytics.ts
+          grep -q "https://www.googletagmanager.com" next.config.js
+          grep -q "https://www.google-analytics.com" next.config.js
+          grep -q "https://region1.google-analytics.com" next.config.js
 
       - name: Security headers QA
         shell: bash
@@ -184,7 +194,13 @@ jobs:
           grep -qi "content-security-policy-report-only:" /tmp/headers.txt
           grep -qi "default-src 'self'" /tmp/headers.txt
           grep -qi "frame-ancestors 'none'" /tmp/headers.txt
-          grep -qi "https://plausible.io" /tmp/headers.txt
+          grep -qi "https://www.googletagmanager.com" /tmp/headers.txt
+          grep -qi "https://www.google-analytics.com" /tmp/headers.txt
+          grep -qi "https://region1.google-analytics.com" /tmp/headers.txt
+          if grep -qi "plausible.io" /tmp/headers.txt; then
+            echo "::error::Plausible CSP allowance remains after GA4 migration."
+            exit 1
+          fi
           grep -qi "cross-origin-opener-policy: same-origin" /tmp/headers.txt
           grep -qi "x-permitted-cross-domain-policies: none" /tmp/headers.txt
           if grep -qi "^content-security-policy:" /tmp/headers.txt; then
