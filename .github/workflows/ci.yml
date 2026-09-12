@@ -137,21 +137,23 @@ jobs:
             exit 1
           fi
 
-      - name: Design System v1.1.1 QA
+      - name: Design System v1.1.1 and CSS source-of-truth QA
         shell: bash
         run: |
-          grep -q -- '--ink: #161411' src/app/brand-v5.css
-          grep -q -- '--paper: #F3EEE5' src/app/brand-v5.css
-          grep -q -- '--signal: #C83830' src/app/brand-v5.css
-          grep -q -- '--white: #FFFFFF' src/app/brand-v5.css
-          grep -q -- '--muted: #8C8278' src/app/brand-v5.css
-          grep -q -- '--outer-max: 1440px' src/app/brand-v5.css
-          grep -q -- '--content-max: 1280px' src/app/brand-v5.css
-          grep -q -- '--prose-max: 760px' src/app/brand-v5.css
+          test -e src/app/site.css
+          test "$(find src/app -maxdepth 1 -type f -name '*.css' | wc -l | tr -d ' ')" = "1"
+          grep -q -- '--ink:#161411' src/app/site.css
+          grep -q -- '--paper:#F3EEE5' src/app/site.css
+          grep -q -- '--signal:#C83830' src/app/site.css
+          grep -q -- '--white:#FFFFFF' src/app/site.css
+          grep -q -- '--muted:#8C8278' src/app/site.css
+          grep -q -- '--outer-max:1440px' src/app/site.css
+          grep -q -- '--content-max:1280px' src/app/site.css
+          grep -q -- '--prose-max:760px' src/app/site.css
 
           node <<'NODE'
           const fs = require('fs');
-          const css = fs.readFileSync('src/app/brand-v5.css', 'utf8');
+          const css = fs.readFileSync('src/app/site.css', 'utf8');
           const widths = [...css.matchAll(/@media\s*\(min-width:\s*(\d+)px\)/g)].map((m) => Number(m[1]));
           const allowed = new Set([640, 768, 1024, 1280, 1440]);
           const invalid = widths.filter((value) => !allowed.has(value));
