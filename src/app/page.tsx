@@ -100,6 +100,7 @@ export default function Home() {
                   sizes="(min-width: 1024px) 20vw, (min-width: 768px) 24vw, 50vw"
                 />
               </div>
+              <div className="editSeam" aria-hidden="true" style={{ display: 'none' }} />
               <div className="proofFrame proofFrame--final">
                 <Image
                   src="/proof-after.webp"
