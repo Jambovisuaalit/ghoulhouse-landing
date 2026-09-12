@@ -41,10 +41,7 @@ jobs:
 
           headers="$(mktemp)"
           curl --silent --head "$QA_BASE_URL/" > "$headers"
-          if grep -qi '^x-robots-tag:.*noindex' "$headers"; then
-            echo '::error::Production-target QA deployment unexpectedly emits X-Robots-Tag noindex.'
-            exit 1
-          fi
+          grep -qi '^x-robots-tag:.*noindex' "$headers"
           grep -qi '^x-content-type-options: nosniff' "$headers"
           grep -qi '^x-frame-options: DENY' "$headers"
           grep -qi '^referrer-policy: strict-origin-when-cross-origin' "$headers"
