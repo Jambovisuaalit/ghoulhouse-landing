@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      QA_BASE_URL: https://ghoulhouse-v5-runtime-7nom5wzg8-info-32533854s-projects.vercel.app
+      QA_BASE_URL: https://ghoulhouse-v5-runtime-qa.vercel.app
       QA_SCREENSHOT_DIR: qa-artifacts/release-ga4
     steps:
       - name: Checkout
@@ -30,28 +30,36 @@ jobs:
           html="$(curl --fail --silent "$QA_BASE_URL/")"
           printf '%s' "$html" | grep -q '<title>GhoulHouse | Työmaakuvat sisään. Valmis some ulos.</title>'
           printf '%s' "$html" | grep -q 'rel="canonical" href="https://ghoulhouse.fi"'
+          printf '%s' "$html" | grep -q '<meta name="robots" content="index, follow"'
           printf '%s' "$html" | grep -q 'property="og:title"'
           printf '%s' "$html" | grep -q 'twitter:card'
           printf '%s' "$html" | grep -q 'application/ld+json'
           if printf '%s' "$html" | grep -q 'rel="canonical" href="https://ghoulhouse-v5-runtime-'; then
-            echo '::error::Preview URL leaked into canonical.'
+            echo '::error::QA URL leaked into canonical.'
             exit 1
           fi
 
           headers="$(mktemp)"
           curl --silent --head "$QA_BASE_URL/" > "$headers"
-          grep -qi '^x-robots-tag:.*noindex' "$headers"
+          if grep -qi '^x-robots-tag:.*noindex' "$headers"; then
+            echo '::error::Production-target QA deployment unexpectedly emits X-Robots-Tag noindex.'
+            exit 1
+          fi
           grep -qi '^x-content-type-options: nosniff' "$headers"
           grep -qi '^x-frame-options: DENY' "$headers"
           grep -qi '^referrer-policy: strict-origin-when-cross-origin' "$headers"
           grep -qi '^permissions-policy:' "$headers"
           grep -qi '^cross-origin-opener-policy: same-origin' "$headers"
-          grep -qi '^content-security-policy-report-only:' "$headers"
+          grep -qi '^content-security-policy:' "$headers"
+          if grep -qi '^content-security-policy-report-only:' "$headers"; then
+            echo '::error::Production-target QA must exercise enforced CSP.'
+            exit 1
+          fi
           grep -qi 'https://www.googletagmanager.com' "$headers"
           grep -qi 'https://www.google-analytics.com' "$headers"
           grep -qi 'https://region1.google-analytics.com' "$headers"
           if grep -qi 'plausible.io' "$headers"; then
-            echo '::error::Plausible remains in preview CSP.'
+            echo '::error::Plausible remains in QA CSP.'
             exit 1
           fi
 
