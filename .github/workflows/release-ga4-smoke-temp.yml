@@ -83,7 +83,7 @@ jobs:
         run: node scripts/no-js-qa-ci.mjs
 
       - name: Expanded boundary form reduced-motion and GA4 runtime smoke
-        run: node scripts/release-ga4-smoke-temp.mjs
+        run: node scripts/release-ga4-smoke-v2-temp.mjs
 
       - name: Upload release smoke artifacts
         if: always()
