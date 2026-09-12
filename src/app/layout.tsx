@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import { Anton, Montserrat } from 'next/font/google';
 import { siteConfig } from '@/config/site';
-import PlausibleAnalytics from '@/components/analytics/PlausibleAnalytics';
+import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
+import ResponsiveNavState from '@/components/ResponsiveNavState';
 import './globals.css';
 import './brand-v5.css';
 import './design-system-1-1-1.css';
@@ -57,8 +58,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fi">
       <body className={`${anton.variable} ${montserrat.variable}`}>
+        <GoogleAnalytics />
+        <ResponsiveNavState />
         {children}
-        <PlausibleAnalytics />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
       </body>
     </html>

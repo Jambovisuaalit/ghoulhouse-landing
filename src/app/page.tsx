@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import LeadForm from '@/components/LeadForm';
+import FunnelAnalytics from '@/components/analytics/FunnelAnalytics';
 
 const workPhoto =
   'https://images.unsplash.com/photo-1768321917661-d4f1a89d2185?auto=format&fit=crop&q=86&w=1800';
@@ -39,6 +40,7 @@ export default function Home() {
   return (
     <>
       <a className="skipLink" href="#main">Siirry pääsisältöön</a>
+      <FunnelAnalytics />
 
       <header className="siteHeader">
         <div className="outerShell headerGrid">
@@ -85,7 +87,7 @@ export default function Home() {
               </div>
             </div>
 
-            <figure className="proofStage" aria-labelledby="proof-caption">
+            <figure className="proofStage" id="esimerkit" aria-labelledby="proof-caption">
               <div className="proofFrame proofFrame--raw">
                 <span className="statusLabel">RAW</span>
                 <Image

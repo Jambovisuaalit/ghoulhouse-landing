@@ -6,11 +6,11 @@ const contentSecurityPolicy = [
   "form-action 'self'",
   "frame-ancestors 'none'",
   "object-src 'none'",
-  "img-src 'self' data: blob: https://images.unsplash.com",
+  "img-src 'self' data: blob: https://images.unsplash.com https://www.google-analytics.com https://region1.google-analytics.com",
   "font-src 'self'",
   "style-src 'self' 'unsafe-inline'",
-  "script-src 'self' 'unsafe-inline' https://plausible.io",
-  "connect-src 'self' https://plausible.io https://qkmyzbqhepapiowrttpz.supabase.co",
+  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com",
+  "connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://qkmyzbqhepapiowrttpz.supabase.co",
   "upgrade-insecure-requests",
 ].join('; ');
 

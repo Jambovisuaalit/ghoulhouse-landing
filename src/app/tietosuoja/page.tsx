@@ -50,7 +50,7 @@ export default function PrivacyPage() {
               <p>
                 Tässä selosteessa kuvataan, miten {company.legalName} käsittelee verkkosivun, yhteydenottojen ja asiakassuhteiden yhteydessä syntyviä henkilötietoja.
               </p>
-              <p className="type-caption text-ink">Viimeksi päivitetty 10.9.2026</p>
+              <p className="type-caption text-ink">Viimeksi päivitetty 12.9.2026</p>
             </div>
           </header>
 
@@ -90,7 +90,7 @@ export default function PrivacyPage() {
               <li>verkkosivu- tai sosiaalisen median profiili</li>
               <li>yhteydenoton tai tilauksen sisältö</li>
               <li>asiakassuhteen hoitamiseen tarvittavat projekti- ja laskutustiedot</li>
-              <li>verkkosivun tekniset ja anonyymit käyttötilastot silloin, kun analytiikka on käytössä</li>
+              <li>verkkosivun tekniset käyttö- ja tapahtumatiedot silloin, kun analytiikka on käytössä</li>
             </ul>
           </PrivacySection>
 
@@ -115,17 +115,17 @@ export default function PrivacyPage() {
               <li><strong className="text-ink">Vercel:</strong> verkkosivun hosting ja tekninen infrastruktuuri.</li>
               <li><strong className="text-ink">Supabase:</strong> verkkosivun yhteydenottojen tietokantatallennus ja tekninen käsittely.</li>
               <li><strong className="text-ink">Resend:</strong> yhteydenotoista syntyvien sähköposti-ilmoitusten toimitus.</li>
-              <li><strong className="text-ink">Plausible Analytics:</strong> anonyymi käyttötilastointi silloin, kun analytiikka on tuotantoympäristössä aktivoitu.</li>
+              <li><strong className="text-ink">Google Analytics 4 / Google:</strong> verkkosivun käytön ja ennalta määriteltyjen sivustotapahtumien mittaaminen.</li>
             </ul>
             <p>Palveluntarjoajat käsittelevät tietoja vain palvelun tuottamisen kannalta tarpeellisessa laajuudessa.</p>
           </PrivacySection>
 
           <PrivacySection number="07" title="Kansainväliset siirrot">
             <p>
-              Hosting-, tietokanta- ja sähköpostipalveluihin voi niiden palvelurakenteesta riippuen liittyä henkilötietojen käsittelyä EU/ETA-alueen ulkopuolella. Tällöin käsittely perustuu sovellettavan tietosuojalainsäädännön mukaisiin siirtoperusteisiin ja suojatoimiin.
+              Hosting-, tietokanta-, sähköposti- ja analytiikkapalveluihin voi niiden palvelurakenteesta riippuen liittyä henkilötietojen käsittelyä EU/ETA-alueen ulkopuolella. Tällöin käsittely perustuu sovellettavan tietosuojalainsäädännön mukaisiin siirtoperusteisiin ja suojatoimiin.
             </p>
             <p>
-              Plausible Analyticsin pilvipalvelun analytiikkadata käsitellään ja säilytetään EU:ssa silloin, kun palvelu on käytössä. Plausible ei käytä analytiikkaan evästeitä tai pysyviä käyttäjätunnisteita.
+              Google Analytics 4:n tekninen käsittely voi tapahtua Googlen kansainvälisessä palveluinfrastruktuurissa. GhoulHouse ei tarkoituksellisesti lähetä yhteydenottolomakkeen nimeä, sähköpostiosoitetta, puhelinnumeroa tai vapaamuotoista viestiä analytiikkatapahtumien mukana.
             </p>
           </PrivacySection>
 
@@ -146,7 +146,10 @@ export default function PrivacyPage() {
 
           <PrivacySection number="09" title="Evästeet ja analytiikka">
             <p>
-              GhoulHouse ei käytä analytiikkaevästeitä. Jos Plausible Analytics aktivoidaan tuotantoympäristössä, sitä käytetään verkkosivun yleisen käytön mittaamiseen ilman analytiikkaevästeitä ja pysyviä käyttäjätunnisteita. Analytiikkaa ei käytetä yksittäisten kävijöiden profilointiin tai mainonnan kohdentamiseen.
+              GhoulHouse käyttää Google Analytics 4 -palvelua verkkosivun käytön ja ennalta määriteltyjen tapahtumien mittaamiseen. Google tag voi käyttää evästeitä tai vastaavia teknisiä tunnisteita analytiikan toteuttamiseen.
+            </p>
+            <p>
+              GhoulHouse lähettää analytiikkaan vain sivuston käyttöön liittyviä tapahtumanimiä ja rajattuja teknisiä tapahtumaparametreja. Yhteydenottolomakkeen nimeä, sähköpostiosoitetta, puhelinnumeroa tai vapaamuotoista viestiä ei tarkoituksellisesti sisällytetä GhoulHousen omiin analytiikkatapahtumiin.
             </p>
             <p>
               Verkkosivun hosting- tai tietoturvatoiminnot voivat käyttää teknisesti välttämättömiä mekanismeja palvelun suojaamiseen ja toimittamiseen.

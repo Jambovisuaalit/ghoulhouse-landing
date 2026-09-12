@@ -17,7 +17,8 @@
 - [x] Internal staging copy removed
 - [x] Footer contact anchor targets `#laheta-kuvat`
 - [x] Vercel Analytics removed
-- [x] Plausible integration and CSP allow-list implemented
+- [x] Google Analytics 4 integration and CSP allow-list implemented
+- [x] GA4 Measurement ID is `G-43VQ8505YL`
 - [x] Node.js pinned to `24.x`
 
 ## 2. Trust assets
@@ -88,7 +89,7 @@ Browser
 - [x] `X-Content-Type-Options: nosniff`
 - [x] `Cross-Origin-Opener-Policy: same-origin`
 - [x] `X-Frame-Options: DENY`
-- [x] privacy page reflects Vercel + Supabase + Resend + Plausible architecture
+- [x] privacy page reflects Vercel + Supabase + Resend + Google Analytics 4 architecture
 - [x] canonical homepage metadata is `index, follow`
 - [x] no `X-Robots-Tag: noindex` on canonical homepage
 - [x] robots allows crawling
@@ -97,13 +98,16 @@ Browser
 
 ## 7. Analytics
 
-- [x] Plausible component implemented
-- [x] CSP allows Plausible endpoints
-- [ ] exact Plausible account-side production script configured
-- [ ] pageview verified in Plausible dashboard
-- [ ] CTA custom event verified in Plausible dashboard
+- [x] Google tag component implemented
+- [x] Measurement ID pinned to `G-43VQ8505YL`
+- [x] CSP allows Google Tag Manager and Google Analytics collection endpoints
+- [x] funnel events contain no user-entered lead fields
+- [ ] pageview verified at runtime
+- [ ] primary CTA event verified at runtime
+- [ ] content_example_view verified at runtime
+- [ ] lead_form_start / submit / success / error verified at runtime
 
-Plausible is intentionally non-blocking for site availability and lead capture. Do not invent a tracker URL; activate only with the exact account-provided production script.
+Do not reintroduce Plausible or Vercel Analytics into the runtime stack.
 
 ## Final sign-off
 
@@ -116,6 +120,6 @@ Lead delivery E2E:    PASS
 Security/privacy/SEO: PASS
 Runtime errors:       CLEAN
 Verified trust media: PENDING — non-blocking
-Plausible dashboard:  PENDING — non-blocking
+GA4 runtime events:   PENDING — release gate for analytics patch
 Persistent Git link:  VERIFY — maintenance item
 ```

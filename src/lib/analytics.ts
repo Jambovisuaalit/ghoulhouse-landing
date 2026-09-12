@@ -12,21 +12,23 @@ export type FunnelEvent =
   | 'content_example_view';
 
 type AnalyticsProperties = Record<string, string | number | boolean>;
-type PlausibleArguments = [event: string, options?: { props?: AnalyticsProperties }];
-type PlausibleAnalyticsFn = (...args: PlausibleArguments) => void;
-type QueuedPlausibleAnalyticsFn = PlausibleAnalyticsFn & {
-  q?: PlausibleArguments[];
+type GtagArguments = [command: 'event', eventName: string, params?: AnalyticsProperties];
+type GtagFn = (...args: GtagArguments) => void;
+
+type AnalyticsWindow = Window & {
+  dataLayer?: unknown[];
+  gtag?: GtagFn;
 };
 
-function getPlausible(target: Window & { plausible?: QueuedPlausibleAnalyticsFn }) {
-  if (typeof target.plausible === 'function') return target.plausible;
+function getGtag(target: AnalyticsWindow): GtagFn {
+  if (typeof target.gtag === 'function') return target.gtag;
 
-  const queue: QueuedPlausibleAnalyticsFn = (...args) => {
-    (queue.q ||= []).push(args);
+  target.dataLayer ||= [];
+  const gtag: GtagFn = (...args) => {
+    target.dataLayer?.push(args);
   };
-
-  target.plausible = queue;
-  return queue;
+  target.gtag = gtag;
+  return gtag;
 }
 
 export function trackEvent(
@@ -36,14 +38,12 @@ export function trackEvent(
   if (typeof window === 'undefined') return;
 
   const payload = { event, ...properties };
-  const target = window as Window & {
-    plausible?: QueuedPlausibleAnalyticsFn;
-  };
+  const target = window as AnalyticsWindow;
 
+  // GA4 sends the initial page_view through gtag('config', measurementId).
+  // Custom funnel events are intentionally limited to non-PII metadata.
   if (event !== 'page_view') {
-    getPlausible(target)(event, {
-      ...(Object.keys(properties).length > 0 ? { props: properties } : {}),
-    });
+    getGtag(target)('event', event, properties);
   }
 
   window.dispatchEvent(
