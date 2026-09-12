@@ -26,7 +26,7 @@ Do not treat old previews, archived projects or previous GhoulHouse brand varian
 - Vercel
 - Supabase Postgres / RPC for lead storage
 - Resend for lead notification email
-- Plausible integration prepared; tracker activates only when its production script URL is configured
+- Google Analytics 4 via Google tag (`G-43VQ8505YL`)
 
 ## Local development
 
@@ -130,11 +130,11 @@ Browser
 → hello@ghoulhouse.fi
 ```
 
-## Plausible Analytics
+## Google Analytics 4
 
-The Plausible component and CSP allow-list are present. Tracking remains disabled until the exact Plausible production script URL is configured.
+The site uses the approved public GA4 Measurement ID `G-43VQ8505YL` through the Google tag. Funnel events are routed through `src/lib/analytics.ts`; user-entered lead fields are not passed as analytics event properties.
 
-Do not reintroduce Vercel Analytics into the runtime stack.
+The runtime CSP allows only the Google Tag Manager script origin and the Google Analytics collection origins required by this integration. Plausible and Vercel Analytics are not part of the runtime stack.
 
 ## SEO and canonical routing
 
@@ -164,4 +164,4 @@ Verified on the active `ghoulhouse-home` Vercel project:
 - responsive/browser QA passes from 320px mobile through 1920px desktop, including 1366×768 and 1440×900 laptop viewports
 - lead RPC hardening verified with an `anon` execution smoke test and Resend `delivered` status
 
-Remaining non-blocking launch assets: verified Hanna Nyholm founder portrait, verified real customer RAW → FINAL material, Plausible account-side tracker activation, and permanent Vercel Git relinking from the stale private clone to this canonical repository.
+Remaining non-blocking launch assets: verified Hanna Nyholm founder portrait, verified real customer RAW → FINAL material, and permanent Vercel Git relinking from the stale private clone to this canonical repository.
