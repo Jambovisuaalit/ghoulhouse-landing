@@ -92,7 +92,6 @@ export default function Home() {
 
             <figure className="proofStage" id="esimerkit" aria-labelledby="proof-caption">
               <div className="proofFrame proofFrame--raw">
-                <span className="statusLabel">ENNEN</span>
                 <Image
                   src="/proof-before.webp"
                   alt="Konseptikuva keskeneräisestä kylpyhuoneremontista ennen sisältökäsittelyä"
@@ -101,9 +100,7 @@ export default function Home() {
                   sizes="(min-width: 1024px) 20vw, (min-width: 768px) 24vw, 50vw"
                 />
               </div>
-              <div className="editSeam" aria-hidden="true"><span>↔</span></div>
               <div className="proofFrame proofFrame--final">
-                <span className="statusLabel statusLabel--final">JÄLKEEN</span>
                 <Image
                   src="/proof-after.webp"
                   alt="Sama konseptitila viimeisteltynä julkaisukelpoisen sisältöesimerkin kuvaksi"
@@ -111,10 +108,6 @@ export default function Home() {
                   priority
                   sizes="(min-width: 1024px) 20vw, (min-width: 768px) 24vw, 50vw"
                 />
-                <div className="finalOverlay">
-                  <small>SAMA TYÖ / ERI VAIKUTELMA</small>
-                  <strong>TYÖ<br />NÄKYVÄKSI.</strong>
-                </div>
               </div>
               <figcaption id="proof-caption">KONSEPTIESIMERKKI — EI ASIAKASTYÖ · VISUAALINEN SUUNTAA-ANTAVA DEMO</figcaption>
             </figure>
@@ -273,7 +266,7 @@ export default function Home() {
           <div><p className="footerBrand">GhoulHouse</p><p>Työmaakuvat sisään. Valmis some ulos.</p></div>
           <div><p>Ghoulhouse Oy</p><p>Y-tunnus 3651127-5</p><p>Helsinki, Suomi</p></div>
           <nav aria-label="Alatunnisteen navigaatio">
-            <a href="#toiminta">Miten toimii</a><a href="#naytto">Näyttö</a><a href="#hinta">Hinta</a><a href="#yhteys">Yhteys</a><a href="/tietosuoja">Tietosuoja</a>
+            <a style={{ minHeight: 44 }} href="#toiminta">Miten toimii</a><a style={{ minHeight: 44 }} href="#naytto">Näyttö</a><a style={{ minHeight: 44 }} href="#hinta">Hinta</a><a style={{ minHeight: 44 }} href="#yhteys">Yhteys</a><a style={{ minHeight: 44 }} href="/tietosuoja">Tietosuoja</a>
           </nav>
         </div>
         <div className="contentShell footerBottom"><span>© 2026 GhoulHouse Oy</span><span>DISTINCTIVE / CONTROLLED / FUNCTIONAL</span></div>
