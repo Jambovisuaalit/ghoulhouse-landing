@@ -3,11 +3,7 @@ import { Anton, Montserrat } from 'next/font/google';
 import { siteConfig } from '@/config/site';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import ResponsiveNavState from '@/components/ResponsiveNavState';
-import './globals.css';
-import './brand-v5.css';
-import './design-system-1-1-1.css';
-import './brand-v5-polish.css';
-import './a11y-v1-1-1.css';
+import './site.css';
 
 const anton = Anton({ weight: '400', subsets: ['latin'], variable: '--font-display', display: 'swap' });
 const montserrat = Montserrat({ weight: ['400', '500', '600', '700', '800', '900'], subsets: ['latin'], variable: '--font-body', display: 'swap' });
