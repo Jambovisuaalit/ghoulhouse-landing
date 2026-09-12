@@ -91,22 +91,24 @@ export default function Home() {
             </div>
 
             <figure className="proofStage" id="esimerkit" aria-labelledby="proof-caption">
-              <div className="proofFrame proofFrame--raw">
+              <div className="proofFrame proofFrame--raw" style={{ aspectRatio: '210 / 380', minHeight: 0 }}>
                 <Image
                   src="/proof-before.webp"
                   alt="Konseptikuva keskeneräisestä kylpyhuoneremontista ennen sisältökäsittelyä"
                   fill
                   priority
+                  style={{ objectFit: 'contain' }}
                   sizes="(min-width: 1024px) 20vw, (min-width: 768px) 24vw, 50vw"
                 />
               </div>
               <div className="editSeam" aria-hidden="true" style={{ display: 'none' }} />
-              <div className="proofFrame proofFrame--final">
+              <div className="proofFrame proofFrame--final" style={{ aspectRatio: '210 / 380', minHeight: 0 }}>
                 <Image
                   src="/proof-after.webp"
                   alt="Sama konseptitila viimeisteltynä julkaisukelpoisen sisältöesimerkin kuvaksi"
                   fill
                   priority
+                  style={{ objectFit: 'contain' }}
                   sizes="(min-width: 1024px) 20vw, (min-width: 768px) 24vw, 50vw"
                 />
               </div>
