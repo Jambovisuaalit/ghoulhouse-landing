@@ -2,18 +2,15 @@ import Image from 'next/image';
 import LeadForm from '@/components/LeadForm';
 import FunnelAnalytics from '@/components/analytics/FunnelAnalytics';
 
-const workPhoto =
-  'https://images.unsplash.com/photo-1768321917661-d4f1a89d2185?auto=format&fit=crop&q=86&w=1800';
-
 const outcomes = [
   ['01', 'VALMIS RYTMI', '12 sisältöä / 30 päivää. Julkaiseminen ei jää työpäivän jälkeen tehtäväksi.'],
-  ['02', 'TYÖ NÄKYVÄKSI', 'Olemassa olevat työmaakuvat muutetaan selkeäksi näytöksi osaamisesta.'],
-  ['03', 'YHTENÄINEN ILME', 'Kuvat, copy ja julkaisut muodostavat johdonmukaisen kokonaisuuden Instagramiin ja Facebookiin.'],
+  ['02', 'TYÖ NÄKYVÄKSI', 'Työmaa- ja referenssimateriaalista rakennetaan selkeä, tunnistettava julkaisulinja.'],
+  ['03', 'YHTENÄINEN ILME', 'Kuvat, tekstit ja julkaisut muodostavat yhden johdonmukaisen kokonaisuuden.'],
 ] as const;
 
 const steps = [
-  ['01', 'LÄHETÄ', 'Työmaa- ja referenssikuvat sekä olennaiset projektifaktat.'],
-  ['02', 'ME EDITOIMME', 'Valinta, kuvankäsittely, sisältökulma, copy ja CTA.'],
+  ['01', 'LÄHETÄ', 'Toimita työmaa- ja referenssikuvat sekä olennaiset projektifaktat.'],
+  ['02', 'ME EDITOIMME', 'Valitsemme materiaalin, käsittelemme kuvat ja rakennamme julkaisukulman sekä copyt.'],
   ['03', 'HYVÄKSY', 'Näet suunnan ennen julkaisua. Palveluun kuuluu yksi koottu korjauskierros.'],
   ['04', 'JULKAISTAAN', 'Hyväksytyt sisällöt ajastetaan Instagramiin ja Facebookiin.'],
 ] as const;
@@ -21,12 +18,18 @@ const steps = [
 const includes = [
   '12 alkuperäistä sisältöä / 30 päivää',
   'Instagram + Facebook',
-  'Sisältösuunnittelu',
+  'Sisältösuunnittelu ja kuukausirytmi',
   'Kuvankäsittely ja somemuotoilu',
   'Copy, CTA:t ja julkaisutekstit',
   'Ajastus ja julkaiseminen',
   'Yksi koottu korjauskierros',
   'Kevyt kuukausiraportti',
+] as const;
+
+const proofCards = [
+  'TYÖMAA NYT', 'VALMIS KOHDE', 'ENNEN / JÄLKEEN', 'TEKIJÄ',
+  'YKSITYISKOHTA', 'PROSESSI', 'MATERIAALI', 'USEIN KYSYTTY',
+  'REFERENSSI', 'VINKKI', 'PALVELU', 'CTA',
 ] as const;
 
 const faq = [
@@ -47,7 +50,7 @@ export default function Home() {
           <a className="brandText" href="#top" aria-label="GhoulHouse — sivun alku">GhoulHouse</a>
           <nav className="desktopNav" aria-label="Päänavigaatio">
             <a href="#toiminta">Miten toimii</a>
-            <a href="#palvelu">Palvelu</a>
+            <a href="#naytto">Näyttö</a>
             <a href="#hinta">Hinta</a>
             <a href="#ukk">UKK</a>
           </nav>
@@ -56,7 +59,7 @@ export default function Home() {
             <summary>MENU</summary>
             <nav aria-label="Mobiilinavigaatio">
               <a href="#toiminta">Miten toimii</a>
-              <a href="#palvelu">Palvelu</a>
+              <a href="#naytto">Näyttö</a>
               <a href="#hinta">Hinta</a>
               <a href="#ukk">UKK</a>
               <a href="#yhteys">Pyydä 2 esimerkkiä</a>
@@ -69,12 +72,12 @@ export default function Home() {
         <section className="hero" id="top">
           <div className="contentShell heroGrid">
             <div className="heroCopy">
-              <p className="kicker">GHOULHOUSE / SISÄLTÖTUOTANTO REMONTTIYRITYKSILLE</p>
+              <p className="kicker">SOMEMALLI REMONTTI- JA LVI-ALAN YRITYKSILLE</p>
               <h1>
                 <span>TYÖMAAKUVAT</span>
                 <span>SISÄÄN.</span>
-                <span>VALMIS SOME</span>
-                <span>ULOS.</span>
+                <span className="signalText">VALMIS SOME</span>
+                <span className="signalText">ULOS.</span>
               </h1>
               <p className="lead">GhoulHouse muuttaa olemassa olevat työmaa- ja referenssikuvat valmiiksi Instagram- ja Facebook-sisällöiksi — suunnittelusta julkaisuun.</p>
               <div className="heroActions">
@@ -87,42 +90,49 @@ export default function Home() {
               </div>
             </div>
 
-            <figure className="proofStage" id="esimerkit" aria-labelledby="proof-caption">
-              <div className="proofFrame proofFrame--raw">
-                <span className="statusLabel">RAW</span>
+            <figure className="proofStage" id="esimerkit" aria-labelledby="proof-caption" style={{ gridTemplateColumns: '210fr 265fr' }}>
+              <div className="proofFrame proofFrame--raw" style={{ aspectRatio: '210 / 380', minHeight: 0 }}>
                 <Image
-                  src={workPhoto}
-                  alt="Remonttityömaan konseptikuva ennen sisältökäsittelyä"
+                  src="/proof-before.webp"
+                  alt="Konseptikuva keskeneräisestä kylpyhuoneremontista ennen sisältökäsittelyä"
                   fill
                   priority
-                  sizes="(min-width: 1024px) 22vw, (min-width: 768px) 25vw, 50vw"
+                  style={{ objectFit: 'contain' }}
+                  sizes="(min-width: 1024px) 20vw, (min-width: 768px) 24vw, 50vw"
                 />
               </div>
-              <div className="editSeam" aria-hidden="true" />
-              <div className="proofFrame proofFrame--final">
-                <span className="statusLabel statusLabel--final">FINAL</span>
+              <div className="editSeam" aria-hidden="true" style={{ display: 'none' }} />
+              <div className="proofFrame proofFrame--final" style={{ aspectRatio: '265 / 380', minHeight: 0 }}>
                 <Image
-                  src={workPhoto}
-                  alt="Sama remonttityömaan konseptikuva viimeisteltynä somejulkaisun esimerkkikäsittelyssä"
+                  src="/proof-after.webp"
+                  alt="Sama konseptitila viimeisteltynä julkaisukelpoisen sisältöesimerkin kuvaksi"
                   fill
                   priority
-                  sizes="(min-width: 1024px) 22vw, (min-width: 768px) 25vw, 50vw"
+                  style={{ objectFit: 'contain' }}
+                  sizes="(min-width: 1024px) 20vw, (min-width: 768px) 24vw, 50vw"
                 />
-                <div className="finalOverlay">
-                  <small>TYÖMAA / 01</small>
-                  <strong>POHJATYÖ<br />RATKAISEE<br />LOPPUTULOKSEN.</strong>
-                </div>
               </div>
-              <figcaption id="proof-caption">KONSEPTIESIMERKKI — EI ASIAKASTYÖ</figcaption>
+              <figcaption id="proof-caption">KONSEPTIESIMERKKI — EI ASIAKASTYÖ · VISUAALINEN SUUNTAA-ANTAVA DEMO</figcaption>
             </figure>
+          </div>
+        </section>
+
+        <section className="factRail" aria-label="GhoulHouse-palvelun pääfaktat">
+          <div className="contentShell factRailGrid">
+            <div><strong>12</strong><span>sisältöä / 30 päivää</span></div>
+            <div><strong>2</strong><span>kanavaa: IG + FB</span></div>
+            <div><strong>1</strong><span>koottu korjauskierros</span></div>
+            <div><strong>0</strong><span>automaattista jatkoa</span></div>
           </div>
         </section>
 
         <section className="statement" aria-labelledby="statement-title">
           <div className="contentShell statementGrid">
             <p className="kicker kicker--inverse">01 / LÄHTÖKOHTA</p>
-            <h2 id="statement-title">HYVÄ TYÖ EI TARVITSE ENEMPÄÄ PUHETTA. SE TARVITSEE NÄKYVYYTTÄ.</h2>
-            <p>Materiaalia ei yleensä puutu. Prosessi puuttuu. GhoulHouse tekee jo syntyvästä materiaalista valmista, säännöllistä näyttöä yrityksen työstä.</p>
+            <div>
+              <h2 id="statement-title">HYVÄ TYÖ EI TARVITSE ENEMPÄÄ PUHETTA. SE TARVITSEE NÄKYVYYTTÄ.</h2>
+              <p>Materiaalia ei yleensä puutu. Prosessi puuttuu. GhoulHouse tekee jo syntyvästä materiaalista valmista, säännöllistä näyttöä yrityksen työstä.</p>
+            </div>
           </div>
         </section>
 
@@ -130,13 +140,15 @@ export default function Home() {
           <div className="contentShell">
             <div className="sectionIntro">
               <p className="kicker">02 / MITÄ SAAT</p>
-              <h2 id="outcomes-title">YKSI TUOTE.<br />KOLME SELKEÄÄ TULOSTA.</h2>
-              <p>Ei kanavalistaa. Ei markkinointijargonia. Vain se, mitä yrittäjän arjessa muuttuu.</p>
+              <div>
+                <h2 id="outcomes-title">YKSI TUOTE.<br />KOLME SELKEÄÄ TULOSTA.</h2>
+                <p>Ei kanavalistaa. Ei markkinointijargonia. Vain se, mitä yrittäjän arjessa muuttuu.</p>
+              </div>
             </div>
             <div className="outcomeGrid">
               {outcomes.map(([n, title, copy]) => (
                 <article className="outcomeCard" key={n}>
-                  <span>{n}</span>
+                  <span className="cardNumber">{n}</span>
                   <h3>{title}</h3>
                   <p>{copy}</p>
                 </article>
@@ -145,10 +157,34 @@ export default function Home() {
           </div>
         </section>
 
+        <section className="productionProof" id="naytto" aria-labelledby="proof-system-title">
+          <div className="contentShell productionProofGrid">
+            <div className="productionProofCopy">
+              <p className="kicker kicker--inverse">03 / TUOTANTOPROOF</p>
+              <h2 id="proof-system-title">NÄIN 12 SISÄLLÖN ERÄ RAKENTUU.</h2>
+              <p>Palvelu ei perustu yksittäiseen postaukseen. Jokainen kuukausi rakennetaan ennalta määritellyistä sisältörooleista, jotta feed ei toista samaa asiaa uudelleen.</p>
+              <div className="proofSpec" aria-label="Tuotantoerän rakenne">
+                <span>12 JULKAISUA</span><span>4 SISÄLTÖROOLIA</span><span>1 HYVÄKSYNTÄKIERROS</span>
+              </div>
+              <div className="proofSpec" aria-label="Todellinen asiakaskohtainen projektisuunnitelma">
+                <span>TODELLINEN ASIAKASKOHTAINEN SUUNNITELMA · 09/2026</span><span>12 COPYA · 12 JULKAISUA · 4 MASTER-POHJAA</span><span>PROJEKTISUUNNITELMA — EI TULOSVÄITE</span>
+              </div>
+            </div>
+            <div className="proofMatrix" aria-label="Esimerkki 12 sisällön tuotantoerästä">
+              {proofCards.map((item, index) => (
+                <div className="proofTile" key={item}>
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                  <strong>{item}</strong>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className="process" id="toiminta" aria-labelledby="process-title">
           <div className="contentShell processGrid">
             <div className="processIntro">
-              <p className="kicker">03 / PROSESSI</p>
+              <p className="kicker">04 / PROSESSI</p>
               <h2 id="process-title">SINÄ TEET TYÖN.<br />ME TEEMME SIITÄ JULKAISTAVAA.</h2>
               <p>Neljä vaihetta. Yksi selkeä handoff. Ei raskasta onboardingia tai ylimääräistä tuotantoprosessia.</p>
             </div>
@@ -167,7 +203,7 @@ export default function Home() {
         <section className="offer" id="hinta" aria-labelledby="offer-title">
           <div className="contentShell offerGrid">
             <div className="offerAnchor">
-              <p className="kicker kicker--inverse">04 / GHOULHOUSE SOME 12</p>
+              <p className="kicker kicker--inverse">05 / GHOULHOUSE SOME 12</p>
               <h2 id="offer-title">12 SISÄLTÖÄ.<br />30 PÄIVÄÄ.<br /><span>490 € + ALV.</span></h2>
               <p>Yksi selkeä pilotti. Ei kolmea pakettia, lisämyyntilabyrinttia tai automaattista jatkoa.</p>
               <a className="button button--paper" href="#yhteys">PYYDÄ 2 ESIMERKKIÄ <span aria-hidden="true">→</span></a>
@@ -183,11 +219,17 @@ export default function Home() {
 
         <section className="founder" aria-labelledby="founder-title">
           <div className="contentShell founderGrid">
-            <div className="founderIndex" aria-hidden="true">HN</div>
+            <div className="founderMark" aria-hidden="true">
+              <span className="founderInitials">HN</span>
+              <div className="founderMarkMeta"><span>FOUNDER</span><span>CONTENT</span><span>QA</span></div>
+            </div>
             <div className="founderCopy">
-              <p className="kicker">05 / TEKIJÄ</p>
+              <p className="kicker">06 / TEKIJÄ</p>
               <h2 id="founder-title">HANNA NYHOLM.<br />SISÄLLÖN TAKANA.</h2>
-              <p>Hanna vastaa GhoulHousen asiakastyöstä, sisältösuunnittelusta ja tuotannosta. Palvelu on rakennettu pienille käytännönläheisille yrityksille, joilla on jo näyttöä työstä mutta liian vähän aikaa tehdä siitä sisältöä.</p>
+              <p>Hanna vastaa GhoulHousen asiakastyöstä, sisältösuunnittelusta ja tuotannosta. Asiakas asioi suoraan tekijän kanssa — ilman välikäsiä tai raskasta toimistomallia.</p>
+              <div className="trustRail" aria-label="Yrityksen perustiedot">
+                <span>Ghoulhouse Oy</span><span>Y-tunnus 3651127-5</span><span>Helsinki</span>
+              </div>
               <a className="textLink" href="mailto:hanna@ghoulhouse.fi">hanna@ghoulhouse.fi</a>
             </div>
           </div>
@@ -196,7 +238,7 @@ export default function Home() {
         <section className="faq" id="ukk" aria-labelledby="faq-title">
           <div className="contentShell faqGrid">
             <div className="faqIntro">
-              <p className="kicker">06 / UKK</p>
+              <p className="kicker">07 / UKK</p>
               <h2 id="faq-title">ENNEN KUIN<br />PYYDÄT DEMON.</h2>
             </div>
             <div className="faqList">
@@ -213,44 +255,27 @@ export default function Home() {
         <section className="contact" id="yhteys" aria-labelledby="contact-title">
           <div className="contentShell contactGrid">
             <div className="contactCopy">
-              <p className="kicker">07 / ALOITA</p>
+              <p className="kicker">08 / ALOITA</p>
               <h2 id="contact-title">NÄE OMA TYÖSI<br />VALMIINA JULKAISUNA.</h2>
               <p>Saat kaksi maksutonta sisältöesimerkkiä yrityksesi nykyisestä materiaalista. Näet ensin lopputuloksen suunnan. Päätät vasta sen jälkeen jatkosta.</p>
               <div className="contactMeta">
-                <span>2 konseptiesimerkkiä</span>
-                <span>0 €</span>
-                <span>Ei sitoumusta</span>
+                <span>2 konseptiesimerkkiä</span><span>0 €</span><span>Ei sitoumusta</span>
               </div>
             </div>
-            <div className="formSurface">
-              <LeadForm />
-            </div>
+            <div className="formSurface"><LeadForm /></div>
           </div>
         </section>
       </main>
 
       <footer className="siteFooter">
         <div className="contentShell footerGrid">
-          <div>
-            <p className="footerBrand">GhoulHouse</p>
-            <p>Työmaakuvat sisään. Valmis some ulos.</p>
-          </div>
-          <div>
-            <p>Ghoulhouse Oy</p>
-            <p>Y-tunnus 3651127-5</p>
-            <p>Helsinki, Suomi</p>
-          </div>
+          <div><p className="footerBrand">GhoulHouse</p><p>Työmaakuvat sisään. Valmis some ulos.</p></div>
+          <div><p>Ghoulhouse Oy</p><p>Y-tunnus 3651127-5</p><p>Helsinki, Suomi</p></div>
           <nav aria-label="Alatunnisteen navigaatio">
-            <a href="#toiminta">Miten toimii</a>
-            <a href="#hinta">Hinta</a>
-            <a href="#yhteys">Yhteys</a>
-            <a href="/tietosuoja">Tietosuoja</a>
+            <a style={{ minHeight: 44 }} href="#toiminta">Miten toimii</a><a style={{ minHeight: 44 }} href="#naytto">Näyttö</a><a style={{ minHeight: 44 }} href="#hinta">Hinta</a><a style={{ minHeight: 44 }} href="#yhteys">Yhteys</a><a style={{ minHeight: 44 }} href="/tietosuoja">Tietosuoja</a>
           </nav>
         </div>
-        <div className="contentShell footerBottom">
-          <span>© 2026 GhoulHouse Oy</span>
-          <span>DISTINCTIVE / CONTROLLED / FUNCTIONAL</span>
-        </div>
+        <div className="contentShell footerBottom"><span>© 2026 GhoulHouse Oy</span><span>DISTINCTIVE / CONTROLLED / FUNCTIONAL</span></div>
       </footer>
     </>
   );
