@@ -166,6 +166,9 @@ export default function Home() {
               <div className="proofSpec" aria-label="Tuotantoerän rakenne">
                 <span>12 JULKAISUA</span><span>4 SISÄLTÖROOLIA</span><span>1 HYVÄKSYNTÄKIERROS</span>
               </div>
+              <div className="proofSpec" aria-label="Todellinen asiakaskohtainen projektisuunnitelma">
+                <span>TODELLINEN ASIAKASKOHTAINEN SUUNNITELMA · 09/2026</span><span>12 COPYA · 12 JULKAISUA · 4 MASTER-POHJAA</span><span>PROJEKTISUUNNITELMA — EI TULOSVÄITE</span>
+              </div>
             </div>
             <div className="proofMatrix" aria-label="Esimerkki 12 sisällön tuotantoerästä">
               {proofCards.map((item, index) => (
