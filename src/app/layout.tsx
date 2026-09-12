@@ -6,6 +6,7 @@ import ResponsiveNavState from '@/components/ResponsiveNavState';
 import './globals.css';
 import './brand-v5.css';
 import './design-system-1-1-1.css';
+import './brand-v5-polish.css';
 import './a11y-v1-1-1.css';
 
 const anton = Anton({ weight: '400', subsets: ['latin'], variable: '--font-display', display: 'swap' });
