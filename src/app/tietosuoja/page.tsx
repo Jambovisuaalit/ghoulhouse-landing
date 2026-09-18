@@ -146,13 +146,13 @@ export default function PrivacyPage() {
 
           <PrivacySection number="09" title="Evästeet ja analytiikka">
             <p>
-              GhoulHouse käyttää Google Analytics 4 -palvelua verkkosivun käytön ja ennalta määriteltyjen tapahtumien mittaamiseen. Google tag voi käyttää evästeitä tai vastaavia teknisiä tunnisteita analytiikan toteuttamiseen.
+              GhoulHouse käyttää Google Analytics 4 -palvelua verkkosivun käytön ja ennalta määriteltyjen tapahtumien mittaamiseen vain analytiikkasuostumuksen jälkeen. Google tag voi käyttää evästeitä tai vastaavia teknisiä tunnisteita analytiikan toteuttamiseen.
             </p>
             <p>
               GhoulHouse lähettää analytiikkaan vain sivuston käyttöön liittyviä tapahtumanimiä ja rajattuja teknisiä tapahtumaparametreja. Yhteydenottolomakkeen nimeä, sähköpostiosoitetta, puhelinnumeroa tai vapaamuotoista viestiä ei tarkoituksellisesti sisällytetä GhoulHousen omiin analytiikkatapahtumiin.
             </p>
             <p>
-              Verkkosivun hosting- tai tietoturvatoiminnot voivat käyttää teknisesti välttämättömiä mekanismeja palvelun suojaamiseen ja toimittamiseen.
+              Analytiikkasuostumuksen voi hyväksyä tai evätä sivuston analytiikkailmoituksesta. Asetusta voi muuttaa sivuston analytiikka-asetuksista. Verkkosivun hosting- tai tietoturvatoiminnot voivat käyttää teknisesti välttämättömiä mekanismeja palvelun suojaamiseen ja toimittamiseen.
             </p>
           </PrivacySection>
 

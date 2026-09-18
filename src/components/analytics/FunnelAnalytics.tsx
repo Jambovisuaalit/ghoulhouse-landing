@@ -13,7 +13,11 @@ const observedSections: Array<{
 
 export default function FunnelAnalytics() {
   useEffect(() => {
-    trackEvent('page_view');
+    const handleAnalyticsReady = () => trackEvent('page_view');
+    if (window.localStorage.getItem('ghoulhouse_analytics_consent') === 'accepted') {
+      trackEvent('page_view');
+    }
+    window.addEventListener('ghoulhouse:analytics-ready', handleAnalyticsReady);
 
     const handleClick = (event: MouseEvent) => {
       const target = event.target;
@@ -31,7 +35,10 @@ export default function FunnelAnalytics() {
     document.addEventListener('click', handleClick);
 
     if (!('IntersectionObserver' in window)) {
-      return () => document.removeEventListener('click', handleClick);
+      return () => {
+        window.removeEventListener('ghoulhouse:analytics-ready', handleAnalyticsReady);
+        document.removeEventListener('click', handleClick);
+      };
     }
 
     const seen = new Set<string>();
@@ -60,6 +67,7 @@ export default function FunnelAnalytics() {
     }
 
     return () => {
+      window.removeEventListener('ghoulhouse:analytics-ready', handleAnalyticsReady);
       document.removeEventListener('click', handleClick);
       observer.disconnect();
     };
