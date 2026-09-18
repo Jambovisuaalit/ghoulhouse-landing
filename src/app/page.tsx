@@ -73,12 +73,13 @@ export default function Home() {
           <div className="contentShell heroGrid">
             <div className="heroCopy">
               <p className="kicker">SOMEMALLI REMONTTI- JA LVI-ALAN YRITYKSILLE</p>
-              <h1>
+              <div className="brandHeadline" aria-label="Työmaakuvat sisään. Valmis some ulos.">
                 <span>TYÖMAAKUVAT</span>
                 <span>SISÄÄN.</span>
                 <span className="signalText">VALMIS SOME</span>
                 <span className="signalText">ULOS.</span>
-              </h1>
+              </div>
+              <h1>Työmaakuvista valmis some remontti- ja LVI-yrityksille.</h1>
               <p className="lead">GhoulHouse muuttaa olemassa olevat työmaa- ja referenssikuvat valmiiksi Instagram- ja Facebook-sisällöiksi — suunnittelusta julkaisuun.</p>
               <div className="heroActions">
                 <a className="button button--signal" href="#yhteys">PYYDÄ 2 SISÄLTÖESIMERKKIÄ <span aria-hidden="true">→</span></a>
