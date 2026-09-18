@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: 'Verkkosivujen hinta | GhoulHouse',
   description: 'Mistä yrityksen verkkosivuprojektin työ muodostuu: rakenne, sisältö, referenssit, toteutus ja julkaisu.',
   alternates: { canonical: '/verkkosivut/hinta' },
+  openGraph: { title: 'Verkkosivujen hinta | GhoulHouse', description: 'Mistä yrityksen verkkosivuprojektin työ muodostuu: rakenne, sisältö, referenssit, toteutus ja julkaisu.', url: '/verkkosivut/hinta', type: 'website', images: [{ url: '/opengraph-image', width: 1200, height: 630 }] },
   robots: process.env.VERCEL_ENV === 'production' ? { index: true, follow: true } : { index: false, follow: false, nocache: true },
 };
 

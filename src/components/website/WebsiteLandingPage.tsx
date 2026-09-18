@@ -60,7 +60,7 @@ export default function WebsiteLandingPage({ vertical }: Props) {
           <div><p className="kicker">PROOF</p><h2>REFERENSSI ON TODISTE, EI KORISTE.</h2></div>
           <div className="websiteProofList">
             {(vertical?.proof ?? ['Oikeat projektit ja kohteet', 'Varmennetut yritys- ja palvelufaktat', 'Selkeä kuvaus tehdystä työstä']).map((item, i) => <div key={item}><span>{String(i + 1).padStart(2, '0')}</span><p>{item}</p></div>)}
-            <Link className="textLink" href="/referenssit">Katso referenssiperiaate →</Link>
+            <div className="heroActions"><Link className="textLink" href="/referenssit">Katso referenssiperiaate →</Link>{vertical?.slug === 'rakennus' ? <Link className="textLink" href="/rakennusyrityksille">Rakennusalan Social →</Link> : null}{vertical?.slug === 'lvi' ? <Link className="textLink" href="/lvi-yrityksille">LVI-alan Social →</Link> : null}</div>
           </div>
         </div>
       </section>
@@ -79,7 +79,7 @@ export default function WebsiteLandingPage({ vertical }: Props) {
       <section className="websiteSection">
         <div className="contentShell">
           <div className="sectionIntro"><p className="kicker">RESURSSIT</p><div><h2>SEURAAVA ASKEL.</h2></div></div>
-          <div className="websiteResourceGrid">{websiteResources.map(([label, copy, href]) => <Link key={href} href={href}><span>{label}</span><p>{copy}</p><b>→</b></Link>)}</div>
+          <div className="websiteResourceGrid"><Link href="/oppaat/verkkosivut-itse-vai-ammattilaiselta"><span>Verkkosivut: tee itse vai ammattilaiselta?</span><p>Milloin oma tekeminen riittää ja milloin kannattaa ulkoistaa?</p><b>OPAS →</b></Link>{websiteResources.map(([label, copy, href]) => <Link key={href} href={href}><span>{label}</span><p>{copy}</p><b>→</b></Link>)}</div>
         </div>
       </section>
 
