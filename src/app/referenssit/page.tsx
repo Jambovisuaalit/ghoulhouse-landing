@@ -11,8 +11,8 @@ export const metadata: Metadata = {
 
 const groups = [
   { title:'WEBSITES', intro:'Verkkosivut, rakenne ja toteutus.', links:[['Verkkosivut yritykselle','/verkkosivut-yritykselle'],['Rakennusyrityksen verkkosivut','/verkkosivut/rakennus'],['LVI-yrityksen verkkosivut','/verkkosivut/lvi'],['Sähköyrityksen verkkosivut','/verkkosivut/sahko']] },
-  { title:'SOCIAL', intro:'Työmaa-, referenssi- ja sisältötuotanto.', links:[['SOME 12','/some-12'],['Rakennusyrityksille','/rakennusyrityksille'],['LVI-yrityksille','/lvi-yrityksille'],['Instagram-sisällöntuotanto','/instagram-sisallontuotanto']] },
-  { title:'TOIMIALAT', intro:'Näyttö järjestetään ostotilanteen ja työn mukaan.', links:[['Verkkosivut rakennusalalle','/verkkosivut/rakennus'],['Verkkosivut LVI-alalle','/verkkosivut/lvi'],['Verkkosivut sähköalalle','/verkkosivut/sahko']] },
+  { title:'SOCIAL', intro:'Työmaa-, referenssi- ja sisältötuotanto.', links:[['SOME 12','/some-12'],['Rakennusyrityksille','/rakennusyrityksille'],['LVI-yrityksille','/lvi-yrityksille'],['Saneerausyrityksille','/saneerausyrityksille'],['Instagram-sisällöntuotanto','/instagram-sisallontuotanto'],['Some-sisällöntuotannon hinta','/some-sisallontuotanto/hinta']] },
+  { title:'TOIMIALAT', intro:'Näyttö järjestetään ostotilanteen ja työn mukaan.', links:[['Verkkosivut rakennusalalle','/verkkosivut/rakennus'],['Verkkosivut LVI-alalle','/verkkosivut/lvi'],['Verkkosivut sähköalalle','/verkkosivut/sahko'],['Some rakennusyritykselle','/oppaat/rakennusyrityksen-some'],['Työmaakuvat sosiaaliseen mediaan','/oppaat/tyomaakuvat-sosiaaliseen-mediaan']] },
 ];
 
 export default function Page(){

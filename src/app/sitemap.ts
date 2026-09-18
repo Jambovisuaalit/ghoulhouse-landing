@@ -16,6 +16,10 @@ const INDEXABLE_CLUSTER_SLUGS = [
   'verkkosivut/sahko',
   'resurssit',
   'oppaat/verkkosivut-itse-vai-ammattilaiselta',
+  'saneerausyrityksille',
+  'some-sisallontuotanto/hinta',
+  'oppaat/rakennusyrityksen-some',
+  'oppaat/tyomaakuvat-sosiaaliseen-mediaan',
 ] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

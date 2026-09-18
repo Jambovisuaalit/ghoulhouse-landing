@@ -44,6 +44,28 @@ export const seoClusterPages: Record<string, SeoClusterPage> = {
     process: ['Valitsemme Instagramiin sopivat kuvat ja aiheet.', 'Rakennamme julkaisujen copyt, rakenteen ja CTA:t.', 'Koko 12 sisällön erä tarkistetaan yhtenä kokonaisuutena.', 'Hyväksytyt julkaisut ajastetaan Instagramiin ja tarvittaessa Facebookiin.'],
     faq: [['Tehdäänkö Reelsejä?', 'Reelsejä voidaan tehdä, kun käytettävissä on sopivaa materiaalia. SOME 12:n ydin on 12 valmista sisältöä kuukaudessa.'], ['Voiko Instagram-sisältö käyttää olemassa olevia kuvia?', 'Kyllä. Palvelu on rakennettu yrityksen omien työmaa- ja referenssikuvien ympärille.'], ['Miten sisältöjen tyyli päätetään?', 'Visuaalinen ja tekstillinen linja rakennetaan yrityksen työn, materiaalin ja kohderyhmän perusteella.']]
   },
+  'saneerausyrityksille': {
+    slug: 'saneerausyrityksille', title: 'Some-sisällöntuotanto saneerausyrityksille | GhoulHouse',
+    description: 'Saneerausyrityksen työmaa-, ennen-jälkeen- ja referenssikuvista valmiit some-sisällöt. 12 sisältöä 30 päivässä, 490 € + ALV.',
+    h1: 'Saneerauskohteista valmis some.',
+    eyebrow: 'SANEERAUSYRITYSTEN SOME-SISÄLLÖT',
+    intro: 'Saneeraustyössä muutos on jo itsessään sisältöä: lähtötilanne, työvaiheet, ratkaisut ja valmis kohde. GhoulHouse tekee tästä materiaalista selkeän kuukausierän ilman erillistä kuvauspäivää.',
+    painPoints: ['Ennen-jälkeen-kuvat syntyvät, mutta ne jäävät puhelimeen.', 'Remontin työvaiheet ovat kiinnostavia, mutta niitä ei ehditä sanoittaa julkaisuiksi.', 'Valmiista kohteista ei synny jatkuvaa referenssisisältöä.'],
+    examples: ['Ennen / jälkeen: muutos näkyväksi yhdellä julkaisulla.', 'Työvaihe: mitä kohteessa tehtiin ja miksi.', 'Valmis kohde: lopputulos, materiaalit ja työn rajaus.', 'Usein kysytty: remontin vaihe tai ratkaisu asiakkaan näkökulmasta.'],
+    process: ['Keräämme saneerauskohteiden kuvat ja varmennetut projektifaktat.', 'Valitsemme kuvista julkaisukulmat ja kirjoitamme sisällöt.', 'Asiakas tarkistaa faktat ja tekee yhden kootun korjauskierroksen.', 'Hyväksytyt sisällöt ajastetaan Instagramiin ja Facebookiin.'],
+    faq: [['Tarvitaanko uusi kuvauspäivä?', 'Ei lähtökohtaisesti. SOME 12 rakennetaan yrityksen olemassa olevasta työmaa- ja referenssimateriaalista.'], ['Voiko ennen-jälkeen-kuvia käyttää?', 'Kyllä, kun kuvat ovat yrityksen omia tai niiden käyttöoikeus on kunnossa ja kohteen faktat voidaan varmistaa.'], ['Mitä ensimmäinen kuukausi maksaa?', 'SOME 12 maksaa 490 € + ALV / 30 päivää ilman automaattista jatkoa.']]
+  },
+  'some-sisallontuotanto/hinta': {
+    slug: 'some-sisallontuotanto/hinta', title: 'Some-sisällöntuotannon hinta | GhoulHouse',
+    description: 'SOME 12 maksaa 490 € + ALV / 30 päivää. Katso mitä hintaan sisältyy, miten tuotanto etenee ja mitä asiakkaalta tarvitaan.',
+    h1: 'Some-sisällöntuotannon hinta ilman markkinointipakettien sumua.',
+    eyebrow: 'SOME 12 / HINTA',
+    intro: 'Yksi selkeä tuotantoerä: 12 valmista Instagram- ja Facebook-sisältöä 30 päivässä. Suunnittelu, copy, kuvankäsittely, ajastus ja yksi korjauskierros kuuluvat samaan kokonaisuuteen.',
+    painPoints: ['Hinta ei kerro mitä konkreettisesti saa.', 'Jatkuva sopimus tekee kokeilusta tarpeettoman raskaan.', 'Sisältöpalvelun tuotantovaiheet jäävät helposti epäselviksi.'],
+    examples: ['12 sisältöä: yksi kuukausierä, ei epämääräistä tuntityötä.', 'Instagram + Facebook: sama tuotanto hyödynnetään kahdessa kanavassa.', 'Yksi koottu korjauskierros: hyväksyntä yhdellä kertaa.', '490 € + ALV: hinta tiedossa ennen aloitusta.'],
+    process: ['Lähtömateriaalin vastaanotto ja kuukauden tärkeimpien kohteiden valinta.', '12 sisällön suunnittelu, copy, kuvankäsittely ja somemuotoilu.', 'Yksi koottu hyväksyntä- ja korjauskierros.', 'Ajastus, julkaiseminen ja kevyt kuukausiraportti.'],
+    faq: [['Paljonko SOME 12 maksaa?', '490 € + ALV / 30 päivää.'], ['Onko palvelussa jatkuva sopimus?', 'Ei. Ensimmäinen 30 päivän tuotantoerä on oma kokonaisuutensa ja jatkosta päätetään erikseen.'], ['Mitä asiakkaan pitää toimittaa?', 'Yrityksen omat työmaa-, referenssi- tai projektikuvat sekä olennaiset faktat kohteista.']]
+  },
   'referenssit': {
     slug: 'referenssit', title: 'Rakennus- ja LVI-yritysten referenssisisällöt | GhoulHouse',
     description: 'Muuta valmistuneet kohteet, ennen-jälkeen-kuvat ja työvaiheet julkaistaviksi referenssisisällöiksi. GhoulHouse SOME 12.',
