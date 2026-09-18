@@ -22,6 +22,7 @@ const INDEXABLE_CLUSTER_SLUGS = [
   'oppaat/tyomaakuvat-sosiaaliseen-mediaan',
 ] as const;
 
+// P2 production trigger: sitemap includes the Social cluster.
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const requestHeaders = await headers();
   const requestHost = requestHeaders.get('x-forwarded-host') || requestHeaders.get('host');
