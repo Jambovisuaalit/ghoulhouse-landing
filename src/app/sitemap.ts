@@ -15,6 +15,7 @@ const INDEXABLE_CLUSTER_SLUGS = [
   'verkkosivut/lvi',
   'verkkosivut/sahko',
   'resurssit',
+  'oppaat/verkkosivut-itse-vai-ammattilaiselta',
 ] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
