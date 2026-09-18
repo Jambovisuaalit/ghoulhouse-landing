@@ -8,7 +8,9 @@ export const metadata: Metadata = {
   title: page.title,
   description: page.description,
   alternates: { canonical: '/' + page.slug },
-  robots: { index: true, follow: true },
+  robots: process.env.VERCEL_ENV === 'production'
+    ? { index: true, follow: true }
+    : { index: false, follow: false, nocache: true },
 };
 
 export default function Page() {
