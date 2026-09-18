@@ -195,7 +195,7 @@ jobs:
           grep -q "G-43VQ8505YL" src/components/analytics/GoogleAnalytics.tsx
           grep -q "www.googletagmanager.com/gtag/js" src/components/analytics/GoogleAnalytics.tsx
           grep -q "gtag('config', '\${GA_MEASUREMENT_ID}')" src/components/analytics/GoogleAnalytics.tsx
-          grep -q "getGtag(target)('event'" src/lib/analytics.ts
+          grep -q "target.gtag('event'" src/lib/analytics.ts
           grep -q "https://www.googletagmanager.com" next.config.js
           grep -q "https://www.google-analytics.com" next.config.js
           grep -q "https://region1.google-analytics.com" next.config.js
