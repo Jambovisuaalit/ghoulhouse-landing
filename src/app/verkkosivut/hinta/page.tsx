@@ -1,3 +1,4 @@
+  openGraph: { title: 'Verkkosivujen hinta | GhoulHouse', description: 'Mistä yrityksen verkkosivuprojektin työ muodostuu: rakenne, sisältö, referenssit, toteutus ja julkaisu.', url: '/verkkosivut/hinta', type: 'website', images: [{ url: '/opengraph-image', width: 1200, height: 630 }] },
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import WebsiteLandingPage from '@/components/website/WebsiteLandingPage';
