@@ -176,11 +176,21 @@ jobs:
       - name: Analytics QA
         shell: bash
         run: |
-          if git grep -nqiE "VercelAnalytics|NEXT_PUBLIC_VERCEL_ANALYTICS_ENABLED|va\.vercel-scripts\.com|vitals\.vercel-insights\.com|PlausibleAnalytics|NEXT_PUBLIC_PLAUSIBLE_SCRIPT_SRC|plausible\.io" -- src next.config.js .env.example; then
-            echo "::error::Legacy analytics integration remains in tracked runtime config."
-            git grep -niE "VercelAnalytics|NEXT_PUBLIC_VERCEL_ANALYTICS_ENABLED|va\.vercel-scripts\.com|vitals\.vercel-insights\.com|PlausibleAnalytics|NEXT_PUBLIC_PLAUSIBLE_SCRIPT_SRC|plausible\.io" -- src next.config.js .env.example
-            exit 1
-          fi
+          legacy_analytics_terms=(
+            "VercelAnalytics"
+            "NEXT_PUBLIC_VERCEL_ANALYTICS_ENABLED"
+            "va.vercel-scripts.com"
+            "vitals.vercel-insights.com"
+            "PlausibleAnalytics"
+            "NEXT_PUBLIC_PLAUSIBLE_SCRIPT_SRC"
+            "plausible.io"
+          )
+          for term in "${legacy_analytics_terms[@]}"; do
+            if git grep -niF -- "$term" -- src next.config.js .env.example; then
+              echo "::error::Legacy analytics integration remains in tracked runtime config: $term"
+              exit 1
+            fi
+          done
           grep -q "GoogleAnalytics" src/app/layout.tsx
           grep -q "G-43VQ8505YL" src/components/analytics/GoogleAnalytics.tsx
           grep -q "www.googletagmanager.com/gtag/js" src/components/analytics/GoogleAnalytics.tsx
