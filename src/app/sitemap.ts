@@ -9,6 +9,12 @@ const INDEXABLE_CLUSTER_SLUGS = [
   'instagram-sisallontuotanto',
   'referenssit',
   'some-12',
+  'verkkosivut-yritykselle',
+  'verkkosivut/hinta',
+  'verkkosivut/rakennus',
+  'verkkosivut/lvi',
+  'verkkosivut/sahko',
+  'resurssit',
 ] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
