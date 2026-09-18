@@ -1,3 +1,4 @@
+  openGraph: { title: 'GhoulHouse', description: 'GhoulHouse', url: '/verkkosivut/sahko', type: 'website', images: [{ url: '/opengraph-image', width: 1200, height: 630 }] },
 import type { Metadata } from 'next';
 import WebsiteLandingPage from '@/components/website/WebsiteLandingPage';
 import { websiteVerticals } from '@/data/website';
