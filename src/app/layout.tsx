@@ -6,8 +6,8 @@ import AnalyticsConsent from '@/components/analytics/AnalyticsConsent';
 import ResponsiveNavState from '@/components/ResponsiveNavState';
 import './site.css';
 
-const anton = Anton({ weight: '400', subsets: ['latin'], variable: '--font-display', display: 'swap' });
-const montserrat = Montserrat({ weight: ['400', '500', '600', '700', '800', '900'], subsets: ['latin'], variable: '--font-body', display: 'swap' });
+const anton = Anton({ weight: '400', subsets: ['latin-ext'], variable: '--font-display', display: 'swap' });
+const montserrat = Montserrat({ weight: ['400', '500', '600', '700', '800', '900'], subsets: ['latin-ext'], variable: '--font-body', display: 'swap' });
 
 const title = 'Some-sisällöntuotanto remontti- ja LVI-yrityksille | GhoulHouse';
 const description = 'GhoulHouse tekee työmaa- ja referenssikuvista 12 valmista Instagram- ja Facebook-sisältöä 30 päivässä. Remontti- ja LVI-yrityksille. 490 € + ALV.';
