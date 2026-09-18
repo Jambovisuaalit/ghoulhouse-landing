@@ -1,3 +1,4 @@
+  openGraph: { title: 'Resurssit | GhoulHouse', description: 'GhoulHousen verkkosivu- ja sisältöresurssit yrityksille.', url: '/resurssit', type: 'website', images: [{ url: '/opengraph-image', width: 1200, height: 630 }] },
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { websiteResources } from '@/data/website';
