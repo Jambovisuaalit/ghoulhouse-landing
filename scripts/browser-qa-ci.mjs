@@ -156,6 +156,7 @@ try {
       };
       const hero = document.querySelector('#top');
       const h1 = hero?.querySelector('h1');
+      const brandHeadline = hero?.querySelector('.brandHeadline');
       const heroCta = hero?.querySelector('a.button--signal[href="#yhteys"]');
       const price = [...(hero?.querySelectorAll('*') || [])].find((el) => visible(el) && el.children.length === 0 && el.textContent?.includes('490 €'));
       const brandLink = document.querySelector('header a[aria-label="GhoulHouse — sivun alku"]');
@@ -166,6 +167,7 @@ try {
       return {
         h1Count: document.querySelectorAll('h1').length,
         h1Text: h1?.textContent?.replace(/\\s+/g, ' ').trim() || '',
+        brandHeadlineText: brandHeadline?.textContent?.replace(/\\s+/g, ' ').trim() || '',
         heroCtaText: heroCta?.textContent?.replace(/\\s+/g, ' ').trim() || '',
         heroCtaHref: heroCta?.getAttribute('href') || '',
         heroCtaRect: rect(heroCta),
@@ -198,7 +200,8 @@ try {
     })()`);
 
     assert(metrics.h1Count === 1, `${viewport.width}x${viewport.height}: expected exactly one H1.`);
-    assert(metrics.h1Text.includes('TYÖMAAKUVAT') && metrics.h1Text.includes('VALMIS SOME') && metrics.h1Text.includes('ULOS.'), `${viewport.width}x${viewport.height}: canonical headline missing.`);
+    assert(metrics.brandHeadlineText.includes('TYÖMAAKUVAT') && metrics.brandHeadlineText.includes('SISÄÄN.') && metrics.brandHeadlineText.includes('VALMIS SOME') && metrics.brandHeadlineText.includes('ULOS.'), `${viewport.width}x${viewport.height}: brand headline missing.`);
+    assert(metrics.h1Text === 'Työmaakuvista valmis some remontti- ja LVI-yrityksille.', `${viewport.width}x${viewport.height}: H1 copy changed unexpectedly.`);
     assert(metrics.heroCtaHref === '#yhteys', `${viewport.width}x${viewport.height}: primary CTA must target #yhteys.`);
     assert(metrics.heroCtaText.includes('2 SISÄLTÖESIMERKKIÄ'), `${viewport.width}x${viewport.height}: primary CTA copy missing.`);
     assert(metrics.priceRect, `${viewport.width}x${viewport.height}: 490 € price missing.`);
