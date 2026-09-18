@@ -156,6 +156,7 @@ try {
       };
       const hero = document.querySelector('#top');
       const h1 = hero?.querySelector('h1');
+      const brandHeadline = hero?.querySelector('.brandHeadline');
       const heroCta = hero?.querySelector('a.button--signal[href="#yhteys"]');
       const price = [...(hero?.querySelectorAll('*') || [])].find((el) => visible(el) && el.children.length === 0 && el.textContent?.includes('490 €'));
       const brandLink = document.querySelector('header a[aria-label="GhoulHouse — sivun alku"]');
@@ -166,6 +167,7 @@ try {
       return {
         h1Count: document.querySelectorAll('h1').length,
         h1Text: h1?.textContent?.replace(/\\s+/g, ' ').trim() || '',
+        brandHeadlineText: brandHeadline?.textContent?.replace(/\\s+/g, ' ').trim() || '',
         heroCtaText: heroCta?.textContent?.replace(/\\s+/g, ' ').trim() || '',
         heroCtaHref: heroCta?.getAttribute('href') || '',
         heroCtaRect: rect(heroCta),
@@ -198,7 +200,8 @@ try {
     })()`);
 
     assert(metrics.h1Count === 1, `${viewport.width}x${viewport.height}: expected exactly one H1.`);
-    assert(metrics.h1Text.includes('TYÖMAAKUVAT') && metrics.h1Text.includes('VALMIS SOME') && metrics.h1Text.includes('ULOS.'), `${viewport.width}x${viewport.height}: canonical headline missing.`);
+    assert(metrics.brandHeadlineText.includes('TYÖMAAKUVAT') && metrics.brandHeadlineText.includes('SISÄÄN.') && metrics.brandHeadlineText.includes('VALMIS SOME') && metrics.brandHeadlineText.includes('ULOS.'), `${viewport.width}x${viewport.height}: brand headline missing.`);
+    assert(metrics.h1Text === 'Työmaakuvista valmis some remontti- ja LVI-yrityksille.', `${viewport.width}x${viewport.height}: H1 copy changed unexpectedly.`);
     assert(metrics.heroCtaHref === '#yhteys', `${viewport.width}x${viewport.height}: primary CTA must target #yhteys.`);
     assert(metrics.heroCtaText.includes('2 SISÄLTÖESIMERKKIÄ'), `${viewport.width}x${viewport.height}: primary CTA copy missing.`);
     assert(metrics.priceRect, `${viewport.width}x${viewport.height}: 490 € price missing.`);
@@ -210,7 +213,7 @@ try {
     assert(metrics.viewportMeta.includes('viewport-fit=cover'), `${viewport.width}x${viewport.height}: viewport-fit=cover missing.`);
     assert(metrics.bodyOverflowX === 'clip' || metrics.bodyOverflowX === 'hidden', `${viewport.width}x${viewport.height}: horizontal overflow suppression missing.`);
     assert(metrics.scrollWidth <= metrics.innerWidth + 1, `${viewport.width}x${viewport.height}: horizontal overflow ${metrics.scrollWidth}px > ${metrics.innerWidth}px.`);
-    assert(metrics.colors.ink === '#161411' && metrics.colors.paper === '#F3EEE5' && metrics.colors.signal === '#C83830' && metrics.colors.white === '#FFFFFF' && metrics.colors.muted === '#8C8278', `${viewport.width}x${viewport.height}: Design System v1.1.1 primitives do not match.`);
+    assert(metrics.colors.ink === '#111111' && metrics.colors.paper === '#F7F4EF' && metrics.colors.signal === '#C9282D' && metrics.colors.white === '#FFFFFF' && metrics.colors.muted === '#8C8278', `${viewport.width}x${viewport.height}: core brand primitives do not match.`);
     assert(!metrics.bodyText.includes('790 €') && !metrics.bodyText.includes('MANAGED'), `${viewport.width}x${viewport.height}: obsolete offer copy reappeared.`);
 
     for (const [name, value] of [['brand', metrics.brandRect], ['headline', metrics.h1Rect], ['hero CTA', metrics.heroCtaRect], ['price', metrics.priceRect]]) {

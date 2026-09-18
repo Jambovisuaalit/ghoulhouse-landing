@@ -37,6 +37,8 @@ const faq = [
   ['Mitä jos materiaalia on vähän?', 'Aloitamme siitä mitä on ja kerromme täsmällisesti, mitä lisämateriaalia seuraavaa sisältöerää varten kannattaa kerätä.'],
   ['Voinko vaikuttaa sisältöihin?', 'Kyllä. Asiakas hyväksyy faktat ja julkaisusuunnan ennen ajastusta. Yksi koottu korjauskierros sisältyy palveluun.'],
   ['Onko 490 € jatkuva sopimus?', 'Ensimmäiset 30 päivää maksavat 490 € + ALV. Jatkosta ei synny automaattista sitoumusta.'],
+  ['Mitä 490 € sisältää?', 'Hintaan sisältyvät 12 alkuperäistä sisältöä / 30 päivää, Instagram + Facebook, sisältösuunnittelu, kuvankäsittely, copyt ja CTA:t, ajastus ja julkaiseminen, yksi koottu korjauskierros sekä kevyt kuukausiraportti.'],
+  ['Kuinka nopeasti julkaiseminen alkaa?', 'Tuotanto alkaa, kun tarvittavat materiaalit ja faktatiedot on vastaanotettu. Julkaiseminen etenee sen jälkeen sovitun tuotanto- ja hyväksyntärytmin mukaisesti.'],
 ] as const;
 
 export default function Home() {
@@ -120,10 +122,10 @@ export default function Home() {
 
         <section className="factRail" aria-label="GhoulHouse-palvelun pääfaktat">
           <div className="contentShell factRailGrid">
-            <div><strong>12</strong><span>sisältöä / 30 päivää</span></div>
-            <div><strong>2</strong><span>kanavaa: IG + FB</span></div>
-            <div><strong>1</strong><span>koottu korjauskierros</span></div>
-            <div><strong>0</strong><span>automaattista jatkoa</span></div>
+            <div><strong>12</strong><span>SISÄLTÖÄ</span></div>
+            <div><strong>2</strong><span>KANAVAA</span></div>
+            <div><strong>1</strong><span>KORJAUSKIERROS</span></div>
+            <div><strong>30</strong><span>PÄIVÄÄ</span></div>
           </div>
         </section>
 
@@ -263,17 +265,29 @@ export default function Home() {
                 <span>2 konseptiesimerkkiä</span><span>0 €</span><span>Ei sitoumusta</span>
               </div>
             </div>
-            <div className="formSurface"><LeadForm /></div>
+            <div className="formSurface">
+              <LeadForm />
+            </div>
           </div>
         </section>
       </main>
 
       <footer className="siteFooter">
         <div className="contentShell footerGrid">
-          <div><p className="footerBrand">GhoulHouse</p><p>Työmaakuvat sisään. Valmis some ulos.</p></div>
-          <div><p>Ghoulhouse Oy</p><p>Y-tunnus 3651127-5</p><p>Helsinki, Suomi</p></div>
-          <nav aria-label="Alatunnisteen navigaatio">
-            <a style={{ minHeight: 44 }} href="#toiminta">Miten toimii</a><a style={{ minHeight: 44 }} href="#naytto">Näyttö</a><a style={{ minHeight: 44 }} href="#hinta">Hinta</a><a style={{ minHeight: 44 }} href="#yhteys">Yhteys</a><a style={{ minHeight: 44 }} href="/tietosuoja">Tietosuoja</a>
+          <div className="footerColumn">
+            <p className="footerLabel">GhoulHouse</p>
+            <p className="footerTagline">Työmaakuvat sisään. Valmis some ulos.</p>
+          </div>
+          <div className="footerColumn">
+            <p className="footerLabel">Yritys</p>
+            <p>Ghoulhouse Oy</p>
+            <p>Y-tunnus 3651127-5</p>
+            <p>Helsinki</p>
+            <a href="mailto:hello@ghoulhouse.fi">hello@ghoulhouse.fi</a>
+          </div>
+          <nav className="footerColumn" aria-label="Alatunnisteen navigaatio">
+            <p className="footerLabel">Navigaatio</p>
+            <a href="#toiminta">Miten toimii</a><a href="#naytto">Näyttö</a><a href="#hinta">Hinta</a><a href="#yhteys">Yhteys</a><a href="/tietosuoja">Tietosuoja</a>
           </nav>
         </div>
         <div className="contentShell footerBottom"><span>© 2026 GhoulHouse Oy</span><span>DISTINCTIVE / CONTROLLED / FUNCTIONAL</span></div>

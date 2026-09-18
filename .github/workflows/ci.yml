@@ -107,7 +107,7 @@ jobs:
           printf '%s\n' "$robots" | grep -q "Disallow: /"
 
           html="$(curl --fail --silent http://127.0.0.1:3000/)"
-          printf '%s' "$html" | grep -q '<title>GhoulHouse | Työmaakuvat sisään. Valmis some ulos.</title>'
+          printf '%s' "$html" | grep -q '<title>Some-sisällöntuotanto remontti- ja LVI-yrityksille | GhoulHouse</title>'
           printf '%s' "$html" | grep -q 'rel="canonical" href="https://ghoulhouse.fi"'
           printf '%s' "$html" | grep -q 'twitter:card'
           printf '%s' "$html" | grep -q 'summary_large_image'
@@ -142,10 +142,10 @@ jobs:
         run: |
           test -e src/app/site.css
           test "$(find src/app -maxdepth 1 -type f -name '*.css' | wc -l | tr -d ' ')" = "1"
-          grep -q -- '--ink:#161411' src/app/site.css
-          grep -q -- '--paper:#F3EEE5' src/app/site.css
-          grep -q -- '--signal:#C83830' src/app/site.css
-          grep -q -- '--white:#FFFFFF' src/app/site.css
+          grep -q -- '--brand-ink:#111111' src/app/site.css
+          grep -q -- '--brand-signal:#C9282D' src/app/site.css
+          grep -q -- '--brand-ghost:#F7F4EF' src/app/site.css
+          grep -q -- '--brand-bone:#E6DFD5' src/app/site.css
           grep -q -- '--muted:#8C8278' src/app/site.css
           grep -q -- '--outer-max:1440px' src/app/site.css
           grep -q -- '--content-max:1280px' src/app/site.css
@@ -176,15 +176,26 @@ jobs:
       - name: Analytics QA
         shell: bash
         run: |
-          if grep -RqiE "VercelAnalytics|NEXT_PUBLIC_VERCEL_ANALYTICS_ENABLED|va\.vercel-scripts\.com|vitals\.vercel-insights\.com|PlausibleAnalytics|NEXT_PUBLIC_PLAUSIBLE_SCRIPT_SRC|plausible\.io" src next.config.js .env.example; then
-            echo "::error::Legacy analytics integration remains in runtime config."
-            exit 1
-          fi
+          legacy_analytics_terms=(
+            "VercelAnalytics"
+            "NEXT_PUBLIC_VERCEL_ANALYTICS_ENABLED"
+            "va.vercel-scripts.com"
+            "vitals.vercel-insights.com"
+            "PlausibleAnalytics"
+            "NEXT_PUBLIC_PLAUSIBLE_SCRIPT_SRC"
+            "plausible.io"
+          )
+          for term in "${legacy_analytics_terms[@]}"; do
+            if git grep -niF -- "$term" -- src next.config.js .env.example; then
+              echo "::error::Legacy analytics integration remains in tracked runtime config: $term"
+              exit 1
+            fi
+          done
           grep -q "GoogleAnalytics" src/app/layout.tsx
           grep -q "G-43VQ8505YL" src/components/analytics/GoogleAnalytics.tsx
           grep -q "www.googletagmanager.com/gtag/js" src/components/analytics/GoogleAnalytics.tsx
-          grep -q "gtag('config', '\${GA_MEASUREMENT_ID}')" src/components/analytics/GoogleAnalytics.tsx
-          grep -q "getGtag(target)('event'" src/lib/analytics.ts
+          grep -q "gtag('config', 'G-43VQ8505YL')" src/components/analytics/GoogleAnalytics.tsx
+          grep -q "target.gtag('event'" src/lib/analytics.ts
           grep -q "https://www.googletagmanager.com" next.config.js
           grep -q "https://www.google-analytics.com" next.config.js
           grep -q "https://region1.google-analytics.com" next.config.js

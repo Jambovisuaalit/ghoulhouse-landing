@@ -146,6 +146,7 @@ export default function LeadForm() {
         <button className="button button--signal formSubmit" type="submit" disabled={submitting}>
           {submitting ? 'LÄHETETÄÄN…' : 'PYYDÄ 2 SISÄLTÖESIMERKKIÄ'} <span aria-hidden="true">→</span>
         </button>
+        <p className="formMicrocopy">Ei myyntipalaveripakkoa. Katsomme ensin, mitä nykyisestä materiaalistanne voidaan tehdä.</p>
         <p className="formNote">Tietoja käytetään vain yhteydenoton käsittelyyn. <a href="/tietosuoja">Tietosuojaseloste</a>.</p>
       </form>
     </>
