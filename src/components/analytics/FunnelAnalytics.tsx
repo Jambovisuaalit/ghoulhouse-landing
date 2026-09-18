@@ -35,8 +35,10 @@ export default function FunnelAnalytics() {
     document.addEventListener('click', handleClick);
 
     if (!('IntersectionObserver' in window)) {
-      window.removeEventListener('ghoulhouse:analytics-ready', handleAnalyticsReady);
-      return () => document.removeEventListener('click', handleClick);
+      return () => {
+        window.removeEventListener('ghoulhouse:analytics-ready', handleAnalyticsReady);
+        document.removeEventListener('click', handleClick);
+      };
     }
 
     const seen = new Set<string>();
