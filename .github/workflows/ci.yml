@@ -176,8 +176,9 @@ jobs:
       - name: Analytics QA
         shell: bash
         run: |
-          if grep -RqiE "VercelAnalytics|NEXT_PUBLIC_VERCEL_ANALYTICS_ENABLED|va\.vercel-scripts\.com|vitals\.vercel-insights\.com|PlausibleAnalytics|NEXT_PUBLIC_PLAUSIBLE_SCRIPT_SRC|plausible\.io" src next.config.js .env.example; then
-            echo "::error::Legacy analytics integration remains in runtime config."
+          if git grep -nqiE "VercelAnalytics|NEXT_PUBLIC_VERCEL_ANALYTICS_ENABLED|va\.vercel-scripts\.com|vitals\.vercel-insights\.com|PlausibleAnalytics|NEXT_PUBLIC_PLAUSIBLE_SCRIPT_SRC|plausible\.io" -- src next.config.js .env.example; then
+            echo "::error::Legacy analytics integration remains in tracked runtime config."
+            git grep -niE "VercelAnalytics|NEXT_PUBLIC_VERCEL_ANALYTICS_ENABLED|va\.vercel-scripts\.com|vitals\.vercel-insights\.com|PlausibleAnalytics|NEXT_PUBLIC_PLAUSIBLE_SCRIPT_SRC|plausible\.io" -- src next.config.js .env.example
             exit 1
           fi
           grep -q "GoogleAnalytics" src/app/layout.tsx
