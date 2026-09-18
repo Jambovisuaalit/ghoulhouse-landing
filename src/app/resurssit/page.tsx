@@ -1,4 +1,3 @@
-  openGraph: { title: 'Resurssit | GhoulHouse', description: 'GhoulHousen verkkosivu- ja sisältöresurssit yrityksille.', url: '/resurssit', type: 'website', images: [{ url: '/opengraph-image', width: 1200, height: 630 }] },
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { websiteResources } from '@/data/website';
@@ -7,6 +6,7 @@ export const metadata: Metadata = {
   title: 'Resurssit | GhoulHouse',
   description: 'GhoulHousen verkkosivu- ja sisältöresurssit yrityksille.',
   alternates: { canonical: '/resurssit' },
+  openGraph: { title: 'Resurssit | GhoulHouse', description: 'GhoulHousen verkkosivu- ja sisältöresurssit yrityksille.', url: '/resurssit', type: 'website', images: [{ url: '/opengraph-image', width: 1200, height: 630 }] },
   robots: process.env.VERCEL_ENV === 'production' ? { index: true, follow: true } : { index: false, follow: false, nocache: true },
 };
 
