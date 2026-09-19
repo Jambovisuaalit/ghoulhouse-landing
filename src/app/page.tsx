@@ -47,16 +47,16 @@ export default function Home() {
       <a className="skipLink" href="#main">Siirry pääsisältöön</a>
       <FunnelAnalytics />
 
-      <header className="siteHeader">
+      <header className="siteHeader siteHeader--homeV2">
         <div className="outerShell headerGrid">
-          <a className="brandText" href="#top" aria-label="GhoulHouse — sivun alku">GhoulHouse</a>
+          <a className="brandIdentity" href="#top" aria-label="GhoulHouse — sivun alku"><Image src="/GhoulHouse_Mark_Color_128px.png" alt="" width={42} height={42} priority /><span>GhoulHouse</span></a>
           <nav className="desktopNav" aria-label="Päänavigaatio">
             <a href="/some-sisallontuotanto">Some</a>
             <a href="/verkkosivut-yritykselle">Verkkosivut</a>
             <a href="/referenssit">Referenssit</a>
             <a href="/resurssit">Resurssit</a>
           </nav>
-          <a className="button button--signal headerAction" href="#yhteys">PYYDÄ 2 ESIMERKKIÄ</a>
+          <a className="button button--signal headerAction" href="#yhteys">PYYDÄ 3 SISÄLTÖESIMERKKIÄ</a>
           <details className="mobileNav">
             <summary>MENU</summary>
             <nav aria-label="Mobiilinavigaatio">
@@ -64,27 +64,27 @@ export default function Home() {
               <a href="/verkkosivut-yritykselle">Verkkosivut</a>
               <a href="/referenssit">Referenssit</a>
               <a href="/resurssit">Resurssit</a>
-              <a href="#yhteys">Pyydä 2 esimerkkiä</a>
+              <a href="#yhteys">Pyydä 3 sisältöesimerkkiä</a>
             </nav>
           </details>
         </div>
       </header>
 
-      <main id="main">
+      <main id="main" className="homeV2">
         <section className="hero" id="top">
           <div className="contentShell heroGrid">
             <div className="heroCopy">
-              <p className="kicker">SOMEMALLI REMONTTI- JA LVI-ALAN YRITYKSILLE</p>
-              <div className="brandHeadline" aria-label="Työmaakuvat sisään. Valmis some ulos.">
+              <p className="kicker">SISÄLLÖNTUOTANTO REMONTTI- JA LVI-YRITYKSILLE</p>
+              <h1 className="brandHeadline" aria-label="Työmaakuvat sisään. Valmis some ulos.">
                 <span>TYÖMAAKUVAT</span>
                 <span>SISÄÄN.</span>
                 <span className="signalText">VALMIS SOME</span>
                 <span className="signalText">ULOS.</span>
-              </div>
-              <h1>Työmaakuvista valmis some remontti- ja LVI-yrityksille.</h1>
+              </h1>
+              <p className="heroSeo">Työmaakuvista valmis some remontti- ja LVI-yrityksille.</p>
               <p className="lead">GhoulHouse muuttaa olemassa olevat työmaa- ja referenssikuvat valmiiksi Instagram- ja Facebook-sisällöiksi — suunnittelusta julkaisuun.</p>
               <div className="heroActions">
-                <a className="button button--signal" href="#yhteys">PYYDÄ 2 SISÄLTÖESIMERKKIÄ <span aria-hidden="true">→</span></a>
+                <a className="button button--signal" href="#yhteys">PYYDÄ 3 SISÄLTÖESIMERKKIÄ <span aria-hidden="true">→</span></a>
                 <a className="textLink" href="#toiminta">Katso miten toimii</a>
               </div>
               <div className="offerLine" aria-label="Palvelun hinta ja sisältö">
@@ -95,6 +95,7 @@ export default function Home() {
 
             <figure className="proofStage" id="esimerkit" aria-labelledby="proof-caption">
               <div className="proofFrame proofFrame--raw">
+                <span className="statusLabel">TYÖMAAKUVA</span>
                 <Image
                   src="/proof-before.webp"
                   alt="Konseptikuva keskeneräisestä kylpyhuoneremontista ennen sisältökäsittelyä"
@@ -106,12 +107,13 @@ export default function Home() {
               </div>
               <div className="editSeam" aria-hidden="true" style={{ display: 'none' }} />
               <div className="proofFrame proofFrame--final">
+                <span className="statusLabel statusLabel--final">VALMIS JULKAISU</span>
                 <Image
                   src="/proof-after.webp"
                   alt="Sama konseptitila viimeisteltynä julkaisukelpoisen sisältöesimerkin kuvaksi"
                   fill
                   priority
-                  style={{ objectFit: 'contain' }}
+                  style={{ objectFit: 'cover' }}
                   sizes="(min-width: 1024px) 20vw, (min-width: 768px) 24vw, 50vw"
                 />
               </div>
@@ -169,9 +171,7 @@ export default function Home() {
               <div className="proofSpec" aria-label="Tuotantoerän rakenne">
                 <span>12 JULKAISUA</span><span>4 SISÄLTÖROOLIA</span><span>1 HYVÄKSYNTÄKIERROS</span>
               </div>
-              <div className="proofSpec" aria-label="Todellinen asiakaskohtainen projektisuunnitelma">
-                <span>TODELLINEN ASIAKASKOHTAINEN SUUNNITELMA · 09/2026</span><span>12 COPYA · 12 JULKAISUA · 4 MASTER-POHJAA</span><span>PROJEKTISUUNNITELMA — EI TULOSVÄITE</span>
-              </div>
+              
             </div>
             <div className="proofMatrix" aria-label="Esimerkki 12 sisällön tuotantoerästä">
               {proofCards.map((item, index) => (
@@ -209,7 +209,7 @@ export default function Home() {
               <p className="kicker kicker--inverse">05 / GHOULHOUSE SOME 12</p>
               <h2 id="offer-title">12 SISÄLTÖÄ.<br />30 PÄIVÄÄ.<br /><span>490 € + ALV.</span></h2>
               <p>Yksi selkeä pilotti. Ei kolmea pakettia, lisämyyntilabyrinttia tai automaattista jatkoa.</p>
-              <a className="button button--paper" href="#yhteys">PYYDÄ 2 ESIMERKKIÄ <span aria-hidden="true">→</span></a>
+              <a className="button button--paper" href="#yhteys">PYYDÄ 3 SISÄLTÖESIMERKKIÄ <span aria-hidden="true">→</span></a>
             </div>
             <div className="offerList" aria-label="Palveluun sisältyy">
               <p className="kicker kicker--inverse">SISÄLTYY</p>
@@ -222,10 +222,7 @@ export default function Home() {
 
         <section className="founder" aria-labelledby="founder-title">
           <div className="contentShell founderGrid">
-            <div className="founderMark" aria-hidden="true">
-              <span className="founderInitials">HN</span>
-              <div className="founderMarkMeta"><span>FOUNDER</span><span>CONTENT</span><span>QA</span></div>
-            </div>
+            <div className="founderEmblem" aria-hidden="true"><Image src="/GhoulHouse_Mark_Color_256px.png" alt="" width={256} height={256} loading="lazy" /></div>
             <div className="founderCopy">
               <p className="kicker">06 / TEKIJÄ</p>
               <h2 id="founder-title">HANNA NYHOLM.<br />SISÄLLÖN TAKANA.</h2>
@@ -260,9 +257,9 @@ export default function Home() {
             <div className="contactCopy">
               <p className="kicker">08 / ALOITA</p>
               <h2 id="contact-title">NÄE OMA TYÖSI<br />VALMIINA JULKAISUNA.</h2>
-              <p>Saat kaksi maksutonta sisältöesimerkkiä yrityksesi nykyisestä materiaalista. Näet ensin lopputuloksen suunnan. Päätät vasta sen jälkeen jatkosta.</p>
+              <p>Saat kolme maksutonta sisältöesimerkkiä yrityksesi nykyisestä materiaalista. Näet ensin lopputuloksen suunnan. Päätät vasta sen jälkeen jatkosta.</p>
               <div className="contactMeta">
-                <span>2 konseptiesimerkkiä</span><span>0 €</span><span>Ei sitoumusta</span>
+                <span>3 konseptiesimerkkiä</span><span>0 €</span><span>Ei sitoumusta</span>
               </div>
             </div>
             <div className="formSurface">
@@ -272,10 +269,10 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="siteFooter">
+      <footer className="siteFooter siteFooter--homeV2">
         <div className="contentShell footerGrid">
           <div className="footerColumn">
-            <p className="footerLabel">GhoulHouse</p>
+            <a className="footerBrand" href="#top" aria-label="GhoulHouse — takaisin sivun alkuun"><Image src="/GhoulHouse_Mark_Reverse_Color_128px.png" alt="" width={44} height={44}/><span>GhoulHouse</span></a>
             <p className="footerTagline">Työmaakuvat sisään. Valmis some ulos.</p>
           </div>
           <div className="footerColumn">
