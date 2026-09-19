@@ -173,6 +173,7 @@ try {
         heroCtaHref: heroCta?.getAttribute('href') || '',
         heroCtaRect: rect(heroCta),
         priceRect: rect(price),
+        consentRect: rect(document.querySelector('.analyticsConsent')),
         h1Rect: rect(h1),
         brandRect: rect(brandLink),
         formExists: Boolean(form),
@@ -223,6 +224,11 @@ try {
       assert(value.left >= -1 && value.right <= metrics.innerWidth + 1, `${viewport.width}x${viewport.height}: ${name} overflows horizontally.`);
     }
 
+    if (viewport.width === 390 || viewport.width === 430) {
+      const a = metrics.heroCtaRect, b = metrics.consentRect;
+      const covered = b && a && a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+      assert(!covered, `${viewport.width}px: consent banner visually covers the primary hero CTA.`);
+    }
     if (viewport.firstView) {
       assert(metrics.heroCtaRect.bottom <= metrics.innerHeight, `${viewport.width}x${viewport.height}: primary CTA below first viewport.`);
       assert(metrics.priceRect.bottom <= metrics.innerHeight, `${viewport.width}x${viewport.height}: price below first viewport.`);
