@@ -228,6 +228,12 @@ jobs:
       - name: Browser QA
         run: node scripts/browser-qa-ci.mjs
 
+      - name: Live production full-page audit
+        env:
+          QA_BASE_URL: https://ghoulhouse.fi
+          QA_SCREENSHOT_DIR: qa-artifacts
+        run: node scripts/browser-qa-ci.mjs
+
       - name: Launch visual and accessibility QA
         run: node scripts/launch-visual-a11y-qa.mjs
 
