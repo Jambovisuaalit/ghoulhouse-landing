@@ -1363,3 +1363,10 @@ body:has(.homePage) .analyticsSettings {
     .ghForm, .ghForm input, .ghForm select, .ghForm textarea,
     .ghForm button, .ghConsentSlot) { scroll-margin-top: 92px; }
 }
+
+/* Source-level 390px overflow fix: the four process steps must not retain
+   the two-column tablet grid on narrow screens. */
+@media (max-width: 767px) {
+  .homePage .ghSteps { grid-template-columns: minmax(0, 1fr); }
+  .homePage .ghSteps li { min-width: 0; }
+}
