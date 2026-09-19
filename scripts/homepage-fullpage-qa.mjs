@@ -195,12 +195,15 @@ try {
   const routeList=await browser.eval('([...new Set([...document.querySelectorAll(".homePage a[href]")].map(a=>a.getAttribute("href")).filter(h=>h&&h.startsWith("/")).map(h=>new URL(h,location.origin).pathname))])');
   // Include first-party CSS, JS, favicon, manifest and touch icon in the URL gate.
   const assetPaths=await browser.eval('([...new Set([...document.querySelectorAll(\'link[href^="/"],script[src^="/" ]\')].map(el=>el.getAttribute("href")||el.getAttribute("src")).filter(Boolean).map(x=>new URL(x,location.origin).pathname))].filter(x=>x.startsWith("/_next/static/")||x==="/favicon.svg"||x==="/manifest.webmanifest"||x==="/apple-touch-icon-180.png").slice(0,8))');
-  const checked=[...new Set([...routeList,...assetPaths])];
+  const extraPages=['/some-sisallontuotanto/hinta','/lvi-yrityksille','/saneerausyrityksille','/some-12','/verkkosivut/lvi'];
+  const pageRoutes=[...new Set([...routeList,...extraPages])];
+  if(pageRoutes.length<15)report.errors.push('Fewer than 15 internal HTML page paths checked');
+  const checked=[...new Set([...pageRoutes,...assetPaths])];
   for(const pathname of checked) {
     const response=await fetch(new URL(pathname,BASE_URL),{redirect:'follow'});
     report.routes.push({pathname,status:response.status,ok:response.ok});
   }
-  if(report.routes.length<15)report.errors.push('Fewer than 15 internal links/assets checked');
+  if(report.routes.filter(x=>pageRoutes.includes(x.pathname)).length<15)report.errors.push('Fewer than 15 HTML page routes checked');
   if(report.routes.some(x=>!x.ok))report.errors.push('Internal destination HTTP failure');
   if(report.results.some(x=>x.errors.length))report.errors.push('At least one viewport failed');
   console.log('INTERNAL DESTINATIONS '+JSON.stringify(report.routes));
