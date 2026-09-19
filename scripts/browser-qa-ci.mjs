@@ -180,7 +180,11 @@ try {
         submitRect: rect(submit),
         requiredFields: ['company','name','email','profile'].every((name) => Boolean(form?.querySelector('[name="' + name + '"][required]'))),
         proofExists: Boolean(proof),
-        serviceLinks: ['/verkkosivut-yritykselle','/some-sisallontuotanto','/resurssit'].every((href) => document.querySelector('.ghServiceCard a[href="' + href + '"]')),\n        serviceCards: document.querySelectorAll('.ghServiceCard').length,\n        resourceLinks: document.querySelectorAll('.ghGuideRow').length,\n        proposalIntent: form?.querySelector('[name="intent"]')?.value === 'booking',\n        schemaTypes: [...document.querySelectorAll('script[type="application/ld+json"]')].map((script) => script.textContent || '').join(' '),
+        serviceLinks: ['/verkkosivut-yritykselle','/some-sisallontuotanto','/resurssit'].every((href) => document.querySelector('.ghServiceCard a[href="' + href + '"]')),
+        serviceCards: document.querySelectorAll('.ghServiceCard').length,
+        resourceLinks: document.querySelectorAll('.ghGuideRow').length,
+        proposalIntent: form?.querySelector('[name="intent"]')?.value === 'booking',
+        schemaTypes: [...document.querySelectorAll('script[type="application/ld+json"]')].map((script) => script.textContent || '').join(' '),
         logoLoaded: document.querySelector('header .ghBrand img')?.getAttribute('src') === '/favicon.svg',
         disclosure: /Oma sivusto — ei asiakasreferenssi/i.test(document.body.innerText),
         bodyText: document.body.innerText.replace(/\\s+/g, ' ').trim(),
@@ -204,12 +208,14 @@ try {
     assert(metrics.h1Text.includes('HYVÄ TYÖ') && metrics.h1Text.includes('PITÄÄ NÄKYÄ'), `${viewport.width}x${viewport.height}: H1 copy changed unexpectedly.`);
     assert(metrics.heroCtaHref === '#yhteys', `${viewport.width}x${viewport.height}: primary CTA must target #yhteys.`);
     assert(/pyydä ehdotus/i.test(metrics.heroCtaText), `${viewport.width}x${viewport.height}: company CTA missing.`);
-    assert(metrics.serviceLinks && metrics.serviceCards === 3, `${viewport.width}x${viewport.height}: three service links missing.`);\n    assert(metrics.resourceLinks === 3 && metrics.proposalIntent, `${viewport.width}x${viewport.height}: resources or general proposal intent missing.`);
+    assert(metrics.serviceLinks && metrics.serviceCards === 3, `${viewport.width}x${viewport.height}: three service links missing.`);
+    assert(metrics.resourceLinks === 3 && metrics.proposalIntent, `${viewport.width}x${viewport.height}: resources or general proposal intent missing.`);
     assert(metrics.formExists && metrics.formMethod === 'post' && metrics.formAction === '/api/leads', `${viewport.width}x${viewport.height}: native lead form contract missing.`);
     assert(metrics.requiredFields, `${viewport.width}x${viewport.height}: required lead fields missing.`);
     assert(metrics.submitRect?.height >= 44, `${viewport.width}x${viewport.height}: submit target below 44px.`);
     assert(metrics.proofExists && metrics.logoLoaded, `${viewport.width}x${viewport.height}: company proof or logo missing.`);
-    assert(metrics.disclosure, `${viewport.width}x${viewport.height}: honest own-work disclosure missing.`);\n    assert(!metrics.schemaTypes.includes('some-12-service') && !metrics.schemaTypes.includes('some-12-offer'), `${viewport.width}x${viewport.height}: product-specific schema remains on homepage.`);
+    assert(metrics.disclosure, `${viewport.width}x${viewport.height}: honest own-work disclosure missing.`);
+    assert(!metrics.schemaTypes.includes('some-12-service') && !metrics.schemaTypes.includes('some-12-offer'), `${viewport.width}x${viewport.height}: product-specific schema remains on homepage.`);
     assert(metrics.viewportMeta.includes('viewport-fit=cover'), `${viewport.width}x${viewport.height}: viewport-fit=cover missing.`);
     assert(metrics.bodyOverflowX === 'clip' || metrics.bodyOverflowX === 'hidden', `${viewport.width}x${viewport.height}: horizontal overflow suppression missing.`);
     assert(metrics.scrollWidth <= metrics.innerWidth + 1, `${viewport.width}x${viewport.height}: horizontal overflow ${metrics.scrollWidth}px > ${metrics.innerWidth}px.`);
