@@ -213,7 +213,7 @@ try {
     assert(metrics.viewportMeta.includes('viewport-fit=cover'), `${viewport.width}x${viewport.height}: viewport-fit=cover missing.`);
     assert(metrics.bodyOverflowX === 'clip' || metrics.bodyOverflowX === 'hidden', `${viewport.width}x${viewport.height}: horizontal overflow suppression missing.`);
     assert(metrics.scrollWidth <= metrics.innerWidth + 1, `${viewport.width}x${viewport.height}: horizontal overflow ${metrics.scrollWidth}px > ${metrics.innerWidth}px.`);
-    assert(metrics.colors.ink === '#111111' && metrics.colors.paper === '#F7F4EF' && metrics.colors.signal.toUpperCase() === '#C83830' && metrics.colors.white === '#FFFFFF' && metrics.colors.muted === '#8C8278', `${viewport.width}x${viewport.height}: core brand primitives do not match.`);
+    assert(metrics.colors.ink === '#111111' && metrics.colors.paper === '#F7F4EF' && metrics.colors.signal.toUpperCase() === '#C9282D' && metrics.colors.white === '#FFFFFF' && metrics.colors.muted === '#8C8278', `${viewport.width}x${viewport.height}: core brand primitives do not match.`);
     assert(!metrics.bodyText.includes('790 €') && !metrics.bodyText.includes('MANAGED'), `${viewport.width}x${viewport.height}: obsolete offer copy reappeared.`);
 
     for (const [name, value] of [['brand', metrics.brandRect], ['headline', metrics.h1Rect], ['hero CTA', metrics.heroCtaRect], ['price', metrics.priceRect]]) {
