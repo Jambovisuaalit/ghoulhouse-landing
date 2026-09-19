@@ -297,7 +297,111 @@ try {
   assert(reducedMotion.proof && reducedMotion.form, 'Reduced motion removed critical content.');
   assert(pageExceptions.length === 0, `Page exceptions: ${pageExceptions.join(' | ')}`);
 
-  const payload = { chromePath, results, interaction, reducedMotion };
+
+  // Audit the *live* production homepage across the entire scroll height; do not submit a lead.
+  const fullPageResults = [];
+  async function liveFullPageScan() {
+    const rect = (el) => {
+      if (!el) return null;
+      const r = el.getBoundingClientRect();
+      return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height};
+    };
+    const intersects = (a,b) => Boolean(a && b && Math.min(a.right,b.right)>Math.max(a.left,b.left)+2 && Math.min(a.bottom,b.bottom)>Math.max(a.top,b.top)+2);
+    const issues = [];
+    const sectionList = [...document.querySelectorAll('main>section,footer')];
+    const sectionRects = sectionList.map(s => ({name:s.id||s.className,rect:rect(s)}));
+    for(let i=1;i<sectionRects.length;i++) {
+      if(sectionRects[i-1].rect.bottom>sectionRects[i].rect.top+3)issues.push('Major sections overlap: '+sectionRects[i-1].name+'/'+sectionRects[i].name);
+    }
+    const outside = [...document.querySelectorAll('main>section,header,footer,.ghServiceCard,.ghSelectedCase,.ghEditorialCard,.ghGuideRow,.ghContactGrid,.ghForm,.ghSelectedScreenshot')]
+      .filter(el=>{const r=rect(el);return r && r.width>0 && (r.left < -1 || r.right > innerWidth+1)})
+      .map(el=>({selector:el.id||el.className||el.tagName,rect:rect(el)}));
+    if(outside.length)issues.push('Element outside viewport: '+JSON.stringify(outside));
+    for(const card of document.querySelectorAll('.ghServiceCard')){
+      const h=rect(card.querySelector('h3')),a=rect(card.querySelector('a.ghTextLink'));
+      if(intersects(h,a))issues.push('Service title overlaps its link: '+card.querySelector('h3')?.textContent);
+    }
+    const firstHeroCTA=rect(document.querySelector('#top .ghHeroActions a.ghButton'));
+    const consentEl=document.querySelector('.analyticsConsent'),consent=rect(consentEl);
+    const buttons=consentEl?[...consentEl.querySelectorAll('button')]:[];
+    if(consentEl){
+      if(consent.left < -1 || consent.right > innerWidth+1)issues.push('Consent overflows horizontally');
+      if(intersects(firstHeroCTA,consent))issues.push('Consent overlays first-viewport hero CTA');
+      if(buttons.length!==2||intersects(rect(buttons[0]),rect(buttons[1])))issues.push('Consent actions overlap/missing');
+      for(const b of buttons){const a=rect(b),hit=document.elementFromPoint((a.left+a.right)/2,(a.top+a.bottom)/2);if(!b.contains(hit))issues.push('Consent action blocked: '+b.textContent.trim())}
+    }else issues.push('Fresh-visitor consent not present');
+    const scan=[];
+    const selected=['#top .ghHeroActions a.ghButton','.ghServiceCard a.ghTextLink','.ghSelectedCase','.ghEditorialCard','.ghGuideRow','.ghSectionLink','#yhteys button[type="submit"]'];
+    const links=selected.flatMap(s=>[...document.querySelectorAll(s)]);
+    const pageH=document.documentElement.scrollHeight;
+    for(let y=0;y<=pageH-innerHeight;y+=Math.max(200,Math.floor(innerHeight*.72))){
+      window.scrollTo(0,y);await new Promise(r=>setTimeout(r,30));
+      if(document.documentElement.scrollWidth>innerWidth+1 || document.body.scrollWidth>innerWidth+1) issues.push('Horizontal scroll after scrolling to y='+y);
+      for(const link of links){
+        const a=rect(link);
+        if(!a || a.height<1 || a.width<1 || a.top<8 || a.bottom>innerHeight-8)continue;
+        const x=(a.left+a.right)/2, yy=(a.top+a.bottom)/2,top=document.elementFromPoint(x,yy);
+        if(!link.contains(top)){const finding={selector:link.className||link.tagName,label:link.textContent?.trim().slice(0,70),scroll:y,rect:a,obscuredBy:top?.className||top?.tagName||'none'};scan.push(finding);issues.push('Visible CTA blocked: '+JSON.stringify(finding))}
+      }
+    }
+    for(const link of links){
+      link.scrollIntoView({behavior:'instant',block:'center'});await new Promise(r=>setTimeout(r,35));
+      const a=rect(link),top=a&&document.elementFromPoint((a.left+a.right)/2,(a.top+a.bottom)/2);
+      if(!a || !link.contains(top))issues.push('Centered CTA blocked: '+link.textContent?.trim().slice(0,70));
+    }
+    const menu=document.querySelector('.ghMobileNav');
+    const mobile=getComputedStyle(menu).display!=='none';
+    const navResult={mobile};
+    if(mobile){
+      menu.querySelector('summary')?.click();
+      navResult.open=menu.open;
+      navResult.links=[...menu.querySelectorAll('nav a')].map(a=>{
+        const r=rect(a),top=r&&document.elementFromPoint((r.left+r.right)/2,(r.top+r.bottom)/2);
+        return {href:a.getAttribute('href'),width:r?.width,within:!!r&&r.left>=-1&&r.right<=innerWidth+1,hittable:!!r&&a.contains(top)};
+      });
+      if(!menu.open||navResult.links.some(x=>!x.width||!x.within||!x.hittable))issues.push('Mobile menu/links: '+JSON.stringify(navResult));
+      menu.querySelector('summary')?.click();
+    }
+    document.querySelector('.ghSelectedScreenshot')?.scrollIntoView({behavior:'instant',block:'center'});
+    await new Promise(r=>setTimeout(r,260));
+    const proof=document.querySelector('.ghSelectedScreenshot');
+    if(!proof?.complete || !proof.naturalWidth)issues.push('Published proof image missing');
+    const form=document.querySelector('#yhteys form[action="/api/leads"]');
+    if(!form || !form.querySelector('button[type="submit"]') || !['name','company','email','profile','service'].every(n=>form.querySelector('[name="'+n+'"]'))) issues.push('Company proposal form fields missing');
+    const reject=document.querySelector('.analyticsConsent__reject');reject?.click();
+    await new Promise(r=>setTimeout(r,120));
+    const rejected=localStorage.getItem('ghoulhouse_analytics_consent')==='rejected' && !document.querySelector('.analyticsConsent') && !!document.querySelector('.analyticsSettings');
+    if(!rejected)issues.push('Consent reject/settings state failed');
+    return {width:innerWidth,height:innerHeight,documentHeight:pageH,scrollWidth:document.documentElement.scrollWidth,sectionCount:sectionList.length,serviceCards:document.querySelectorAll('.ghServiceCard').length,linkTargetsScanned:links.length,visibleCTAObstructions:scan,consentVisible:!!consentEl,consentRect:consent,firstHeroCTA,navResult,rejected,proofLoaded:!!proof?.naturalWidth,issues};
+  }
+  const qaWidths=[{width:320,height:568},{width:390,height:844},{width:768,height:1024},{width:1440,height:900}];
+  for(const vp of qaWidths) {
+    await client.send('Emulation.setDeviceMetricsOverride',{width:vp.width,height:vp.height,deviceScaleFactor:1,mobile:vp.width<768});
+    // Isolated clean consent state on each fresh-visitor viewport.
+    await client.send('Page.navigate',{url:BASE_URL+'/?fullpageqa='+vp.width});
+    await waitForDocument(client);
+    await evaluate(client,'localStorage.removeItem("ghoulhouse_analytics_consent")');
+    await client.send('Page.reload',{ignoreCache:true});
+    await waitForDocument(client);await sleep(600);
+    const full=await evaluate(client,'('+liveFullPageScan.toString()+')()');
+    const metrics=await client.send('Page.getLayoutMetrics');
+    const pageHeight=Math.ceil(metrics.cssContentSize?.height||full.documentHeight);
+    const screenshot=await client.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true,clip:{x:0,y:0,width:vp.width,height:Math.min(pageHeight,16000),scale:1}});
+    await writeFile(SCREENSHOT_DIR+'/fullpage-production-'+vp.width+'x'+vp.height+'.png',Buffer.from(screenshot.data,'base64'));
+    fullPageResults.push({viewport:vp.width+'x'+vp.height,...full});
+    console.log('LIVE FULL PAGE '+vp.width+'x'+vp.height+' '+JSON.stringify({documentHeight:full.documentHeight,scrollWidth:full.scrollWidth,consent:full.consentVisible,proofLoaded:full.proofLoaded,serviceCards:full.serviceCards,linkTargetsScanned:full.linkTargetsScanned,issues:full.issues}));
+  }
+  // Check every internal homepage destination without submitting the form.
+  const homeHtml=await fetch(BASE_URL).then(r=>r.text());
+  const routeList=[...new Set([...homeHtml.matchAll(/href="(\/[^"#?]*)/g)].map(m=>m[1]))].filter(x=>x!=='/'&&x!=='/api/leads');
+  const internalRoutes=[];
+  for(const path of routeList){const r=await fetch(new URL(path,BASE_URL),{redirect:'follow'});internalRoutes.push({path,status:r.status,ok:r.ok})}
+  console.log('LIVE HOMEPAGE INTERNAL LINKS '+JSON.stringify(internalRoutes));
+  await writeFile(SCREENSHOT_DIR+'/fullpage-production-results.json',JSON.stringify({base:BASE_URL,results:fullPageResults,internalRoutes},null,2));
+  assert(fullPageResults.every(r=>r.issues.length===0),'Live full-page QA failed: '+JSON.stringify(fullPageResults.filter(r=>r.issues.length).map(r=>({viewport:r.viewport,issues:r.issues}))));
+  assert(internalRoutes.every(r=>r.ok),'Live internal link check failed: '+JSON.stringify(internalRoutes.filter(r=>!r.ok)));
+
+  const payload = { chromePath, results, interaction, reducedMotion, fullPageResults };
   await writeFile(`${SCREENSHOT_DIR}/results.json`, JSON.stringify(payload, null, 2));
   console.log(JSON.stringify(payload, null, 2));
 } finally {
