@@ -1234,7 +1234,7 @@ body:has(.homePage) .analyticsSettings {
 }
 
 /* Published own-site proof. The image is captured from ghoulhouse.fi and not a client case. */
-.homePage .ghSelectedCaseDisplay { display:block; flex:1; min-height:0; padding:24px 0; overflow:hidden; }
+.homePage .ghSelectedCaseDisplay { display:block; flex:0 0 auto; aspect-ratio:2/1; min-height:0; padding:0; overflow:hidden; }
 .homePage .ghSelectedCaseDisplay .ghSelectedScreenshot { display:block; width:100%; height:auto; aspect-ratio:16/10; object-fit:cover; object-position:top; border:1px solid #ffffff40; background:#f7f4ef; }
 .homePage .ghSelectedCase { cursor:pointer; }
 .homePage .ghServerFormError { border:2px solid #f7f4ef; padding:16px 20px; margin-bottom:20px; background:#342725; color:#fff; }
