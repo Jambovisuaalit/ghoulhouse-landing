@@ -144,7 +144,7 @@ export default function LeadForm() {
 
         <input className="trap" name="fax" tabIndex={-1} autoComplete="off" aria-hidden="true" />
         <button className="button button--signal formSubmit" type="submit" disabled={submitting}>
-          {submitting ? 'LÄHETETÄÄN…' : 'PYYDÄ 2 SISÄLTÖESIMERKKIÄ'} <span aria-hidden="true">→</span>
+          {submitting ? 'LÄHETETÄÄN…' : 'PYYDÄ 3 SISÄLTÖESIMERKKIÄ'} <span aria-hidden="true">→</span>
         </button>
         <p className="formMicrocopy">Ei myyntipalaveripakkoa. Katsomme ensin, mitä nykyisestä materiaalistanne voidaan tehdä.</p>
         <p className="formNote">Tietoja käytetään vain yhteydenoton käsittelyyn. <a href="/tietosuoja">Tietosuojaseloste</a>.</p>
