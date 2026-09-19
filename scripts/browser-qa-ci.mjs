@@ -215,7 +215,7 @@ try {
     assert(metrics.formExists && metrics.formMethod === 'post' && metrics.formAction === '/api/leads', `${viewport.width}x${viewport.height}: native lead form contract missing.`);
     assert(metrics.requiredFields, `${viewport.width}x${viewport.height}: required lead fields missing.`);
     assert(metrics.submitRect?.height >= 44, `${viewport.width}x${viewport.height}: submit target below 44px.`);
-    assert(metrics.proofExists && metrics.logoLoaded && metrics.proofImageLoaded, `${viewport.width}x${viewport.height}: actual published-site screenshot or logo missing.`);
+    assert(metrics.proofExists && metrics.logoLoaded, `${viewport.width}x${viewport.height}: company proof or logo missing.`);
     assert(metrics.seoSelected, `${viewport.width}x${viewport.height}: service-interest selector missing.`);
     assert(metrics.disclosure, `${viewport.width}x${viewport.height}: honest own-work disclosure missing.`);
     assert(!metrics.schemaTypes.includes('some-12-service') && !metrics.schemaTypes.includes('some-12-offer'), `${viewport.width}x${viewport.height}: product-specific schema remains on homepage.`);
@@ -246,6 +246,15 @@ try {
     await client.send('Page.navigate', { url: BASE_URL });
     await waitForDocument(client);
     await evaluate(client, 'document.querySelector("#esimerkit")?.scrollIntoView({behavior:"instant",block:"start"})');
+    const proofImageLoaded = await evaluate(client, `new Promise((resolve) => {
+      const img = document.querySelector('.ghSelectedScreenshot');
+      if (!img) return resolve(false);
+      if (img.complete) return resolve(img.naturalWidth > 100);
+      img.addEventListener('load', () => resolve(img.naturalWidth > 100), { once:true });
+      img.addEventListener('error', () => resolve(false), { once:true });
+      setTimeout(() => resolve(false), 10000);
+    })`);
+    assert(proofImageLoaded, `${viewport.width}x${viewport.height}: published-site proof image failed after scrolling into view.`);
     await sleep(180);
     const image = await client.send('Page.captureScreenshot', { format:'png', captureBeyondViewport:false });
     await writeFile(`${SCREENSHOT_DIR}/proof-${viewport.width}x${viewport.height}.png`, Buffer.from(image.data,'base64'));
