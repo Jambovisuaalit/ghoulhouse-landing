@@ -19,9 +19,9 @@ const montserrat = Montserrat({
   display: 'swap',
 });
 
-const title = 'Some-sisällöntuotanto remontti- ja LVI-yrityksille | GhoulHouse';
+const title = 'GhoulHouse | Verkkosivut, Social & SEO palveluyrityksille';
 const description =
-  'GhoulHouse tekee työmaa- ja referenssikuvista 12 valmista Instagram- ja Facebook-sisältöä 30 päivässä. Remontti- ja LVI-yrityksille. 490 € + ALV.';
+  'GhoulHouse toteuttaa verkkosivut, sosiaalisen median sisällöt ja hakukonenäkyvyyden suomalaisille palveluyrityksille selkeästi tuotteistettuna.';
 const indexable = process.env.VERCEL_ENV === 'production';
 
 export const metadata: Metadata = {
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
         url: '/opengraph-image',
         width: 1200,
         height: 630,
-        alt: 'GhoulHouse — Työmaakuvat sisään. Valmis some ulos.',
+        alt: 'GhoulHouse — Hyvä työ pitää näkyä. Verkkosivut, Social & SEO.',
       },
     ],
   },
@@ -107,25 +107,6 @@ const structuredData = {
       name: siteConfig.company.founder,
       worksFor: { '@id': 'https://ghoulhouse.fi/#organization' },
       sameAs: socialProfiles,
-    },
-    {
-      '@type': 'Service',
-      '@id': 'https://ghoulhouse.fi/#some-12-service',
-      name: 'GhoulHouse SOME 12',
-      provider: { '@id': 'https://ghoulhouse.fi/#organization' },
-      serviceType: 'Some-sisällöntuotanto',
-      areaServed: { '@type': 'Country', name: 'Finland' },
-      offers: { '@id': 'https://ghoulhouse.fi/#some-12-offer' },
-    },
-    {
-      '@type': 'Offer',
-      '@id': 'https://ghoulhouse.fi/#some-12-offer',
-      name: 'GhoulHouse SOME 12',
-      price: '490',
-      priceCurrency: 'EUR',
-      description: '12 some-sisältöä 30 päivässä. Hinta 490 € + ALV.',
-      url: 'https://ghoulhouse.fi/some-12',
-      itemOffered: { '@id': 'https://ghoulhouse.fi/#some-12-service' },
     },
   ],
 };
