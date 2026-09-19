@@ -201,9 +201,10 @@ try {
 
     assert(metrics.h1Count === 1, `${viewport.width}x${viewport.height}: expected exactly one H1.`);
     assert(metrics.brandHeadlineText.includes('TYÖMAAKUVAT') && metrics.brandHeadlineText.includes('SISÄÄN.') && metrics.brandHeadlineText.includes('VALMIS SOME') && metrics.brandHeadlineText.includes('ULOS.'), `${viewport.width}x${viewport.height}: brand headline missing.`);
-    assert(metrics.h1Text === 'Työmaakuvista valmis some remontti- ja LVI-yrityksille.', `${viewport.width}x${viewport.height}: H1 copy changed unexpectedly.`);
+    assert(metrics.h1Text.includes('TYÖMAAKUVAT') && metrics.h1Text.includes('VALMIS SOME'), `${viewport.width}x${viewport.height}: semantic H1 must contain the brand headline.`);
+    assert(metrics.bodyText.includes('Työmaakuvista valmis some remontti- ja LVI-yrityksille.'), `${viewport.width}x${viewport.height}: SEO supporting headline missing.`);
     assert(metrics.heroCtaHref === '#yhteys', `${viewport.width}x${viewport.height}: primary CTA must target #yhteys.`);
-    assert(metrics.heroCtaText.includes('2 SISÄLTÖESIMERKKIÄ'), `${viewport.width}x${viewport.height}: primary CTA copy missing.`);
+    assert(metrics.heroCtaText.includes('3 SISÄLTÖESIMERKKIÄ'), `${viewport.width}x${viewport.height}: primary CTA copy missing.`);
     assert(metrics.priceRect, `${viewport.width}x${viewport.height}: 490 € price missing.`);
     assert(metrics.formExists && metrics.formMethod === 'post' && metrics.formAction === '/api/leads', `${viewport.width}x${viewport.height}: native lead form contract missing.`);
     assert(metrics.requiredFields, `${viewport.width}x${viewport.height}: required lead fields missing.`);
