@@ -49,7 +49,7 @@ export default function Home() {
 
       <header className="siteHeader siteHeader--homeV2">
         <div className="outerShell headerGrid">
-          <a className="brandIdentity" href="#top" aria-label="GhoulHouse — sivun alku"><Image src="/GhoulHouse_Mark_Color_128px.png" alt="" width={42} height={42} priority /><span>GhoulHouse</span></a>
+          <a className="brandIdentity" href="#top" aria-label="GhoulHouse — sivun alku"><Image src="/favicon.svg" alt="" width={42} height={42} priority /><span>GhoulHouse</span></a>
           <nav className="desktopNav" aria-label="Päänavigaatio">
             <a href="/some-sisallontuotanto">Some</a>
             <a href="/verkkosivut-yritykselle">Verkkosivut</a>
