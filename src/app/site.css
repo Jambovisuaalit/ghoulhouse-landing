@@ -229,3 +229,14 @@
  body:has(.homeV2) .analyticsConsent__actions{max-width:none;gap:8px}
  body:has(.homeV2) .analyticsConsent__actions .button{min-width:0;flex:1 1 0;font-size:12px}
 }
+
+
+/* Process rows: keep title and copy distinct at intermediate widths. */
+@media (min-width:768px) and (max-width:1279px){
+ .homeV2 .stepList li{grid-template-columns:42px minmax(0,1fr);gap:10px 16px}
+ .homeV2 .stepList li p{grid-column:2}
+}
+@media (min-width:1280px){
+ .homeV2 .stepList li{grid-template-columns:42px minmax(220px,.58fr) minmax(0,1fr)}
+ .homeV2 .stepList li h3{font-size:26px;line-height:1.2}
+}
