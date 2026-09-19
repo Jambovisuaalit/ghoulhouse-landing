@@ -9,6 +9,7 @@ const USER_DATA_DIR = `/tmp/ghoulhouse-browser-qa-${process.pid}`;
 const viewports = [
   { width: 320, height: 568 },
   { width: 390, height: 844, firstView: true },
+  { width: 430, height: 932 },
   { width: 640, height: 900 },
   { width: 768, height: 1024 },
   { width: 1024, height: 768 },
