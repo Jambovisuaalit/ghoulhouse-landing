@@ -33,7 +33,7 @@ assert(/<h1\b[^>]*>[\s\S]*?<\/h1>/i.test(html), 'No-JS QA: H1 is missing.');
 assert(html.includes('TYÖMAAKUVAT') && html.includes('VALMIS SOME') && html.includes('ULOS.'), 'No-JS QA: canonical headline is missing.');
 assert(html.includes('490 €'), 'No-JS QA: 490 € price is missing.');
 assert(/<a\b[^>]*href=["']#yhteys["'][^>]*>/i.test(html), 'No-JS QA: #yhteys CTA anchor is missing.');
-assert(html.includes('2 SISÄLTÖESIMERKKIÄ') || html.includes('2 ESIMERKKIÄ'), 'No-JS QA: primary CTA copy is missing.');
+assert(html.includes('3 SISÄLTÖESIMERKKIÄ') || html.includes('3 ESIMERKKIÄ'), 'No-JS QA: primary CTA copy is missing.');
 assert(
   /<form\b[^>]*method=["']POST["'][^>]*action=["']\/api\/leads["'][^>]*>/i.test(html) ||
   /<form\b[^>]*action=["']\/api\/leads["'][^>]*method=["']POST["'][^>]*>/i.test(html),
