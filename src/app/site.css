@@ -172,7 +172,7 @@
  .homeV2 .proofTile{min-height:130px}
  .homeV2 .process{padding:128px 0 144px}
  .homeV2 .processGrid{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(48px,6vw,88px)}
- .homeV2 .stepList li{grid-template-columns:42px 130px minmax(0,1fr);gap:16px;padding:28px 0}
+ .homeV2 .stepList li{grid-template-columns:42px minmax(188px,.58fr) minmax(0,1fr);gap:16px;padding:28px 0;align-items:start}.homeV2 .stepList li h3{min-width:0;overflow-wrap:normal}.homeV2 .stepList li p{min-width:0}
  .homeV2 .stepList li p{grid-column:3}
  .homeV2 .offer{padding:128px 0 144px}
  .homeV2 .offerGrid{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(48px,6vw,88px)}
