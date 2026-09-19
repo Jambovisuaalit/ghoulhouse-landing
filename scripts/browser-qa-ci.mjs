@@ -229,6 +229,32 @@ try {
 
     const screenshot = await client.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
     await writeFile(`${SCREENSHOT_DIR}/homepage-${viewport.width}x${viewport.height}.png`, Buffer.from(screenshot.data, 'base64'));
+    // The first screenshot records the real consent prompt. Capture the approved
+    // no-analytics state separately so the actual page art direction can be QA'd.
+    const dismissed = await evaluate(client, `(() => {
+      const reject = document.querySelector('.analyticsConsent__reject');
+      if (reject) reject.click();
+      return Boolean(reject) || localStorage.getItem('ghoulhouse_analytics_consent') === 'rejected';
+    })()`);
+    assert(dismissed, `${viewport.width}px: consent rejection could not be exercised.`);
+    await sleep(160);
+    const cleanUi = await evaluate(client, `(() => ({
+      stored: localStorage.getItem('ghoulhouse_analytics_consent'),
+      open: Boolean(document.querySelector('.analyticsConsent')),
+      height: Math.ceil(document.documentElement.scrollHeight)
+    }))()`);
+    assert(cleanUi.stored === 'rejected' && !cleanUi.open, `${viewport.width}px: consent rejection must hide the banner.`);
+    const cleanScreenshot = await client.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
+    await writeFile(`${SCREENSHOT_DIR}/homepage-clean-${viewport.width}x${viewport.height}.png`, Buffer.from(cleanScreenshot.data, 'base64'));
+    if (viewport.firstView) {
+      const fullScreenshot = await client.send('Page.captureScreenshot', {
+        format: 'png',
+        captureBeyondViewport: true,
+        clip: { x: 0, y: 0, width: viewport.width, height: Math.min(cleanUi.height, 15000), scale: 1 },
+      });
+      await writeFile(`${SCREENSHOT_DIR}/homepage-full-${viewport.width}x${viewport.height}.png`, Buffer.from(fullScreenshot.data, 'base64'));
+    }
+    await evaluate(client, `(() => { localStorage.removeItem('ghoulhouse_analytics_consent'); return true; })()`);
     results.push({ viewport: `${viewport.width}x${viewport.height}`, status: 'PASS' });
   }
 
