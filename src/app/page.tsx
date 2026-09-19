@@ -51,19 +51,19 @@ export default function Home() {
         <div className="outerShell headerGrid">
           <a className="brandText" href="#top" aria-label="GhoulHouse — sivun alku">GhoulHouse</a>
           <nav className="desktopNav" aria-label="Päänavigaatio">
-            <a href="#toiminta">Miten toimii</a>
-            <a href="#naytto">Näyttö</a>
-            <a href="#hinta">Hinta</a>
-            <a href="#ukk">UKK</a>
+            <a href="/some-sisallontuotanto">Some</a>
+            <a href="/verkkosivut-yritykselle">Verkkosivut</a>
+            <a href="/referenssit">Referenssit</a>
+            <a href="/resurssit">Resurssit</a>
           </nav>
           <a className="button button--signal headerAction" href="#yhteys">PYYDÄ 2 ESIMERKKIÄ</a>
           <details className="mobileNav">
             <summary>MENU</summary>
             <nav aria-label="Mobiilinavigaatio">
-              <a href="#toiminta">Miten toimii</a>
-              <a href="#naytto">Näyttö</a>
-              <a href="#hinta">Hinta</a>
-              <a href="#ukk">UKK</a>
+              <a href="/some-sisallontuotanto">Some</a>
+              <a href="/verkkosivut-yritykselle">Verkkosivut</a>
+              <a href="/referenssit">Referenssit</a>
+              <a href="/resurssit">Resurssit</a>
               <a href="#yhteys">Pyydä 2 esimerkkiä</a>
             </nav>
           </details>
@@ -287,7 +287,7 @@ export default function Home() {
           </div>
           <nav className="footerColumn" aria-label="Alatunnisteen navigaatio">
             <p className="footerLabel">Navigaatio</p>
-            <a href="#toiminta">Miten toimii</a><a href="#naytto">Näyttö</a><a href="#hinta">Hinta</a><a href="#yhteys">Yhteys</a><a href="/tietosuoja">Tietosuoja</a>
+            <a href="/some-sisallontuotanto">Some</a><a href="/verkkosivut-yritykselle">Verkkosivut</a><a href="/referenssit">Referenssit</a><a href="/resurssit">Resurssit</a><a href="/tietosuoja">Tietosuoja</a>
           </nav>
         </div>
         <div className="contentShell footerBottom"><span>© 2026 GhoulHouse Oy</span><span>DISTINCTIVE / CONTROLLED / FUNCTIONAL</span></div>

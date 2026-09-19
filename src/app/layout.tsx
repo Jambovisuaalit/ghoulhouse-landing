@@ -65,6 +65,13 @@ const structuredData = {
       url: 'https://ghoulhouse.fi',
       foundingDate: siteConfig.company.registrationDate,
       identifier: { '@type': 'PropertyValue', name: 'Y-tunnus', value: siteConfig.company.businessId },
+      logo: {
+        '@type': 'ImageObject',
+        '@id': 'https://ghoulhouse.fi/#logo',
+        url: 'https://ghoulhouse.fi/ghoulhouse-logo.svg',
+        width: 600,
+        height: 120,
+      },
       sameAs: socialProfiles,
     },
     {

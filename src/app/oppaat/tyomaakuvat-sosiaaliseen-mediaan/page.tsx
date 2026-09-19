@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Työmaakuvat sosiaaliseen mediaan — kuvausohje yritykselle | GhoulHouse',
+  title: 'Työmaakuvat someen – käytännön kuvausohje | GhoulHouse',
   description: 'Käytännön kuvausohje: miten työmaalta otetaan kuvia, joista voidaan rakentaa some- ja referenssisisältöä.',
   alternates: { canonical: '/oppaat/tyomaakuvat-sosiaaliseen-mediaan' },
   openGraph: { title: 'Työmaakuvat sosiaaliseen mediaan | GhoulHouse', description: 'Käytännön kuvausohje työmaakuvien hyödyntämiseen somessa.', url: '/oppaat/tyomaakuvat-sosiaaliseen-mediaan', type: 'article', images: [{ url: '/opengraph-image', width: 1200, height: 630 }] },
@@ -10,7 +10,19 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  const schema = { '@context':'https://schema.org', '@type':'Article', headline:'Työmaakuvat sosiaaliseen mediaan — kuvausohje yritykselle', description:metadata.description, url:'https://ghoulhouse.fi/oppaat/tyomaakuvat-sosiaaliseen-mediaan' };
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'Työmaakuvat someen – käytännön kuvausohje',
+    description: metadata.description,
+    url: 'https://ghoulhouse.fi/oppaat/tyomaakuvat-sosiaaliseen-mediaan',
+    mainEntityOfPage: 'https://ghoulhouse.fi/oppaat/tyomaakuvat-sosiaaliseen-mediaan',
+    image: 'https://ghoulhouse.fi/opengraph-image',
+    datePublished: '2026-09-18',
+    dateModified: '2026-09-19',
+    author: { '@id': 'https://ghoulhouse.fi/#organization' },
+    publisher: { '@id': 'https://ghoulhouse.fi/#organization' },
+  };
   return <main className="websitePage">
     <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}} />
     <section className="websiteHero"><div className="contentShell websiteHeroGrid"><div className="websiteHeroCopy">

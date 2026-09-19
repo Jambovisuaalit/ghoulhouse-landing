@@ -3,10 +3,10 @@ import Link from 'next/link';
 import { websiteResources } from '@/data/website';
 
 export const metadata: Metadata = {
-  title: 'Resurssit | GhoulHouse',
-  description: 'GhoulHousen verkkosivu- ja sisältöresurssit yrityksille.',
+  title: 'Yrityksen verkkosivut, some ja SEO – oppaat | GhoulHouse',
+  description: 'Käytännön oppaat yrityksen verkkosivuihin, some-sisältöihin ja digitaaliseen näkyvyyteen. Katso hinnat, ohjeet ja toimialakohtaiset resurssit.',
   alternates: { canonical: '/resurssit' },
-  openGraph: { title: 'Resurssit | GhoulHouse', description: 'GhoulHousen verkkosivu- ja sisältöresurssit yrityksille.', url: '/resurssit', type: 'website', images: [{ url: '/opengraph-image', width: 1200, height: 630 }] },
+  openGraph: { title: 'Yrityksen verkkosivut, some ja SEO – oppaat | GhoulHouse', description: 'Käytännön oppaat yrityksen verkkosivuihin, some-sisältöihin ja digitaaliseen näkyvyyteen.', url: '/resurssit', type: 'website', images: [{ url: '/opengraph-image', width: 1200, height: 630 }] },
   robots: process.env.VERCEL_ENV === 'production' ? { index: true, follow: true } : { index: false, follow: false, nocache: true },
 };
 

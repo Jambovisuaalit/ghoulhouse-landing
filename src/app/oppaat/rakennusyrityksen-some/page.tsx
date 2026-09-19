@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Rakennusyrityksen some: mitä työmaakuvista kannattaa julkaista? | GhoulHouse',
+  title: 'Rakennusyrityksen some – mitä julkaista? | GhoulHouse',
   description: 'Opas rakennusyritykselle: miten työmaa-, valmis kohde- ja prosessikuvista rakennetaan jatkuvaa some-sisältöä.',
   alternates: { canonical: '/oppaat/rakennusyrityksen-some' },
   openGraph: { title: 'Rakennusyrityksen some | GhoulHouse', description: 'Miten työmaakuvista rakennetaan jatkuvaa some-sisältöä.', url: '/oppaat/rakennusyrityksen-some', type: 'article', images: [{ url: '/opengraph-image', width: 1200, height: 630 }] },
@@ -10,7 +10,19 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  const schema = { '@context':'https://schema.org', '@type':'Article', headline:'Rakennusyrityksen some: mitä työmaakuvista kannattaa julkaista?', description:metadata.description, url:'https://ghoulhouse.fi/oppaat/rakennusyrityksen-some' };
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'Rakennusyrityksen some – mitä julkaista?',
+    description: metadata.description,
+    url: 'https://ghoulhouse.fi/oppaat/rakennusyrityksen-some',
+    mainEntityOfPage: 'https://ghoulhouse.fi/oppaat/rakennusyrityksen-some',
+    image: 'https://ghoulhouse.fi/opengraph-image',
+    datePublished: '2026-09-18',
+    dateModified: '2026-09-19',
+    author: { '@id': 'https://ghoulhouse.fi/#organization' },
+    publisher: { '@id': 'https://ghoulhouse.fi/#organization' },
+  };
   return <main className="websitePage">
     <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}} />
     <section className="websiteHero"><div className="contentShell websiteHeroGrid"><div className="websiteHeroCopy">

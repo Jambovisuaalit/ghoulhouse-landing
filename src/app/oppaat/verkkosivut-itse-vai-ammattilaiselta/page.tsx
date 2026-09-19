@@ -26,8 +26,11 @@ export default function Page() {
     '@type': 'Article',
     headline: 'Verkkosivut itse vai ammattilaiselta?',
     description: 'Käytännön tarkistuslista yrityksen verkkosivuprojektin päätökseen.',
-    author: { '@type': 'Organization', name: 'GhoulHouse' },
-    publisher: { '@type': 'Organization', name: 'GhoulHouse', url: 'https://ghoulhouse.fi' },
+    image: 'https://ghoulhouse.fi/opengraph-image',
+    datePublished: '2026-09-18',
+    dateModified: '2026-09-19',
+    author: { '@id': 'https://ghoulhouse.fi/#organization' },
+    publisher: { '@id': 'https://ghoulhouse.fi/#organization' },
     mainEntityOfPage: 'https://ghoulhouse.fi/oppaat/verkkosivut-itse-vai-ammattilaiselta',
   };
   return (
