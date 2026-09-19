@@ -240,6 +240,17 @@ try {
     results.push({ viewport: `${viewport.width}x${viewport.height}`, status: 'PASS' });
   }
 
+  // Capture proof section as well as the first view at all three approval widths.
+  for (const viewport of [viewports[1], viewports[3], viewports[6]]) {
+    await client.send('Emulation.setDeviceMetricsOverride', { width: viewport.width, height: viewport.height, deviceScaleFactor: 1, mobile: viewport.width < 768 });
+    await client.send('Page.navigate', { url: BASE_URL });
+    await waitForDocument(client);
+    await evaluate(client, 'document.querySelector("#esimerkit")?.scrollIntoView({behavior:"instant",block:"start"})');
+    await sleep(180);
+    const image = await client.send('Page.captureScreenshot', { format:'png', captureBeyondViewport:false });
+    await writeFile(`${SCREENSHOT_DIR}/proof-${viewport.width}x${viewport.height}.png`, Buffer.from(image.data,'base64'));
+  }
+
   await client.send('Page.navigate', { url: BASE_URL + '/?service=seo#yhteys' });
   await waitForDocument(client);
   assert(await evaluate(client, 'document.querySelector(\'#yhteys select[name="service"]\')?.value === "seo"'), 'SEO CTA failed to preselect the service in the proposal form.');
