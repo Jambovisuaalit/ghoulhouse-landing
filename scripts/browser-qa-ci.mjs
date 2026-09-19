@@ -156,14 +156,14 @@ try {
       };
       const hero = document.querySelector('#top');
       const h1 = hero?.querySelector('h1');
-      const brandHeadline = hero?.querySelector('.brandHeadline');
-      const heroCta = hero?.querySelector('a.button--signal[href="#yhteys"]');
+      const brandHeadline = h1;
+      const heroCta = hero?.querySelector('a.ghButton[href="#yhteys"]');
       const price = [...(hero?.querySelectorAll('*') || [])].find((el) => visible(el) && el.children.length === 0 && el.textContent?.includes('490 €'));
-      const brandLink = document.querySelector('header a[aria-label="GhoulHouse — sivun alku"]');
+      const brandLink = document.querySelector('header a.ghBrand');
       const form = document.querySelector('#yhteys form[action="/api/leads"]');
       const submit = form?.querySelector('button[type="submit"]');
-      const proof = document.querySelector('.proofStage');
-      const root = getComputedStyle(document.documentElement);
+      const proof = document.querySelector('.ghSelectedCase');
+      const root = getComputedStyle(document.querySelector('.homePage'));
       return {
         h1Count: document.querySelectorAll('h1').length,
         h1Text: h1?.textContent?.replace(/\\s+/g, ' ').trim() || '',
@@ -180,9 +180,13 @@ try {
         submitRect: rect(submit),
         requiredFields: ['company','name','email','profile'].every((name) => Boolean(form?.querySelector('[name="' + name + '"][required]'))),
         proofExists: Boolean(proof),
-        proofPanels: document.querySelectorAll('.proofFrame').length,
-        seamExists: Boolean(document.querySelector('.editSeam')),
-        disclosure: document.body.innerText.includes('KONSEPTIESIMERKKI — EI ASIAKASTYÖ'),
+        serviceLinks: ['/verkkosivut-yritykselle','/some-sisallontuotanto','/resurssit'].every((href) => document.querySelector('.ghServiceCard a[href="' + href + '"]')),
+        serviceCards: document.querySelectorAll('.ghServiceCard').length,
+        resourceLinks: document.querySelectorAll('.ghGuideRow').length,
+        proposalIntent: form?.querySelector('[name="intent"]')?.value === 'booking',
+        schemaTypes: [...document.querySelectorAll('script[type="application/ld+json"]')].map((script) => script.textContent || '').join(' '),
+        logoLoaded: document.querySelector('header .ghBrand img')?.getAttribute('src') === '/favicon.svg',
+        disclosure: /Oma sivusto — ei asiakasreferenssi/i.test(document.body.innerText),
         bodyText: document.body.innerText.replace(/\\s+/g, ' ').trim(),
         viewportMeta: document.querySelector('meta[name="viewport"]')?.getAttribute('content') || '',
         bodyOverflowX: getComputedStyle(document.body).overflowX,
@@ -200,30 +204,32 @@ try {
     })()`);
 
     assert(metrics.h1Count === 1, `${viewport.width}x${viewport.height}: expected exactly one H1.`);
-    assert(metrics.brandHeadlineText.includes('TYÖMAAKUVAT') && metrics.brandHeadlineText.includes('SISÄÄN.') && metrics.brandHeadlineText.includes('VALMIS SOME') && metrics.brandHeadlineText.includes('ULOS.'), `${viewport.width}x${viewport.height}: brand headline missing.`);
-    assert(metrics.h1Text === 'Työmaakuvista valmis some remontti- ja LVI-yrityksille.', `${viewport.width}x${viewport.height}: H1 copy changed unexpectedly.`);
+    assert(metrics.brandHeadlineText.includes('HYVÄ TYÖ') && metrics.brandHeadlineText.includes('PITÄÄ NÄKYÄ.'), `${viewport.width}x${viewport.height}: company headline missing.`);
+    assert(metrics.h1Text.includes('HYVÄ TYÖ') && metrics.h1Text.includes('PITÄÄ NÄKYÄ'), `${viewport.width}x${viewport.height}: H1 copy changed unexpectedly.`);
     assert(metrics.heroCtaHref === '#yhteys', `${viewport.width}x${viewport.height}: primary CTA must target #yhteys.`);
-    assert(metrics.heroCtaText.includes('2 SISÄLTÖESIMERKKIÄ'), `${viewport.width}x${viewport.height}: primary CTA copy missing.`);
-    assert(metrics.priceRect, `${viewport.width}x${viewport.height}: 490 € price missing.`);
+    assert(/pyydä ehdotus/i.test(metrics.heroCtaText), `${viewport.width}x${viewport.height}: company CTA missing.`);
+    assert(metrics.serviceLinks && metrics.serviceCards === 3, `${viewport.width}x${viewport.height}: three service links missing.`);
+    assert(metrics.resourceLinks === 3 && metrics.proposalIntent, `${viewport.width}x${viewport.height}: resources or general proposal intent missing.`);
     assert(metrics.formExists && metrics.formMethod === 'post' && metrics.formAction === '/api/leads', `${viewport.width}x${viewport.height}: native lead form contract missing.`);
     assert(metrics.requiredFields, `${viewport.width}x${viewport.height}: required lead fields missing.`);
     assert(metrics.submitRect?.height >= 44, `${viewport.width}x${viewport.height}: submit target below 44px.`);
-    assert(metrics.proofExists && metrics.proofPanels === 2 && metrics.seamExists, `${viewport.width}x${viewport.height}: RAW/FINAL proof mechanism missing.`);
-    assert(metrics.disclosure, `${viewport.width}x${viewport.height}: concept disclosure missing.`);
+    assert(metrics.proofExists && metrics.logoLoaded, `${viewport.width}x${viewport.height}: company proof or logo missing.`);
+    assert(metrics.disclosure, `${viewport.width}x${viewport.height}: honest own-work disclosure missing.`);
+    assert(!metrics.schemaTypes.includes('some-12-service') && !metrics.schemaTypes.includes('some-12-offer'), `${viewport.width}x${viewport.height}: product-specific schema remains on homepage.`);
     assert(metrics.viewportMeta.includes('viewport-fit=cover'), `${viewport.width}x${viewport.height}: viewport-fit=cover missing.`);
     assert(metrics.bodyOverflowX === 'clip' || metrics.bodyOverflowX === 'hidden', `${viewport.width}x${viewport.height}: horizontal overflow suppression missing.`);
     assert(metrics.scrollWidth <= metrics.innerWidth + 1, `${viewport.width}x${viewport.height}: horizontal overflow ${metrics.scrollWidth}px > ${metrics.innerWidth}px.`);
-    assert(metrics.colors.ink === '#111111' && metrics.colors.paper === '#F7F4EF' && metrics.colors.signal === '#C9282D' && metrics.colors.white === '#FFFFFF' && metrics.colors.muted === '#8C8278', `${viewport.width}x${viewport.height}: core brand primitives do not match.`);
+    assert(metrics.colors.ink === '#111111' && metrics.colors.paper === '#F7F4EF' && metrics.colors.signal.toUpperCase() === '#C9282D' && metrics.colors.white === '#FFFFFF' && metrics.colors.muted === '#8C8278', `${viewport.width}x${viewport.height}: core brand primitives do not match.`);
     assert(!metrics.bodyText.includes('790 €') && !metrics.bodyText.includes('MANAGED'), `${viewport.width}x${viewport.height}: obsolete offer copy reappeared.`);
 
-    for (const [name, value] of [['brand', metrics.brandRect], ['headline', metrics.h1Rect], ['hero CTA', metrics.heroCtaRect], ['price', metrics.priceRect]]) {
+    for (const [name, value] of [['brand', metrics.brandRect], ['headline', metrics.h1Rect], ['hero CTA', metrics.heroCtaRect]]) {
       assert(value, `${viewport.width}x${viewport.height}: ${name} missing.`);
       assert(value.left >= -1 && value.right <= metrics.innerWidth + 1, `${viewport.width}x${viewport.height}: ${name} overflows horizontally.`);
     }
 
     if (viewport.firstView) {
       assert(metrics.heroCtaRect.bottom <= metrics.innerHeight, `${viewport.width}x${viewport.height}: primary CTA below first viewport.`);
-      assert(metrics.priceRect.bottom <= metrics.innerHeight, `${viewport.width}x${viewport.height}: price below first viewport.`);
+      assert(!metrics.h1Text.includes('TYÖMAAKUVAT'), `${viewport.width}x${viewport.height}: legacy Social-only H1 remains.`);
     }
 
     const screenshot = await client.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
@@ -235,7 +241,7 @@ try {
   await client.send('Page.navigate', { url: BASE_URL });
   await waitForDocument(client);
   const interaction = await evaluate(client, `(() => {
-    const cta = document.querySelector('#top a.button--signal[href="#yhteys"]');
+    const cta = document.querySelector('#top a.ghButton[href="#yhteys"]');
     cta?.focus();
     const focused = document.activeElement === cta;
     cta?.click();
@@ -256,7 +262,7 @@ try {
       const durations = (s.animationDuration + ',' + s.transitionDuration).split(',').map((v) => v.trim());
       return durations.some((v) => !['0s','0ms','0.01ms'].includes(v));
     }).length,
-    proof: Boolean(document.querySelector('.proofStage')),
+    proof: Boolean(document.querySelector('.ghSelectedCase')),
     form: Boolean(document.querySelector('#yhteys form[action="/api/leads"]')),
   }))()`);
   assert(reducedMotion.scrollBehavior === 'auto', 'Reduced motion must disable smooth scrolling.');

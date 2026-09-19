@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 
-export const alt = 'GhoulHouse — Työmaakuvat sisään. Valmis some ulos.';
+export const alt = 'GhoulHouse — Hyvä työ pitää näkyä. Verkkosivut, Social & SEO.';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -26,16 +26,16 @@ export default function OpenGraphImage() {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'stretch', gap: 28 }}>
-          <div style={{ width: 8, background: '#C83830' }} />
+          <div style={{ width: 8, background: '#C9282D' }} />
           <div style={{ display: 'flex', flexDirection: 'column', maxWidth: 960 }}>
-            <div style={{ display: 'flex', fontSize: 82, lineHeight: 0.9, fontWeight: 900, letterSpacing: '-0.05em', textTransform: 'uppercase' }}>TYÖMAAKUVAT SISÄÄN.</div>
-            <div style={{ display: 'flex', fontSize: 82, lineHeight: 0.9, fontWeight: 900, letterSpacing: '-0.05em', textTransform: 'uppercase', color: '#C83830' }}>VALMIS SOME ULOS.</div>
+            <div style={{ display: 'flex', fontSize: 82, lineHeight: 0.9, fontWeight: 900, letterSpacing: '-0.05em', textTransform: 'uppercase' }}>HYVÄ TYÖ.</div>
+            <div style={{ display: 'flex', fontSize: 82, lineHeight: 0.9, fontWeight: 900, letterSpacing: '-0.05em', textTransform: 'uppercase', color: '#C83830' }}>PITÄÄ NÄKYÄ.</div>
           </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', borderTop: '1px solid #161411', paddingTop: 22 }}>
-          <div style={{ display: 'flex', maxWidth: 700, fontSize: 24, lineHeight: 1.35 }}>12 sisältöä / 30 päivää · Instagram + Facebook</div>
-          <div style={{ display: 'flex', fontSize: 28, fontWeight: 800 }}>490 € + ALV</div>
+          <div style={{ display: 'flex', maxWidth: 700, fontSize: 24, lineHeight: 1.35 }}>Verkkosivut · Social · SEO</div>
+          <div style={{ display: 'flex', fontSize: 23, fontWeight: 700 }}>ghoulhouse.fi</div>
         </div>
       </div>
     ),

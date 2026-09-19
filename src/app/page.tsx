@@ -1,297 +1,193 @@
 import Image from 'next/image';
 import LeadForm from '@/components/LeadForm';
 import FunnelAnalytics from '@/components/analytics/FunnelAnalytics';
+import './homepage.css';
 
-const outcomes = [
-  ['01', 'VALMIS RYTMI', '12 sisältöä / 30 päivää. Julkaiseminen ei jää työpäivän jälkeen tehtäväksi.'],
-  ['02', 'TYÖ NÄKYVÄKSI', 'Työmaa- ja referenssimateriaalista rakennetaan selkeä, tunnistettava julkaisulinja.'],
-  ['03', 'YHTENÄINEN ILME', 'Kuvat, tekstit ja julkaisut muodostavat yhden johdonmukaisen kokonaisuuden.'],
+const navigation = [
+  ['/verkkosivut-yritykselle', 'Verkkosivut'],
+  ['/some-sisallontuotanto', 'Social'],
+  ['/resurssit', 'SEO & resurssit'],
+  ['/referenssit', 'Referenssit'],
+] as const;
+
+const services = [
+  {
+    index: '01',
+    title: 'VERKKOSIVUT',
+    body: 'Selkeä palvelurakenne, oma työnäyttö ja yhteydenotto samassa toimivassa kokonaisuudessa.',
+    href: '/verkkosivut-yritykselle',
+    link: 'Tutustu verkkosivuihin',
+  },
+  {
+    index: '02',
+    title: 'SOCIAL',
+    body: 'Oman työn kuvat ja faktat suunnitelluiksi julkaisuiksi Instagramiin ja Facebookiin.',
+    meta: 'SOME 12 · 12 sisältöä / 30 päivää · 490 € + ALV',
+    href: '/some-sisallontuotanto',
+    link: 'Tutustu sisällöntuotantoon',
+  },
+  {
+    index: '03',
+    title: 'SEO',
+    body: 'Hakukonenäkyvyyden perusta: ymmärrettävät sisällöt, sivurakenne ja löydettävät palvelut.',
+    href: '/resurssit',
+    link: 'Tutustu oppaisiin ja SEO-sisältöihin',
+  },
 ] as const;
 
 const steps = [
-  ['01', 'LÄHETÄ', 'Toimita työmaa- ja referenssikuvat sekä olennaiset projektifaktat.'],
-  ['02', 'ME EDITOIMME', 'Valitsemme materiaalin, käsittelemme kuvat ja rakennamme julkaisukulman sekä copyt.'],
-  ['03', 'HYVÄKSY', 'Näet suunnan ennen julkaisua. Palveluun kuuluu yksi koottu korjauskierros.'],
-  ['04', 'JULKAISTAAN', 'Hyväksytyt sisällöt ajastetaan Instagramiin ja Facebookiin.'],
+  ['Tilanne', 'Käymme läpi nykyisen sivuston, sisällöt ja sen, mitä asiakkaiden pitäisi löytää.'],
+  ['Ehdotus', 'Rajaamme tarvittavat palvelut, toimitukset ja etenemisjärjestyksen selkeäksi ehdotukseksi.'],
+  ['Toteutus', 'Rakennamme sovitun verkkosivu-, sisältö- tai näkyvyyskokonaisuuden käytettävissä olevasta materiaalista.'],
+  ['Julkaisu & kehitys', 'Tarkistamme toteutuksen, julkaisemme hyväksytyn työn ja sovimme mahdollisista jatkotoimista.'],
 ] as const;
 
-const includes = [
-  '12 alkuperäistä sisältöä / 30 päivää',
-  'Instagram + Facebook',
-  'Sisältösuunnittelu ja kuukausirytmi',
-  'Kuvankäsittely ja somemuotoilu',
-  'Copy, CTA:t ja julkaisutekstit',
-  'Ajastus ja julkaiseminen',
-  'Yksi koottu korjauskierros',
-  'Kevyt kuukausiraportti',
+const proofLinks = [
+  ['WEBSITES', 'Palvelut ja yhteydenotto', 'Julkaistu GhoulHousen verkkosivurakenne.', '/verkkosivut-yritykselle'],
+  ['SOCIAL', 'Sisältötuotannon malli', 'SOME 12 -palvelun sisältö ja toimitustapa.', '/some-sisallontuotanto'],
+  ['TOIMIALA', 'Työn näyttäminen verkossa', 'Rakennusalan verkkosivujen toimialakohtainen rakenne.', '/verkkosivut/rakennus'],
 ] as const;
 
-const proofCards = [
-  'TYÖMAA NYT', 'VALMIS KOHDE', 'ENNEN / JÄLKEEN', 'TEKIJÄ',
-  'YKSITYISKOHTA', 'PROSESSI', 'MATERIAALI', 'USEIN KYSYTTY',
-  'REFERENSSI', 'VINKKI', 'PALVELU', 'CTA',
+const guides = [
+  ['01 / HINTA', 'Mistä verkkosivujen hinta muodostuu?', 'Rakenne, sisällöt ja toteutuksen laajuus.', '/verkkosivut/hinta'],
+  ['02 / OPAS', 'Verkkosivut itse vai ammattilaiselta?', 'Tarkistuslista oikean toteutustavan valintaan.', '/oppaat/verkkosivut-itse-vai-ammattilaiselta'],
+  ['03 / OPAS', 'Työmaakuvat sosiaaliseen mediaan', 'Mitä kuvata, jotta omasta työstä syntyy julkaistavaa sisältöä.', '/oppaat/tyomaakuvat-sosiaaliseen-mediaan'],
 ] as const;
 
-const faq = [
-  ['Tarvitaanko uusi kuvauspäivä?', 'Ei lähtökohtaisesti. Palvelu rakennetaan asiakkaan olemassa olevan työmaa- ja referenssimateriaalin ympärille.'],
-  ['Mitä jos materiaalia on vähän?', 'Aloitamme siitä mitä on ja kerromme täsmällisesti, mitä lisämateriaalia seuraavaa sisältöerää varten kannattaa kerätä.'],
-  ['Voinko vaikuttaa sisältöihin?', 'Kyllä. Asiakas hyväksyy faktat ja julkaisusuunnan ennen ajastusta. Yksi koottu korjauskierros sisältyy palveluun.'],
-  ['Onko 490 € jatkuva sopimus?', 'Ensimmäiset 30 päivää maksavat 490 € + ALV. Jatkosta ei synny automaattista sitoumusta.'],
-  ['Mitä 490 € sisältää?', 'Hintaan sisältyvät 12 alkuperäistä sisältöä / 30 päivää, Instagram + Facebook, sisältösuunnittelu, kuvankäsittely, copyt ja CTA:t, ajastus ja julkaiseminen, yksi koottu korjauskierros sekä kevyt kuukausiraportti.'],
-  ['Kuinka nopeasti julkaiseminen alkaa?', 'Tuotanto alkaa, kun tarvittavat materiaalit ja faktatiedot on vastaanotettu. Julkaiseminen etenee sen jälkeen sovitun tuotanto- ja hyväksyntärytmin mukaisesti.'],
-] as const;
+function Brand({ footer = false }: { footer?: boolean }) {
+  return (
+    <a className="ghBrand" href={footer ? '#top' : '/'} aria-label="GhoulHouse — etusivu">
+      <Image src="/favicon.svg" alt="" width={40} height={40} priority={!footer} />
+      <span>GhoulHouse</span>
+    </a>
+  );
+}
 
 export default function Home() {
   return (
-    <>
+    <div className="homePage">
       <a className="skipLink" href="#main">Siirry pääsisältöön</a>
       <FunnelAnalytics />
-
-      <header className="siteHeader">
-        <div className="outerShell headerGrid">
-          <a className="brandText" href="#top" aria-label="GhoulHouse — sivun alku">GhoulHouse</a>
-          <nav className="desktopNav" aria-label="Päänavigaatio">
-            <a href="/some-sisallontuotanto">Some</a>
-            <a href="/verkkosivut-yritykselle">Verkkosivut</a>
-            <a href="/referenssit">Referenssit</a>
-            <a href="/resurssit">Resurssit</a>
+      <header className="ghHeader">
+        <div className="ghShell ghHeaderInner">
+          <Brand />
+          <nav className="ghDesktopNav" aria-label="Päänavigaatio">
+            {navigation.map(([url, label]) => <a key={url} href={url}>{label}</a>)}
           </nav>
-          <a className="button button--signal headerAction" href="#yhteys">PYYDÄ 2 ESIMERKKIÄ</a>
-          <details className="mobileNav">
-            <summary>MENU</summary>
+          <a className="ghButton ghHeaderCta" href="#yhteys">Pyydä ehdotus <span aria-hidden="true">↗</span></a>
+          <details className="mobileNav ghMobileNav">
+            <summary aria-label="Avaa valikko">Valikko <span aria-hidden="true">+</span></summary>
             <nav aria-label="Mobiilinavigaatio">
-              <a href="/some-sisallontuotanto">Some</a>
-              <a href="/verkkosivut-yritykselle">Verkkosivut</a>
-              <a href="/referenssit">Referenssit</a>
-              <a href="/resurssit">Resurssit</a>
-              <a href="#yhteys">Pyydä 2 esimerkkiä</a>
+              {navigation.map(([url, label]) => <a key={url} href={url}>{label}</a>)}
+              <a href="#yhteys">Pyydä ehdotus</a>
             </nav>
           </details>
         </div>
       </header>
 
       <main id="main">
-        <section className="hero" id="top">
-          <div className="contentShell heroGrid">
-            <div className="heroCopy">
-              <p className="kicker">SOMEMALLI REMONTTI- JA LVI-ALAN YRITYKSILLE</p>
-              <div className="brandHeadline" aria-label="Työmaakuvat sisään. Valmis some ulos.">
-                <span>TYÖMAAKUVAT</span>
-                <span>SISÄÄN.</span>
-                <span className="signalText">VALMIS SOME</span>
-                <span className="signalText">ULOS.</span>
+        <section className="ghHero ghHeroEditorial" id="top" aria-labelledby="hero-title">
+          <div className="ghShell ghHeroGrid">
+            <div className="ghHeroCopy">
+              <p className="ghEyebrow">GhoulHouse Oy · Digitaalinen näkyvyys palveluyrityksille</p>
+              <h1 id="hero-title">HYVÄ TYÖ<br /><span>PITÄÄ NÄKYÄ.</span></h1>
+              <p className="ghLead">Verkkosivut, sisältö ja hakukonenäkyvyys suomalaisille palveluyrityksille.</p>
+              <div className="ghHeroActions">
+                <a className="ghButton" href="#yhteys">Pyydä ehdotus <span aria-hidden="true">↗</span></a>
               </div>
-              <h1>Työmaakuvista valmis some remontti- ja LVI-yrityksille.</h1>
-              <p className="lead">GhoulHouse muuttaa olemassa olevat työmaa- ja referenssikuvat valmiiksi Instagram- ja Facebook-sisällöiksi — suunnittelusta julkaisuun.</p>
-              <div className="heroActions">
-                <a className="button button--signal" href="#yhteys">PYYDÄ 2 SISÄLTÖESIMERKKIÄ <span aria-hidden="true">→</span></a>
-                <a className="textLink" href="#toiminta">Katso miten toimii</a>
-              </div>
-              <div className="offerLine" aria-label="Palvelun hinta ja sisältö">
-                <strong>490 € + ALV / 30 PÄIVÄÄ</strong>
-                <span>12 sisältöä · Instagram + Facebook · ei automaattista jatkoa</span>
-              </div>
+              <p className="ghHeroFootnote">Yksi selkeä ehdotus yrityksenne tilanteen perusteella.</p>
             </div>
-
-            <figure className="proofStage" id="esimerkit" aria-labelledby="proof-caption">
-              <div className="proofFrame proofFrame--raw">
-                <Image
-                  src="/proof-before.webp"
-                  alt="Konseptikuva keskeneräisestä kylpyhuoneremontista ennen sisältökäsittelyä"
-                  fill
-                  priority
-                  style={{ objectFit: 'cover' }}
-                  sizes="(min-width: 1024px) 20vw, (min-width: 768px) 24vw, 50vw"
-                />
-              </div>
-              <div className="editSeam" aria-hidden="true" style={{ display: 'none' }} />
-              <div className="proofFrame proofFrame--final">
-                <Image
-                  src="/proof-after.webp"
-                  alt="Sama konseptitila viimeisteltynä julkaisukelpoisen sisältöesimerkin kuvaksi"
-                  fill
-                  priority
-                  style={{ objectFit: 'contain' }}
-                  sizes="(min-width: 1024px) 20vw, (min-width: 768px) 24vw, 50vw"
-                />
-              </div>
-              <figcaption id="proof-caption">KONSEPTIESIMERKKI — EI ASIAKASTYÖ · VISUAALINEN SUUNTAA-ANTAVA DEMO</figcaption>
-            </figure>
+            <aside className="ghHeroEditorialPanel" aria-label="GhoulHousen toimintatapa">
+              <div className="ghHeroPanelTop"><span>GH / 01</span><span>Helsinki · Suomi</span></div>
+              <Image src="/ghoulhouse-mark.svg" alt="" width={116} height={116} priority className="ghHeroPanelMark" />
+              <p>TEHTY TYÖ.<br />SELKEÄ VIESTI.<br />LÖYDETTÄVÄ YRITYS.</p>
+              <div className="ghHeroPanelBottom"><span>WEBSITES</span><span>SOCIAL</span><span>SEO</span></div>
+            </aside>
           </div>
         </section>
 
-        <section className="factRail" aria-label="GhoulHouse-palvelun pääfaktat">
-          <div className="contentShell factRailGrid">
-            <div><strong>12</strong><span>SISÄLTÖÄ</span></div>
-            <div><strong>2</strong><span>KANAVAA</span></div>
-            <div><strong>1</strong><span>KORJAUSKIERROS</span></div>
-            <div><strong>30</strong><span>PÄIVÄÄ</span></div>
+        <section className="ghSelected ghSection" id="esimerkit" aria-labelledby="selected-title">
+          <div className="ghShell ghSelectedGrid">
+            <div className="ghSectionIntro">
+              <p className="ghEyebrow">Valittuja toteutuksia / julkaistu</p>
+              <h2 id="selected-title">Näytä työ.<br />Älä vain kuvaile sitä.</h2>
+              <p>Esimerkkinä oma julkaistu sivustomme: palvelut, asiantuntijasisällöt ja yhteydenotto löytyvät yhdestä rakenteesta.</p>
+              <a className="ghTextLink" href="/referenssit">Selaa toteutuksia ja työnäytteitä <span aria-hidden="true">↗</span></a>
+            </div>
+            <a className="ghSelectedCase" href="/verkkosivut-yritykselle" aria-label="Tutustu GhoulHousen julkaistuun verkkosivurakenteeseen">
+              <div className="ghSelectedCaseTop"><span>GH / OMA TOTEUTUS</span><span>ghoulhouse.fi ↗</span></div>
+              <div className="ghSelectedCaseDisplay"><Image src="/ghoulhouse-mark.svg" alt="" width={96} height={96} /><strong>GhoulHouse.</strong><span>WEBSITES / SOCIAL / SEO</span></div>
+              <div className="ghSelectedCaseFoot"><strong>Julkaistu verkkosivurakenne</strong><span>Oma sivusto — ei asiakasreferenssi eikä tulosväite.</span></div>
+            </a>
           </div>
         </section>
 
-        <section className="statement" aria-labelledby="statement-title">
-          <div className="contentShell statementGrid">
-            <p className="kicker kicker--inverse">01 / LÄHTÖKOHTA</p>
-            <div>
-              <h2 id="statement-title">HYVÄ TYÖ EI TARVITSE ENEMPÄÄ PUHETTA. SE TARVITSEE NÄKYVYYTTÄ.</h2>
-              <p>Materiaalia ei yleensä puutu. Prosessi puuttuu. GhoulHouse tekee jo syntyvästä materiaalista valmista, säännöllistä näyttöä yrityksen työstä.</p>
+        <section className="ghServices ghSection" id="palvelut" aria-labelledby="services-title">
+          <div className="ghShell">
+            <div className="ghSectionIntro ghServicesIntro">
+              <p className="ghEyebrow">Kolme palvelua, yksi kokonaisuus</p>
+              <h2 id="services-title">Mitä yrityksenne<br />tarvitsee näkyäkseen?</h2>
+              <p>Aloitamme olennaisesta. Verkkosivut, jatkuva sisältö ja löydettävyys voidaan toteuttaa erikseen tai yhdessä.</p>
             </div>
-          </div>
-        </section>
-
-        <section className="outcomes" id="palvelu" aria-labelledby="outcomes-title">
-          <div className="contentShell">
-            <div className="sectionIntro">
-              <p className="kicker">02 / MITÄ SAAT</p>
-              <div>
-                <h2 id="outcomes-title">YKSI TUOTE.<br />KOLME SELKEÄÄ TULOSTA.</h2>
-                <p>Ei kanavalistaa. Ei markkinointijargonia. Vain se, mitä yrittäjän arjessa muuttuu.</p>
-              </div>
-            </div>
-            <div className="outcomeGrid">
-              {outcomes.map(([n, title, copy]) => (
-                <article className="outcomeCard" key={n}>
-                  <span className="cardNumber">{n}</span>
-                  <h3>{title}</h3>
-                  <p>{copy}</p>
+            <div className="ghServiceList">
+              {services.map((service) => (
+                <article key={service.index} className="ghServiceCard">
+                  <span className="ghServiceIndex">{service.index} / 03</span>
+                  <div><h3>{service.title}</h3><p>{service.body}</p>{'meta' in service && <p className="ghServiceMeta">{service.meta}</p>}</div>
+                  <a className="ghTextLink" href={service.href}>{service.link} <span aria-hidden="true">↗</span></a>
                 </article>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="productionProof" id="naytto" aria-labelledby="proof-system-title">
-          <div className="contentShell productionProofGrid">
-            <div className="productionProofCopy">
-              <p className="kicker kicker--inverse">03 / TUOTANTOPROOF</p>
-              <h2 id="proof-system-title">NÄIN 12 SISÄLLÖN ERÄ RAKENTUU.</h2>
-              <p>Palvelu ei perustu yksittäiseen postaukseen. Jokainen kuukausi rakennetaan ennalta määritellyistä sisältörooleista, jotta feed ei toista samaa asiaa uudelleen.</p>
-              <div className="proofSpec" aria-label="Tuotantoerän rakenne">
-                <span>12 JULKAISUA</span><span>4 SISÄLTÖROOLIA</span><span>1 HYVÄKSYNTÄKIERROS</span>
-              </div>
-              <div className="proofSpec" aria-label="Todellinen asiakaskohtainen projektisuunnitelma">
-                <span>TODELLINEN ASIAKASKOHTAINEN SUUNNITELMA · 09/2026</span><span>12 COPYA · 12 JULKAISUA · 4 MASTER-POHJAA</span><span>PROJEKTISUUNNITELMA — EI TULOSVÄITE</span>
-              </div>
-            </div>
-            <div className="proofMatrix" aria-label="Esimerkki 12 sisällön tuotantoerästä">
-              {proofCards.map((item, index) => (
-                <div className="proofTile" key={item}>
-                  <span>{String(index + 1).padStart(2, '0')}</span>
-                  <strong>{item}</strong>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="process" id="toiminta" aria-labelledby="process-title">
-          <div className="contentShell processGrid">
-            <div className="processIntro">
-              <p className="kicker">04 / PROSESSI</p>
-              <h2 id="process-title">SINÄ TEET TYÖN.<br />ME TEEMME SIITÄ JULKAISTAVAA.</h2>
-              <p>Neljä vaihetta. Yksi selkeä handoff. Ei raskasta onboardingia tai ylimääräistä tuotantoprosessia.</p>
-            </div>
-            <ol className="stepList">
-              {steps.map(([n, title, copy]) => (
-                <li key={n}>
-                  <span className="stepNumber">{n}</span>
-                  <h3>{title}</h3>
-                  <p>{copy}</p>
-                </li>
-              ))}
+        <section className="ghProcess ghSection" id="toiminta" aria-labelledby="process-title">
+          <div className="ghShell">
+            <div className="ghSectionIntro"><p className="ghEyebrow">Yhteistyömalli</p><h2 id="process-title">Selkeästi alusta<br />julkaisuun asti.</h2></div>
+            <ol className="ghSteps">
+              {steps.map(([title, copy], i) => <li key={title}><div className="ghStepTop"><span>{String(i + 1).padStart(2, '0')}</span>{i < 3 && <span aria-hidden="true">→</span>}</div><h3>{title}</h3><p>{copy}</p></li>)}
             </ol>
           </div>
         </section>
 
-        <section className="offer" id="hinta" aria-labelledby="offer-title">
-          <div className="contentShell offerGrid">
-            <div className="offerAnchor">
-              <p className="kicker kicker--inverse">05 / GHOULHOUSE SOME 12</p>
-              <h2 id="offer-title">12 SISÄLTÖÄ.<br />30 PÄIVÄÄ.<br /><span>490 € + ALV.</span></h2>
-              <p>Yksi selkeä pilotti. Ei kolmea pakettia, lisämyyntilabyrinttia tai automaattista jatkoa.</p>
-              <a className="button button--paper" href="#yhteys">PYYDÄ 2 ESIMERKKIÄ <span aria-hidden="true">→</span></a>
+        <section className="ghProofGridSection ghSection" id="referenssit" aria-labelledby="proof-grid-title">
+          <div className="ghShell">
+            <div className="ghSectionIntro"><p className="ghEyebrow">Lisää näyttöä</p><h2 id="proof-grid-title">Kolme näkökulmaa<br />tehtyyn työhön.</h2><p>Alla olevat nostot vievät julkaistuihin palvelu- ja toimialasisältöihin. Ne eivät ole asiakkaiden tuloksia tai vahvistettuja asiakascaseja.</p></div>
+            <div className="ghEditorialGrid">
+              {proofLinks.map(([type, title, copy, href]) => <a className="ghEditorialCard" href={href} key={type}><span className="ghEyebrow">{type}</span><h3>{title}</h3><p>{copy}</p><span className="ghEditorialCardArrow" aria-hidden="true">↗</span></a>)}
             </div>
-            <div className="offerList" aria-label="Palveluun sisältyy">
-              <p className="kicker kicker--inverse">SISÄLTYY</p>
-              <ul>
-                {includes.map((item, index) => <li key={item}><span>{String(index + 1).padStart(2, '0')}</span>{item}</li>)}
-              </ul>
-            </div>
+            <a className="ghTextLink ghSectionLink" href="/referenssit">Katso kaikki referenssit ja työnäytteet <span aria-hidden="true">↗</span></a>
           </div>
         </section>
 
-        <section className="founder" aria-labelledby="founder-title">
-          <div className="contentShell founderGrid">
-            <div className="founderMark" aria-hidden="true">
-              <span className="founderInitials">HN</span>
-              <div className="founderMarkMeta"><span>FOUNDER</span><span>CONTENT</span><span>QA</span></div>
+        <section className="ghResources ghSection" id="resurssit" aria-labelledby="resources-title">
+          <div className="ghShell">
+            <div className="ghSectionIntro"><p className="ghEyebrow">Resurssit / asiantuntijuus</p><h2 id="resources-title">Tietoa ennen päätöstä.</h2><p>Käytännön oppaat verkkosivujen, sisällön ja yrityksen näkyvyyden suunnitteluun.</p></div>
+            <div className="ghGuideList">
+              {guides.map(([label, title, copy, href]) => <a className="ghGuideRow" href={href} key={href}><span className="ghEyebrow">{label}</span><span><strong>{title}</strong><small>{copy}</small></span><span className="ghGuideArrow" aria-hidden="true">↗</span></a>)}
             </div>
-            <div className="founderCopy">
-              <p className="kicker">06 / TEKIJÄ</p>
-              <h2 id="founder-title">HANNA NYHOLM.<br />SISÄLLÖN TAKANA.</h2>
-              <p>Hanna vastaa GhoulHousen asiakastyöstä, sisältösuunnittelusta ja tuotannosta. Asiakas asioi suoraan tekijän kanssa — ilman välikäsiä tai raskasta toimistomallia.</p>
-              <div className="trustRail" aria-label="Yrityksen perustiedot">
-                <span>Ghoulhouse Oy</span><span>Y-tunnus 3651127-5</span><span>Helsinki</span>
-              </div>
-              <a className="textLink" href="mailto:hanna@ghoulhouse.fi">hanna@ghoulhouse.fi</a>
-            </div>
+            <a className="ghTextLink ghSectionLink" href="/resurssit">Kaikki resurssit <span aria-hidden="true">↗</span></a>
           </div>
         </section>
 
-        <section className="faq" id="ukk" aria-labelledby="faq-title">
-          <div className="contentShell faqGrid">
-            <div className="faqIntro">
-              <p className="kicker">07 / UKK</p>
-              <h2 id="faq-title">ENNEN KUIN<br />PYYDÄT DEMON.</h2>
-            </div>
-            <div className="faqList">
-              {faq.map(([question, answer], index) => (
-                <details key={question}>
-                  <summary><span>{String(index + 1).padStart(2, '0')}</span><b>{question}</b><i aria-hidden="true">+</i></summary>
-                  <p>{answer}</p>
-                </details>
-              ))}
-            </div>
+        <section className="ghFounder ghSection" aria-labelledby="founder-title">
+          <div className="ghShell ghFounderGrid">
+            <div className="ghFounderIdentity"><Image src="/ghoulhouse-mark.svg" alt="" width={176} height={176} /><p>GhoulHouse Oy<br /><span>Helsinki</span></p></div>
+            <div className="ghSectionIntro"><p className="ghEyebrow">Yhteys suoraan tekijään</p><h2 id="founder-title">Hanna Nyholm.<br />GhoulHouse.</h2><p>GhoulHouse rakentaa palveluyritysten verkkonäkyvyyttä verkkosivujen, sisällön ja löydettävyyden kautta. Sovimme tehtävät ja hyväksynnät ennen toteutusta.</p><a className="ghTextLink" href="mailto:hanna@ghoulhouse.fi">hanna@ghoulhouse.fi <span aria-hidden="true">↗</span></a></div>
           </div>
         </section>
 
-        <section className="contact" id="yhteys" aria-labelledby="contact-title">
-          <div className="contentShell contactGrid">
-            <div className="contactCopy">
-              <p className="kicker">08 / ALOITA</p>
-              <h2 id="contact-title">NÄE OMA TYÖSI<br />VALMIINA JULKAISUNA.</h2>
-              <p>Saat kaksi maksutonta sisältöesimerkkiä yrityksesi nykyisestä materiaalista. Näet ensin lopputuloksen suunnan. Päätät vasta sen jälkeen jatkosta.</p>
-              <div className="contactMeta">
-                <span>2 konseptiesimerkkiä</span><span>0 €</span><span>Ei sitoumusta</span>
-              </div>
-            </div>
-            <div className="formSurface">
-              <LeadForm />
-            </div>
+        <section className="ghContact ghSection" id="yhteys" aria-labelledby="contact-title">
+          <div className="ghShell ghContactGrid">
+            <div className="ghSectionIntro"><p className="ghEyebrow">Aloitetaan yrityksenne tilanteesta</p><h2 id="contact-title">ONKO TEILLÄ HYVÄ PALVELU,<br />MUTTA VERKOSSA SE EI VIELÄ NÄY?</h2><p>Kerro yrityksestäsi ja siitä, mitä haluat parantaa. Palaamme asiaan ehdotuksella sopivasta seuraavasta askeleesta.</p><p className="ghContactNote">Ei sitoumusta yhteydenotosta.</p></div>
+            <div className="ghForm"><LeadForm compact mode="proposal" /></div>
           </div>
         </section>
       </main>
-
-      <footer className="siteFooter">
-        <div className="contentShell footerGrid">
-          <div className="footerColumn">
-            <p className="footerLabel">GhoulHouse</p>
-            <p className="footerTagline">Työmaakuvat sisään. Valmis some ulos.</p>
-          </div>
-          <div className="footerColumn">
-            <p className="footerLabel">Yritys</p>
-            <p>Ghoulhouse Oy</p>
-            <p>Y-tunnus 3651127-5</p>
-            <p>Helsinki</p>
-            <a href="mailto:hello@ghoulhouse.fi">hello@ghoulhouse.fi</a>
-          </div>
-          <nav className="footerColumn" aria-label="Alatunnisteen navigaatio">
-            <p className="footerLabel">Navigaatio</p>
-            <a href="/some-sisallontuotanto">Some</a><a href="/verkkosivut-yritykselle">Verkkosivut</a><a href="/referenssit">Referenssit</a><a href="/resurssit">Resurssit</a><a href="/tietosuoja">Tietosuoja</a>
-          </nav>
-        </div>
-        <div className="contentShell footerBottom"><span>© 2026 GhoulHouse Oy</span><span>DISTINCTIVE / CONTROLLED / FUNCTIONAL</span></div>
+      <footer className="ghFooter">
+        <div className="ghShell ghFooterMain"><div><Brand footer /><p className="ghFooterTagline">Hyvä työ pitää näkyä.<br />Verkkosivut · Social · SEO.</p></div><div className="ghFooterCompany"><p>GhoulHouse Oy</p><p>Y-tunnus 3651127-5 · Helsinki</p><a href="mailto:hello@ghoulhouse.fi">hello@ghoulhouse.fi</a></div><nav aria-label="Alatunnisteen navigaatio">{navigation.map(([url, label]) => <a key={url} href={url}>{label}</a>)}<a href="/tietosuoja">Tietosuoja</a></nav></div>
+        <div className="ghShell ghFooterBottom"><span>© 2026 GhoulHouse Oy</span><a href="#top">Takaisin ylös ↑</a></div>
       </footer>
-    </>
+    </div>
   );
 }
