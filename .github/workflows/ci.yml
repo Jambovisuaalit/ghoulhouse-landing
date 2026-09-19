@@ -142,7 +142,7 @@ jobs:
         run: |
           test -e src/app/site.css
           test -e src/app/homepage.css
-          grep -qi -- '--signal: #C83830' src/app/homepage.css
+          grep -qi -- '--signal: #C9282D' src/app/homepage.css
           grep -q -- '--brand-ink:#111111' src/app/site.css
           grep -q -- '--brand-signal:#C9282D' src/app/site.css
           grep -q -- '--brand-ghost:#F7F4EF' src/app/site.css
