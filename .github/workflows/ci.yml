@@ -228,6 +228,15 @@ jobs:
       - name: Browser QA
         run: node scripts/browser-qa-ci.mjs
 
+      - name: Full-page responsive and consent QA
+        run: node scripts/homepage-fullpage-qa.mjs
+
+      - name: Vercel Preview full-page responsive QA
+        env:
+          QA_BASE_URL: https://ghoulhouse-home-aswhc7zam-info-32533854s-projects.vercel.app
+          QA_SCREENSHOT_DIR: qa-artifacts/preview
+        run: node scripts/homepage-fullpage-qa.mjs
+
       - name: Launch visual and accessibility QA
         run: node scripts/launch-visual-a11y-qa.mjs
 

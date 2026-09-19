@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 const CONSENT_KEY = 'ghoulhouse_analytics_consent';
 
@@ -16,10 +17,13 @@ export default function AnalyticsConsent() {
   const [consent, setConsent] = useState<ConsentState>(null);
   const [open, setOpen] = useState(false);
   const [ready, setReady] = useState(false);
+  const [homepageSlot, setHomepageSlot] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
     setConsent(readConsent());
     setReady(true);
+    // On the homepage, keep consent in the document flow so it cannot cover CTA links.
+    setHomepageSlot(document.getElementById('gh-consent-inflow'));
     const handleOpen = () => setOpen(true);
     window.addEventListener('ghoulhouse:analytics-settings', handleOpen);
     return () => window.removeEventListener('ghoulhouse:analytics-settings', handleOpen);
@@ -36,14 +40,15 @@ export default function AnalyticsConsent() {
   if (!ready) return null;
 
   if (consent && !open) {
-    return (
+    const settings = (
       <button className="analyticsSettings" type="button" onClick={() => setOpen(true)}>
         Analytiikka-asetukset
       </button>
     );
+    return homepageSlot ? createPortal(settings, homepageSlot) : settings;
   }
 
-  return (
+  const banner = (
     <aside className="analyticsConsent" aria-labelledby="analytics-consent-title">
       <div className="analyticsConsent__copy">
         <p className="kicker">ANALYTIIKKA</p>
@@ -68,4 +73,5 @@ export default function AnalyticsConsent() {
       </div>
     </aside>
   );
+  return homepageSlot ? createPortal(banner, homepageSlot) : banner;
 }

@@ -118,6 +118,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
           </div>
         </section>
 
+        {/* Analytics consent is placed after the hero, in normal flow on the homepage. */}
+        <div id="gh-consent-inflow" className="ghConsentSlot" />
+
         <section className="ghSelected ghSection" id="esimerkit" aria-labelledby="selected-title">
           <div className="ghShell ghSelectedGrid">
             <div className="ghSectionIntro">
