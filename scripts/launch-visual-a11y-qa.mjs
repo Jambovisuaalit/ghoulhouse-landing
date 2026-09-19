@@ -118,7 +118,7 @@ try {
     await setViewport(client, viewport);
     await navigate(client, '/');
     const expected = await evaluate(client, `(() => {
-      const selector = 'a[href],button:not([disabled]),input:not([type="hidden"]):not([disabled]),textarea:not([disabled]),summary,[tabindex]';
+      const selector = 'a[href],button:not([disabled]),input:not([type="hidden"]):not([disabled]),textarea:not([disabled]),select:not([disabled]),summary,[tabindex]';
       const visible = (el) => { const r = el.getBoundingClientRect(); const s = getComputedStyle(el); return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden'; };
       const nodes = [...document.querySelectorAll(selector)].filter((el) => visible(el) && el.tabIndex >= 0 && !(el.closest('details:not([open])') && el.tagName !== 'SUMMARY'));
       nodes.forEach((el, index) => { el.dataset.qaTabId = String(index); });
@@ -141,7 +141,7 @@ try {
   const formA11y = await evaluate(client, `(() => {
     const form = document.querySelector('#yhteys form');
     if (!form) return { exists: false };
-    const named = ['name','company','email','phone','profile','message'];
+    const named = ['name','company','email','phone','profile','service','message'];
     return {
       exists: true,
       labelsPresent: named.every((name) => {
