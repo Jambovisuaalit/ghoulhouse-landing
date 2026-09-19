@@ -298,8 +298,9 @@ try {
   assert(pageExceptions.length === 0, `Page exceptions: ${pageExceptions.join(' | ')}`);
 
 
-  // Audit the *live* production homepage across the entire scroll height; do not submit a lead.
   const fullPageResults = [];
+  if (process.env.QA_BASE_URL?.startsWith('https://ghoulhouse.fi')) {
+  // Audit the *live* production homepage across the entire scroll height; do not submit a lead.
   async function liveFullPageScan() {
     const rect = (el) => {
       if (!el) return null;
@@ -400,6 +401,7 @@ try {
   await writeFile(SCREENSHOT_DIR+'/fullpage-production-results.json',JSON.stringify({base:BASE_URL,results:fullPageResults,internalRoutes},null,2));
   assert(fullPageResults.every(r=>r.issues.length===0),'Live full-page QA failed: '+JSON.stringify(fullPageResults.filter(r=>r.issues.length).map(r=>({viewport:r.viewport,issues:r.issues}))));
   assert(internalRoutes.every(r=>r.ok),'Live internal link check failed: '+JSON.stringify(internalRoutes.filter(r=>!r.ok)));
+  }
 
   const payload = { chromePath, results, interaction, reducedMotion, fullPageResults };
   await writeFile(`${SCREENSHOT_DIR}/results.json`, JSON.stringify(payload, null, 2));
