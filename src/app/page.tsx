@@ -222,7 +222,7 @@ export default function Home() {
 
         <section className="founder" aria-labelledby="founder-title">
           <div className="contentShell founderGrid">
-            <div className="founderEmblem" aria-hidden="true"><Image src="/GhoulHouse_Mark_Color_256px.png" alt="" width={256} height={256} loading="lazy" /></div>
+            <div className="founderEmblem" aria-hidden="true"><Image src="/GhoulHouse_Mark_Color_256px.png" alt="" width={256} height={256} loading="eager" /></div>
             <div className="founderCopy">
               <p className="kicker">06 / TEKIJÄ</p>
               <h2 id="founder-title">HANNA NYHOLM.<br />SISÄLLÖN TAKANA.</h2>
@@ -272,7 +272,7 @@ export default function Home() {
       <footer className="siteFooter siteFooter--homeV2">
         <div className="contentShell footerGrid">
           <div className="footerColumn">
-            <a className="footerBrand" href="#top" aria-label="GhoulHouse — takaisin sivun alkuun"><Image src="/GhoulHouse_Mark_Reverse_Color_128px.png" alt="" width={44} height={44}/><span>GhoulHouse</span></a>
+            <a className="footerBrand" href="#top" aria-label="GhoulHouse — takaisin sivun alkuun"><Image src="/GhoulHouse_Mark_Reverse_Color_128px.png" alt="" width={44} height={44} loading="eager"/><span>GhoulHouse</span></a>
             <p className="footerTagline">Työmaakuvat sisään. Valmis some ulos.</p>
           </div>
           <div className="footerColumn">
