@@ -208,3 +208,24 @@
 @media(prefers-reduced-motion:reduce){
  .homeV2 *, .siteHeader--homeV2 *, .siteFooter--homeV2 *{scroll-behavior:auto;animation:none!important;transition:none!important}
 }
+
+
+/* On the homepage, consent remains explicit but must not cover the first CTA. */
+@media (max-width:767px){
+ body:has(.homeV2) .analyticsConsent{right:12px;bottom:10px;left:12px;gap:8px;max-width:unset;margin:0;padding:10px 12px;border-width:1px;box-shadow:none}
+ body:has(.homeV2) .analyticsConsent__copy{gap:3px}
+ body:has(.homeV2) .analyticsConsent__copy .kicker{display:none}
+ body:has(.homeV2) .analyticsConsent__copy h2{font-family:var(--font-body),Arial,sans-serif;font-size:17px;font-weight:800;line-height:1.2;letter-spacing:-.035em}
+ body:has(.homeV2) .analyticsConsent__copy p:not(.kicker){max-width:55ch;font-size:14px;line-height:1.4}
+ body:has(.homeV2) .analyticsConsent__copy a{font-size:14px;font-weight:700}
+ body:has(.homeV2) .analyticsConsent__actions{gap:8px;flex-wrap:nowrap}
+ body:has(.homeV2) .analyticsConsent__actions .button{min-width:0;min-height:44px;flex:1 1 0;padding:10px 6px;font-size:11px;line-height:1.2;letter-spacing:0}
+}
+@media (min-width:768px){
+ body:has(.homeV2) .analyticsConsent{right:16px;left:auto;bottom:16px;max-width:520px;gap:12px;padding:16px;grid-template-columns:1fr;box-shadow:none}
+ body:has(.homeV2) .analyticsConsent__copy{gap:6px}
+ body:has(.homeV2) .analyticsConsent__copy h2{font-family:var(--font-body),Arial,sans-serif;font-size:24px;font-weight:800;line-height:1.15;letter-spacing:-.045em}
+ body:has(.homeV2) .analyticsConsent__copy p:not(.kicker){font-size:14px;line-height:1.45}
+ body:has(.homeV2) .analyticsConsent__actions{max-width:none;gap:8px}
+ body:has(.homeV2) .analyticsConsent__actions .button{min-width:0;flex:1 1 0;font-size:12px}
+}
