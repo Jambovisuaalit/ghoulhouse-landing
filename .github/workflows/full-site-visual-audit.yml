@@ -1,0 +1,28 @@
+name: One-off 18-page visual audit
+
+on:
+  push:
+    branches: [audit/18-page-review-20260920]
+
+permissions:
+  contents: read
+
+jobs:
+  capture-production:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Capture all production pages at 390, 768 and 1440
+        run: node scripts/full-site-visual-audit.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ghoulhouse-18-page-visual-review
+          path: qa-artifacts/site18
+          retention-days: 7
+          compression-level: 6
+          if-no-files-found: warn
