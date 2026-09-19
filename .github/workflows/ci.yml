@@ -137,11 +137,12 @@ jobs:
             exit 1
           fi
 
-      - name: Design System v1.1.1 and CSS source-of-truth QA
+      - name: Design system and scoped homepage CSS QA
         shell: bash
         run: |
           test -e src/app/site.css
-          test "$(find src/app -maxdepth 1 -type f -name '*.css' | wc -l | tr -d ' ')" = "1"
+          test -e src/app/homepage.css
+          grep -qi -- '--signal: #C83830' src/app/homepage.css
           grep -q -- '--brand-ink:#111111' src/app/site.css
           grep -q -- '--brand-signal:#C9282D' src/app/site.css
           grep -q -- '--brand-ghost:#F7F4EF' src/app/site.css
@@ -171,7 +172,7 @@ jobs:
           html="$(curl --fail --silent http://127.0.0.1:3000/)"
           printf '%s' "$html" | grep -q "TYÖMAAKUVAT"
           printf '%s' "$html" | grep -q "VALMIS SOME"
-          printf '%s' "$html" | grep -q "KONSEPTIESIMERKKI — EI ASIAKASTYÖ"
+          printf '%s' "$html" | grep -qi "Konseptiesimerkki — ei asiakastyö"
 
       - name: Analytics QA
         shell: bash

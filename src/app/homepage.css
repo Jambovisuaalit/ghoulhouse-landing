@@ -1,0 +1,1031 @@
+/* Homepage v2: quiet editorial hierarchy, one dark offer section. */
+.homePage {
+  --signal: #c83830;
+  --gh-copy: #514e49;
+  background: #f7f4ef;
+  font-size: 18px;
+  line-height: 1.7;
+}
+.homePage h1,
+.homePage h2,
+.homePage h3 {
+  margin: 0;
+  text-wrap: balance;
+}
+.homePage h2,
+.homePage h3 {
+  font-family: var(--font-body), Arial, sans-serif;
+  text-transform: none;
+  letter-spacing: -0.04em;
+  font-weight: 600;
+}
+.homePage h2 {
+  font-size: clamp(30px, 3.4vw, 46px);
+  line-height: 1.2;
+}
+.homePage h3 {
+  font-size: 23px;
+  line-height: 1.35;
+  letter-spacing: -0.025em;
+}
+.ghShell {
+  width: min(calc(100% - 112px), 1280px);
+  margin-inline: auto;
+}
+.ghSection {
+  padding-block: 120px;
+}
+.homePage section,
+.homePage #esimerkit {
+  scroll-margin-top: 116px;
+}
+.ghEyebrow {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.025em;
+  color: var(--gh-copy);
+}
+.ghHeader {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #f7f4ef;
+  border-bottom: 1px solid #1111110f;
+}
+.ghHeaderInner {
+  min-height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+.ghBrand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex: none;
+  min-height: 48px;
+}
+.ghBrand img {
+  width: 40px;
+  height: 40px;
+}
+.ghBrand span {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.065em;
+}
+.ghDesktopNav {
+  display: flex;
+  gap: 28px;
+  margin-left: auto;
+}
+.ghDesktopNav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.ghDesktopNav a:hover,
+.ghFooter a:hover {
+  color: var(--signal);
+}
+.ghButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  min-height: 58px;
+  padding: 16px 24px;
+  background: var(--signal);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+  transition: background 0.15s ease;
+}
+.ghButton:hover {
+  background: #111111;
+}
+.ghButton span {
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1;
+}
+.ghHeaderCta {
+  min-height: 48px;
+  padding: 12px 18px;
+  font-size: 14px;
+  gap: 18px;
+}
+.ghMobileNav {
+  display: none;
+}
+.ghHero {
+  padding: 64px 0 80px;
+  min-height: calc(88svh - 96px);
+  display: grid;
+  align-items: center;
+}
+.ghHeroGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 64px;
+}
+.ghHeroCopy > .ghEyebrow {
+  margin-bottom: 24px;
+}
+.homePage .ghHero h1 {
+  font-family: var(--font-display), Impact, sans-serif;
+  font-weight: 400;
+  font-size: clamp(54px, 5.1vw, 76px);
+  line-height: 1.03;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+  text-wrap: initial;
+}
+.ghHero h1 span {
+  color: #514e49;
+}
+.ghLead {
+  max-width: 480px;
+  color: var(--gh-copy);
+  font-size: 18px;
+  line-height: 1.7;
+  margin-top: 26px;
+}
+.ghHeroActions {
+  margin-top: 30px;
+}
+.ghHeroPrice {
+  display: grid;
+  gap: 4px;
+  margin-top: 22px;
+  font-size: 16px;
+  line-height: 1.65;
+}
+.ghHeroPrice strong {
+  font-weight: 600;
+}
+.ghHeroPrice > span {
+  color: var(--gh-copy);
+  font-size: 14px;
+}
+.ghProof {
+  width: 100%;
+  align-self: center;
+}
+.ghProofComposition {
+  display: grid;
+  grid-template-columns: 0.36fr 1fr;
+  gap: 20px;
+  align-items: center;
+}
+.ghImageLabel {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+.ghRaw {
+  padding-top: 76px;
+}
+.ghRaw img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4/5;
+  object-fit: cover;
+}
+.ghProofArrow {
+  display: block;
+  font-size: 30px;
+  text-align: right;
+  margin-top: 8px;
+  color: #77736c;
+}
+.ghPost {
+  background: #e6dfd5;
+  overflow: hidden;
+}
+.ghPostPhoto {
+  position: relative;
+  aspect-ratio: 1/1.06;
+}
+.ghPostPhoto img {
+  object-fit: cover;
+  object-position: center 46%;
+}
+.ghPostCopy {
+  padding: 24px 26px 28px;
+}
+.ghPostCopy > span {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.ghPostCopy strong {
+  display: block;
+  font-family: var(--font-body), Arial, sans-serif;
+  font-weight: 600;
+  font-size: clamp(22px, 2.05vw, 30px);
+  letter-spacing: -0.05em;
+  line-height: 1.18;
+}
+.ghPostCopy p {
+  font-size: 13px;
+  line-height: 1.5;
+  margin-top: 14px;
+}
+.ghProof figcaption {
+  margin-top: 18px;
+  padding-left: calc(26.47% + 14px);
+  color: var(--gh-copy);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.ghBenefits {
+  background: #fffdf9;
+}
+.ghBenefitsGrid {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 130px;
+}
+.ghSectionIntro > .ghEyebrow {
+  margin-bottom: 24px;
+}
+.ghSectionIntro > p:not(.ghEyebrow) {
+  max-width: 49ch;
+  margin-top: 24px;
+  color: var(--gh-copy);
+}
+.ghBenefitList {
+  display: grid;
+  gap: 38px;
+}
+.ghBenefitList p {
+  max-width: 48ch;
+  margin-top: 12px;
+  color: var(--gh-copy);
+  font-size: 17px;
+  line-height: 1.75;
+}
+.ghOffer {
+  background: #171716;
+  color: #f7f4ef;
+  padding-block: 132px;
+}
+.ghOfferGrid {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 130px;
+}
+.ghOffer .ghEyebrow {
+  color: #c5c0b8;
+}
+.homePage .ghOffer h2 {
+  font-family: var(--font-display), Impact, sans-serif;
+  font-size: clamp(60px, 6.1vw, 84px);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  margin-top: 30px;
+  text-transform: uppercase;
+}
+.ghOffer h2 span {
+  font-size: 0.6em;
+  white-space: nowrap;
+}
+.ghOfferAnchor > p:not(.ghEyebrow) {
+  max-width: 35ch;
+  color: #c5c0b8;
+  margin-top: 28px;
+  font-size: 17px;
+}
+.ghOfferAnchor .ghButton {
+  margin-top: 34px;
+}
+.ghOfferAnchor .ghButton:hover {
+  background: #f7f4ef;
+  color: #111111;
+}
+.ghInclusions ul {
+  list-style: none;
+  margin-top: 12px;
+}
+.ghInclusions li {
+  padding: 24px 0;
+  border-bottom: 1px solid #ffffff24;
+}
+.ghInclusions li h3 {
+  font-size: 22px;
+  font-weight: 500;
+}
+.ghInclusions li p {
+  color: #c5c0b8;
+  font-size: 16px;
+  margin-top: 8px;
+}
+.ghScope {
+  margin-top: 26px;
+  font-size: 14px;
+  color: #c5c0b8;
+  max-width: 49ch;
+}
+.ghSteps {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 48px;
+  margin-top: 64px;
+}
+.ghStepTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #77736c;
+  font-size: 16px;
+  margin-bottom: 26px;
+}
+.ghStepTop > span + span {
+  font-size: 25px;
+}
+.ghSteps h3 {
+  font-size: 24px;
+}
+.ghSteps p {
+  font-size: 16px;
+  color: var(--gh-copy);
+  margin-top: 14px;
+  line-height: 1.75;
+}
+.ghFounder {
+  padding-top: 32px;
+}
+.ghFounderGrid {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 120px;
+  border-top: 1px solid #11111126;
+  padding-top: 104px;
+  align-items: center;
+}
+.ghFounderIdentity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+.ghFounderIdentity img {
+  width: 176px;
+  height: 176px;
+}
+.ghFounderIdentity p {
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+}
+.ghFounderIdentity span {
+  font-size: 14px;
+  color: var(--gh-copy);
+  font-weight: 400;
+}
+.ghTextLink {
+  display: inline-flex;
+  gap: 30px;
+  min-height: 48px;
+  align-items: center;
+  border-bottom: 1px solid #aaa39a;
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 24px;
+}
+.ghTextLink:hover {
+  color: var(--signal);
+  border-color: var(--signal);
+}
+.ghClosing {
+  background: #fffdf9;
+}
+.ghFaq {
+  padding-bottom: 0;
+}
+.ghFaqGrid {
+  display: grid;
+  grid-template-columns: 0.75fr 1.25fr;
+  gap: 100px;
+}
+.ghFaqList {
+  border-top: 1px solid #11111126;
+}
+.ghFaqList details {
+  border-bottom: 1px solid #11111126;
+}
+.ghFaqList summary {
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 76px;
+  padding-block: 20px;
+  font-size: 17px;
+  line-height: 1.5;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+.ghFaqList summary::-webkit-details-marker {
+  display: none;
+}
+.ghFaqList summary span {
+  font-size: 24px;
+  font-weight: 400;
+  flex: none;
+}
+.ghFaqList details[open] summary span {
+  transform: rotate(45deg);
+}
+.ghFaqList details p {
+  font-size: 16px;
+  color: var(--gh-copy);
+  padding: 0 44px 26px 0;
+}
+.ghContactGrid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 100px;
+  align-items: start;
+}
+.homePage .ghContact h2 {
+  font-family: var(--font-display), Impact, sans-serif;
+  font-size: clamp(44px, 4.6vw, 64px);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: 0;
+}
+.ghSectionIntro > .ghContactNote {
+  font-size: 15px;
+  font-weight: 500;
+}
+.ghForm {
+  padding-top: 8px;
+}
+.ghForm .leadForm {
+  gap: 24px;
+}
+.ghForm .fieldRow {
+  gap: 20px;
+}
+.ghForm .fieldRow--full {
+  grid-template-columns: 1fr;
+}
+.ghForm .fieldGroup {
+  gap: 10px;
+}
+.ghForm label {
+  font-size: 14px;
+  font-weight: 600;
+}
+.ghForm input,
+.ghForm textarea {
+  background: transparent;
+  min-height: 56px;
+  border-color: #9d9991;
+  padding: 14px;
+  font-size: 16px;
+}
+.ghForm textarea {
+  min-height: 106px;
+}
+.ghForm .formSubmit {
+  min-height: 60px;
+  font-size: 14px;
+  letter-spacing: 0;
+  font-weight: 700;
+  text-transform: none;
+  padding: 16px 18px;
+}
+.ghForm .formMicrocopy {
+  font-size: 14px;
+  line-height: 1.6;
+  font-weight: 400;
+  color: var(--gh-copy);
+  margin: 0;
+}
+.ghForm .formNote {
+  font-size: 13px;
+  line-height: 1.65;
+}
+.ghForm .fieldError {
+  font-size: 14px;
+}
+.ghForm .optionalFields summary {
+  font-size: 14px;
+  cursor: pointer;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  list-style: none;
+}
+.ghForm .optionalFields summary::before {
+  content: '+';
+  font-size: 20px;
+}
+.ghForm .optionalFields[open] summary::before {
+  content: '−';
+}
+.ghForm .optionalFields > div {
+  display: grid;
+  gap: 24px;
+  padding-top: 12px;
+}
+.ghFooter {
+  padding: 64px 0 28px;
+  border-top: 1px solid #11111126;
+}
+.ghFooterMain {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 0.6fr;
+  gap: 70px;
+}
+.ghFooterTagline {
+  font-size: 16px;
+  color: var(--gh-copy);
+  margin-top: 24px;
+  line-height: 1.6;
+}
+.ghFooterCompany {
+  font-size: 14px;
+  line-height: 1.8;
+  padding-top: 8px;
+}
+.ghFooterCompany a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  margin-top: 8px;
+}
+.ghFooter nav {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-content: start;
+}
+.ghFooter nav a {
+  font-size: 14px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+}
+.ghFooterBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding-top: 40px;
+  margin-top: 50px;
+  border-top: 1px solid #11111120;
+  font-size: 13px;
+  color: var(--gh-copy);
+}
+.ghFooterBottom a {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+@media (min-width: 1600px) {
+  .ghHero {
+    padding-block: 90px;
+  }
+  .ghHeroGrid {
+    gap: 100px;
+  }
+}
+@media (max-width: 1199px) {
+  .ghShell {
+    width: calc(100% - 72px);
+  }
+  .ghHeroGrid {
+    gap: 40px;
+  }
+  .ghDesktopNav {
+    gap: 18px;
+  }
+  .ghHeaderInner {
+    gap: 22px;
+  }
+  .ghBrand span {
+    font-size: 20px;
+  }
+  .ghHeaderCta {
+    font-size: 13px;
+  }
+  .ghBenefitsGrid,
+  .ghOfferGrid {
+    gap: 72px;
+  }
+  .ghSteps {
+    gap: 28px;
+  }
+  .ghContactGrid,
+  .ghFaqGrid,
+  .ghFounderGrid {
+    gap: 64px;
+  }
+  .ghHero h1 {
+    font-size: 60px;
+  }
+  .ghPostCopy {
+    padding: 22px;
+  }
+  .ghProofComposition {
+    gap: 16px;
+  }
+}
+@media (max-width: 1023px) {
+  .ghHeaderInner {
+    min-height: 84px;
+  }
+  .ghHeaderCta {
+    display: none;
+  }
+  .ghHero {
+    min-height: auto;
+    padding-block: 60px 80px;
+  }
+  .ghHeroGrid {
+    gap: 44px;
+    grid-template-columns: 1fr;
+  }
+  .ghHeroCopy {
+    max-width: 620px;
+  }
+  .homePage .ghHero h1 {
+    font-size: 72px;
+  }
+  .ghLead {
+    max-width: 550px;
+  }
+  .ghProof {
+    max-width: 620px;
+    justify-self: end;
+  }
+  .ghProofComposition {
+    grid-template-columns: 0.34fr 1fr;
+    gap: 26px;
+  }
+  .ghRaw {
+    padding-top: 50px;
+  }
+  .ghPostPhoto {
+    aspect-ratio: 1.15;
+  }
+  .ghPostCopy strong {
+    font-size: 30px;
+  }
+  .ghSection {
+    padding-block: 96px;
+  }
+  .ghBenefitsGrid,
+  .ghOfferGrid {
+    gap: 48px;
+  }
+  .ghSteps {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 48px 64px;
+  }
+  .ghFounder {
+    padding-top: 0;
+  }
+  .ghFounderGrid {
+    padding-top: 80px;
+    gap: 52px;
+    grid-template-columns: 0.7fr 1.3fr;
+  }
+  .ghFaqGrid,
+  .ghContactGrid {
+    grid-template-columns: 1fr;
+    gap: 44px;
+  }
+  .ghFaq {
+    padding-bottom: 0;
+  }
+  .ghForm {
+    max-width: 780px;
+    width: 100%;
+  }
+  .ghFooterMain {
+    gap: 40px;
+  }
+  .ghContact .ghSectionIntro > p {
+    max-width: 58ch;
+  }
+}
+@media (max-width: 767px) {
+  .ghShell {
+    width: calc(100% - 40px);
+  }
+  .homePage {
+    font-size: 17px;
+  }
+  .ghHeaderInner {
+    min-height: 76px;
+    gap: 12px;
+  }
+  .ghBrand span {
+    font-size: 20px;
+  }
+  .ghBrand {
+    gap: 8px;
+  }
+  .ghDesktopNav {
+    display: none;
+  }
+  .ghMobileNav {
+    display: block;
+  }
+  .ghMobileNav summary {
+    border: 0;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0;
+    display: flex;
+    gap: 14px;
+    min-width: 80px;
+  }
+  .ghMobileNav summary span {
+    font-size: 22px;
+    font-weight: 400;
+  }
+  .ghMobileNav[open] summary span {
+    transform: rotate(45deg);
+  }
+  .ghMobileNav nav {
+    min-width: 260px;
+    box-shadow: none;
+    top: calc(100% + 16px);
+  }
+  .ghHero {
+    padding: 36px 0 64px;
+  }
+  .ghHeroGrid {
+    gap: 52px;
+  }
+  .ghHeroCopy > .ghEyebrow {
+    margin-bottom: 20px;
+    font-size: 13px;
+  }
+  .homePage .ghHero h1 {
+    font-size: clamp(42px, 12.6vw, 72px);
+    line-height: 1.07;
+  }
+  .ghLead {
+    font-size: 17px;
+    line-height: 1.65;
+    margin-top: 24px;
+  }
+  .ghHeroActions {
+    margin-top: 24px;
+  }
+  .ghButton {
+    font-size: 14px;
+    gap: 20px;
+    min-height: 56px;
+    padding: 16px 20px;
+  }
+  .ghHeroPrice {
+    margin-top: 20px;
+    font-size: 16px;
+  }
+  .ghHeroPrice > span {
+    font-size: 13px;
+  }
+  .ghProof {
+    max-width: 520px;
+  }
+  .ghProofComposition {
+    gap: 16px;
+    grid-template-columns: 0.34fr 1fr;
+  }
+  .ghRaw {
+    padding-top: 34px;
+  }
+  .ghImageLabel {
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+  .ghPostPhoto {
+    aspect-ratio: 1/1.1;
+  }
+  .ghPostCopy {
+    padding: 20px;
+  }
+  .ghPostCopy strong {
+    font-size: 24px;
+  }
+  .ghPostCopy > span {
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+  .ghPostCopy p {
+    font-size: 12px;
+    margin-top: 12px;
+  }
+  .ghProof figcaption {
+    padding-left: 0;
+    font-size: 12px;
+    margin-top: 20px;
+  }
+  .ghSection {
+    padding-block: 72px;
+  }
+  .ghSectionIntro > .ghEyebrow {
+    margin-bottom: 20px;
+  }
+  .ghSectionIntro > p:not(.ghEyebrow) {
+    margin-top: 20px;
+  }
+  .ghBenefitsGrid,
+  .ghOfferGrid {
+    grid-template-columns: 1fr;
+    gap: 44px;
+  }
+  .ghBenefitList {
+    gap: 30px;
+  }
+  .homePage h3 {
+    font-size: 22px;
+  }
+  .ghBenefitList p {
+    font-size: 16px;
+  }
+  .ghOffer {
+    padding-block: 76px;
+  }
+  .homePage .ghOffer h2 {
+    font-size: 64px;
+    margin-top: 24px;
+  }
+  .ghOfferAnchor > p:not(.ghEyebrow) {
+    font-size: 16px;
+  }
+  .ghInclusions li h3 {
+    font-size: 21px;
+  }
+  .ghSteps {
+    gap: 36px 28px;
+    margin-top: 40px;
+  }
+  .ghSteps h3 {
+    font-size: 22px;
+  }
+  .ghSteps p {
+    font-size: 16px;
+  }
+  .ghStepTop {
+    margin-bottom: 18px;
+  }
+  .ghFounder {
+    padding-top: 0;
+  }
+  .ghFounderGrid {
+    grid-template-columns: 1fr;
+    padding-top: 64px;
+    gap: 38px;
+  }
+  .ghFounderIdentity {
+    flex-direction: row;
+    gap: 24px;
+    justify-content: flex-start;
+  }
+  .ghFounderIdentity img {
+    width: 96px;
+    height: 96px;
+  }
+  .ghFounderIdentity p {
+    text-align: left;
+  }
+  .ghFaq {
+    padding-bottom: 0;
+  }
+  .ghFaqList summary {
+    font-size: 16px;
+    min-height: 72px;
+    gap: 20px;
+  }
+  .ghFaqList details p {
+    padding-right: 24px;
+  }
+  .ghContactGrid {
+    gap: 36px;
+  }
+  .homePage .ghContact h2 {
+    font-size: clamp(40px, 11vw, 60px);
+  }
+  .ghForm .leadForm {
+    gap: 20px;
+  }
+  .ghForm .fieldRow {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .ghForm .formSubmit {
+    font-size: 14px;
+  }
+  .ghFooter {
+    padding-top: 44px;
+  }
+  .ghFooterMain {
+    grid-template-columns: 1fr 1fr;
+    gap: 36px 20px;
+  }
+  .ghFooterMain > div:first-child {
+    grid-column: 1/-1;
+  }
+  .ghFooterCompany {
+    font-size: 13px;
+  }
+  .ghFooterBottom {
+    margin-top: 32px;
+    padding-top: 24px;
+    font-size: 12px;
+    gap: 16px;
+  }
+  .ghFooter nav a {
+    min-height: 44px;
+  }
+}
+@media (max-width: 359px) {
+  .ghShell {
+    width: calc(100% - 32px);
+  }
+  .ghButton {
+    gap: 12px;
+    padding-inline: 14px;
+    font-size: 13px;
+  }
+  .ghSteps {
+    grid-template-columns: 1fr;
+  }
+  .ghPostCopy {
+    padding: 16px;
+  }
+  .ghPostCopy strong {
+    font-size: 21px;
+  }
+  .ghBrand span {
+    font-size: 18px;
+  }
+  .homePage .ghOffer h2 {
+    font-size: 56px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ghButton {
+    transition: none;
+  }
+}
+/* Keep the shared consent surface quiet on the redesigned homepage. */
+body:has(.homePage) .analyticsConsent {
+  border: 1px solid #d1cbc2;
+  box-shadow: none;
+  max-width: 820px;
+  padding: 22px;
+  gap: 24px;
+}
+body:has(.homePage) .analyticsConsent__copy h2 {
+  font-family: var(--font-body), Arial, sans-serif;
+  text-transform: none;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.03em;
+}
+body:has(.homePage) .analyticsConsent__copy .kicker {
+  display: none;
+}
+body:has(.homePage) .analyticsConsent__copy p:not(.kicker) {
+  font-size: 14px;
+}
+body:has(.homePage) .analyticsConsent__copy a {
+  font-size: 13px;
+  font-weight: 500;
+}
+body:has(.homePage) .analyticsConsent__actions .button {
+  font-size: 13px;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 600;
+}
+body:has(.homePage) .analyticsSettings {
+  font-size: 12px;
+  text-transform: none;
+  font-weight: 500;
+  letter-spacing: 0;
+  box-shadow: none;
+  border-color: #d1cbc2;
+}

@@ -6,11 +6,22 @@ import AnalyticsConsent from '@/components/analytics/AnalyticsConsent';
 import ResponsiveNavState from '@/components/ResponsiveNavState';
 import './site.css';
 
-const anton = Anton({ weight: '400', subsets: ['latin-ext'], variable: '--font-display', display: 'swap' });
-const montserrat = Montserrat({ weight: ['400', '500', '600', '700', '800', '900'], subsets: ['latin-ext'], variable: '--font-body', display: 'swap' });
+const anton = Anton({
+  weight: '400',
+  subsets: ['latin-ext'],
+  variable: '--font-display',
+  display: 'swap',
+});
+const montserrat = Montserrat({
+  weight: ['400', '500', '600', '700', '800', '900'],
+  subsets: ['latin-ext'],
+  variable: '--font-body',
+  display: 'swap',
+});
 
 const title = 'Some-sisällöntuotanto remontti- ja LVI-yrityksille | GhoulHouse';
-const description = 'GhoulHouse tekee työmaa- ja referenssikuvista 12 valmista Instagram- ja Facebook-sisältöä 30 päivässä. Remontti- ja LVI-yrityksille. 490 € + ALV.';
+const description =
+  'GhoulHouse tekee työmaa- ja referenssikuvista 12 valmista Instagram- ja Facebook-sisältöä 30 päivässä. Remontti- ja LVI-yrityksille. 490 € + ALV.';
 const indexable = process.env.VERCEL_ENV === 'production';
 
 export const metadata: Metadata = {
@@ -18,10 +29,17 @@ export const metadata: Metadata = {
   title,
   description,
   applicationName: 'GhoulHouse',
+  manifest: '/manifest.webmanifest',
+  icons: {
+    icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
+    apple: [{ url: '/apple-touch-icon-180.png', sizes: '180x180', type: 'image/png' }],
+  },
   creator: siteConfig.company.legalName,
   publisher: siteConfig.company.legalName,
   alternates: { canonical: '/' },
-  robots: indexable ? { index: true, follow: true } : { index: false, follow: false, nocache: true },
+  robots: indexable
+    ? { index: true, follow: true }
+    : { index: false, follow: false, nocache: true },
   openGraph: {
     title,
     description,
@@ -29,7 +47,14 @@ export const metadata: Metadata = {
     siteName: 'GhoulHouse',
     locale: 'fi_FI',
     type: 'website',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'GhoulHouse — Työmaakuvat sisään. Valmis some ulos.' }],
+    images: [
+      {
+        url: '/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'GhoulHouse — Työmaakuvat sisään. Valmis some ulos.',
+      },
+    ],
   },
   twitter: { card: 'summary_large_image', title, description, images: ['/opengraph-image'] },
 };
@@ -64,13 +89,15 @@ const structuredData = {
       alternateName: siteConfig.company.brand,
       url: 'https://ghoulhouse.fi',
       foundingDate: siteConfig.company.registrationDate,
-      identifier: { '@type': 'PropertyValue', name: 'Y-tunnus', value: siteConfig.company.businessId },
+      identifier: {
+        '@type': 'PropertyValue',
+        name: 'Y-tunnus',
+        value: siteConfig.company.businessId,
+      },
       logo: {
         '@type': 'ImageObject',
         '@id': 'https://ghoulhouse.fi/#logo',
         url: 'https://ghoulhouse.fi/ghoulhouse-logo.svg',
-        width: 600,
-        height: 120,
       },
       sameAs: socialProfiles,
     },
@@ -111,7 +138,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ResponsiveNavState />
         {children}
         <AnalyticsConsent />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
       </body>
     </html>
   );

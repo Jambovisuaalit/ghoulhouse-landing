@@ -102,7 +102,7 @@ try {
       const result = await evaluate(client, `(() => ({
         innerWidth,
         scrollWidth: document.documentElement.scrollWidth,
-        targetFailures: [...document.querySelectorAll('a.button, button, summary, .btn')]
+        targetFailures: [...document.querySelectorAll('a.button, a.ghButton, button, summary, .btn')]
           .filter((el) => { const r = el.getBoundingClientRect(); const s = getComputedStyle(el); return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden'; })
           .map((el) => { const r = el.getBoundingClientRect(); return { text: el.textContent?.replace(/\\s+/g, ' ').trim() || '', width: r.width, height: r.height }; })
           .filter((item) => item.width < 44 || item.height < 44),

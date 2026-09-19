@@ -42,7 +42,7 @@ assert(
 for (const name of ['company', 'name', 'email', 'profile']) {
   assert(html.includes(`name="${name}"`), `No-JS QA: ${name} field is missing.`);
 }
-assert(html.includes('KONSEPTIESIMERKKI — EI ASIAKASTYÖ'), 'No-JS QA: concept disclosure is missing.');
+assert(/Konseptiesimerkki — ei asiakastyö/i.test(html), 'No-JS QA: concept disclosure is missing.');
 assert(!html.includes('logo-horizontal.svg') && !html.includes('logo-horizontal-white.svg'), 'No-JS QA: unavailable/fabricated logo lockup referenced.');
 
 console.log('No-JS QA passed: canonical hero, offer, CTA, disclosure and native POST lead form remain usable without JavaScript.');
