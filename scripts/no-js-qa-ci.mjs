@@ -31,7 +31,10 @@ const html = execFileSync(
 
 assert(/<h1\b[^>]*>[\s\S]*?<\/h1>/i.test(html), 'No-JS QA: H1 is missing.');
 assert(html.includes('HYVÄ TYÖ') && html.includes('PITÄÄ NÄKYÄ.'), 'No-JS QA: canonical headline is missing.');
-assert(html.includes('490 €'), 'No-JS QA: Social card pricing is missing.');\nfor (const href of ['/verkkosivut-yritykselle','/some-sisallontuotanto','/resurssit','/referenssit']) {\n  assert(html.includes('href="' + href + '"'), 'No-JS QA: required company navigation missing: ' + href);\n}
+assert(html.includes('490 €'), 'No-JS QA: Social card pricing is missing.');
+for (const href of ['/verkkosivut-yritykselle','/some-sisallontuotanto','/resurssit','/referenssit']) {
+  assert(html.includes('href="' + href + '"'), 'No-JS QA: required company navigation missing: ' + href);
+}
 assert(/<a\b[^>]*href=["']#yhteys["'][^>]*>/i.test(html), 'No-JS QA: #yhteys CTA anchor is missing.');
 assert(html.includes('PYYDÄ EHDOTUS') || html.includes('Pyydä ehdotus'), 'No-JS QA: primary CTA copy is missing.');
 assert(
@@ -42,7 +45,8 @@ assert(
 for (const name of ['company', 'name', 'email', 'profile']) {
   assert(html.includes(`name="${name}"`), `No-JS QA: ${name} field is missing.`);
 }
-assert(/Oma sivusto — ei asiakasreferenssi/i.test(html), 'No-JS QA: honest own-work disclosure is missing.');\nassert(!html.includes('Kuva luotu tekoälyllä'), 'No-JS QA: AI concept still dominates company homepage.');
+assert(/Oma sivusto — ei asiakasreferenssi/i.test(html), 'No-JS QA: honest own-work disclosure is missing.');
+assert(!html.includes('Kuva luotu tekoälyllä'), 'No-JS QA: AI concept still dominates company homepage.');
 assert(!html.includes('logo-horizontal.svg') && !html.includes('logo-horizontal-white.svg'), 'No-JS QA: unavailable/fabricated logo lockup referenced.');
 
 console.log('No-JS QA passed: company hero, three service paths, proposal CTA and native POST lead form remain usable without JavaScript.');
