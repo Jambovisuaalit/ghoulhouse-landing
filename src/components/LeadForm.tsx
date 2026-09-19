@@ -26,7 +26,8 @@ function a11yErrorProps(name: string, errors: FieldErrors) {
     : { 'aria-invalid': false as const };
 }
 
-export default function LeadForm({ compact = false }: { compact?: boolean }) {
+export default function LeadForm({ compact = false, mode = 'social' }: { compact?: boolean; mode?: 'social' | 'proposal' }) {
+  const proposal = mode === 'proposal';
   const [toast, setToast] = useState<Toast>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [submitting, setSubmitting] = useState(false);
@@ -122,7 +123,7 @@ export default function LeadForm({ compact = false }: { compact?: boolean }) {
         onChange={markStarted}
         noValidate
       >
-        <input type="hidden" name="intent" value="photos" />
+        <input type="hidden" name="intent" value={proposal ? "booking" : "photos"} />
 
         <div className="fieldRow">
           <div className="fieldGroup">
@@ -221,13 +222,13 @@ export default function LeadForm({ compact = false }: { compact?: boolean }) {
                 <FieldError name="phone" errors={fieldErrors} />
               </div>
               <div className="fieldGroup">
-                <label htmlFor="lead-message">Mitä materiaalia sinulla on?</label>
+                <label htmlFor="lead-message">{proposal ? "Mitä haluat parantaa?" : "Mitä materiaalia sinulla on?"}</label>
                 <textarea
                   id="lead-message"
                   name="message"
                   rows={4}
                   maxLength={1200}
-                  placeholder="Esim. työmaakuvia, valmiita kohteita, videoita..."
+                  placeholder={proposal ? "Esim. verkkosivut, some tai hakukonenäkyvyys..." : "Esim. työmaakuvia, valmiita kohteita, videoita..."}
                   {...a11yErrorProps('message', fieldErrors)}
                 />
                 <FieldError name="message" errors={fieldErrors} />
@@ -243,7 +244,7 @@ export default function LeadForm({ compact = false }: { compact?: boolean }) {
                 name="message"
                 rows={4}
                 maxLength={1200}
-                placeholder="Esim. työmaakuvia, valmiita kohteita, videoita..."
+                placeholder={proposal ? "Esim. verkkosivut, some tai hakukonenäkyvyys..." : "Esim. työmaakuvia, valmiita kohteita, videoita..."}
                 {...a11yErrorProps('message', fieldErrors)}
               />
               <FieldError name="message" errors={fieldErrors} />
@@ -253,11 +254,11 @@ export default function LeadForm({ compact = false }: { compact?: boolean }) {
 
         <input className="trap" name="fax" tabIndex={-1} autoComplete="off" aria-hidden="true" />
         <button className="button button--signal formSubmit" type="submit" disabled={submitting}>
-          {submitting ? 'LÄHETETÄÄN…' : 'PYYDÄ 2 SISÄLTÖESIMERKKIÄ'}{' '}
+          {submitting ? 'LÄHETETÄÄN…' : proposal ? 'PYYDÄ EHDOTUS' : 'PYYDÄ 2 SISÄLTÖESIMERKKIÄ'}{' '}
           <span aria-hidden="true">→</span>
         </button>
         <p className="formMicrocopy">
-          Ei myyntipalaveripakkoa. Katsomme ensin, mitä nykyisestä materiaalistanne voidaan tehdä.
+          {proposal ? 'Kerro tilanteestanne. Ehdotamme sopivaa seuraavaa askelta ilman sitoumusta.' : 'Ei myyntipalaveripakkoa. Katsomme ensin, mitä nykyisestä materiaalistanne voidaan tehdä.'}
         </p>
         <p className="formNote">
           Tietoja käytetään vain yhteydenoton käsittelyyn.{' '}
