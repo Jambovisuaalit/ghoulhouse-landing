@@ -9,6 +9,7 @@ const USER_DATA_DIR = `/tmp/ghoulhouse-browser-qa-${process.pid}`;
 const viewports = [
   { width: 320, height: 568 },
   { width: 390, height: 844, firstView: true },
+  { width: 430, height: 932 },
   { width: 640, height: 900 },
   { width: 768, height: 1024 },
   { width: 1024, height: 768 },
@@ -172,6 +173,7 @@ try {
         heroCtaHref: heroCta?.getAttribute('href') || '',
         heroCtaRect: rect(heroCta),
         priceRect: rect(price),
+        consentRect: rect(document.querySelector('.analyticsConsent')),
         h1Rect: rect(h1),
         brandRect: rect(brandLink),
         formExists: Boolean(form),
@@ -201,9 +203,10 @@ try {
 
     assert(metrics.h1Count === 1, `${viewport.width}x${viewport.height}: expected exactly one H1.`);
     assert(metrics.brandHeadlineText.includes('TYÖMAAKUVAT') && metrics.brandHeadlineText.includes('SISÄÄN.') && metrics.brandHeadlineText.includes('VALMIS SOME') && metrics.brandHeadlineText.includes('ULOS.'), `${viewport.width}x${viewport.height}: brand headline missing.`);
-    assert(metrics.h1Text === 'Työmaakuvista valmis some remontti- ja LVI-yrityksille.', `${viewport.width}x${viewport.height}: H1 copy changed unexpectedly.`);
+    assert(metrics.h1Text.includes('TYÖMAAKUVAT') && metrics.h1Text.includes('VALMIS SOME'), `${viewport.width}x${viewport.height}: semantic H1 must contain the brand headline.`);
+    assert(metrics.bodyText.includes('Työmaakuvista valmis some remontti- ja LVI-yrityksille.'), `${viewport.width}x${viewport.height}: SEO supporting headline missing.`);
     assert(metrics.heroCtaHref === '#yhteys', `${viewport.width}x${viewport.height}: primary CTA must target #yhteys.`);
-    assert(metrics.heroCtaText.includes('2 SISÄLTÖESIMERKKIÄ'), `${viewport.width}x${viewport.height}: primary CTA copy missing.`);
+    assert(metrics.heroCtaText.includes('3 SISÄLTÖESIMERKKIÄ'), `${viewport.width}x${viewport.height}: primary CTA copy missing.`);
     assert(metrics.priceRect, `${viewport.width}x${viewport.height}: 490 € price missing.`);
     assert(metrics.formExists && metrics.formMethod === 'post' && metrics.formAction === '/api/leads', `${viewport.width}x${viewport.height}: native lead form contract missing.`);
     assert(metrics.requiredFields, `${viewport.width}x${viewport.height}: required lead fields missing.`);
@@ -221,6 +224,11 @@ try {
       assert(value.left >= -1 && value.right <= metrics.innerWidth + 1, `${viewport.width}x${viewport.height}: ${name} overflows horizontally.`);
     }
 
+    if (viewport.width === 390 || viewport.width === 430) {
+      const a = metrics.heroCtaRect, b = metrics.consentRect;
+      const covered = b && a && a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+      assert(!covered, `${viewport.width}px: consent banner visually covers the primary hero CTA.`);
+    }
     if (viewport.firstView) {
       assert(metrics.heroCtaRect.bottom <= metrics.innerHeight, `${viewport.width}x${viewport.height}: primary CTA below first viewport.`);
       assert(metrics.priceRect.bottom <= metrics.innerHeight, `${viewport.width}x${viewport.height}: price below first viewport.`);
@@ -228,6 +236,32 @@ try {
 
     const screenshot = await client.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
     await writeFile(`${SCREENSHOT_DIR}/homepage-${viewport.width}x${viewport.height}.png`, Buffer.from(screenshot.data, 'base64'));
+    // The first screenshot records the real consent prompt. Capture the approved
+    // no-analytics state separately so the actual page art direction can be QA'd.
+    const dismissed = await evaluate(client, `(() => {
+      const reject = document.querySelector('.analyticsConsent__reject');
+      if (reject) reject.click();
+      return Boolean(reject) || localStorage.getItem('ghoulhouse_analytics_consent') === 'rejected';
+    })()`);
+    assert(dismissed, `${viewport.width}px: consent rejection could not be exercised.`);
+    await sleep(160);
+    const cleanUi = await evaluate(client, `(() => ({
+      stored: localStorage.getItem('ghoulhouse_analytics_consent'),
+      open: Boolean(document.querySelector('.analyticsConsent')),
+      height: Math.ceil(document.documentElement.scrollHeight)
+    }))()`);
+    assert(cleanUi.stored === 'rejected' && !cleanUi.open, `${viewport.width}px: consent rejection must hide the banner.`);
+    const cleanScreenshot = await client.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
+    await writeFile(`${SCREENSHOT_DIR}/homepage-clean-${viewport.width}x${viewport.height}.png`, Buffer.from(cleanScreenshot.data, 'base64'));
+    if (viewport.firstView) {
+      const fullScreenshot = await client.send('Page.captureScreenshot', {
+        format: 'png',
+        captureBeyondViewport: true,
+        clip: { x: 0, y: 0, width: viewport.width, height: Math.min(cleanUi.height, 15000), scale: 1 },
+      });
+      await writeFile(`${SCREENSHOT_DIR}/homepage-full-${viewport.width}x${viewport.height}.png`, Buffer.from(fullScreenshot.data, 'base64'));
+    }
+    await evaluate(client, `(() => { localStorage.removeItem('ghoulhouse_analytics_consent'); return true; })()`);
     results.push({ viewport: `${viewport.width}x${viewport.height}`, status: 'PASS' });
   }
 

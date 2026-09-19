@@ -39,8 +39,7 @@ export default function AnalyticsConsent() {
       <div className="analyticsConsent__copy">
         <p className="kicker">ANALYTIIKKA</p>
         <h2 id="analytics-consent-title">SALLITAANKO KÄYTÖN MITTAUS?</h2>
-        <p>Google Analytics 4 auttaa GhoulHousea ymmärtämään sivuston käyttöä. Analytiikka aktivoituu vain, jos annat siihen suostumuksen. Välttämättömät sivustotoiminnot toimivat ilman analytiikkaa.</p>
-        <a href="/tietosuoja">Lue tietosuojaseloste</a>
+        <p>Google Analytics 4 mittaa sivuston käyttöä vain suostumuksellasi. <a href="/tietosuoja">Tietosuojaseloste</a>.</p>
       </div>
       <div className="analyticsConsent__actions">
         <button className="button button--signal" type="button" onClick={() => save('accepted')}>SALLI ANALYTIIKKA</button>
