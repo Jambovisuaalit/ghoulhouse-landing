@@ -49,8 +49,7 @@ export default function AnalyticsConsent() {
         <p className="kicker">ANALYTIIKKA</p>
         <h2 id="analytics-consent-title">SALLITAANKO KÄYTÖN MITTAUS?</h2>
         <p>
-          Google Analytics 4 auttaa GhoulHousea ymmärtämään sivuston käyttöä. Analytiikka aktivoituu
-          vain, jos annat siihen suostumuksen. Välttämättömät sivustotoiminnot toimivat ilman
+          Google Analytics 4 mittaa sivuston käyttöä vain suostumuksellasi. Sivusto toimii myös ilman
           analytiikkaa.
         </p>
         <a href="/tietosuoja">Lue tietosuojaseloste</a>
