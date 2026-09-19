@@ -124,7 +124,7 @@
   display: none;
 }
 .ghHero {
-  padding: 64px 0 80px;
+  padding: 40px 0 48px;
   min-height: calc(88svh - 96px);
   display: grid;
   align-items: center;
@@ -141,7 +141,7 @@
 .homePage .ghHero h1 {
   font-family: var(--font-display), Impact, sans-serif;
   font-weight: 400;
-  font-size: clamp(54px, 5.1vw, 76px);
+  font-size: clamp(54px, 4.4vw, 64px);
   line-height: 1.03;
   letter-spacing: -0.015em;
   text-transform: uppercase;
@@ -212,7 +212,7 @@
 }
 .ghPostPhoto {
   position: relative;
-  aspect-ratio: 1/1.06;
+  aspect-ratio: 1.35;
 }
 .ghPostPhoto img {
   object-fit: cover;
@@ -1028,4 +1028,9 @@ body:has(.homePage) .analyticsSettings {
   letter-spacing: 0;
   box-shadow: none;
   border-color: #d1cbc2;
+}
+
+.homePage .toast {
+  z-index: 210;
+  max-width: min(460px, calc(100vw - 32px));
 }
