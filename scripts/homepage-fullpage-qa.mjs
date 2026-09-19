@@ -66,6 +66,7 @@ async function auditViewport() {
   const rootWidth=document.documentElement.scrollWidth,bodyWidth=document.body.scrollWidth;
   const widthOffenders=bodyWidth>innerWidth+1?[...document.querySelectorAll('body *')].map(el=>({tag:el.tagName,cls:typeof el.className==='string'?el.className.slice(0,70):'',id:el.id||'',rect:rect(el),scrollWidth:el.scrollWidth,clientWidth:el.clientWidth})).filter(x=>x.rect&&x.rect.width>0&&(x.rect.right>innerWidth+1||x.rect.left < -1||x.scrollWidth>x.clientWidth+8)).sort((a,b)=>b.rect.right-a.rect.right).slice(0,22):[];
   if(rootWidth>innerWidth+1)errors.push('Actual root horizontal scroll: '+rootWidth+' > '+innerWidth);
+  if(bodyWidth>innerWidth+1)errors.push('Body content exceeds viewport: '+JSON.stringify(widthOffenders));
   const consent=document.querySelector('.ghConsentSlot .analyticsConsent');
   const slot=document.querySelector('#gh-consent-inflow');
   if(!slot||!consent)errors.push('Consent missing from homepage in-flow slot');
@@ -192,10 +193,14 @@ try {
   }
   // All homepage-internal destinations (deduplicated and query/hash stripped).
   const routeList=await browser.eval('([...new Set([...document.querySelectorAll(".homePage a[href]")].map(a=>a.getAttribute("href")).filter(h=>h&&h.startsWith("/")).map(h=>new URL(h,location.origin).pathname))])');
-  for(const pathname of routeList) {
+  // Include first-party CSS, JS, favicon, manifest and touch icon in the URL gate.
+  const assetPaths=await browser.eval('([...new Set([...document.querySelectorAll(\'link[href^="/"],script[src^="/" ]\')].map(el=>el.getAttribute("href")||el.getAttribute("src")).filter(Boolean).map(x=>new URL(x,location.origin).pathname))].filter(x=>x.startsWith("/_next/static/")||x==="/favicon.svg"||x==="/manifest.webmanifest"||x==="/apple-touch-icon-180.png").slice(0,8))');
+  const checked=[...new Set([...routeList,...assetPaths])];
+  for(const pathname of checked) {
     const response=await fetch(new URL(pathname,BASE_URL),{redirect:'follow'});
     report.routes.push({pathname,status:response.status,ok:response.ok});
   }
+  if(report.routes.length<15)report.errors.push('Fewer than 15 internal links/assets checked');
   if(report.routes.some(x=>!x.ok))report.errors.push('Internal destination HTTP failure');
   if(report.results.some(x=>x.errors.length))report.errors.push('At least one viewport failed');
   console.log('INTERNAL DESTINATIONS '+JSON.stringify(report.routes));
