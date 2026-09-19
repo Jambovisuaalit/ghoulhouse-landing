@@ -1,5 +1,6 @@
 export interface LeadInput {
   intent: 'booking' | 'photos';
+  service?: 'websites' | 'social' | 'seo';
   company: string;
   name: string;
   email: string;
@@ -95,6 +96,9 @@ export function validateLead(input: unknown): LeadValidationResult {
 
   const data: LeadInput = {
     intent: source.intent === 'photos' ? 'photos' : 'booking',
+    service: ['websites', 'social', 'seo'].includes(String(source.service))
+      ? (source.service as 'websites' | 'social' | 'seo')
+      : undefined,
     company: clean(source.company, limits.company),
     name: clean(source.name, limits.name),
     email: clean(source.email, limits.email).toLowerCase(),

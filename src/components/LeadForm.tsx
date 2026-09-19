@@ -26,7 +26,7 @@ function a11yErrorProps(name: string, errors: FieldErrors) {
     : { 'aria-invalid': false as const };
 }
 
-export default function LeadForm({ compact = false, mode = 'social' }: { compact?: boolean; mode?: 'social' | 'proposal' }) {
+export default function LeadForm({ compact = false, mode = 'social', defaultService }: { compact?: boolean; mode?: 'social' | 'proposal'; defaultService?: 'seo' }) {
   const proposal = mode === 'proposal';
   const [toast, setToast] = useState<Toast>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -204,6 +204,18 @@ export default function LeadForm({ compact = false, mode = 'social' }: { compact
           />
           <FieldError name="profile" errors={fieldErrors} />
         </div>
+
+        {proposal && (
+          <div className="fieldGroup">
+            <label htmlFor="lead-service">Mistä palvelusta olet kiinnostunut?</label>
+            <select id="lead-service" name="service" defaultValue={defaultService || ""}>
+              <option value="">En vielä tiedä</option>
+              <option value="websites">Verkkosivut</option>
+              <option value="social">Social</option>
+              <option value="seo">SEO / hakukonenäkyvyys</option>
+            </select>
+          </div>
+        )}
 
         {compact ? (
           <details className="optionalFields">

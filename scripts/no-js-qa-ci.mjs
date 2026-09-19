@@ -49,4 +49,14 @@ assert(/Oma sivusto — ei asiakasreferenssi/i.test(html), 'No-JS QA: honest own
 assert(!html.includes('Kuva luotu tekoälyllä'), 'No-JS QA: AI concept still dominates company homepage.');
 assert(!html.includes('logo-horizontal.svg') && !html.includes('logo-horizontal-white.svg'), 'No-JS QA: unavailable/fabricated logo lockup referenced.');
 
+const seoPage = await fetch(BASE_URL + '/?service=seo#yhteys', { cache: 'no-store' }).then((res) => res.text());
+assert(/<option[^>]*value="seo"[^>]*selected/i.test(seoPage), 'No-JS QA: SEO CTA does not preselect the service.');
+const invalidPage = await fetch(BASE_URL + '/?lead=validation#yhteys', { cache: 'no-store' }).then((res) => res.text());
+assert(invalidPage.includes('Lomaketta ei lähetetty.'), 'No-JS QA: form error message is missing from server-rendered homepage.');
+const invalidPost = await fetch(BASE_URL + '/api/leads', {
+  method: 'POST', redirect: 'manual',
+  headers: { 'content-type': 'application/x-www-form-urlencoded', referer: BASE_URL + '/' },
+  body: 'intent=booking&name=&company=&email=&profile=',
+});
+assert(invalidPost.status === 303 && (invalidPost.headers.get('location') || '').includes('/?lead=validation#yhteys'), 'No-JS QA: invalid native POST does not return to visible homepage form.');
 console.log('No-JS QA passed: company hero, three service paths, proposal CTA and native POST lead form remain usable without JavaScript.');

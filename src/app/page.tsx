@@ -30,8 +30,8 @@ const services = [
     index: '03',
     title: 'SEO',
     body: 'Hakukonenäkyvyyden perusta: ymmärrettävät sisällöt, sivurakenne ja löydettävät palvelut.',
-    href: '/resurssit',
-    link: 'Tutustu oppaisiin ja SEO-sisältöihin',
+    href: '/?service=seo#yhteys',
+    link: 'Pyydä SEO-ehdotus',
   },
 ] as const;
 
@@ -63,7 +63,19 @@ function Brand({ footer = false }: { footer?: boolean }) {
   );
 }
 
-export default function Home() {
+const leadErrors: Record<string, string> = {
+  validation: 'Tarkista pakolliset tiedot ja sähköpostiosoite. Lähetä lomake uudelleen.',
+  invalid: 'Lomakkeen tietoja ei voitu käsitellä. Tarkista tiedot ja yritä uudelleen.',
+  rate_limited: 'Lähetyksiä on tehty liian monta. Yritä hetken kuluttua uudelleen tai lähetä sähköpostia.',
+  delivery: 'Lähetys ei onnistunut. Yritä uudelleen tai ota yhteyttä sähköpostitse.',
+};
+
+export default async function Home({ searchParams }: { searchParams: Promise<{ lead?: string; service?: string }> }) {
+  const params = await searchParams;
+  const leadError = params.lead && Object.prototype.hasOwnProperty.call(leadErrors, params.lead)
+    ? leadErrors[params.lead]
+    : null;
+  const selectedService = params.service === 'seo' ? 'seo' : undefined;
   return (
     <div className="homePage">
       <a className="skipLink" href="#main">Siirry pääsisältöön</a>
@@ -109,15 +121,17 @@ export default function Home() {
         <section className="ghSelected ghSection" id="esimerkit" aria-labelledby="selected-title">
           <div className="ghShell ghSelectedGrid">
             <div className="ghSectionIntro">
-              <p className="ghEyebrow">Valittuja toteutuksia / julkaistu</p>
+              <p className="ghEyebrow">Oma toteutus / julkaistu</p>
               <h2 id="selected-title">Näytä työ.<br />Älä vain kuvaile sitä.</h2>
               <p>Esimerkkinä oma julkaistu sivustomme: palvelut, asiantuntijasisällöt ja yhteydenotto löytyvät yhdestä rakenteesta.</p>
-              <a className="ghTextLink" href="/referenssit">Selaa toteutuksia ja työnäytteitä <span aria-hidden="true">↗</span></a>
+              <a className="ghTextLink" href="/referenssit">Katso toteutukset ja työnäytteet <span aria-hidden="true">↗</span></a>
             </div>
-            <a className="ghSelectedCase" href="/verkkosivut-yritykselle" aria-label="Tutustu GhoulHousen julkaistuun verkkosivurakenteeseen">
+            <a className="ghSelectedCase" href="https://ghoulhouse.fi/" target="_blank" rel="noopener noreferrer" aria-label="Avaa julkaistu GhoulHousen verkkosivusto uudessa välilehdessä">
               <div className="ghSelectedCaseTop"><span>GH / OMA TOTEUTUS</span><span>ghoulhouse.fi ↗</span></div>
-              <div className="ghSelectedCaseDisplay"><Image src="/ghoulhouse-mark.svg" alt="" width={96} height={96} /><strong>GhoulHouse.</strong><span>WEBSITES / SOCIAL / SEO</span></div>
-              <div className="ghSelectedCaseFoot"><strong>Julkaistu verkkosivurakenne</strong><span>Oma sivusto — ei asiakasreferenssi eikä tulosväite.</span></div>
+              <div className="ghSelectedCaseDisplay">
+                <Image src="/ghoulhouse-site-proof.png" alt="Kuvakaappaus GhoulHousen julkaistusta ghoulhouse.fi-etusivusta." width={1440} height={900} sizes="(max-width: 767px) 100vw, 50vw" className="ghSelectedScreenshot" />
+              </div>
+              <div className="ghSelectedCaseFoot"><strong>GhoulHousen julkaistu verkkosivusto</strong><span>Oma sivusto — ei asiakasreferenssi eikä tulosväite.</span></div>
             </a>
           </div>
         </section>
@@ -152,11 +166,11 @@ export default function Home() {
 
         <section className="ghProofGridSection ghSection" id="referenssit" aria-labelledby="proof-grid-title">
           <div className="ghShell">
-            <div className="ghSectionIntro"><p className="ghEyebrow">Lisää näyttöä</p><h2 id="proof-grid-title">Kolme näkökulmaa<br />tehtyyn työhön.</h2><p>Alla olevat nostot vievät julkaistuihin palvelu- ja toimialasisältöihin. Ne eivät ole asiakkaiden tuloksia tai vahvistettuja asiakascaseja.</p></div>
+            <div className="ghSectionIntro"><p className="ghEyebrow">Palveluiden esittely</p><h2 id="proof-grid-title">Kolme tapaa tehdä<br />työ näkyväksi.</h2><p>Alla olevat nostot esittelevät palveluita ja toimialaratkaisuja, eivät toteutuneita asiakastöitä tai asiakastuloksia.</p></div>
             <div className="ghEditorialGrid">
               {proofLinks.map(([type, title, copy, href]) => <a className="ghEditorialCard" href={href} key={type}><span className="ghEyebrow">{type}</span><h3>{title}</h3><p>{copy}</p><span className="ghEditorialCardArrow" aria-hidden="true">↗</span></a>)}
             </div>
-            <a className="ghTextLink ghSectionLink" href="/referenssit">Katso kaikki referenssit ja työnäytteet <span aria-hidden="true">↗</span></a>
+            <a className="ghTextLink ghSectionLink" href="/referenssit">Katso erilliset työnäytteet ja referenssit <span aria-hidden="true">↗</span></a>
           </div>
         </section>
 
@@ -180,7 +194,7 @@ export default function Home() {
         <section className="ghContact ghSection" id="yhteys" aria-labelledby="contact-title">
           <div className="ghShell ghContactGrid">
             <div className="ghSectionIntro"><p className="ghEyebrow">Aloitetaan yrityksenne tilanteesta</p><h2 id="contact-title">ONKO TEILLÄ HYVÄ PALVELU,<br />MUTTA VERKOSSA SE EI VIELÄ NÄY?</h2><p>Kerro yrityksestäsi ja siitä, mitä haluat parantaa. Palaamme asiaan ehdotuksella sopivasta seuraavasta askeleesta.</p><p className="ghContactNote">Ei sitoumusta yhteydenotosta.</p></div>
-            <div className="ghForm"><LeadForm compact mode="proposal" /></div>
+            <div className="ghForm">{leadError && <div className="ghServerFormError" role="alert" aria-live="assertive"><strong>Lomaketta ei lähetetty.</strong><p>{leadError}</p></div>}<LeadForm compact mode="proposal" defaultService={selectedService} /></div>
           </div>
         </section>
       </main>

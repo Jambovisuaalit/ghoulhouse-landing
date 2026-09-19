@@ -1232,3 +1232,13 @@ body:has(.homePage) .analyticsSettings {
 @media (prefers-reduced-motion: reduce) {
   .ghSelectedCase, .ghEditorialCard { transition: none; }
 }
+
+/* Published own-site proof. The image is captured from ghoulhouse.fi and not a client case. */
+.homePage .ghSelectedCaseDisplay { display:block; flex:0 0 auto; aspect-ratio:2/1; min-height:0; padding:0; overflow:hidden; }
+.homePage .ghSelectedCaseDisplay .ghSelectedScreenshot { display:block; width:100%; height:auto; aspect-ratio:16/10; object-fit:cover; object-position:top; border:1px solid #ffffff40; background:#f7f4ef; }
+.homePage .ghSelectedCase { cursor:pointer; }
+.homePage .ghServerFormError { border:2px solid #f7f4ef; padding:16px 20px; margin-bottom:20px; background:#342725; color:#fff; }
+.homePage .ghServerFormError strong { display:block; font-size:17px; line-height:1.5; }
+.homePage .ghServerFormError p { margin-top:8px; font-size:15px; line-height:1.6; color:#f7f4ef; }
+.homePage .ghForm select { width:100%; min-height:50px; border:1px solid #aaa49c; border-radius:0; padding:12px 13px; background:#171716; color:#f7f4ef; font-size:16px; }
+.homePage .ghForm select:focus { outline:3px solid #c9282d; outline-offset:2px; }

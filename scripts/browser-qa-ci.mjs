@@ -10,7 +10,7 @@ const viewports = [
   { width: 320, height: 568 },
   { width: 390, height: 844, firstView: true },
   { width: 640, height: 900 },
-  { width: 768, height: 1024 },
+  { width: 768, height: 1024, firstView: true },
   { width: 1024, height: 768 },
   { width: 1280, height: 800 },
   { width: 1440, height: 900, firstView: true },
@@ -180,7 +180,9 @@ try {
         submitRect: rect(submit),
         requiredFields: ['company','name','email','profile'].every((name) => Boolean(form?.querySelector('[name="' + name + '"][required]'))),
         proofExists: Boolean(proof),
-        serviceLinks: ['/verkkosivut-yritykselle','/some-sisallontuotanto','/resurssit'].every((href) => document.querySelector('.ghServiceCard a[href="' + href + '"]')),
+        proofImageLoaded: document.querySelector('.ghSelectedScreenshot')?.naturalWidth > 100,
+        seoSelected: form?.querySelector('select[name="service"]') !== null,
+        serviceLinks: ['/verkkosivut-yritykselle','/some-sisallontuotanto','/?service=seo#yhteys'].every((href) => document.querySelector('.ghServiceCard a[href="' + href + '"]')),
         serviceCards: document.querySelectorAll('.ghServiceCard').length,
         resourceLinks: document.querySelectorAll('.ghGuideRow').length,
         proposalIntent: form?.querySelector('[name="intent"]')?.value === 'booking',
@@ -214,6 +216,7 @@ try {
     assert(metrics.requiredFields, `${viewport.width}x${viewport.height}: required lead fields missing.`);
     assert(metrics.submitRect?.height >= 44, `${viewport.width}x${viewport.height}: submit target below 44px.`);
     assert(metrics.proofExists && metrics.logoLoaded, `${viewport.width}x${viewport.height}: company proof or logo missing.`);
+    assert(metrics.seoSelected, `${viewport.width}x${viewport.height}: service-interest selector missing.`);
     assert(metrics.disclosure, `${viewport.width}x${viewport.height}: honest own-work disclosure missing.`);
     assert(!metrics.schemaTypes.includes('some-12-service') && !metrics.schemaTypes.includes('some-12-offer'), `${viewport.width}x${viewport.height}: product-specific schema remains on homepage.`);
     assert(metrics.viewportMeta.includes('viewport-fit=cover'), `${viewport.width}x${viewport.height}: viewport-fit=cover missing.`);
@@ -236,6 +239,30 @@ try {
     await writeFile(`${SCREENSHOT_DIR}/homepage-${viewport.width}x${viewport.height}.png`, Buffer.from(screenshot.data, 'base64'));
     results.push({ viewport: `${viewport.width}x${viewport.height}`, status: 'PASS' });
   }
+
+  // Capture proof section as well as the first view at all three approval widths.
+  for (const viewport of [viewports[1], viewports[3], viewports[6]]) {
+    await client.send('Emulation.setDeviceMetricsOverride', { width: viewport.width, height: viewport.height, deviceScaleFactor: 1, mobile: viewport.width < 768 });
+    await client.send('Page.navigate', { url: BASE_URL });
+    await waitForDocument(client);
+    await evaluate(client, 'document.querySelector("#esimerkit")?.scrollIntoView({behavior:"instant",block:"start"})');
+    const proofImageLoaded = await evaluate(client, `new Promise((resolve) => {
+      const img = document.querySelector('.ghSelectedScreenshot');
+      if (!img) return resolve(false);
+      if (img.complete) return resolve(img.naturalWidth > 100);
+      img.addEventListener('load', () => resolve(img.naturalWidth > 100), { once:true });
+      img.addEventListener('error', () => resolve(false), { once:true });
+      setTimeout(() => resolve(false), 10000);
+    })`);
+    assert(proofImageLoaded, `${viewport.width}x${viewport.height}: published-site proof image failed after scrolling into view.`);
+    await sleep(180);
+    const image = await client.send('Page.captureScreenshot', { format:'png', captureBeyondViewport:false });
+    await writeFile(`${SCREENSHOT_DIR}/proof-${viewport.width}x${viewport.height}.png`, Buffer.from(image.data,'base64'));
+  }
+
+  await client.send('Page.navigate', { url: BASE_URL + '/?service=seo#yhteys' });
+  await waitForDocument(client);
+  assert(await evaluate(client, 'document.querySelector(\'#yhteys select[name="service"]\')?.value === "seo"'), 'SEO CTA failed to preselect the service in the proposal form.');
 
   await client.send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
   await client.send('Page.navigate', { url: BASE_URL });
