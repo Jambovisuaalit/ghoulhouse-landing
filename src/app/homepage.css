@@ -1,6 +1,6 @@
 /* Homepage v2: quiet editorial hierarchy, one dark offer section. */
 .homePage {
-  --signal: #c83830;
+  --signal: #c9282d;
   --gh-copy: #514e49;
   background: #f7f4ef;
   font-size: 18px;
@@ -1033,4 +1033,92 @@ body:has(.homePage) .analyticsSettings {
 .homePage .toast {
   z-index: 210;
   max-width: min(460px, calc(100vw - 32px));
+}
+
+/* Homepage v2 conversion QA: consent must not mask the hero offer on first load. */
+@media (max-width: 767px) {
+  body:has(.homePage) .analyticsConsent {
+    right: 12px;
+    left: 12px;
+    bottom: 10px;
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 10px 12px;
+    gap: 5px;
+    border: 1px solid #d1cbc2;
+    box-shadow: none;
+  }
+  body:has(.homePage) .analyticsConsent__copy {
+    gap: 3px;
+  }
+  body:has(.homePage) .analyticsConsent__copy h2 {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  body:has(.homePage) .analyticsConsent__copy p:not(.kicker) {
+    max-width: none;
+    font-size: 12px;
+    line-height: 1.35;
+  }
+  body:has(.homePage) .analyticsConsent__copy a {
+    font-size: 12px;
+    line-height: 1.35;
+    padding: 0;
+  }
+  body:has(.homePage) .analyticsConsent__actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px;
+  }
+  body:has(.homePage) .analyticsConsent__actions .button {
+    min-width: 0;
+    min-height: 44px;
+    padding: 7px 8px;
+    flex: none;
+    font-size: 12px;
+    line-height: 1.2;
+    letter-spacing: 0;
+  }
+}
+@media (min-width: 768px) {
+  body:has(.homePage) .analyticsConsent {
+    right: 16px;
+    bottom: 12px;
+    left: auto;
+    width: min(440px, calc(100vw - 32px));
+    max-width: none;
+    margin: 0;
+    padding: 12px 14px;
+    gap: 8px;
+    grid-template-columns: 1fr;
+  }
+  body:has(.homePage) .analyticsConsent__copy {
+    gap: 4px;
+  }
+  body:has(.homePage) .analyticsConsent__copy h2 {
+    font-size: 16px;
+    line-height: 1.25;
+  }
+  body:has(.homePage) .analyticsConsent__copy p:not(.kicker),
+  body:has(.homePage) .analyticsConsent__copy a {
+    font-size: 12px;
+    line-height: 1.45;
+  }
+  body:has(.homePage) .analyticsConsent__actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    max-width: none;
+  }
+  body:has(.homePage) .analyticsConsent__actions .button {
+    min-width: 0;
+    min-height: 44px;
+    padding: 9px 10px;
+    font-size: 12px;
+  }
 }
