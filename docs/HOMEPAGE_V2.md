@@ -28,3 +28,12 @@ Prompt: A single photorealistic portrait of a believable recently completed smal
 
 Review at 390×844, 768×1024 and 1440×900 before approving production.
 Measure the redesign with existing primary_cta_click, lead_form_start and lead_form_success events. Compare CTA click-through and form completion against the prior period; this preview makes no conversion-lift claim.
+
+## Validation results
+
+- Production build, TypeScript and lint pass.
+- Layout verified at 320, 390, 640, 768, 1024, 1280 and 1440px; no horizontal overflow.
+- At 1440×900 the header + hero ends at about 797px (89% of viewport).
+- Form error and mocked success flow checked without creating a production lead.
+- Fixed error-toast overlap with analytics settings and the inert consent overlay on JavaScript-disabled pages.
+- Existing CI checks include browser, keyboard/accessibility, reduced motion, metadata, native POST and no-JS content.
