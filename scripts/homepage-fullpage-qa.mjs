@@ -64,6 +64,7 @@ async function auditViewport() {
     .map(el=>({element:el.id||el.className,rect:rect(el)}));
   if(elementsOutside.length)errors.push('Horizontal element overflow: '+JSON.stringify(elementsOutside));
   const rootWidth=document.documentElement.scrollWidth,bodyWidth=document.body.scrollWidth;
+  const widthOffenders=bodyWidth>innerWidth+1?[...document.querySelectorAll('body *')].map(el=>({tag:el.tagName,cls:typeof el.className==='string'?el.className.slice(0,70):'',id:el.id||'',rect:rect(el),scrollWidth:el.scrollWidth,clientWidth:el.clientWidth})).filter(x=>x.rect&&x.rect.width>0&&(x.rect.right>innerWidth+1||x.rect.left < -1||x.scrollWidth>x.clientWidth+8)).sort((a,b)=>b.rect.right-a.rect.right).slice(0,22):[];
   if(rootWidth>innerWidth+1)errors.push('Actual root horizontal scroll: '+rootWidth+' > '+innerWidth);
   const consent=document.querySelector('.ghConsentSlot .analyticsConsent');
   const slot=document.querySelector('#gh-consent-inflow');
@@ -122,11 +123,12 @@ async function auditViewport() {
   }
   // On-page #yhteys must remain below the sticky navigation when activated.
   const heroLink=document.querySelector('#top .ghHeroActions a');
-  heroLink?.click();await sleep(140);
+  document.documentElement.style.scrollBehavior='auto';
+  heroLink?.click();await sleep(180);
   const target=document.querySelector('#yhteys'),targetR=rect(target);
   const headingR=rect(target?.querySelector('h2'));
   const anchor={hash:location.hash,sectionTop:targetR?.top,headingTop:headingR?.top,headerBottom:rect(header)?.bottom};
-  if(anchor.hash!=='#yhteys'||(headingR&&headingR.bottom<=anchor.headerBottom))
+  if(anchor.hash!=='#yhteys'||(targetR&&targetR.top<anchor.headerBottom-2)||(headingR&&headingR.bottom<=anchor.headerBottom))
     errors.push('Contact anchor hidden behind sticky header: '+JSON.stringify(anchor));
   // Leave consent visible in the full-page screenshot; then test reject and reopening.
   const screenshot={documentHeight:document.documentElement.scrollHeight,scrollWidth:document.documentElement.scrollWidth};
@@ -139,7 +141,7 @@ async function auditViewport() {
   if(!document.querySelector('.ghConsentSlot .analyticsConsent')||!document.querySelector('.ghConsentSlot .analyticsConsent__actions button'))
     errors.push('Consent cannot be reopened');
   return {viewport:innerWidth+'x'+innerHeight,documentHeight:screenshot.documentHeight,rootWidth,bodyWidth,midPageRootMax,
-    sections:sections.length,serviceCards:serviceCards.length,targets:centered.length,scrollSteps,
+    sections:sections.length,serviceCards:serviceCards.length,targets:centered.length,scrollSteps,widthOffenders,
     errors,consentPosition:consent?getComputedStyle(consent).position:null,nav,anchor,rejected,firstHeroCTA:rect(document.querySelector('#top .ghHeroActions a'))};
 }
 
@@ -179,7 +181,7 @@ try {
     report.results.push(result);
     console.log('FULL PAGE '+size.width+'x'+size.height+': '+JSON.stringify({
       documentHeight:result.documentHeight,rootWidth:result.rootWidth,bodyWidth:result.bodyWidth,
-      scrollSteps:result.scrollSteps,targets:result.targets,consentPosition:result.consentPosition,errors:result.errors
+      scrollSteps:result.scrollSteps,targets:result.targets,consentPosition:result.consentPosition,widthOffenders:result.widthOffenders,errors:result.errors
     }));
     // Screenshot with consent open and in flow, from page top to footer.
     await browser.eval('window.scrollTo(0,0)');
