@@ -1122,3 +1122,15 @@ body:has(.homePage) .analyticsSettings {
     font-size: 12px;
   }
 }
+
+/* Show the concept/AI disclosure above the compact desktop consent prompt. */
+@media (min-width: 768px) {
+  body:has(.homePage) .analyticsConsent__copy h2 {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
