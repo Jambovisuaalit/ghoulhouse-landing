@@ -172,7 +172,10 @@ jobs:
           html="$(curl --fail --silent http://127.0.0.1:3000/)"
           printf '%s' "$html" | grep -q "HYVÄ TYÖ"
           printf '%s' "$html" | grep -q "PITÄÄ NÄKYÄ"
-          printf '%s' "$html" | grep -qi "Oma sivusto — ei asiakasreferenssi"\n          printf '%s' "$html" | grep -q 'href="/verkkosivut-yritykselle"'\n          printf '%s' "$html" | grep -q 'href="/some-sisallontuotanto"'\n          printf '%s' "$html" | grep -q 'href="/resurssit"'
+          printf '%s' "$html" | grep -qi "Oma sivusto — ei asiakasreferenssi"
+          printf '%s' "$html" | grep -q 'href="/verkkosivut-yritykselle"'
+          printf '%s' "$html" | grep -q 'href="/some-sisallontuotanto"'
+          printf '%s' "$html" | grep -q 'href="/resurssit"'
 
       - name: Analytics QA
         shell: bash
