@@ -1,5 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="GhoulHouse">
-  <rect width="64" height="64" fill="#F7F4EF"/>
-  <rect width="8" height="64" fill="#D3262E"/>
-  <text x="17" y="45" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="900" fill="#111111">G</text>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none" role="img" aria-labelledby="title">
+  <title id="title">GhoulHouse mark - color</title>
+  <g transform="translate(0 0) scale(1.00000000)" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M256 30 482 256 256 482 30 256Z" stroke="#161411" stroke-width="22"/>
+  <path d="M145 238 256 132 367 238" stroke="#161411" stroke-width="28"/>
+  <path d="M177 236 188 337H324L335 236" stroke="#161411" stroke-width="28"/>
+  <path d="M219 337 206 392 205 438M293 337 307 392 307 438" stroke="#161411" stroke-width="26"/>
+  <path d="M205 438 174 452M205 438 208 463M205 438 234 454M307 438 276 454M307 438 305 463M307 438 338 451" stroke="#161411" stroke-width="22"/>
+  <rect x="214" y="247" width="84" height="68" rx="5" fill="#C83830" stroke="#161411" stroke-width="22"/>
+</g>
 </svg>
