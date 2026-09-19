@@ -1,39 +1,28 @@
-# GhoulHouse Homepage v2
+# GhoulHouse Homepage v2 — company-level editorial layout
 
-Status: preview for visual review. Do not merge to production until reviewed.
+Status: company-level Homepage v2 merged via PR #71. Further proof and form corrections are reviewed separately in draft PR #72. No production deployment from PR #72 until owner approves.
 
-## Direction
+## Current direction
+- Three distinct services: Websites, Social and SEO. Social's SOME 12 price belongs in its service row.
+- Hero: HYVÄ TYÖ PITÄÄ NÄKYÄ. CTA: Pyydä ehdotus.
+- Editorial spacing and legible Montserrat body. Anton is limited to large statements and service titles.
+- Existing resources are editorial guides, never presented as customer results.
+- The services overview is distinct from verified customer references.
 
-- 1280px maximum content width, 120–132px main desktop section spacing.
-- One dark offer section; remaining content flows through light surfaces.
-- Anton restricted to hero, offer and final contact headline. Normal headings use Montserrat.
-- 17–18px body copy, readable controls and captions, no proof matrices or HN placeholder.
-- Hero shows the same image as source material and as a formatted social post. It does not imply that content production completes a renovation.
-- Four required lead fields. Phone and material notes remain available in optional details.
-- Native POST form, consent-based analytics, existing SEO routes and canonical/indexing rules retained.
+## Verified own-work proof
+- Main proof uses a real 1440×900 PNG captured directly from the publicly published https://ghoulhouse.fi/ by scripts/capture-production-proof.mjs.
+- Screenshot asset: public/ghoulhouse-site-proof.png. The workflow writes only to the review branch; it cannot deploy production.
+- Own-work disclosure remains visible: Oma sivusto — ei asiakasreferenssi eikä tulosväite.
+- Proof link opens the actual published ghoulhouse.fi, not a generic service description.
+- No AI bathroom concept and no invented customer case are used on the homepage.
 
-## Asset provenance
+## Proposal and accessibility
+- The SEO service CTA leads to /?service=seo#yhteys and the general proposal form preselects SEO.
+- The optional service interest is stored as a labelled prefix to the existing lead message; no new database column or schema change is required.
+- Native POST errors (validation, payload, rate limit, delivery) return to #yhteys from the homepage, with server-rendered error text for users without JavaScript.
+- Social and other existing service flows retain their original functionality.
 
-Logo master: supplied `GhoulHouse_Web_Brand_Assets_v1.zip`.
-- Header/footer/favicon use supplied `ghoulhouse-micro-primary.svg` copied to `/favicon.svg`.
-- Founder uses supplied `ghoulhouse-mark-primary.svg`.
-- Organization schema points to the supplied horizontal primary lockup.
-- 192/512 PNG and Apple icon come unchanged from the same pack.
-- Logo colors remain unchanged. Homepage decision accent follows the requested #C83830.
-
-Hero `/bathroom-concept-v2.webp` was made with the built-in image generator for this preview. It is explicitly labeled as an AI concept and not customer work.
-Prompt: A single photorealistic portrait of a believable recently completed small Finnish bathroom, grey porcelain tiles, glass shower, chrome fixtures, oak vanity and round mirror; natural daylight, correct perspective, no people, props, text, logos, frames or before/after UI. Used as one source photograph and repeated in an HTML social-post composition.
-
-## Review
-
-Review at 390×844, 768×1024 and 1440×900 before approving production.
-Measure the redesign with existing primary_cta_click, lead_form_start and lead_form_success events. Compare CTA click-through and form completion against the prior period; this preview makes no conversion-lift claim.
-
-## Validation results
-
-- Production build, TypeScript and lint pass.
-- Layout verified at 320, 390, 640, 768, 1024, 1280 and 1440px; no horizontal overflow.
-- At 1440×900 the header + hero ends at about 797px (89% of viewport).
-- Form error and mocked success flow checked without creating a production lead.
-- Fixed error-toast overlap with analytics settings and the inert consent overlay on JavaScript-disabled pages.
-- Existing CI checks include browser, keyboard/accessibility, reduced motion, metadata, native POST and no-JS content.
+## Release gate
+- CI build, typecheck, lead API, no-JavaScript failure-path test, browser QA and visual accessibility tests must pass on the same final commit.
+- Browser QA must capture 390×844, 768×1024 and 1440×900 PNGs for review, and the real published-site proof must load in each layout.
+- PR #72 remains draft until owner reviews the actual screenshots and explicitly approves a merge. No production change is authorized by this document.
