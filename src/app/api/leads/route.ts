@@ -28,6 +28,21 @@ function redirect(request: NextRequest, destination: string) {
   return NextResponse.redirect(new URL(destination, request.url), 303);
 }
 
+/** Preserve the referring form's anchor in JavaScript-disabled error redirects. */
+function leadFailureRedirect(request: NextRequest, code: string, intent?: unknown) {
+  let fromHomepage = intent === 'booking';
+  try {
+    const referer = request.headers.get('referer');
+    if (referer) {
+      const origin = new URL(request.url).origin;
+      const source = new URL(referer);
+      if (source.origin === origin && source.pathname === '/') fromHomepage = true;
+    }
+  } catch { /* An absent or malformed Referer must not break the error flow. */ }
+  const anchor = fromHomepage ? 'yhteys' : 'laheta-kuvat';
+  return redirect(request, `/?lead=${code}#${anchor}`);
+}
+
 function getClientKey(request: NextRequest) {
   return (
     request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
@@ -103,7 +118,7 @@ export async function POST(request: NextRequest) {
   const htmlForm = !contentType.includes('application/json');
 
   if (rateLimit.limited) {
-    if (htmlForm) return redirect(request, '/?lead=rate_limited#laheta-kuvat');
+    if (htmlForm) return leadFailureRedirect(request, 'rate_limited');
     return json(
       { ok: false, code: 'rate_limited' },
       429,
@@ -116,7 +131,7 @@ export async function POST(request: NextRequest) {
   try {
     parsed = await readBody(request);
   } catch {
-    if (htmlForm) return redirect(request, '/?lead=invalid#laheta-kuvat');
+    if (htmlForm) return leadFailureRedirect(request, 'invalid');
     return json({ ok: false, code: 'invalid_payload' }, 400);
   }
 
@@ -128,7 +143,7 @@ export async function POST(request: NextRequest) {
 
   if (!validation.ok || !validation.data) {
     if (parsed.htmlForm) {
-      return redirect(request, '/?lead=validation#laheta-kuvat');
+      return leadFailureRedirect(request, 'validation', parsed.body.intent);
     }
 
     return json(
@@ -150,13 +165,13 @@ export async function POST(request: NextRequest) {
     if (error instanceof LeadStorageError) {
       if (error.code === 'rate_limited') {
         if (parsed.htmlForm) {
-          return redirect(request, '/?lead=rate_limited#laheta-kuvat');
+          return leadFailureRedirect(request, 'rate_limited', parsed.body.intent);
         }
         return json({ ok: false, code: 'rate_limited' }, 429);
       }
 
       if (parsed.htmlForm) {
-        return redirect(request, '/?lead=delivery#laheta-kuvat');
+        return leadFailureRedirect(request, 'delivery', parsed.body.intent);
       }
 
       return json(
@@ -172,7 +187,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (parsed.htmlForm) {
-      return redirect(request, '/?lead=delivery#laheta-kuvat');
+      return leadFailureRedirect(request, 'delivery', parsed.body.intent);
     }
 
     return json({ ok: false, code: 'delivery_failed' }, 502);
