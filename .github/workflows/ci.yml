@@ -98,6 +98,9 @@ jobs:
           test "$form_status" = "303"
           grep -Eqi '^location: .*\/kiitos' "$form_headers"
 
+      - name: Lead confirmation and service-specific routing QA
+        run: node scripts/lead-confirmation-qa.mjs
+
       - name: SEO safety QA
         shell: bash
         run: |

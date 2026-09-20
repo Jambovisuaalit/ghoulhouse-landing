@@ -2,6 +2,7 @@
 
 import { FormEvent, useRef, useState } from 'react';
 import { trackEvent } from '@/lib/analytics';
+import { confirmationPath, type LeadService } from '@/lib/lead-confirmation';
 
 type Toast = { message: string } | null;
 type FieldErrors = Record<string, string>;
@@ -26,7 +27,7 @@ function a11yErrorProps(name: string, errors: FieldErrors) {
     : { 'aria-invalid': false as const };
 }
 
-export default function LeadForm({ compact = false, mode = 'social', defaultService }: { compact?: boolean; mode?: 'social' | 'proposal'; defaultService?: 'seo' }) {
+export default function LeadForm({ compact = false, mode = 'social', defaultService }: { compact?: boolean; mode?: 'social' | 'proposal'; defaultService?: LeadService }) {
   const proposal = mode === 'proposal';
   const [toast, setToast] = useState<Toast>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -47,17 +48,18 @@ export default function LeadForm({ compact = false, mode = 'social', defaultServ
     setFieldErrors({});
     setSubmitting(true);
     trackEvent('lead_form_submit');
+    const formData = Object.fromEntries(new FormData(form).entries());
 
     try {
       const response = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(Object.fromEntries(new FormData(form).entries())),
+        body: JSON.stringify(formData),
       });
 
       if (response.ok) {
         trackEvent('lead_form_success');
-        window.location.assign('/kiitos');
+        window.location.assign(confirmationPath(proposal ? 'booking' : 'photos', String(formData.service || '')));
         return;
       }
 

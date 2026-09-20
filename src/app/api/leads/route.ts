@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateLead } from '@/lib/lead';
 import { storeLead, LeadStorageError } from '@/lib/lead-storage';
+import { confirmationPath } from '@/lib/lead-confirmation';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -159,7 +160,7 @@ export async function POST(request: NextRequest) {
   try {
     await storeLead(validation.data);
 
-    if (parsed.htmlForm) return redirect(request, '/kiitos');
+    if (parsed.htmlForm) return redirect(request, confirmationPath(validation.data.intent, validation.data.service));
     return json({ ok: true }, 201);
   } catch (error) {
     if (error instanceof LeadStorageError) {
