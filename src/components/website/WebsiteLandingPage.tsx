@@ -10,10 +10,12 @@ type Props = {
   eyebrow?: string;
   contactHeading?: string;
   contactIntroduction?: string;
+  secondaryHref?: string;
+  secondaryLabel?: string;
   children?: ReactNode;
 };
 
-export default function WebsiteLandingPage({ vertical, heading, introduction, eyebrow, contactHeading, contactIntroduction, children }: Props) {
+export default function WebsiteLandingPage({ vertical, heading, introduction, eyebrow, contactHeading, contactIntroduction, secondaryHref, secondaryLabel, children }: Props) {
   const title = heading ?? vertical?.h1 ?? 'Verkkosivut yritykselle, rakennettu ostamista varten.';
   const intro = introduction ?? vertical?.intro ?? 'GhoulHouse rakentaa yrityksen verkkosivun palveluista, oikeasta työnäytöstä ja selkeästä yhteydenottopolusta. Ei geneeristä yritysjargonia.';
 
@@ -27,7 +29,7 @@ export default function WebsiteLandingPage({ vertical, heading, introduction, ey
             <p className="websiteLead">{intro}</p>
             <div className="heroActions">
               <a className="button button--signal" href="#yhteys">PYYDÄ VERKKOSIVUARVIO <span aria-hidden="true">→</span></a>
-              <Link className="textLink" href="/verkkosivut/hinta">Katso rakenne ja hinta</Link>
+              <Link className="textLink" href={secondaryHref ?? '/verkkosivut/hinta'}>{secondaryLabel ?? 'Katso rakenne ja hinta'}</Link>
             </div>
             <div className="offerLine"><strong>1 SELKEÄ TOTEUTUS</strong><span>Rakenne · sisältö · näyttö · yhteydenotto · julkaisu</span></div>
           </div>
