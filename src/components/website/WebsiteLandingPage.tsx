@@ -95,7 +95,7 @@ export default function WebsiteLandingPage({ vertical, heading, introduction, ey
       {children}
       <section className="contact" id="yhteys" aria-labelledby="website-contact-title">
         <div className="contentShell contactGrid">
-          <div className="contactCopy"><p className="kicker">ALOITA</p><h2 id="website-contact-title">{contactHeading ?? 'KATSOTAAN NYKYINEN SIVUSTO LÄPI.'}</h2><p>{contactIntroduction ?? 'Lähetä yrityksen nimi ja nykyinen verkkosivu. Saat lähtökohdan siitä, mitä kannattaa säilyttää, korjata tai rakentaa uudelleen.'}</p></div>
+          <div className="contactCopy"><p className="kicker">ALOITA</p><h2 id="website-contact-title">{contactHeading ?? 'KATSOTAAN YRITYKSENNE LÄHTÖTILANNE.'}</h2><p>{contactIntroduction ?? 'Lähetä yrityksen nimi ja mahdollinen nykyinen verkkosivu. Ehdotamme, mitä kannattaa säilyttää, korjata tai rakentaa alusta.'}</p></div>
           <div className="formSurface"><LeadForm mode="proposal" defaultService="websites" /></div>
         </div>
       </section>
