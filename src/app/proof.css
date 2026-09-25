@@ -1,5 +1,5 @@
 .proofIntro{max-width:1000px;display:grid;gap:20px}
-.proofIntro h1{max-width:14ch}
+.proofIntro h1{max-width:14ch;font-size:clamp(52px,8vw,88px);line-height:.9;letter-spacing:-.02em}
 .proofIntro>p:last-child{max-width:62ch;color:var(--copy-strong);font-size:clamp(18px,2vw,22px);line-height:1.55}
 .proofCase{display:grid;gap:48px;align-items:start}
 .proofCaseDetails{display:grid;gap:20px}
