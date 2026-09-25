@@ -247,6 +247,14 @@ jobs:
       - name: No-JS QA
         run: node scripts/no-js-qa-ci.mjs
 
+      # One synthetic request through the actual Next.js API, live Supabase RPC and Resend trigger.
+      # Scoped to the audit PR so routine main/other PR runs never create test leads.
+      - name: Controlled lead API end-to-end smoke
+        if: github.event_name == 'pull_request' && github.event.pull_request.number == 77
+        env:
+          QA_EXPECTED_SHA: ${{ github.event.pull_request.head.sha }}
+        run: node scripts/controlled-lead-e2e.mjs
+
       - name: Resolve this PR's exact Vercel preview
         if: github.event_name == 'pull_request'
         env:
