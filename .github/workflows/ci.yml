@@ -10,6 +10,8 @@ on:
 
 permissions:
   contents: read
+  deployments: read
+  statuses: read
 
 jobs:
   validate:
@@ -239,10 +241,17 @@ jobs:
       - name: Full-page responsive and consent QA
         run: node scripts/homepage-fullpage-qa.mjs
 
+      - name: Launch visual and accessibility QA
+        run: node scripts/launch-visual-a11y-qa.mjs
+
+      - name: No-JS QA
+        run: node scripts/no-js-qa-ci.mjs
+
       - name: Resolve this PR's exact Vercel preview
         if: github.event_name == 'pull_request'
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
           PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
         run: node scripts/resolve-pr-preview.mjs
@@ -252,12 +261,6 @@ jobs:
         env:
           QA_SCREENSHOT_DIR: qa-artifacts/preview
         run: node scripts/homepage-fullpage-qa.mjs
-
-      - name: Launch visual and accessibility QA
-        run: node scripts/launch-visual-a11y-qa.mjs
-
-      - name: No-JS QA
-        run: node scripts/no-js-qa-ci.mjs
 
       - name: Upload browser QA artifacts
         if: always()
