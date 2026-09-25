@@ -29,19 +29,11 @@ function redirect(request: NextRequest, destination: string) {
   return NextResponse.redirect(new URL(destination, request.url), 303);
 }
 
-/** Preserve the referring form's anchor in JavaScript-disabled error redirects. */
+/** Return to the existing form and retain the photo intent on native error retries. */
 function leadFailureRedirect(request: NextRequest, code: string, intent?: unknown) {
-  let fromHomepage = intent === 'booking';
-  try {
-    const referer = request.headers.get('referer');
-    if (referer) {
-      const origin = new URL(request.url).origin;
-      const source = new URL(referer);
-      if (source.origin === origin && source.pathname === '/') fromHomepage = true;
-    }
-  } catch { /* An absent or malformed Referer must not break the error flow. */ }
-  const anchor = fromHomepage ? 'yhteys' : 'laheta-kuvat';
-  return redirect(request, `/?lead=${code}#${anchor}`);
+  const params = new URLSearchParams({ lead: code });
+  if (intent === 'photos') params.set('intent', 'photos');
+  return redirect(request, `/?${params.toString()}#yhteys`);
 }
 
 function getClientKey(request: NextRequest) {
