@@ -1,19 +1,28 @@
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 import LeadForm from '@/components/LeadForm';
 import { websiteMainFacts, websiteResources, type WebsiteVertical } from '@/data/website';
 
-type Props = { vertical?: WebsiteVertical };
+type Props = {
+  vertical?: WebsiteVertical;
+  heading?: string;
+  introduction?: string;
+  eyebrow?: string;
+  contactHeading?: string;
+  contactIntroduction?: string;
+  children?: ReactNode;
+};
 
-export default function WebsiteLandingPage({ vertical }: Props) {
-  const title = vertical?.h1 ?? 'Verkkosivut yritykselle, rakennettu ostamista varten.';
-  const intro = vertical?.intro ?? 'GhoulHouse rakentaa yrityksen verkkosivun palveluista, oikeasta työnäytöstä ja selkeästä yhteydenottopolusta. Ei geneeristä yritysjargonia.';
+export default function WebsiteLandingPage({ vertical, heading, introduction, eyebrow, contactHeading, contactIntroduction, children }: Props) {
+  const title = heading ?? vertical?.h1 ?? 'Verkkosivut yritykselle, rakennettu ostamista varten.';
+  const intro = introduction ?? vertical?.intro ?? 'GhoulHouse rakentaa yrityksen verkkosivun palveluista, oikeasta työnäytöstä ja selkeästä yhteydenottopolusta. Ei geneeristä yritysjargonia.';
 
   return (
     <main className="websitePage">
       <section className="websiteHero">
         <div className="contentShell websiteHeroGrid">
           <div className="websiteHeroCopy">
-            <p className="kicker">{vertical?.label ?? 'VERKKOSIVUT YRITYKSELLE'}</p>
+            <p className="kicker">{eyebrow ?? vertical?.label ?? 'VERKKOSIVUT YRITYKSELLE'}</p>
             <h1>{title}</h1>
             <p className="websiteLead">{intro}</p>
             <div className="heroActions">
@@ -83,9 +92,10 @@ export default function WebsiteLandingPage({ vertical }: Props) {
         </div>
       </section>
 
+      {children}
       <section className="contact" id="yhteys" aria-labelledby="website-contact-title">
         <div className="contentShell contactGrid">
-          <div className="contactCopy"><p className="kicker">ALOITA</p><h2 id="website-contact-title">KATSOTAAN NYKYINEN SIVUSTO LÄPI.</h2><p>Lähetä yrityksen nimi ja nykyinen verkkosivu. Saat lähtökohdan siitä, mitä kannattaa säilyttää, korjata tai rakentaa uudelleen.</p></div>
+          <div className="contactCopy"><p className="kicker">ALOITA</p><h2 id="website-contact-title">{contactHeading ?? 'KATSOTAAN NYKYINEN SIVUSTO LÄPI.'}</h2><p>{contactIntroduction ?? 'Lähetä yrityksen nimi ja nykyinen verkkosivu. Saat lähtökohdan siitä, mitä kannattaa säilyttää, korjata tai rakentaa uudelleen.'}</p></div>
           <div className="formSurface"><LeadForm mode="proposal" defaultService="websites" /></div>
         </div>
       </section>
