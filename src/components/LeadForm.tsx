@@ -3,6 +3,7 @@
 import { FormEvent, useRef, useState } from 'react';
 import { trackEvent } from '@/lib/analytics';
 import { confirmationPath, type LeadService } from '@/lib/lead-confirmation';
+import { messageLimit } from '@/lib/lead';
 
 type Toast = { message: string } | null;
 type FieldErrors = Record<string, string>;
@@ -32,13 +33,20 @@ export default function LeadForm({ compact = false, mode = 'social', defaultServ
   const [toast, setToast] = useState<Toast>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [submitting, setSubmitting] = useState(false);
+  const [selectedService, setSelectedService] = useState<LeadService | ''>(defaultService || '');
+  const [noProfile, setNoProfile] = useState(false);
+  const canHaveNoProfile = proposal && (!selectedService || selectedService === 'websites');
+  const analyticsProps = (service: LeadService | '' = selectedService) => ({
+    service: proposal ? service || 'unspecified' : 'social',
+    intent: proposal ? 'booking' : 'photos',
+  });
   const formRef = useRef<HTMLFormElement>(null);
   const hasStarted = useRef(false);
 
   function markStarted() {
     if (hasStarted.current) return;
     hasStarted.current = true;
-    trackEvent('lead_form_start');
+    trackEvent('lead_form_start', analyticsProps());
   }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -47,8 +55,9 @@ export default function LeadForm({ compact = false, mode = 'social', defaultServ
     setToast(null);
     setFieldErrors({});
     setSubmitting(true);
-    trackEvent('lead_form_submit');
     const formData = Object.fromEntries(new FormData(form).entries());
+    const props = analyticsProps(String(formData.service || '') as LeadService | '');
+    trackEvent('lead_form_submit', props);
 
     try {
       const response = await fetch('/api/leads', {
@@ -58,7 +67,7 @@ export default function LeadForm({ compact = false, mode = 'social', defaultServ
       });
 
       if (response.ok) {
-        trackEvent('lead_form_success');
+        trackEvent('lead_form_success', props);
         window.location.assign(confirmationPath(proposal ? 'booking' : 'photos', String(formData.service || '')));
         return;
       }
@@ -71,7 +80,7 @@ export default function LeadForm({ compact = false, mode = 'social', defaultServ
         const field = form.elements.namedItem(first[0]);
         if (field instanceof HTMLElement) field.focus();
         setToast({ message: `Tarkista lomake: ${first[1]}` });
-        trackEvent('lead_form_error');
+        trackEvent('lead_form_error', props);
         return;
       }
 
@@ -79,10 +88,10 @@ export default function LeadForm({ compact = false, mode = 'social', defaultServ
         message:
           'Lähetys ei onnistunut. Yritä uudelleen tai lähetä sähköpostia osoitteeseen hello@ghoulhouse.fi.',
       });
-      trackEvent('lead_form_error');
+      trackEvent('lead_form_error', props);
     } catch {
       setToast({ message: 'Yhteys katkesi. Yritä uudelleen.' });
-      trackEvent('lead_form_error');
+      trackEvent('lead_form_error', props);
     } finally {
       setSubmitting(false);
     }
@@ -192,25 +201,14 @@ export default function LeadForm({ compact = false, mode = 'social', defaultServ
           )}
         </div>
 
-        <div className="fieldGroup">
-          <label htmlFor="lead-profile">
-            Verkkosivu tai Instagram <span aria-hidden="true">*</span>
-          </label>
-          <input
-            id="lead-profile"
-            name="profile"
-            required
-            maxLength={300}
-            placeholder="yritys.fi tai @yritys"
-            {...a11yErrorProps('profile', fieldErrors)}
-          />
-          <FieldError name="profile" errors={fieldErrors} />
-        </div>
-
         {proposal && (
           <div className="fieldGroup">
             <label htmlFor="lead-service">Mistä palvelusta olet kiinnostunut?</label>
-            <select id="lead-service" name="service" defaultValue={defaultService || ""}>
+            <select id="lead-service" name="service" value={selectedService} onChange={(event) => {
+              const service = event.target.value as LeadService | '';
+              setSelectedService(service);
+              if (service === 'social' || service === 'seo') setNoProfile(false);
+            }}>
               <option value="">En vielä tiedä</option>
               <option value="websites">Verkkosivut</option>
               <option value="social">Social</option>
@@ -218,6 +216,32 @@ export default function LeadForm({ compact = false, mode = 'social', defaultServ
             </select>
           </div>
         )}
+        <div className="fieldGroup">
+          <label htmlFor="lead-profile">Verkkosivu tai Instagram <span aria-hidden="true">*</span></label>
+          <input
+            id="lead-profile"
+            name="profile"
+            maxLength={300}
+            disabled={noProfile && canHaveNoProfile}
+            placeholder="yritys.fi tai @yritys"
+            {...a11yErrorProps('profile', fieldErrors)}
+          />
+          {proposal && (
+            <label className="fieldCheckbox" htmlFor="lead-no-profile">
+              <input
+                id="lead-no-profile"
+                name="noProfile"
+                type="checkbox"
+                value="1"
+                checked={noProfile && canHaveNoProfile}
+                disabled={!canHaveNoProfile}
+                onChange={(event) => setNoProfile(event.target.checked)}
+              />
+              Ei vielä verkkosivua tai Instagramia
+            </label>
+          )}
+          <FieldError name="profile" errors={fieldErrors} />
+        </div>
 
         {compact ? (
           <details className="optionalFields">
@@ -241,7 +265,7 @@ export default function LeadForm({ compact = false, mode = 'social', defaultServ
                   id="lead-message"
                   name="message"
                   rows={4}
-                  maxLength={1200}
+                  maxLength={messageLimit(proposal ? selectedService || undefined : undefined)}
                   placeholder={proposal ? "Esim. verkkosivut, some tai hakukonenäkyvyys..." : "Esim. työmaakuvia, valmiita kohteita, videoita..."}
                   {...a11yErrorProps('message', fieldErrors)}
                 />
@@ -257,7 +281,7 @@ export default function LeadForm({ compact = false, mode = 'social', defaultServ
                 id="lead-message"
                 name="message"
                 rows={4}
-                maxLength={1200}
+                maxLength={messageLimit(proposal ? selectedService || undefined : undefined)}
                 placeholder={proposal ? "Esim. verkkosivut, some tai hakukonenäkyvyys..." : "Esim. työmaakuvia, valmiita kohteita, videoita..."}
                 {...a11yErrorProps('message', fieldErrors)}
               />

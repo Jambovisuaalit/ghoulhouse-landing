@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import LeadForm from '@/components/LeadForm';
+import FunnelAnalytics from '@/components/analytics/FunnelAnalytics';
 import { seoClusterPages, type SeoClusterPage } from '@/data/seo-cluster';
 
 const clusterLinks = Object.values(seoClusterPages);
@@ -7,6 +8,7 @@ const clusterLinks = Object.values(seoClusterPages);
 export default function SeoLandingPage({ page }: { page: SeoClusterPage }) {
   return (
     <main className="seoPage">
+      <FunnelAnalytics />
       <section className="seoHero">
         <div className="contentShell seoHeroGrid">
           <div className="seoHeroCopy">
@@ -14,7 +16,7 @@ export default function SeoLandingPage({ page }: { page: SeoClusterPage }) {
             <h1>{page.h1}</h1>
             <p className="seoLead">{page.intro}</p>
             <div className="heroActions">
-              <a className="button button--signal" href="#yhteys">PYYDÄ 2 SISÄLTÖESIMERKKIÄ <span aria-hidden="true">→</span></a>
+              <a className="button button--signal" href="#yhteys" data-cta-intent="photos" data-cta-service="social">PYYDÄ 2 SISÄLTÖESIMERKKIÄ <span aria-hidden="true">→</span></a>
               <Link className="textLink" href="/">Takaisin etusivulle</Link>
             </div>
             <div className="offerLine"><strong>490 € + ALV / 30 PÄIVÄÄ</strong><span>12 sisältöä · Instagram + Facebook · ei automaattista jatkoa</span></div>
