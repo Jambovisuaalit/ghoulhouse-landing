@@ -19,6 +19,8 @@ export default function Page() {
         introduction="Hinta riippuu siitä, mitä sivuston pitää sisältää ja mitä materiaalia yrityksellä on jo valmiina. Käy läpi kustannukseen vaikuttavat osat ja pyydä omaan tilanteeseesi rajattu arvio."
         contactHeading="PYYDÄ ARVIO OMASTA PROJEKTISTA."
         contactIntroduction="Kerro yrityksen nimi, tarvittavat palvelut ja mahdollinen nykyinen sivusto. Voit pyytää arviota myös, jos verkkosivua ei vielä ole."
+        secondaryHref="/verkkosivut-yritykselle"
+        secondaryLabel="Katso toteutuksen sisältö"
       >
       <section className="websitePrice" aria-labelledby="website-price-title">
         <div className="contentShell websitePriceGrid">
