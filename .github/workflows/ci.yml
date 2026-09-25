@@ -246,6 +246,9 @@ jobs:
       - name: No-JS QA
         run: node scripts/no-js-qa-ci.mjs
 
+      - name: Pricing and proof page screenshots
+        run: node scripts/proof-pricing-screenshots.mjs
+
       - name: Upload browser QA artifacts
         if: always()
         uses: actions/upload-artifact@v4
