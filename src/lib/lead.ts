@@ -1,3 +1,9 @@
+export const NO_PROFILE_OPTION = 'Ei vielä verkkosivua tai Instagramia';
+export const SERVICE_LABELS = { websites: 'Verkkosivut', social: 'Social', seo: 'SEO' } as const;
+export type LeadService = keyof typeof SERVICE_LABELS;
+export const serviceMessagePrefix = (service?: LeadService) => service ? `Palvelu: ${SERVICE_LABELS[service]}\n` : '';
+export const messageLimit = (service?: LeadService) => 1200 - serviceMessagePrefix(service).length;
+
 export interface LeadInput {
   intent: 'booking' | 'photos';
   service?: 'websites' | 'social' | 'seo';
@@ -91,14 +97,18 @@ export function validateLead(input: unknown): LeadValidationResult {
   }
 
   const source = input as Record<string, unknown>;
-  const profile = clean(source.profile, limits.profile);
-  const classifiedProfile = profile ? classifyProfile(profile) : null;
+  const intent = source.intent === 'photos' ? 'photos' : 'booking';
+  const service = ['websites', 'social', 'seo'].includes(String(source.service))
+    ? (source.service as LeadService) : undefined;
+  const requestedNoProfile = source.noProfile === '1' || source.noProfile === true || source.profile === NO_PROFILE_OPTION;
+  const noProfileAllowed = intent === 'booking' && (!service || service === 'websites');
+  const profile = requestedNoProfile && noProfileAllowed ? NO_PROFILE_OPTION : clean(source.profile, limits.profile);
+  const classifiedProfile = profile === NO_PROFILE_OPTION ? null : profile ? classifyProfile(profile) : null;
+  const rawMessage = typeof source.message === 'string' ? source.message.trim().replace(/\u0000/g, '') : '';
 
   const data: LeadInput = {
-    intent: source.intent === 'photos' ? 'photos' : 'booking',
-    service: ['websites', 'social', 'seo'].includes(String(source.service))
-      ? (source.service as 'websites' | 'social' | 'seo')
-      : undefined,
+    intent,
+    service,
     company: clean(source.company, limits.company),
     name: clean(source.name, limits.name),
     email: clean(source.email, limits.email).toLowerCase(),
@@ -106,7 +116,7 @@ export function validateLead(input: unknown): LeadValidationResult {
     phone: clean(source.phone, limits.phone),
     website: classifiedProfile?.website || '',
     instagram: classifiedProfile?.instagram || '',
-    message: clean(source.message, limits.message),
+    message: rawMessage.slice(0, limits.message),
   };
 
   const errors: Record<string, string> = {};
@@ -119,10 +129,15 @@ export function validateLead(input: unknown): LeadValidationResult {
     errors.email = 'Tarkista sähköpostiosoite.';
   }
 
-  if (!profile) {
-    errors.profile = 'Verkkosivu tai Instagram on pakollinen.';
-  } else if (!classifiedProfile) {
+  if (requestedNoProfile && !noProfileAllowed) {
+    errors.profile = 'Tämä vaihtoehto on käytettävissä verkkosivupyynnölle tai yleiselle ehdotuspyynnölle.';
+  } else if (!profile) {
+    errors.profile = 'Anna verkkosivu tai Instagram tai valitse ”Ei vielä verkkosivua tai Instagramia”.';
+  } else if (profile !== NO_PROFILE_OPTION && !classifiedProfile) {
     errors.profile = 'Anna verkkosivu (esim. yritys.fi) tai Instagram (@yritys).';
+  }
+  if (rawMessage.length > messageLimit(service)) {
+    errors.message = `Viestin enimmäispituus on ${messageLimit(service)} merkkiä valitulla palvelulla.`;
   }
 
   if (Object.keys(errors).length > 0) {

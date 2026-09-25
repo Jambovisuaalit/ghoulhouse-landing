@@ -1,4 +1,5 @@
 import type { LeadInput } from './lead';
+import { serviceMessagePrefix } from './lead';
 
 const DEFAULT_SUPABASE_URL = 'https://qkmyzbqhepapiowrttpz.supabase.co';
 const DEFAULT_SUPABASE_PUBLISHABLE_KEY =
@@ -56,9 +57,7 @@ export async function storeLead(lead: LeadInput) {
       p_phone: lead.phone || null,
       p_website: lead.website || null,
       p_instagram: lead.instagram || null,
-      p_message: lead.service
-        ? `Palvelu: ${{ websites: 'Verkkosivut', social: 'Social', seo: 'SEO' }[lead.service]}\n${lead.message || ''}`.trim()
-        : lead.message || null,
+      p_message: `${serviceMessagePrefix(lead.service)}${lead.message || ''}`.trim() || null,
     }),
     cache: 'no-store',
   });

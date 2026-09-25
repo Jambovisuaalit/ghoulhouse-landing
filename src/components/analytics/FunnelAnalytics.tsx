@@ -23,13 +23,16 @@ export default function FunnelAnalytics() {
       const target = event.target;
       if (!(target instanceof Element)) return;
 
-      const link = target.closest<HTMLAnchorElement>('a[href="#yhteys"]');
+      const link = target.closest<HTMLAnchorElement>('a[href]');
       if (!link) return;
-
-      trackEvent('primary_cta_click', {
-        location: link.closest('header') ? 'navigation' : link.closest('#top') ? 'hero' : 'page',
+      const url = new URL(link.href, window.location.href);
+      if (url.origin !== window.location.origin || url.pathname !== window.location.pathname || url.hash !== '#yhteys') return;
+      const intent = link.dataset.ctaIntent === 'photos' ? 'photos' : 'booking';
+      const service = link.dataset.ctaService || url.searchParams.get('service') || (intent === 'photos' ? 'social' : 'unspecified');
+      trackEvent(intent === 'photos' ? 'photo_demo_cta_click' : 'primary_cta_click', {
+        service, intent,
+        location: link.closest('header') ? 'navigation' : link.closest('#top, .seoHero') ? 'hero' : 'page',
       });
-      trackEvent('photo_demo_cta_click');
     };
 
     document.addEventListener('click', handleClick);

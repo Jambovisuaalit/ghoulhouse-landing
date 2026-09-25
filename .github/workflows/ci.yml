@@ -10,6 +10,8 @@ on:
 
 permissions:
   contents: read
+  deployments: read
+  statuses: read
 
 jobs:
   validate:
@@ -19,6 +21,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -100,6 +104,9 @@ jobs:
 
       - name: Lead confirmation and service-specific routing QA
         run: node scripts/lead-confirmation-qa.mjs
+
+      - name: Lead validation and message length QA
+        run: node scripts/lead-validation-qa.mjs
 
       - name: SEO safety QA
         shell: bash
@@ -234,17 +241,34 @@ jobs:
       - name: Full-page responsive and consent QA
         run: node scripts/homepage-fullpage-qa.mjs
 
-      - name: Vercel Preview full-page responsive QA
-        env:
-          QA_BASE_URL: https://ghoulhouse-home-aswhc7zam-info-32533854s-projects.vercel.app
-          QA_SCREENSHOT_DIR: qa-artifacts/preview
-        run: node scripts/homepage-fullpage-qa.mjs
-
       - name: Launch visual and accessibility QA
         run: node scripts/launch-visual-a11y-qa.mjs
 
       - name: No-JS QA
         run: node scripts/no-js-qa-ci.mjs
+
+      # One synthetic request through the actual Next.js API, live Supabase RPC and Resend trigger.
+      # Scoped to the audit PR so routine main/other PR runs never create test leads.
+      - name: Controlled lead API end-to-end smoke
+        if: github.event_name == 'pull_request' && github.event.pull_request.number == 77
+        env:
+          QA_EXPECTED_SHA: ${{ github.event.pull_request.head.sha }}
+        run: node scripts/controlled-lead-e2e.mjs
+
+      - name: Resolve this PR's exact Vercel preview
+        if: github.event_name == 'pull_request'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: node scripts/resolve-pr-preview.mjs
+
+      - name: Vercel Preview full-page responsive QA
+        if: github.event_name == 'pull_request'
+        env:
+          QA_SCREENSHOT_DIR: qa-artifacts/preview
+        run: node scripts/homepage-fullpage-qa.mjs
 
       - name: Upload browser QA artifacts
         if: always()
