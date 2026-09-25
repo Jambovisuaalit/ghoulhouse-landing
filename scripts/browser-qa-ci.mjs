@@ -178,7 +178,8 @@ try {
         formMethod: form?.getAttribute('method')?.toLowerCase() || '',
         formAction: form?.getAttribute('action') || '',
         submitRect: rect(submit),
-        requiredFields: ['company','name','email','profile'].every((name) => Boolean(form?.querySelector('[name="' + name + '"][required]'))),
+        requiredFields: ['company','name','email'].every((name) => Boolean(form?.querySelector('[name="' + name + '"][required]'))),
+        noProfileOption: Boolean(form?.querySelector('input[name="noProfile"][value="1"]')),
         proofExists: Boolean(proof),
         proofImageLoaded: document.querySelector('.ghSelectedScreenshot')?.naturalWidth > 100,
         seoSelected: form?.querySelector('select[name="service"]') !== null,
@@ -213,7 +214,7 @@ try {
     assert(metrics.serviceLinks && metrics.serviceCards === 3, `${viewport.width}x${viewport.height}: three service links missing.`);
     assert(metrics.resourceLinks === 3 && metrics.proposalIntent, `${viewport.width}x${viewport.height}: resources or general proposal intent missing.`);
     assert(metrics.formExists && metrics.formMethod === 'post' && metrics.formAction === '/api/leads', `${viewport.width}x${viewport.height}: native lead form contract missing.`);
-    assert(metrics.requiredFields, `${viewport.width}x${viewport.height}: required lead fields missing.`);
+    assert(metrics.requiredFields && metrics.noProfileOption, `${viewport.width}x${viewport.height}: required fields or no-profile choice missing.`);
     assert(metrics.submitRect?.height >= 44, `${viewport.width}x${viewport.height}: submit target below 44px.`);
     assert(metrics.proofExists && metrics.logoLoaded, `${viewport.width}x${viewport.height}: company proof or logo missing.`);
     assert(metrics.seoSelected, `${viewport.width}x${viewport.height}: service-interest selector missing.`);
@@ -271,11 +272,16 @@ try {
     const cta = document.querySelector('#top a.ghButton[href="#yhteys"]');
     cta?.focus();
     const focused = document.activeElement === cta;
+    const events = [];
+    window.addEventListener('ghoulhouse:analytics', (event) => events.push(event.detail));
     cta?.click();
     const form = document.querySelector('#yhteys form[action="/api/leads"]');
-    return { focused, hash: location.hash, formExists: Boolean(form), submitTabIndex: form?.querySelector('button[type="submit"]')?.tabIndex ?? -1 };
+    return { focused, hash: location.hash, formExists: Boolean(form), submitTabIndex: form?.querySelector('button[type="submit"]')?.tabIndex ?? -1, ctaEvents: events };
   })()`);
   assert(interaction.focused, 'Primary CTA is not keyboard-focusable.');
+  assert(interaction.ctaEvents.filter((event) => event.event === 'primary_cta_click').length === 1, 'Primary CTA must emit exactly one event.');
+  assert(!interaction.ctaEvents.some((event) => event.event === 'photo_demo_cta_click'), 'Primary CTA was wrongly counted as a photo request.');
+  assert(interaction.ctaEvents.some((event) => event.intent === 'booking' && event.service === 'unspecified'), 'Primary CTA is missing service/intent dimensions.');
   assert(interaction.hash === '#yhteys', 'Primary CTA did not navigate to #yhteys.');
   assert(interaction.formExists && interaction.submitTabIndex >= 0, 'Lead form or submit keyboard access missing.');
 

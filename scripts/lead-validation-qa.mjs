@@ -1,0 +1,20 @@
+import assert from 'node:assert/strict';
+import { validateLead, messageLimit, NO_PROFILE_OPTION } from '../src/lib/lead.ts';
+
+const base = { intent: 'booking', company: 'QA Oy', name: 'Quality Test', email: 'qa@example.com' };
+const website = validateLead({ ...base, service: 'websites', profile: '', noProfile: '1' });
+assert.equal(website.ok, true);
+assert.equal(website.data?.profile, NO_PROFILE_OPTION);
+assert.equal(website.data?.website, '');
+assert.equal(website.data?.instagram, '');
+assert.equal(validateLead({ ...base, profile: '', noProfile: '1' }).ok, true);
+assert.equal(validateLead({ ...base, service: 'social', profile: '', noProfile: '1' }).ok, false);
+assert.equal(validateLead({ ...base, service: 'seo', profile: '', noProfile: '1' }).ok, false);
+assert.equal(validateLead({ ...base, intent: 'photos', profile: '', noProfile: '1' }).ok, false);
+assert.equal(validateLead({ ...base, service: 'websites', profile: '' }).ok, false);
+assert.equal(validateLead({ ...base, service: 'websites', profile: 'example.com', message: 'x'.repeat(messageLimit('websites')) }).ok, true);
+const over = validateLead({ ...base, service: 'websites', profile: 'example.com', message: 'x'.repeat(1200) });
+assert.equal(over.ok, false);
+assert.ok(over.errors?.message);
+assert.equal(validateLead({ ...base, profile: 'example.com', message: 'x'.repeat(1200) }).ok, true);
+console.log('Lead validation PASS: explicit no-profile option, rejected unsupported intents, exact message budgets.');

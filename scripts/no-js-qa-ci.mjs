@@ -60,3 +60,12 @@ const invalidPost = await fetch(BASE_URL + '/api/leads', {
 });
 assert(invalidPost.status === 303 && (invalidPost.headers.get('location') || '').includes('/?lead=validation#yhteys'), 'No-JS QA: invalid native POST does not return to visible homepage form.');
 console.log('No-JS QA passed: company hero, three service paths, proposal CTA and native POST lead form remain usable without JavaScript.');
+
+const photoError = await fetch(BASE_URL + '/api/leads', {
+  method: 'POST', redirect: 'manual',
+  headers: { 'content-type': 'application/x-www-form-urlencoded', referer: BASE_URL + '/some-sisallontuotanto' },
+  body: 'intent=photos&name=&company=&email=&profile=',
+});
+assert(photoError.status === 303 && (photoError.headers.get('location') || '').includes('/?lead=validation&intent=photos#yhteys'), 'No-JS QA: photo request error must return to #yhteys with photo intent.');
+const photoRetry = await fetch(BASE_URL + '/?lead=validation&intent=photos#yhteys').then((r) => r.text());
+assert(/name="intent" value="photos"/.test(photoRetry), 'No-JS QA: photo retry form lost its intent.');

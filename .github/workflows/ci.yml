@@ -19,6 +19,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -100,6 +102,9 @@ jobs:
 
       - name: Lead confirmation and service-specific routing QA
         run: node scripts/lead-confirmation-qa.mjs
+
+      - name: Lead validation and message length QA
+        run: node scripts/lead-validation-qa.mjs
 
       - name: SEO safety QA
         shell: bash
@@ -234,9 +239,17 @@ jobs:
       - name: Full-page responsive and consent QA
         run: node scripts/homepage-fullpage-qa.mjs
 
-      - name: Vercel Preview full-page responsive QA
+      - name: Resolve this PR's exact Vercel preview
+        if: github.event_name == 'pull_request'
         env:
-          QA_BASE_URL: https://ghoulhouse-home-aswhc7zam-info-32533854s-projects.vercel.app
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: node scripts/resolve-pr-preview.mjs
+
+      - name: Vercel Preview full-page responsive QA
+        if: github.event_name == 'pull_request'
+        env:
           QA_SCREENSHOT_DIR: qa-artifacts/preview
         run: node scripts/homepage-fullpage-qa.mjs
 
