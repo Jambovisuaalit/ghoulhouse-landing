@@ -48,6 +48,7 @@ async function githubPreview() {
       }
     }
     if (deployments.some((d) => d.task === 'error')) throw new Error('Matching GitHub preview deployment failed.');
+    if (deployments.length === 0 && attempt >= 2) return null;
     await sleep(8000);
   }
   return null;
