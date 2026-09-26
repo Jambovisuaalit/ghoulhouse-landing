@@ -414,7 +414,7 @@
 .homePage .ghFooterMain { gap: 48px; }
 .homePage .ghFooterBottom { border-color: #111; }
 .homePage .ghFooter nav a { text-transform: uppercase; font-size: 12px; font-weight: 700; letter-spacing: .025em; }
-.homePage .ghConsentSlot:not(:empty) { background: #f7f4ef; }
+
 
 @media (max-width: 1199px) {
   .homePage .ghShell, .homePage .ghSwissHero .ghHeroGrid { width: calc(100% - 72px); }

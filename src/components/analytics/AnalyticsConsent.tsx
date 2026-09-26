@@ -51,24 +51,24 @@ export default function AnalyticsConsent() {
   const banner = (
     <aside className="analyticsConsent" aria-labelledby="analytics-consent-title">
       <div className="analyticsConsent__copy">
-        <p className="kicker">ANALYTIIKKA</p>
-        <h2 id="analytics-consent-title">SALLITAANKO KÄYTÖN MITTAUS?</h2>
+        <p className="analyticsConsent__eyebrow">YKSITYISYYS / ANALYTIIKKA</p>
+        <h2 id="analytics-consent-title">Sallitaanko käytön mittaus?</h2>
         <p>
-          Google Analytics 4 mittaa sivuston käyttöä vain suostumuksellasi. Sivusto toimii myös ilman
-          analytiikkaa.
+          Google Analytics 4 käynnistyy vain luvallasi. Sivusto toimii myös ilman analytiikkaa.
+          Voit muuttaa valintaasi myöhemmin.
         </p>
         <a href="/tietosuoja">Lue tietosuojaseloste</a>
       </div>
       <div className="analyticsConsent__actions">
-        <button className="button button--signal" type="button" onClick={() => save('accepted')}>
-          SALLI ANALYTIIKKA
+        <button className="analyticsConsent__button analyticsConsent__accept" type="button" onClick={() => save('accepted')}>
+          Salli analytiikka
         </button>
         <button
-          className="button button--paper analyticsConsent__reject"
+          className="analyticsConsent__button analyticsConsent__reject"
           type="button"
           onClick={() => save('rejected')}
         >
-          EI NYT
+          Hylkää analytiikka
         </button>
       </div>
     </aside>
