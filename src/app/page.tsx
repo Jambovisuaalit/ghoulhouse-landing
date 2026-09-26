@@ -1,12 +1,11 @@
 import Image from 'next/image';
 import LeadForm from '@/components/LeadForm';
 import FunnelAnalytics from '@/components/analytics/FunnelAnalytics';
-import HeroDotGrid from '@/components/HeroDotGrid';
-import Service3DCarousel from '@/components/Service3DCarousel';
 import { siteNavigation } from '@/data/site-navigation';
 import LiquidGlassFooter from '@/components/LiquidGlassFooter';
 import './homepage.css';
 import './homepage-swiss.css';
+import './editorial-home.css';
 
 const services = [
   {
@@ -45,10 +44,10 @@ const steps = [
   ['Julkaisu & kehitys', 'Tarkistamme toteutuksen, julkaisemme hyväksytyn työn ja sovimme mahdollisista jatkotoimista.'],
 ] as const;
 
-const proofLinks = [
-  ['WEBSITES', 'Valmis verkkosivupolku', 'Oman sivustomme toteutettu polku: palvelut, työnäyte ja tarjouspyyntö. Avaa tarkempi toteutusesittely.', '/tyot/ghoulhouse-verkkosivut'],
-  ['SOCIAL', 'Työmaakuvasta julkaisuksi', 'Havainne-esimerkki siitä, miten työmaakuvasta muodostuu otsikoitu ja brändätty somejulkaisu.', '/some-sisallontuotanto'],
-  ['SEO', 'Palvelusta toimialasivuksi', 'Esimerkkirakenne: rakennusalan palvelusivu, siihen liittyvä sisältö ja selkeä yhteydenotto. Ei hakusijalupaus.', '/verkkosivut/rakennus'],
+const editorialRoutes = [
+  ['01', 'RAKENNUS', 'Työmaakuvat, työn vaiheet ja valmiit kohteet.', '/rakennusyrityksille'],
+  ['02', 'LVI', 'Asennukset ja tekninen työ ymmärrettävästi näkyville.', '/lvi-yrityksille'],
+  ['03', 'INSTAGRAM', 'Kuvat ja tekstit yhtenäiseksi julkaisulinjaksi.', '/instagram-sisallontuotanto'],
 ] as const;
 
 const guides = [
@@ -104,52 +103,40 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
       </header>
 
       <main id="main">
-        <section className="ghHero ghHeroEditorial ghSwissHero" id="top" aria-labelledby="hero-title">
-          <HeroDotGrid />
-          <div className="ghShell ghSwissHeroMeta" aria-hidden="true">
-            <span>01 / GHOULHOUSE — HELSINKI</span>
-            <span>WEBSITES · SOCIAL · SEO</span>
+        <section className="ghHero ghHeroEditorial ghArtHero" id="top" aria-labelledby="hero-title">
+          <div className="ghArtGrain" aria-hidden="true" />
+          <div className="ghShell ghArtHeroMeta" aria-hidden="true">
+            <span>GH / 001 &nbsp; — &nbsp; HELSINKI</span>
+            <span>EDITORIAL STUDIO / WEB · SOCIAL · SEO</span>
           </div>
-          <div className="ghShell ghHeroGrid">
-            <div className="ghHeroCopy">
-              <p className="ghEyebrow">Digitaalinen näkyvyys suomalaisille palveluyrityksille</p>
-              <h1 id="hero-title"><span>HYVÄ TYÖ</span>{' '}<span>PITÄÄ NÄKYÄ.</span></h1>
-              <div className="ghSwissHeroBelow">
-                <p className="ghLead">Verkkosivut, sisältö ja hakukonenäkyvyys. Vähemmän kohinaa. Enemmän näkyvyyttä oikealle työlle.</p>
-                <div className="ghSwissHeroAction">
-                  <div className="ghHeroActions"><a className="ghButton" href="#yhteys">Pyydä ehdotus <span aria-hidden="true">↗</span></a></div>
-                  <p className="ghHeroFootnote">Selkeä ehdotus yrityksenne tilanteen perusteella.</p>
+          <div className="ghShell ghArtHeroLayout">
+            <div className="ghArtHeroCopy">
+              <p className="ghEyebrow ghArtHeroEyebrow"><span aria-hidden="true">✳</span> NÄKYVYYTTÄ OIKEALLE TYÖLLE</p>
+              <h1 id="hero-title"><span>HYVÄ TYÖ</span><span>PITÄÄ NÄKYÄ.</span></h1>
+              <div className="ghArtHeroBottom">
+                <p className="ghLead">Verkkosivut, sisältö ja hakukonenäkyvyys suomalaisille palveluyrityksille. Selkeä toteutus, joka näyttää tekemisen.</p>
+                <div className="ghArtHeroAction">
+                  <div className="ghHeroActions">
+                    <a className="ghButton" href="#yhteys">Pyydä ehdotus <span aria-hidden="true">↗</span></a>
+                  </div>
+                  <p className="ghHeroFootnote">Kerro tilanteenne. Ehdotamme seuraavaa askelta.</p>
                 </div>
               </div>
             </div>
-            <aside className="ghHeroEditorialPanel ghSwissHeroGallery" aria-label="GhoulHousen visuaaliset esimerkit">
-              <figure className="ghSwissTile ghSwissTile--work">
-                <div className="ghSwissTileImage">
-                  <Image src="/bathroom-concept-v2.webp" alt="Havainnekuva kylpyhuoneremontista. Ei asiakkaan työmaa." fill sizes="(max-width: 767px) 45vw, 34vw" priority />
-                </div>
-                <figcaption>01 / KONSEPTIESIMERKKI — EI ASIAKASTYÖ</figcaption>
-              </figure>
-              <figure className="ghSwissTile ghSwissTile--brand">
-                <div className="ghSwissTileBrand">
-                  <span className="ghSwissTileSerial">GH / 002</span>
-                  <Image src="/ghoulhouse-mark-reverse.svg" alt="" width={112} height={112} priority />
-                  <strong>GHOUL<br />HOUSE<span>.</span></strong>
-                </div>
-                <figcaption>02 / GHOULHOUSE — VISUAALINEN IDENTITEETTI</figcaption>
-              </figure>
-              <figure className="ghSwissTile ghSwissTile--system">
-                <div className="ghSwissTileSystem" aria-label="GhoulHousen palvelumallin visuaalinen esitys">
-                  <span className="ghSwissTileSerial">GH / 003 — SERVICE SYSTEM</span>
-                  <strong>WEB.<br />SOCIAL.<br />SEO<span>.</span></strong>
-                  <span className="ghSwissTileSystemRule">YKSI SELKEÄ KOKONAISUUS <span aria-hidden="true">↗</span></span>
-                </div>
-                <figcaption>03 / PALVELUMALLI — HAVAINNE</figcaption>
-              </figure>
-            </aside>
+            <figure className="ghArtHeroVisual">
+              <div className="ghArtHeroImage">
+                <Image src="/bathroom-concept-v2.webp"
+                  alt="Havainnekuva keskeneräisestä kylpyhuoneremontista. Ei asiakkaan työmaa."
+                  fill sizes="(max-width:767px) 100vw, (max-width:1023px) 54vw, 42vw" priority />
+                <span className="ghArtHeroImageMark" aria-hidden="true">✳</span>
+                <span className="ghArtHeroImageSerial" aria-hidden="true">GH / IMAGE STUDY — 01</span>
+              </div>
+              <figcaption>VISUAALINEN KONSEPTI / EI ASIAKASTYÖ</figcaption>
+            </figure>
           </div>
-          <div className="ghShell ghSwissHeroRule" aria-hidden="true">
+          <div className="ghShell ghArtHeroRule" aria-hidden="true">
             <span>INDEPENDENT DIGITAL STUDIO</span>
-            <span>SELAA ALAS ↓</span>
+            <span>SEURAA TYÖN JÄLKEÄ &nbsp; ↓</span>
           </div>
         </section>
 
@@ -179,7 +166,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
           <div className="ghShell ghSelectedGrid">
             <div className="ghSectionIntro">
               <p className="ghEyebrow">02 / Valitut työt</p>
-              <h2 id="selected-title">TYÖ PUHUU.<br />NÄYTÄ SE.</h2>
+              <h2 id="selected-title">TYÖ PUHUU.<br /><em>NÄYTÄ SE.</em></h2>
               <p>Oma julkaistu verkkosivutoteutuksemme on ensimmäinen dokumentoitu työnäyte. Lisäämme asiakastöitä vasta julkaisuluvan ja todennettavan aineiston perusteella.</p>
               <a className="ghTextLink" href="/referenssit">Katso toteutukset ja työnäytteet <span aria-hidden="true">↗</span></a>
               <a className="ghSelectedInquiry" href="/verkkosivut-yritykselle#yhteys">Pyydä oma verkkosivuarvio <span aria-hidden="true">↗</span></a>
@@ -204,11 +191,24 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
           </div>
         </section>
 
-        <section className="ghProofGridSection ghSection" id="referenssit" aria-labelledby="proof-grid-title">
-          <div className="ghShell">
-            <div className="ghSectionIntro"><p className="ghEyebrow">03 / Toimitusesimerkit</p><h2 id="proof-grid-title">NÄIN TYÖ<br />VALMISTUU.</h2><p>Katso kolme konkreettista esitystapaa: oman verkkosivumme käyttäjäpolku, kuvasta tehtävän somejulkaisun konsepti sekä toimialasivun rakenne. Vain oma julkaistu työ on merkitty toteutukseksi.</p></div>
-            <Service3DCarousel items={proofLinks} />
-            <a className="ghTextLink ghSectionLink" href="/referenssit">Katso erilliset työnäytteet ja referenssit <span aria-hidden="true">↗</span></a>
+        <section className="ghProofGridSection ghSection ghArtRoutesSection" id="referenssit" aria-labelledby="proof-grid-title">
+          <div className="ghArtGrain" aria-hidden="true" />
+          <div className="ghShell ghArtRoutesLayout">
+            <div className="ghSectionIntro">
+              <p className="ghEyebrow">03 / TOIMIALAT JA KANAVAT</p>
+              <h2 id="proof-grid-title">JOKAISELLA<br /><em>TYÖLLÄ ON</em><br />TARINANSA.</h2>
+              <p>Rakennusalan ja LVI-yritysten työstä syntyy sisältöä. Näin näytämme osaamisen eri palveluissa ja kanavissa — ilman keksittyjä asiakastuloksia.</p>
+              <a className="ghTextLink ghSectionLink" href="/referenssit">Omat työt ja toteutusesimerkit <span aria-hidden="true">↗</span></a>
+            </div>
+            <nav className="ghArtRouteList" aria-label="Toimialojen ja kanavien palvelusivut">
+              {editorialRoutes.map(([number,title,body,url]) => (
+                <a key={url} className="ghArtRoute" href={url}>
+                  <span className="ghArtRouteIndex">{number} / 03</span>
+                  <span className="ghArtRouteMain"><strong>{title}</strong><small>{body}</small></span>
+                  <span className="ghArtRouteArrow" aria-hidden="true">↗</span>
+                </a>
+              ))}
+            </nav>
           </div>
         </section>
 
