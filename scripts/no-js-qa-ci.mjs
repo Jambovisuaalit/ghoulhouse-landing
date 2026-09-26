@@ -53,9 +53,13 @@ assert(html.includes('class="ghLiquidFooterButton"') && html.includes('href="#yh
 
 assert(!html.includes('ghSwissTile--site'), 'No-JS QA: duplicate self-site screenshot in hero is still present.');
 assert(/Oma sivusto — ei asiakasreferenssi/i.test(html), 'No-JS QA: honest own-work disclosure is missing.');
-assert((html.match(/gh3dCardLink/g) || []).length >= 3, 'No-JS QA: the three carousel items are not rendered as ordinary static service links.');
-assert(html.includes('Palvelun havainne-esittely — ei asiakastyö.'), 'No-JS QA: carousel concept disclosure missing.');
-assert(html.includes('href="/verkkosivut/rakennus"'), 'No-JS QA: industry carousel link missing.');
+assert((html.match(/class="ghArtRoute"/g) || []).length === 3,
+  'No-JS QA: three editorial industry/channel links must be server-rendered.');
+for (const route of ['/rakennusyrityksille','/lvi-yrityksille','/instagram-sisallontuotanto']) {
+  assert(html.includes('href="' + route + '"'), 'No-JS QA: editorial industry route missing: ' + route);
+}
+assert(html.includes('VISUAALINEN KONSEPTI / EI ASIAKASTYÖ'),
+  'No-JS QA: photographic hero must disclose its concept nature.');
 assert(html.includes('href="/tyot/ghoulhouse-verkkosivut"'), 'No-JS QA: own-site case detail link missing.');
 assert(!html.includes('Kuva luotu tekoälyllä'), 'No-JS QA: AI concept still dominates company homepage.');
 assert(!html.includes('logo-horizontal.svg') && !html.includes('logo-horizontal-white.svg'), 'No-JS QA: unavailable/fabricated logo lockup referenced.');
