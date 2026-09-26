@@ -207,17 +207,28 @@ try {
         proposalIntent: form?.querySelector('[name="intent"]')?.value === 'booking',
         schemaTypes: [...document.querySelectorAll('script[type="application/ld+json"]')].map((script) => script.textContent || '').join(' '),
         logoLoaded: (() => {
-          const image = document.querySelector('header .ghBrand img');
-          return image?.getAttribute('src') === '/ghoulhouse-logo.svg' && image.complete &&
-            image.naturalWidth > 200 && image.naturalHeight > 50;
+          const compact = document.querySelector('header .ghOfficialMobileLockup');
+          const onMobile = compact && getComputedStyle(compact).display !== 'none';
+          const logo = document.querySelector(onMobile
+            ? 'header .ghOfficialMobileWordmark' : 'header .ghOfficialHeaderLogo');
+          const mark = document.querySelector('header .ghOfficialMobileMark');
+          return logo?.getAttribute('src') === (onMobile
+            ? '/ghoulhouse-wordmark-black.svg' : '/ghoulhouse-logo.svg') &&
+            logo.complete && logo.naturalWidth > 200 &&
+            (!onMobile || (mark?.getAttribute('src') === '/favicon.svg' && mark.complete));
         })(),
         brandLayout: (() => {
-          const logo = document.querySelector('header .ghBrand img');
+          const compact = document.querySelector('header .ghOfficialMobileLockup');
+          const onMobile = compact && getComputedStyle(compact).display !== 'none';
+          const logo = document.querySelector(onMobile
+            ? 'header .ghOfficialMobileLockup' : 'header .ghOfficialHeaderLogo');
           const footer = document.querySelector('footer .ghOfficialFooterLogo');
           const wordmark = document.querySelector('footer .ghOfficialWordmark');
           const heroMark = document.querySelector('.ghSwissTileBrand img');
           return {
             header: rect(logo),
+            mobileMark: onMobile ? compact.querySelector('.ghOfficialMobileMark')?.getAttribute('src') : null,
+            mobileWordmark: onMobile ? compact.querySelector('.ghOfficialMobileWordmark')?.getAttribute('src') : null,
             footer: footer?.getAttribute('src'),
             footerLoaded: Boolean(footer?.complete && footer.naturalWidth > 200),
             giantWordmark: wordmark?.getAttribute('src'),
@@ -305,6 +316,10 @@ try {
     assert(metrics.requiredFields, `${viewport.width}x${viewport.height}: required lead fields missing.`);
     assert(metrics.submitRect?.height >= 44, `${viewport.width}x${viewport.height}: submit target below 44px.`);
     assert(metrics.proofExists && metrics.logoLoaded, `${viewport.width}x${viewport.height}: company proof or logo missing.`);
+    assert(viewport.width >= 768 ||
+      (metrics.brandLayout.mobileMark === '/favicon.svg' &&
+       metrics.brandLayout.mobileWordmark === '/ghoulhouse-wordmark-black.svg'),
+      `${viewport.width}x${viewport.height}: mobile header must use the official compact mark + vector wordmark.`);
     assert(metrics.brandLayout.header?.left >= -1 && metrics.brandLayout.header?.right <= metrics.innerWidth + 1 &&
       metrics.brandLayout.footer === '/ghoulhouse-logo-reverse.svg' &&
       metrics.brandLayout.giantWordmark === '/ghoulhouse-wordmark-white.svg' &&
