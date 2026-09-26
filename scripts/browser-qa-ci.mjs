@@ -214,6 +214,9 @@ try {
             navItems: footer?.querySelectorAll('.ghLiquidFooterNav[aria-label="Alatunnisteen navigaatio"] a').length || 0,
             privacy: Boolean(footer?.querySelector('a[href="/tietosuoja"]')),
             columns: cols ? getComputedStyle(cols).gridTemplateColumns : '',
+            unclippedHeadings: [...(cols?.querySelectorAll('h3') || [])].every((heading) =>
+              heading.scrollWidth <= heading.clientWidth + 1 &&
+              parseFloat(getComputedStyle(heading).fontSize) <= 13),
             fakeNewsletter: Boolean(footer?.querySelector('form[action="#"], form[action=""]')),
           };
         })(),
@@ -269,6 +272,8 @@ try {
     assert(metrics.glassFooter.exists && metrics.glassFooter.rimBackground.includes('gradient') &&
       metrics.glassFooter.brandLink === '/' && metrics.glassFooter.navItems === 4 && metrics.glassFooter.privacy,
       `${viewport.width}x${viewport.height}: shared glass footer contents/rim missing: ${JSON.stringify(metrics.glassFooter)}`);
+    assert(metrics.glassFooter.unclippedHeadings,
+      `${viewport.width}x${viewport.height}: footer column headings are too large or clipped.`);
     assert(metrics.glassFooter.inquiry === '#yhteys' && metrics.glassFooter.inquiryRect?.height >= 44 &&
       !metrics.glassFooter.fakeNewsletter,
       `${viewport.width}x${viewport.height}: glass footer must have working inquiry CTA and no fake signup.`);
