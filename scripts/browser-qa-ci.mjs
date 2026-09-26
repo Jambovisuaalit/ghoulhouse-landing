@@ -155,8 +155,6 @@ try {
         return { top:r.top, right:r.right, bottom:r.bottom, left:r.left, width:r.width, height:r.height };
       };
       const hero = document.querySelector('#top');
-      const dotGrid = hero?.querySelector('.ghHeroDotGrid');
-      const dotCanvas = dotGrid?.querySelector('canvas');
       const h1 = hero?.querySelector('h1');
       const brandHeadline = h1;
       const heroCta = hero?.querySelector('a.ghButton[href="#yhteys"]');
@@ -195,11 +193,7 @@ try {
         seoSelected: form?.querySelector('select[name="service"]') !== null,
         serviceLinks: ['/verkkosivut-yritykselle','/some-sisallontuotanto','/?service=seo#yhteys'].every((href) => document.querySelector('.ghServiceCard a[href="' + href + '"]')),
         serviceCards: document.querySelectorAll('.ghServiceCard').length,
-        carouselCards: document.querySelectorAll('.gh3dCarousel .gh3dCard').length,
-        carouselLinks: [...document.querySelectorAll('.gh3dCarousel .gh3dCardLink')].map((a) => a.getAttribute('href')),
-        carouselRegion: document.querySelector('.gh3dCarousel')?.getAttribute('aria-roledescription') || '',
-        centeredCarouselRect: rect(document.querySelector('.gh3dCarousel.is-ready .gh3dCard[data-slot="center"]')),
-        carouselStageRect: rect(document.querySelector('.gh3dCarousel.is-ready .gh3dStage')),
+        editorialRoutes: [...document.querySelectorAll('.ghArtRouteList .ghArtRoute')].map((a) => a.getAttribute('href')),
         primaryNavDesktop: [...document.querySelectorAll('.ghDesktopNav a')].map((a) => [a.textContent?.trim(),a.getAttribute('href')]),
         primaryNavMobile: [...document.querySelectorAll('.ghMobileNav nav a')].slice(0,4).map((a) => [a.textContent?.trim(),a.getAttribute('href')]),
         proofCardHref: proof?.getAttribute('href'),
@@ -224,7 +218,7 @@ try {
             ? 'header .ghOfficialMobileLockup' : 'header .ghOfficialHeaderLogo');
           const footer = document.querySelector('footer .ghOfficialFooterLogo');
           const wordmark = document.querySelector('footer .ghOfficialWordmark');
-          const heroMark = document.querySelector('.ghSwissTileBrand img');
+          const heroMark = document.querySelector('.ghFounderIdentity img');
           return {
             header: rect(logo),
             mobileMark: onMobile ? compact.querySelector('.ghOfficialMobileMark')?.getAttribute('src') : null,
@@ -265,13 +259,19 @@ try {
         innerWidth,
         innerHeight,
         scrollWidth: document.documentElement.scrollWidth,
-        dotGrid: {
-          image: hero ? getComputedStyle(hero).backgroundImage : '',
-          heroRect: rect(hero),
-          overlayRect: rect(dotGrid),
-          canvasWidth: dotCanvas?.width || 0,
-          canvasHeight: dotCanvas?.height || 0,
-        },
+        artDirection: (() => {
+          const image = hero?.querySelector('.ghArtHeroImage img');
+          const noise = hero?.querySelector('.ghArtGrain');
+          const imageBox = hero?.querySelector('.ghArtHeroImage');
+          return {
+            imageLoaded: Boolean(image?.complete && image.naturalWidth > 100),
+            imageBox: rect(imageBox),
+            imageDisclosure: Boolean(hero?.querySelector('figcaption')?.textContent?.includes('EI ASIAKASTYÖ')),
+            grain: noise ? getComputedStyle(noise).backgroundImage : '',
+            background: hero ? getComputedStyle(hero).backgroundColor : '',
+            headingFont: h1 ? getComputedStyle(h1).fontFamily : '',
+          };
+        })(),
         colors: {
           ink: root.getPropertyValue('--ink').trim(),
           paper: root.getPropertyValue('--paper').trim(),
@@ -282,9 +282,11 @@ try {
       };
     })()`);
 
-    assert(metrics.dotGrid.image.includes('hero-dot-grid.svg'), `${viewport.width}x${viewport.height}: the visible hero must retain its static dot pattern regardless of JS.`);
-    assert(metrics.dotGrid.overlayRect?.width >= metrics.dotGrid.heroRect?.width - 1 && metrics.dotGrid.overlayRect?.height >= metrics.dotGrid.heroRect?.height - 1,
-      `${viewport.width}x${viewport.height}: the interactive dot layer does not cover the hero: ${JSON.stringify(metrics.dotGrid)}`);
+    assert(metrics.artDirection.grain.includes('data:image/svg+xml') &&
+      metrics.artDirection.background === 'rgb(11, 11, 11)' &&
+      /Georgia/i.test(metrics.artDirection.headingFont) &&
+      metrics.artDirection.imageLoaded && metrics.artDirection.imageDisclosure,
+      `${viewport.width}x${viewport.height}: editorial hero missing: ${JSON.stringify(metrics.artDirection)}`);
     assert(metrics.h1Count === 1, `${viewport.width}x${viewport.height}: expected exactly one H1.`);
     assert(metrics.brandHeadlineText.includes('HYVÄ TYÖ') && metrics.brandHeadlineText.includes('PITÄÄ NÄKYÄ.'), `${viewport.width}x${viewport.height}: company headline missing.`);
     assert(metrics.h1Text.includes('HYVÄ TYÖ') && metrics.h1Text.includes('PITÄÄ NÄKYÄ'), `${viewport.width}x${viewport.height}: H1 copy changed unexpectedly.`);
@@ -300,17 +302,14 @@ try {
     assert(metrics.heroCtaHref === '#yhteys', `${viewport.width}x${viewport.height}: primary CTA must target #yhteys.`);
     assert(/pyydä ehdotus/i.test(metrics.heroCtaText), `${viewport.width}x${viewport.height}: company CTA missing.`);
     assert(metrics.serviceLinks && metrics.serviceCards === 3, `${viewport.width}x${viewport.height}: three service links missing.`);
-    assert(metrics.carouselCards === 3 && metrics.carouselRegion === 'karuselli', `${viewport.width}x${viewport.height}: 3D carousel cards or semantics missing.`);
-    if (metrics.centeredCarouselRect && metrics.carouselStageRect) {
-      assert(metrics.centeredCarouselRect.left >= metrics.carouselStageRect.left - 1 &&
-        metrics.centeredCarouselRect.right <= metrics.carouselStageRect.right + 1,
-        `${viewport.width}x${viewport.height}: focused carousel card escapes stage on hydration.`);
-    }
+    assert(metrics.editorialRoutes.length === 3 &&
+      ['/rakennusyrityksille','/lvi-yrityksille','/instagram-sisallontuotanto']
+        .every((href) => metrics.editorialRoutes.includes(href)),
+      `${viewport.width}x${viewport.height}: editorial industry links missing.`);
     assert(JSON.stringify(metrics.primaryNavDesktop) === JSON.stringify(metrics.primaryNavMobile),
       `${viewport.width}x${viewport.height}: desktop/mobile primary navigation diverged: ${JSON.stringify(metrics.primaryNavDesktop)} / ${JSON.stringify(metrics.primaryNavMobile)}`);
     assert(metrics.proofCardHref === '/tyot/ghoulhouse-verkkosivut',
       `${viewport.width}x${viewport.height}: own work must open a useful case study instead of the current homepage.`);
-    assert(['/tyot/ghoulhouse-verkkosivut','/some-sisallontuotanto','/verkkosivut/rakennus'].every((href) => metrics.carouselLinks.includes(href)), `${viewport.width}x${viewport.height}: a carousel link is missing.`);
     assert(metrics.resourceLinks === 2 && metrics.proposalIntent, `${viewport.width}x${viewport.height}: resources or general proposal intent missing.`);
     assert(metrics.formExists && metrics.formMethod === 'post' && metrics.formAction === '/api/leads', `${viewport.width}x${viewport.height}: native lead form contract missing.`);
     assert(metrics.requiredFields, `${viewport.width}x${viewport.height}: required lead fields missing.`);
@@ -323,7 +322,7 @@ try {
     assert(metrics.brandLayout.header?.left >= -1 && metrics.brandLayout.header?.right <= metrics.innerWidth + 1 &&
       metrics.brandLayout.footer === '/ghoulhouse-logo-reverse.svg' &&
       metrics.brandLayout.giantWordmark === '/ghoulhouse-wordmark-white.svg' &&
-      metrics.brandLayout.mark === '/ghoulhouse-mark-reverse.svg' &&
+      metrics.brandLayout.mark === '/ghoulhouse-mark.svg' &&
       metrics.brandLayout.markFilter === 'none',
       `${viewport.width}x${viewport.height}: official logo contrast, load or clipping failed: ${JSON.stringify(metrics.brandLayout)}`);
     assert(metrics.glassFooter.exists && metrics.glassFooter.rimBackground.includes('gradient') &&
@@ -412,24 +411,10 @@ try {
   assert(selectedNoProfile.profile === 'Ei vielä verkkosivua tai Instagramia' && selectedNoProfile.pressed === 'true',
     'No-profile selection did not set the lead value.');
 
-  // An infinite carousel must wrap in both directions without changing links.
-  const carouselInteraction = await evaluate(client, `(() => {
-    const region = document.querySelector('.gh3dCarousel');
-    const next = region?.querySelector('[aria-label="Seuraava palveluesittely"]');
-    const previous = region?.querySelector('[aria-label="Edellinen palveluesittely"]');
-    const counter = () => region?.querySelector('.gh3dCounter')?.textContent?.replace(/\\s+/g,' ').trim();
-    const before = counter();
-    next?.click();
-    return { before, nextExists: Boolean(next), previousExists: Boolean(previous) };
-  })()`);
-  assert(carouselInteraction.nextExists && carouselInteraction.previousExists, 'Carousel navigation controls missing after hydration.');
-  await sleep(120);
-  const nextCounter = await evaluate(client, 'document.querySelector(".gh3dCounter")?.textContent?.replace(/\\s+/g," ").trim()');
-  assert(nextCounter === '02 / 03', `3D carousel did not advance: ${nextCounter}`);
-  await evaluate(client, 'document.querySelector("[aria-label=\\"Edellinen palveluesittely\\"]")?.click()');
-  await sleep(120);
-  const wrappedCounter = await evaluate(client, 'document.querySelector(".gh3dCounter")?.textContent?.replace(/\\s+/g," ").trim()');
-  assert(wrappedCounter === '01 / 03', `3D carousel did not navigate backward: ${wrappedCounter}`);
+  const routeNavigation = await evaluate(client, `(() => [...document.querySelectorAll('.ghArtRouteList a')]
+    .map((a) => ({href:a.getAttribute('href'),focusable:a.tabIndex>=0})))()`);
+  assert(routeNavigation.length === 3 && routeNavigation.every((a) => a.focusable),
+    'Editorial industry routes missing or not keyboard accessible.');
 
   // True CDP mobile emulation: Chrome's --window-size 390 screenshots can
   // preserve a ~500px desktop layout and crop the right edge. Measure real
