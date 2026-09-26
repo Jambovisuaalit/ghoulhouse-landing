@@ -23,7 +23,7 @@ const services = [
     outputs: ['12 alkuperäistä sisältöä / 30 päivää', 'Instagram ja Facebook', 'Yksi korjauskierros ja kuukausiraportti'],
     meta: 'SOME 12 · 490 € + ALV / 30 päivää',
     href: '/some-sisallontuotanto',
-    link: 'Katso Social-paketti',
+    link: 'Tutustu Social-palveluun',
   },
   {
     index: '03',
@@ -52,7 +52,6 @@ const editorialRoutes = [
 const guides = [
   ['01 / HINTA', 'Mistä verkkosivujen hinta muodostuu?', 'Rakenne, sisällöt ja toteutuksen laajuus.', '/verkkosivut/hinta'],
   ['02 / OPAS', 'Verkkosivut itse vai ammattilaiselta?', 'Tarkistuslista oikean toteutustavan valintaan.', '/oppaat/verkkosivut-itse-vai-ammattilaiselta'],
-  ['03 / OPAS', 'Työmaakuvat sosiaaliseen mediaan', 'Mitä kuvata, jotta omasta työstä syntyy julkaistavaa sisältöä.', '/oppaat/tyomaakuvat-sosiaaliseen-mediaan'],
 ] as const;
 
 function Brand() {
@@ -213,9 +212,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
 
         <section className="ghResources ghSection" id="resurssit" aria-labelledby="resources-title">
           <div className="ghShell">
-            <div className="ghSectionIntro"><p className="ghEyebrow">Resurssit / asiantuntijuus</p><h2 id="resources-title">Tietoa ennen päätöstä.</h2><p>Kaksi käytännön opasta ostopäätöksen tueksi. Lisää sisältöä löytyy resurssisivulta.</p></div>
+            <div className="ghSectionIntro"><p className="ghEyebrow">Resurssit / asiantuntijuus</p><h2 id="resources-title">Tietoa ennen päätöstä.</h2><p>Hinta-artikkeli ja käytännön opas toteutustavan valintaan. Lisää sisältöä löytyy resurssisivulta.</p></div>
             <div className="ghGuideList">
-              {guides.slice(0, 2).map(([label, title, copy, href]) => <a className="ghGuideRow" href={href} key={href}><span className="ghEyebrow">{label}</span><span><strong>{title}</strong><small>{copy}</small></span><span className="ghGuideArrow" aria-hidden="true">↗</span></a>)}
+              {guides.map(([label, title, copy, href]) => <a className="ghGuideRow" href={href} key={href}><span className="ghEyebrow">{label}</span><span><strong>{title}</strong><small>{copy}</small></span><span className="ghGuideArrow" aria-hidden="true">↗</span></a>)}
             </div>
             <a className="ghTextLink ghSectionLink" href="/resurssit">Kaikki resurssit <span aria-hidden="true">↗</span></a>
           </div>
