@@ -15,7 +15,7 @@ type ConfirmationQuery = { intent?: string; service?: string };
 const proposals = {
   websites: {
     heading: 'VERKKOSIVUT.',
-    copy: 'Verkkosivuja koskeva ehdotuspyyntösi on vastaanotettu. Käymme läpi yrityksesi tiedot ja nykyisen sivuston sekä otamme yhteyttä sopiaksemme seuraavasta askeleesta.',
+    copy: 'Verkkosivuja koskeva ehdotuspyyntösi on vastaanotettu. Käymme läpi yrityksesi tiedot ja mahdollisen nykyisen sivuston sekä otamme yhteyttä sopiaksemme seuraavasta askeleesta.',
   },
   social: {
     heading: 'SOME-EHDOTUS.',

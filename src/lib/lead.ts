@@ -123,7 +123,7 @@ export function validateLead(input: unknown): LeadValidationResult {
   }
 
   if (!noProfile && !profile) {
-    errors.profile = 'Verkkosivu tai Instagram on pakollinen.';
+    errors.profile = 'Anna verkkosivu tai Instagram tai valitse, ettei niitä vielä ole.';
   } else if (!noProfile && !classifiedProfile) {
     errors.profile = 'Anna verkkosivu (esim. yritys.fi) tai Instagram (@yritys).';
   }

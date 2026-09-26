@@ -30,8 +30,11 @@ function redirect(request: NextRequest, destination: string) {
 }
 
 /** All lead errors return to the existing contact section. */
-function leadFailureRedirect(request: NextRequest, code: string) {
-  return redirect(request, `/?lead=${code}#yhteys`);
+function leadFailureRedirect(request: NextRequest, code: string, intent?: unknown, service?: unknown) {
+  const params = new URLSearchParams({ lead: code });
+  if (intent === 'photos') params.set('intent', 'photos');
+  if (service === 'websites' || service === 'social' || service === 'seo') params.set('service', service);
+  return redirect(request, `/?${params.toString()}#yhteys`);
 }
 
 function getClientKey(request: NextRequest) {
@@ -134,7 +137,7 @@ export async function POST(request: NextRequest) {
 
   if (!validation.ok || !validation.data) {
     if (parsed.htmlForm) {
-      return leadFailureRedirect(request, 'validation');
+      return leadFailureRedirect(request, 'validation', parsed.body.intent, parsed.body.service);
     }
 
     return json(
@@ -156,13 +159,13 @@ export async function POST(request: NextRequest) {
     if (error instanceof LeadStorageError) {
       if (error.code === 'rate_limited') {
         if (parsed.htmlForm) {
-          return leadFailureRedirect(request, 'rate_limited');
+          return leadFailureRedirect(request, 'rate_limited', parsed.body.intent, parsed.body.service);
         }
         return json({ ok: false, code: 'rate_limited' }, 429);
       }
 
       if (parsed.htmlForm) {
-        return leadFailureRedirect(request, 'delivery');
+        return leadFailureRedirect(request, 'delivery', parsed.body.intent, parsed.body.service);
       }
 
       return json(
@@ -178,7 +181,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (parsed.htmlForm) {
-      return leadFailureRedirect(request, 'delivery');
+      return leadFailureRedirect(request, 'delivery', parsed.body.intent, parsed.body.service);
     }
 
     return json({ ok: false, code: 'delivery_failed' }, 502);

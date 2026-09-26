@@ -69,12 +69,12 @@ const leadErrors: Record<string, string> = {
   delivery: 'Lähetys ei onnistunut. Yritä uudelleen tai ota yhteyttä sähköpostitse.',
 };
 
-export default async function Home({ searchParams }: { searchParams: Promise<{ lead?: string; service?: string }> }) {
+export default async function Home({ searchParams }: { searchParams: Promise<{ lead?: string; service?: string; intent?: string }> }) {
   const params = await searchParams;
   const leadError = params.lead && Object.prototype.hasOwnProperty.call(leadErrors, params.lead)
     ? leadErrors[params.lead]
     : null;
-  const selectedService = params.service === 'seo' ? 'seo' : undefined;
+  const selectedService = params.service === 'seo' || params.service === 'social' || params.service === 'websites' ? params.service : undefined;
   return (
     <div className="homePage">
       <a className="skipLink" href="#main">Siirry pääsisältöön</a>
@@ -196,7 +196,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
         <section className="ghContact ghSection" id="yhteys" aria-labelledby="contact-title">
           <div className="ghShell ghContactGrid">
             <div className="ghSectionIntro"><p className="ghEyebrow">Aloitetaan yrityksenne tilanteesta</p><h2 id="contact-title">ONKO TEILLÄ HYVÄ PALVELU,<br />MUTTA VERKOSSA SE EI VIELÄ NÄY?</h2><p>Kerro yrityksestäsi ja siitä, mitä haluat parantaa. Palaamme asiaan ehdotuksella sopivasta seuraavasta askeleesta.</p><p className="ghContactNote">Ei sitoumusta yhteydenotosta.</p></div>
-            <div className="ghForm">{leadError && <div className="ghServerFormError" role="alert" aria-live="assertive"><strong>Lomaketta ei lähetetty.</strong><p>{leadError}</p></div>}<LeadForm compact mode="proposal" defaultService={selectedService} /></div>
+            <div className="ghForm">{leadError && <div className="ghServerFormError" role="alert" aria-live="assertive"><strong>Lomaketta ei lähetetty.</strong><p>{leadError}</p></div>}<LeadForm compact mode={params.intent === 'photos' ? 'social' : 'proposal'} defaultService={selectedService} /></div>
           </div>
         </section>
       </main>

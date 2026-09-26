@@ -1,5 +1,6 @@
 'use client';
 
+import { ctaContext } from '@/lib/cta-context';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import { trackEvent, type FunnelEvent } from '@/lib/analytics';
@@ -25,11 +26,15 @@ export default function FunnelAnalytics() {
       const target = event.target;
       if (!(target instanceof Element)) return;
 
-      const link = target.closest<HTMLAnchorElement>('a[href="#yhteys"]');
+      const link = target.closest<HTMLAnchorElement>('a[href$="#yhteys"]');
       if (!link) return;
 
-      const intent = document.querySelector<HTMLInputElement>('form input[name="intent"]')?.value === 'photos' ? 'photos' : 'booking';
-      trackEvent(intent === 'photos' ? 'photo_demo_cta_click' : 'proposal_cta_click', {
+      const form = document.querySelector<HTMLFormElement>('form[action="/api/leads"]');
+      const data = form ? new FormData(form) : null;
+      const context = ctaContext(link.href, window.location.href, data?.get('intent'), data?.get('service'));
+      if (!context) return;
+      trackEvent(context.intent === 'photos' ? 'photo_demo_cta_click' : 'proposal_cta_click', {
+        ...context,
         location: link.closest('header') ? 'navigation' : link.closest('#top') ? 'hero' : 'page',
       });
     };

@@ -254,7 +254,7 @@ export default function LeadForm({ compact = false, mode = 'social', defaultServ
         ) : (
           <>
             <div className="fieldGroup">
-              <label htmlFor="lead-message">Mitä materiaalia sinulla on?</label>
+              <label htmlFor="lead-message">{proposal ? "Mitä haluat parantaa?" : "Mitä materiaalia sinulla on?"}</label>
               <textarea
                 id="lead-message"
                 name="message"
