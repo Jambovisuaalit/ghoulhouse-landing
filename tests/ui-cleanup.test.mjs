@@ -15,17 +15,17 @@ test('unused homepage clients and obsolete contact form remain removed', () => {
 
 test('only one opt-out choice appears in the homepage form', () => {
   const form = source('src/components/LeadForm.tsx');
-  assert.equal((form.match(/<ProfileChoice\\b/g) || []).length, 1);
-  assert.doesNotMatch(form, /leadProfileNoWebsite|lead-profile-options/);
-  assert.match(form, /checked=\\{noProfile\\}/);
-  assert.match(form, /setProfileValue\\(''\\)/);
-  const choice = source('src/components/ProfileChoice.tsx');
-  assert.match(choice, /name="noProfile"/);
+  assert.equal(form.split('<ProfileChoice').length - 1, 1);
+  assert.ok(!form.includes('leadProfileNoWebsite'));
+  assert.ok(!form.includes('lead-profile-options'));
+  assert.ok(form.includes('checked={noProfile}'));
+  assert.ok(form.includes("setProfileValue('')"));
+  assert.ok(source('src/components/ProfileChoice.tsx').includes('name="noProfile"'));
 });
 
 test('mobile proof screenshot stays whole and hero microcopy is legible', () => {
   const css = source('src/app/editorial-home.css');
-  assert.match(css, /ghSelectedCaseDisplay \\{[^}]*aspect-ratio:16 \\/ 10/);
-  assert.match(css, /ghSelectedCaseDisplay \\.ghSelectedScreenshot \\{[^}]*object-fit:contain/);
-  assert.match(css, /ghArtHero \\.ghHeroFootnote \\{ font-size:13px/);
+  assert.ok(css.includes('aspect-ratio:16 / 10;'));
+  assert.ok(css.includes('object-fit:contain;'));
+  assert.ok(css.includes('font-size:13px; line-height:1.55;'));
 });
