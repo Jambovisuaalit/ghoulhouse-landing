@@ -398,20 +398,31 @@ try {
   assert(interaction.hash === '#yhteys', 'Primary CTA did not navigate to #yhteys.');
   assert(interaction.formExists && interaction.submitTabIndex >= 0, 'Lead form or submit keyboard access missing.');
 
-  // The previously mandatory profile field must support companies with no channels.
+  // One real checkbox controls the explicit no-profile state (no duplicate button).
   const noProfile = await evaluate(client, `(() => ({
-    control: Boolean(document.querySelector('#yhteys .leadProfileNoWebsite')),
+    controls: document.querySelectorAll('#yhteys input[name="noProfile"][type="checkbox"]').length,
     initiallyEmpty: document.querySelector('#yhteys input[name="profile"]')?.value === '',
+    label: document.querySelector('#yhteys label.profileChoice')?.textContent?.trim(),
   }))()`);
-  assert(noProfile.control && noProfile.initiallyEmpty, 'Accessible no-profile choice missing from proposal form.');
-  await evaluate(client, 'document.querySelector("#yhteys .leadProfileNoWebsite")?.click()');
+  assert(noProfile.controls === 1 && noProfile.initiallyEmpty &&
+    noProfile.label === 'Ei vielä verkkosivua tai Instagramia',
+    'Exactly one accessible no-profile checkbox is required.');
+  await evaluate(client, 'document.querySelector("#yhteys input[name=noProfile]")?.click()');
   await sleep(100);
   const selectedNoProfile = await evaluate(client, `(() => ({
     profile: document.querySelector('#yhteys input[name="profile"]')?.value,
-    pressed: document.querySelector('#yhteys .leadProfileNoWebsite')?.getAttribute('aria-pressed'),
+    readOnly: document.querySelector('#yhteys input[name="profile"]')?.readOnly,
+    checked: document.querySelector('#yhteys input[name="noProfile"]')?.checked,
   }))()`);
-  assert(selectedNoProfile.profile === 'Ei vielä verkkosivua tai Instagramia' && selectedNoProfile.pressed === 'true',
-    'No-profile selection did not set the lead value.');
+  assert(selectedNoProfile.profile === '' && selectedNoProfile.checked && selectedNoProfile.readOnly,
+    'Opt-out must check exactly one box and clear or lock stale URLs.');
+  await evaluate(client, 'document.querySelector("#yhteys input[name=noProfile]")?.click()');
+  const clearedNoProfile = await evaluate(client, `(() => ({
+    checked: document.querySelector('#yhteys input[name="noProfile"]')?.checked,
+    readOnly: document.querySelector('#yhteys input[name="profile"]')?.readOnly,
+  }))()`);
+  assert(!clearedNoProfile.checked && !clearedNoProfile.readOnly,
+    'Unchecking opt-out must allow entering a profile again.');
 
   const routeNavigation = await evaluate(client, `(() => [...document.querySelectorAll('.ghArtRouteList a')]
     .map((a) => ({href:a.getAttribute('href'),focusable:a.tabIndex>=0})))()`);
