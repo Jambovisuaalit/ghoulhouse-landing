@@ -5,7 +5,14 @@ import { siteConfig } from '@/config/site';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import AnalyticsConsent from '@/components/analytics/AnalyticsConsent';
 import ResponsiveNavState from '@/components/ResponsiveNavState';
+import SiteChrome from '@/components/SiteChrome';
 import './site.css';
+import './global-chrome.css';
+import './liquid-glass-footer.css';
+import './analytics-consent.css';
+import './official-brand.css';
+import './social-editorial.css';
+import './editorial-system.css';
 
 const anton = Anton({
   weight: '400',
@@ -33,7 +40,7 @@ export const metadata: Metadata = {
   manifest: '/manifest.webmanifest',
   icons: {
     icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
-    apple: [{ url: '/apple-touch-icon-180.png', sizes: '180x180', type: 'image/png' }],
+    apple: [{ url: '/brand-icons/180', sizes: '180x180', type: 'image/png' }],
   },
   creator: siteConfig.company.legalName,
   publisher: siteConfig.company.legalName,
@@ -119,7 +126,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <GoogleAnalytics />
         <FunnelAnalytics />
         <ResponsiveNavState />
-        {children}
+        <SiteChrome>{children}</SiteChrome>
         <AnalyticsConsent />
         <script
           type="application/ld+json"

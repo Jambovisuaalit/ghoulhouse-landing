@@ -44,6 +44,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Lead profile validation QA
+        run: node scripts/lead-profile-qa.mjs
+
       - name: Build
         run: npm run build
 
@@ -104,6 +107,12 @@ jobs:
             http://127.0.0.1:3000/api/leads)"
           test "$form_status" = "303"
           grep -Eqi '^location: .*\/kiitos' "$form_headers"
+
+      - name: Official brand and full sitemap page QA
+        run: node scripts/official-brand-qa.mjs
+
+      - name: Social content, intent and internal links QA
+        run: node scripts/social-content-qa.mjs
 
       - name: Lead confirmation and service-specific routing QA
         run: node scripts/lead-confirmation-qa.mjs
@@ -256,6 +265,29 @@ jobs:
           QA_BASE_URL: ${{ steps.preview.outputs.url }}
           QA_SCREENSHOT_DIR: qa-artifacts/preview
         run: node scripts/homepage-fullpage-qa.mjs
+      # Never run release assertions against a hard-coded, older Preview SHA.
+      # The full-page job above tests this exact checkout's production build;
+      # the matching Vercel Preview is checked by SHA before PR merge.
+      - name: Consent CSS single-source QA
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const old = ['src/app/site.css','src/app/global-chrome.css','src/app/homepage.css','src/app/homepage-swiss.css'];
+          for (const path of old) {
+            if (/\.analytics(?:Consent|Settings)/.test(fs.readFileSync(path,'utf8'))) {
+              throw new Error('Legacy consent CSS reintroduced in ' + path);
+            }
+          }
+          const styles = fs.readFileSync('src/app/analytics-consent.css','utf8');
+          const component = fs.readFileSync('src/components/analytics/AnalyticsConsent.tsx','utf8');
+          for (const token of ['.analyticsConsent__eyebrow','.analyticsConsent__accept','.analyticsConsent__reject','.homePage .ghConsentSlot .analyticsConsent']) {
+            if (!styles.includes(token)) throw new Error('Missing canonical consent selector: ' + token);
+          }
+          if (component.includes('className="button ') || component.includes('className="kicker"')) {
+            throw new Error('Consent still inherits default utility styling');
+          }
+          console.log('Consent CSS single-source QA PASS');
+          NODE
 
       - name: Recheck preview SHA after QA
         if: github.event_name == 'pull_request'

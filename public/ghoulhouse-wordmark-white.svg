@@ -1,19 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="460" viewBox="0 0 1400 460" fill="none" role="img" aria-labelledby="title">
-  <title id="title">GhoulHouse horizontal logo - color</title>
-  <g transform="translate(40 28) scale(0.78906250)" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M256 28 484 256 256 484 28 256Z" stroke="#161411" stroke-width="16"/>
-  <path d="M132 229C169 211 201 183 226 151L257 112 289 153C315 184 346 211 381 229L355 241 334 220H178L157 241Z" stroke="#161411" stroke-width="12" fill="none"/>
-  <path d="M178 223 188 342H324L334 223" stroke="#161411" stroke-width="12"/>
-  <path d="M219 342C224 365 216 383 201 399L203 430M293 342C288 366 297 384 312 399L309 430" stroke="#161411" stroke-width="13"/>
-  <path d="M203 430 176 445M203 430 205 457M203 430 229 446M309 430 282 446M309 430 307 457M309 430 337 444" stroke="#161411" stroke-width="12"/>
-  <path d="M286 342V279C286 267 293 260 301 260S316 267 316 279V342" stroke="#161411" stroke-width="10"/>
-  <circle cx="305" cy="302" r="4.5" fill="#161411" stroke="none"/>
-  <rect x="202" y="252" width="66" height="62" rx="4" fill="#C83830" stroke="#161411" stroke-width="11"/>
-  <path d="M235 254V312M204 283H266" stroke="#161411" stroke-width="7"/>
-  <path d="M190 328 266 322M190 299 202 298M270 321 282 320" stroke="#161411" stroke-width="7"/>
-</g>
-<g fill="#161411" transform="translate(508.551437 258.474802) scale(0.11495210 -0.11495210)">
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="200" viewBox="0 0 1000 200" fill="none" role="img" aria-labelledby="title">
+  <title id="title">GhoulHouse wordmark - white</title>
+  <g fill="#FFFFFF" transform="translate(20.034985 148.835763) scale(0.13216715 -0.13216715)">
 <path d="M335 249H641C602 167 522 119 424 119C279 119 168 227 168 369C168 433 195 503 237 548C280 594 345 620 416 620C502 620 574 585 619 522H780C732 655 580 752 419 752C202 752 30 584 30 371C30 154 205 -13 432 -13C544 -13 639 26 712 101C780 172 818 264 818 359V377H335Z" transform="translate(0 0)"/>
 <path d="M68 0H205V310H469V0H606V739H469V441H205V739H68Z" transform="translate(912 0)"/>
 <path d="M420 752C200 752 30 585 30 369C30 155 202 -13 419 -13C634 -13 800 154 800 369C800 582 631 752 420 752ZM418 620C555 620 662 510 662 368C662 225 558 119 418 119C278 119 168 229 168 369C168 512 276 620 418 620Z" transform="translate(1664 0)"/>

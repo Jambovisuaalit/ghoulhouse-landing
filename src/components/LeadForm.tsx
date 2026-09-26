@@ -4,6 +4,7 @@ import { FormEvent, useRef, useState } from 'react';
 import ProfileChoice from '@/components/ProfileChoice';
 import { trackEvent } from '@/lib/analytics';
 import { confirmationPath, type LeadService } from '@/lib/lead-confirmation';
+import { NO_PROFILE_YET } from '@/lib/lead';
 
 type Toast = { message: string } | null;
 type FieldErrors = Record<string, string>;
@@ -33,6 +34,7 @@ export default function LeadForm({ compact = false, mode = 'social', defaultServ
   const [toast, setToast] = useState<Toast>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [submitting, setSubmitting] = useState(false);
+  const [profileValue, setProfileValue] = useState('');
   const formRef = useRef<HTMLFormElement>(null);
   const hasStarted = useRef(false);
 
@@ -201,10 +203,29 @@ export default function LeadForm({ compact = false, mode = 'social', defaultServ
             id="lead-profile"
             name="profile"
             maxLength={300}
+            list="lead-profile-options"
+            value={profileValue}
+            readOnly={profileValue === NO_PROFILE_YET}
+            onChange={(event) => setProfileValue(event.target.value)}
             placeholder="yritys.fi tai @yritys"
             {...a11yErrorProps('profile', fieldErrors)}
           />
           <ProfileChoice />
+          <datalist id="lead-profile-options">
+            <option value={NO_PROFILE_YET} />
+          </datalist>
+          <button
+            className="leadProfileNoWebsite"
+            type="button"
+            aria-pressed={profileValue === NO_PROFILE_YET}
+            onClick={() => {
+              markStarted();
+              setProfileValue((current) => current === NO_PROFILE_YET ? '' : NO_PROFILE_YET);
+            }}
+          >
+            <span aria-hidden="true">{profileValue === NO_PROFILE_YET ? '☑' : '□'}</span>
+            Ei vielä verkkosivua tai Instagramia
+          </button>
           <FieldError name="profile" errors={fieldErrors} />
         </div>
 

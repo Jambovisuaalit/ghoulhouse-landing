@@ -1,0 +1,118 @@
+/* Official GhoulHouse logo pack: genuine horizontal and mark SVGs.
+   These rules override the previous constructed text+favicon lockups. */
+.homePage .ghBrand,
+.ghGlobalHeader .ghGlobalBrand {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  gap: 0;
+  min-width: 0;
+  overflow: visible;
+}
+body .homePage .ghBrand img.ghOfficialHeaderLogo,
+body .ghGlobalHeader .ghGlobalBrand img.ghOfficialHeaderLogo {
+  display: block;
+  width: clamp(148px, 12.3vw, 175px);
+  height: auto;
+  max-height: 58px;
+  flex: none;
+  object-fit: contain;
+  filter: none;
+}
+body .ghLiquidFooter .ghLiquidFooterBrand img.ghOfficialFooterLogo {
+  display: block;
+  width: clamp(174px, 19vw, 225px);
+  height: auto;
+  max-height: none;
+  flex: none;
+  filter: none;
+  object-fit: contain;
+}
+body .ghLiquidFooter .ghLiquidFooterWordmark img.ghOfficialWordmark {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: none;
+  object-fit: contain;
+  filter: none;
+}
+body .homePage .ghSwissTileBrand img {
+  filter: none;
+  width: clamp(53px, 6.5vw, 100px);
+  height: auto;
+}
+body .homePage .ghFounderIdentity img {
+  filter: none;
+}
+@media (max-width: 1023px) {
+  body .homePage .ghBrand img.ghOfficialHeaderLogo,
+  body .ghGlobalHeader .ghGlobalBrand img.ghOfficialHeaderLogo {
+    width: clamp(133px, 15vw, 161px);
+  }
+}
+@media (max-width: 767px) {
+  body .homePage .ghBrand img.ghOfficialHeaderLogo,
+  body .ghGlobalHeader .ghGlobalBrand img.ghOfficialHeaderLogo {
+    width: clamp(117px, 32vw, 140px);
+    height: auto;
+    max-height: 48px;
+  }
+  body .homePage .ghSwissTileBrand img {
+    width: clamp(38px, 13vw, 60px);
+  }
+  body .ghLiquidFooter .ghLiquidFooterBrand img.ghOfficialFooterLogo {
+    width: clamp(176px, 57vw, 210px);
+  }
+}
+@media (max-width: 359px) {
+  body .homePage .ghBrand img.ghOfficialHeaderLogo,
+  body .ghGlobalHeader .ghGlobalBrand img.ghOfficialHeaderLogo {
+    width: 112px;
+  }
+}
+
+/* At narrow widths the supplied compact mark + vector wordmark has a more
+   legible glyph height than scaling the full 1400×460 lockup to ~110px. */
+.ghOfficialMobileLockup { display: none; }
+@media (max-width: 767px) {
+  body .homePage .ghBrand img.ghOfficialHeaderLogo,
+  body .ghGlobalHeader .ghGlobalBrand img.ghOfficialHeaderLogo {
+    display: none;
+  }
+  body .homePage .ghBrand span.ghOfficialMobileLockup,
+  body .ghGlobalHeader .ghGlobalBrand span.ghOfficialMobileLockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    width: auto;
+    max-width: 100%;
+    line-height: 1;
+  }
+  body .homePage .ghBrand .ghOfficialMobileLockup img.ghOfficialMobileMark,
+  body .ghGlobalHeader .ghGlobalBrand .ghOfficialMobileLockup img.ghOfficialMobileMark {
+    display: block;
+    width: 35px;
+    height: 35px;
+    flex: none;
+    object-fit: contain;
+  }
+  body .homePage .ghBrand .ghOfficialMobileLockup img.ghOfficialMobileWordmark,
+  body .ghGlobalHeader .ghGlobalBrand .ghOfficialMobileLockup img.ghOfficialMobileWordmark {
+    display: block;
+    width: clamp(125px, 34vw, 145px);
+    height: auto;
+    flex: none;
+    object-fit: contain;
+  }
+}
+@media (max-width: 359px) {
+  body .homePage .ghBrand .ghOfficialMobileLockup img.ghOfficialMobileMark,
+  body .ghGlobalHeader .ghGlobalBrand .ghOfficialMobileLockup img.ghOfficialMobileMark {
+    width: 30px;
+    height: 30px;
+  }
+  body .homePage .ghBrand .ghOfficialMobileLockup img.ghOfficialMobileWordmark,
+  body .ghGlobalHeader .ghGlobalBrand .ghOfficialMobileLockup img.ghOfficialMobileWordmark {
+    width: 119px;
+  }
+}

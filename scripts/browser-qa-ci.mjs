@@ -173,6 +173,15 @@ try {
         heroCtaRect: rect(heroCta),
         priceRect: rect(price),
         h1Rect: rect(h1),
+        heroLineMetrics: (() => {
+          const lines = [...(h1?.querySelectorAll(':scope > span') || [])];
+          const style = h1 ? getComputedStyle(h1) : null;
+          return {
+            lines: lines.map((line) => ({ text: line.textContent?.trim(), rect: rect(line), display: getComputedStyle(line).display })),
+            fontSize: style ? parseFloat(style.fontSize) : null,
+            lineHeight: style ? parseFloat(style.lineHeight) : null,
+          };
+        })(),
         brandRect: rect(brandLink),
         formExists: Boolean(form),
         formMethod: form?.getAttribute('method')?.toLowerCase() || '',
@@ -185,10 +194,65 @@ try {
         seoSelected: form?.querySelector('select[name="service"]') !== null,
         serviceLinks: ['/verkkosivut-yritykselle','/some-sisallontuotanto','/?service=seo#yhteys'].every((href) => document.querySelector('.ghServiceCard a[href="' + href + '"]')),
         serviceCards: document.querySelectorAll('.ghServiceCard').length,
+        editorialRoutes: [...document.querySelectorAll('.ghArtRouteList .ghArtRoute')].map((a) => a.getAttribute('href')),
+        primaryNavDesktop: [...document.querySelectorAll('.ghDesktopNav a')].map((a) => [a.textContent?.trim(),a.getAttribute('href')]),
+        primaryNavMobile: [...document.querySelectorAll('.ghMobileNav nav a')].slice(0,4).map((a) => [a.textContent?.trim(),a.getAttribute('href')]),
+        proofCardHref: proof?.getAttribute('href'),
         resourceLinks: document.querySelectorAll('.ghGuideRow').length,
         proposalIntent: form?.querySelector('[name="intent"]')?.value === 'booking',
         schemaTypes: [...document.querySelectorAll('script[type="application/ld+json"]')].map((script) => script.textContent || '').join(' '),
-        logoLoaded: document.querySelector('header .ghBrand img')?.getAttribute('src') === '/favicon.svg',
+        logoLoaded: (() => {
+          const compact = document.querySelector('header .ghOfficialMobileLockup');
+          const onMobile = compact && getComputedStyle(compact).display !== 'none';
+          const logo = document.querySelector(onMobile
+            ? 'header .ghOfficialMobileWordmark' : 'header .ghOfficialHeaderLogo');
+          const mark = document.querySelector('header .ghOfficialMobileMark');
+          return logo?.getAttribute('src') === (onMobile
+            ? '/ghoulhouse-wordmark-black.svg' : '/ghoulhouse-logo.svg') &&
+            logo.complete && logo.naturalWidth > 200 &&
+            (!onMobile || (mark?.getAttribute('src') === '/favicon.svg' && mark.complete));
+        })(),
+        brandLayout: (() => {
+          const compact = document.querySelector('header .ghOfficialMobileLockup');
+          const onMobile = compact && getComputedStyle(compact).display !== 'none';
+          const logo = document.querySelector(onMobile
+            ? 'header .ghOfficialMobileLockup' : 'header .ghOfficialHeaderLogo');
+          const footer = document.querySelector('footer .ghOfficialFooterLogo');
+          const wordmark = document.querySelector('footer .ghOfficialWordmark');
+          const heroMark = document.querySelector('.ghFounderIdentity img');
+          return {
+            header: rect(logo),
+            mobileMark: onMobile ? compact.querySelector('.ghOfficialMobileMark')?.getAttribute('src') : null,
+            mobileWordmark: onMobile ? compact.querySelector('.ghOfficialMobileWordmark')?.getAttribute('src') : null,
+            footer: footer?.getAttribute('src'),
+            footerLoaded: Boolean(footer?.complete && footer.naturalWidth > 200),
+            giantWordmark: wordmark?.getAttribute('src'),
+            mark: heroMark?.getAttribute('src'),
+            markFilter: heroMark ? getComputedStyle(heroMark).filter : '',
+          };
+        })(),
+        glassFooter: (() => {
+          const footer = document.querySelector('footer.ghLiquidFooter');
+          const rim = footer?.querySelector('.ghLiquidFooterRim');
+          const surface = footer?.querySelector('.ghLiquidFooterSurface');
+          const inquiry = footer?.querySelector('.ghLiquidFooterButton');
+          const cols = footer?.querySelector('.ghLiquidFooterLinks');
+          return {
+            exists: Boolean(footer),
+            rimBackground: rim ? getComputedStyle(rim).backgroundImage : '',
+            glassBackdrop: surface ? (getComputedStyle(surface).backdropFilter || getComputedStyle(surface).webkitBackdropFilter) : '',
+            inquiry: inquiry?.getAttribute('href'),
+            inquiryRect: rect(inquiry),
+            brandLink: footer?.querySelector('.ghLiquidFooterBrand')?.getAttribute('href'),
+            navItems: footer?.querySelectorAll('.ghLiquidFooterNav[aria-label="Alatunnisteen navigaatio"] a').length || 0,
+            privacy: Boolean(footer?.querySelector('a[href="/tietosuoja"]')),
+            columns: cols ? getComputedStyle(cols).gridTemplateColumns : '',
+            unclippedHeadings: [...(cols?.querySelectorAll('h3') || [])].every((heading) =>
+              heading.scrollWidth <= heading.clientWidth + 1 &&
+              parseFloat(getComputedStyle(heading).fontSize) <= 13),
+            fakeNewsletter: Boolean(footer?.querySelector('form[action="#"], form[action=""]')),
+          };
+        })(),
         disclosure: /Oma sivusto — ei asiakasreferenssi/i.test(document.body.innerText),
         bodyText: document.body.innerText.replace(/\\s+/g, ' ').trim(),
         viewportMeta: document.querySelector('meta[name="viewport"]')?.getAttribute('content') || '',
@@ -196,6 +260,19 @@ try {
         innerWidth,
         innerHeight,
         scrollWidth: document.documentElement.scrollWidth,
+        artDirection: (() => {
+          const image = hero?.querySelector('.ghArtHeroImage img');
+          const noise = hero?.querySelector('.ghArtGrain');
+          const imageBox = hero?.querySelector('.ghArtHeroImage');
+          return {
+            imageLoaded: Boolean(image?.complete && image.naturalWidth > 100),
+            imageBox: rect(imageBox),
+            imageDisclosure: Boolean(hero?.querySelector('figcaption')?.textContent?.includes('EI ASIAKASTYÖ')),
+            grain: noise ? getComputedStyle(noise).backgroundImage : '',
+            background: hero ? getComputedStyle(hero).backgroundColor : '',
+            headingFont: h1 ? getComputedStyle(h1).fontFamily : '',
+          };
+        })(),
         colors: {
           ink: root.getPropertyValue('--ink').trim(),
           paper: root.getPropertyValue('--paper').trim(),
@@ -206,18 +283,58 @@ try {
       };
     })()`);
 
+    assert(metrics.artDirection.grain.includes('data:image/svg+xml') &&
+      metrics.artDirection.background === 'rgb(11, 11, 11)' &&
+      /Georgia/i.test(metrics.artDirection.headingFont) &&
+      metrics.artDirection.imageLoaded && metrics.artDirection.imageDisclosure,
+      `${viewport.width}x${viewport.height}: editorial hero missing: ${JSON.stringify(metrics.artDirection)}`);
     assert(metrics.h1Count === 1, `${viewport.width}x${viewport.height}: expected exactly one H1.`);
     assert(metrics.brandHeadlineText.includes('HYVÄ TYÖ') && metrics.brandHeadlineText.includes('PITÄÄ NÄKYÄ.'), `${viewport.width}x${viewport.height}: company headline missing.`);
     assert(metrics.h1Text.includes('HYVÄ TYÖ') && metrics.h1Text.includes('PITÄÄ NÄKYÄ'), `${viewport.width}x${viewport.height}: H1 copy changed unexpectedly.`);
+    const heroLines = metrics.heroLineMetrics;
+    assert(heroLines.lines.length === 2 &&
+      heroLines.lines[0].text === 'HYVÄ TYÖ' && heroLines.lines[1].text === 'PITÄÄ NÄKYÄ.' &&
+      heroLines.lines.every((line) => line.display === 'block'),
+      `${viewport.width}x${viewport.height}: Finnish hero must render as two separate blocks: ${JSON.stringify(heroLines)}`);
+    assert(heroLines.lineHeight / heroLines.fontSize >= 1.10 &&
+      heroLines.lines[0].rect.bottom <= heroLines.lines[1].rect.top + 1 &&
+      heroLines.lines[1].rect.top - heroLines.lines[0].rect.top >= heroLines.fontSize * 1.10 - 1,
+      `${viewport.width}x${viewport.height}: hero Ä/Ö accents risk overlapping due to line spacing: ${JSON.stringify(heroLines)}`);
     assert(metrics.heroCtaHref === '#yhteys', `${viewport.width}x${viewport.height}: primary CTA must target #yhteys.`);
     assert(/pyydä ehdotus/i.test(metrics.heroCtaText), `${viewport.width}x${viewport.height}: company CTA missing.`);
     assert(metrics.serviceLinks && metrics.serviceCards === 3, `${viewport.width}x${viewport.height}: three service links missing.`);
-    assert(metrics.resourceLinks === 3 && metrics.proposalIntent, `${viewport.width}x${viewport.height}: resources or general proposal intent missing.`);
+    assert(metrics.editorialRoutes.length === 3 &&
+      ['/rakennusyrityksille','/lvi-yrityksille','/instagram-sisallontuotanto']
+        .every((href) => metrics.editorialRoutes.includes(href)),
+      `${viewport.width}x${viewport.height}: editorial industry links missing.`);
+    assert(JSON.stringify(metrics.primaryNavDesktop) === JSON.stringify(metrics.primaryNavMobile),
+      `${viewport.width}x${viewport.height}: desktop/mobile primary navigation diverged: ${JSON.stringify(metrics.primaryNavDesktop)} / ${JSON.stringify(metrics.primaryNavMobile)}`);
+    assert(metrics.proofCardHref === '/tyot/ghoulhouse-verkkosivut',
+      `${viewport.width}x${viewport.height}: own work must open a useful case study instead of the current homepage.`);
+    assert(metrics.resourceLinks === 2 && metrics.proposalIntent, `${viewport.width}x${viewport.height}: resources or general proposal intent missing.`);
     assert(metrics.formExists && metrics.formMethod === 'post' && metrics.formAction === '/api/leads', `${viewport.width}x${viewport.height}: native lead form contract missing.`);
     assert(metrics.profileChoice, `${viewport.width}x${viewport.height}: profile or explicit no-profile choice missing.`);
     assert(metrics.requiredFields, `${viewport.width}x${viewport.height}: required lead fields missing.`);
     assert(metrics.submitRect?.height >= 44, `${viewport.width}x${viewport.height}: submit target below 44px.`);
     assert(metrics.proofExists && metrics.logoLoaded, `${viewport.width}x${viewport.height}: company proof or logo missing.`);
+    assert(viewport.width >= 768 ||
+      (metrics.brandLayout.mobileMark === '/favicon.svg' &&
+       metrics.brandLayout.mobileWordmark === '/ghoulhouse-wordmark-black.svg'),
+      `${viewport.width}x${viewport.height}: mobile header must use the official compact mark + vector wordmark.`);
+    assert(metrics.brandLayout.header?.left >= -1 && metrics.brandLayout.header?.right <= metrics.innerWidth + 1 &&
+      metrics.brandLayout.footer === '/ghoulhouse-logo-reverse.svg' &&
+      metrics.brandLayout.giantWordmark === '/ghoulhouse-wordmark-white.svg' &&
+      metrics.brandLayout.mark === '/ghoulhouse-mark.svg' &&
+      metrics.brandLayout.markFilter === 'none',
+      `${viewport.width}x${viewport.height}: official logo contrast, load or clipping failed: ${JSON.stringify(metrics.brandLayout)}`);
+    assert(metrics.glassFooter.exists && metrics.glassFooter.rimBackground.includes('gradient') &&
+      metrics.glassFooter.brandLink === '/' && metrics.glassFooter.navItems === 4 && metrics.glassFooter.privacy,
+      `${viewport.width}x${viewport.height}: shared glass footer contents/rim missing: ${JSON.stringify(metrics.glassFooter)}`);
+    assert(metrics.glassFooter.unclippedHeadings,
+      `${viewport.width}x${viewport.height}: footer column headings are too large or clipped.`);
+    assert(metrics.glassFooter.inquiry === '#yhteys' && metrics.glassFooter.inquiryRect?.height >= 44 &&
+      !metrics.glassFooter.fakeNewsletter,
+      `${viewport.width}x${viewport.height}: glass footer must have working inquiry CTA and no fake signup.`);
     assert(metrics.seoSelected, `${viewport.width}x${viewport.height}: service-interest selector missing.`);
     assert(metrics.disclosure, `${viewport.width}x${viewport.height}: honest own-work disclosure missing.`);
     assert(!metrics.schemaTypes.includes('some-12-service') && !metrics.schemaTypes.includes('some-12-offer'), `${viewport.width}x${viewport.height}: product-specific schema remains on homepage.`);
@@ -281,6 +398,167 @@ try {
   assert(interaction.hash === '#yhteys', 'Primary CTA did not navigate to #yhteys.');
   assert(interaction.formExists && interaction.submitTabIndex >= 0, 'Lead form or submit keyboard access missing.');
 
+  // The previously mandatory profile field must support companies with no channels.
+  const noProfile = await evaluate(client, `(() => ({
+    control: Boolean(document.querySelector('#yhteys .leadProfileNoWebsite')),
+    initiallyEmpty: document.querySelector('#yhteys input[name="profile"]')?.value === '',
+  }))()`);
+  assert(noProfile.control && noProfile.initiallyEmpty, 'Accessible no-profile choice missing from proposal form.');
+  await evaluate(client, 'document.querySelector("#yhteys .leadProfileNoWebsite")?.click()');
+  await sleep(100);
+  const selectedNoProfile = await evaluate(client, `(() => ({
+    profile: document.querySelector('#yhteys input[name="profile"]')?.value,
+    pressed: document.querySelector('#yhteys .leadProfileNoWebsite')?.getAttribute('aria-pressed'),
+  }))()`);
+  assert(selectedNoProfile.profile === 'Ei vielä verkkosivua tai Instagramia' && selectedNoProfile.pressed === 'true',
+    'No-profile selection did not set the lead value.');
+
+  const routeNavigation = await evaluate(client, `(() => [...document.querySelectorAll('.ghArtRouteList a')]
+    .map((a) => ({href:a.getAttribute('href'),focusable:a.tabIndex>=0})))()`);
+  assert(routeNavigation.length === 3 && routeNavigation.every((a) => a.focusable),
+    'Editorial industry routes missing or not keyboard accessible.');
+
+  // True CDP mobile emulation: Chrome's --window-size 390 screenshots can
+  // preserve a ~500px desktop layout and crop the right edge. Measure real
+  // CSS viewport metrics and every Social H2 rather than only static PNG size.
+  const socialLayoutResults = [];
+  await evaluate(client, 'localStorage.setItem("ghoulhouse_analytics_consent","rejected")');
+  for (const path of [
+    '/some-sisallontuotanto', '/some-12', '/rakennusyrityksille',
+    '/lvi-yrityksille', '/instagram-sisallontuotanto',
+  ]) {
+    for (const width of [320, 390, 768, 1440]) {
+      const height = width < 768 ? 844 : 900;
+      await client.send('Emulation.setDeviceMetricsOverride', {
+        width, height, deviceScaleFactor: 1, mobile: width < 768,
+      });
+      await client.send('Page.navigate', {url: BASE_URL + path});
+      await waitForDocument(client);
+      const layout = await evaluate(client, `(() => {
+        const hero = document.querySelector('main.seoPage .seoHeroCopy');
+        const h1 = hero?.querySelector('h1');
+        const brand = document.querySelector('main.seoPage .seoBrandBlock');
+        const h2 = [...document.querySelectorAll('main.seoPage h2')];
+        const r = (el) => {
+          if (!el) return null;
+          const b = el.getBoundingClientRect();
+          return { left:b.left, right:b.right, top:b.top, bottom:b.bottom };
+        };
+        return {
+          viewport: innerWidth,
+          documentWidth: document.documentElement.scrollWidth,
+          h1: r(h1),
+          h1ScrollWidth: h1?.scrollWidth,
+          h1ClientWidth: h1?.clientWidth,
+          brand: r(brand),
+          brandScrollWidth: brand?.scrollWidth,
+          brandClientWidth: brand?.clientWidth,
+          brandSpans: [...(brand?.querySelectorAll('span') || [])].map(r),
+          h2Count: h2.length,
+          overflowHeadings: h2.filter(x => x.scrollWidth > x.clientWidth + 1).map(x => x.textContent?.trim()),
+        };
+      })()`);
+      assert(layout.viewport === width && layout.h1 && layout.brand &&
+        layout.documentWidth <= width + 1 && layout.h1ScrollWidth <= layout.h1ClientWidth + 1 &&
+        layout.brandScrollWidth <= layout.brandClientWidth + 1,
+        `${path} ${width}px: horizontal overflow in Social hero: ${JSON.stringify(layout)}`);
+      assert(layout.h1.left >= -1 && layout.h1.right <= width + 1 &&
+        layout.brand.left >= -1 && layout.brand.right <= width + 1 &&
+        layout.brandSpans.every(rect => rect.left >= -1 && rect.right <= width + 1),
+        `${path} ${width}px: Social heading or brand extends offscreen: ${JSON.stringify(layout)}`);
+      const disjoint = layout.h1.right < layout.brand.left - 4 ||
+        layout.h1.bottom < layout.brand.top - 4 ||
+        layout.brand.bottom < layout.h1.top - 4;
+      assert(disjoint && layout.overflowHeadings.length === 0 && layout.h2Count >= 5,
+        `${path} ${width}px: Social H1/illustration overlap or H2 clipping: ${JSON.stringify(layout)}`);
+      if (width === 390 || width === 768) {
+        const name = path.split('/').pop();
+        const image = await client.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
+        await writeFile(`${SCREENSHOT_DIR}/social-${name}-${width}.png`, Buffer.from(image.data, 'base64'));
+      }
+      socialLayoutResults.push({ path, width, status: 'PASS' });
+    }
+  }
+
+  // Consent is an accessible branded in-flow strip on the homepage,
+  // but a compact fixed notice on inner pages. Verify both at realistic widths.
+  const innerConsentResults = [];
+  for (const vp of [{ width: 320, height: 568 }, { width: 390, height: 844 }, { width: 1440, height: 900 }]) {
+    await client.send('Emulation.setDeviceMetricsOverride', {
+      width: vp.width, height: vp.height, deviceScaleFactor: 1, mobile: vp.width < 768,
+    });
+    await evaluate(client, 'localStorage.removeItem("ghoulhouse_analytics_consent")');
+    await client.send('Page.navigate', { url: BASE_URL + '/referenssit' });
+    await waitForDocument(client);
+    let hasConsent = false;
+    for (let i = 0; i < 25; i++) {
+      hasConsent = await evaluate(client, '!!document.querySelector(".analyticsConsent")');
+      if (hasConsent) break;
+      await sleep(120);
+    }
+    assert(hasConsent, `${vp.width}x${vp.height}: inner-page consent notice missing on first visit.`);
+    const styled = await evaluate(client, `(() => {
+      const el = document.querySelector('.analyticsConsent');
+      const st = getComputedStyle(el);
+      const box = el.getBoundingClientRect();
+      const title = el.querySelector('h2');
+      const titleStyle = getComputedStyle(title);
+      const buttons = [...el.querySelectorAll('.analyticsConsent__actions button')];
+      const sizes = buttons.map(b => b.getBoundingClientRect().height);
+      return {
+        position: st.position, background: st.backgroundColor,
+        accent: st.borderLeftColor, borderRadius: st.borderRadius,
+        box: {left:box.left,right:box.right,height:box.height},
+        viewportWidth: innerWidth, viewportHeight: innerHeight,
+        headingVisible: titleStyle.position === 'static' &&
+          title.getBoundingClientRect().height >= 18,
+        brandedControls: buttons.length === 2 &&
+          buttons.every(b => b.classList.contains('analyticsConsent__button')),
+        buttonHeights: sizes,
+        privacy: Boolean(el.querySelector('a[href="/tietosuoja"]')),
+        genericStyles: Boolean(el.querySelector('.button,.kicker')),
+        prematureGA: Boolean(document.querySelector('#google-analytics-src')),
+      };
+    })()`);
+    assert(styled.position === 'fixed' && styled.background === 'rgb(247, 244, 239)' &&
+      styled.accent === 'rgb(201, 40, 45)' && styled.borderRadius === '0px',
+      `${vp.width}x${vp.height}: inner consent still inherits a default popup skin: ${JSON.stringify(styled)}`);
+    assert(styled.headingVisible && styled.brandedControls && styled.privacy && !styled.genericStyles &&
+      !styled.prematureGA, `${vp.width}x${vp.height}: consent copy, controls, privacy or GA gate invalid.`);
+    assert(styled.box.left >= -1 && styled.box.right <= styled.viewportWidth + 1 &&
+      styled.box.height <= styled.viewportHeight - 20 &&
+      styled.buttonHeights.every(h => h >= 44) &&
+      Math.max(...styled.buttonHeights) - Math.min(...styled.buttonHeights) <= 2,
+      `${vp.width}x${vp.height}: consent overflow or unequal buttons: ${JSON.stringify(styled)}`);
+    const shot = await client.send('Page.captureScreenshot', {format:'png',captureBeyondViewport:false});
+    await writeFile(`${SCREENSHOT_DIR}/consent-inner-${vp.width}x${vp.height}.png`,Buffer.from(shot.data,'base64'));
+    if (vp.width === 390) {
+      await evaluate(client, 'document.querySelector(".analyticsConsent__reject").click()');
+      await sleep(110);
+      const rejected = await evaluate(client, `({
+        saved: localStorage.getItem('ghoulhouse_analytics_consent'),
+        dismissed: !document.querySelector('.analyticsConsent'),
+        settings: !!document.querySelector('.analyticsSettings'),
+      })`);
+      assert(rejected.saved === 'rejected' && rejected.dismissed && rejected.settings,
+        'Inner page: rejection was not saved or the settings control disappeared.');
+      await evaluate(client, 'document.querySelector(".analyticsSettings").click()');
+      await sleep(100);
+      assert(await evaluate(client,'!!document.querySelector(".analyticsConsent__accept")'),
+        'Inner page: consent cannot be reopened.');
+      await evaluate(client, 'document.querySelector(".analyticsConsent__accept").click()');
+      await sleep(130);
+      const accepted = await evaluate(client, `({
+        saved: localStorage.getItem('ghoulhouse_analytics_consent'),
+        dismissed: !document.querySelector('.analyticsConsent'),
+        settings: !!document.querySelector('.analyticsSettings'),
+      })`);
+      assert(accepted.saved === 'accepted' && accepted.dismissed && accepted.settings,
+        'Inner page: acceptance was not saved or the settings control disappeared.');
+    }
+    innerConsentResults.push({viewport:vp.width+'x'+vp.height,status:'PASS'});
+  }
+
   await client.send('Emulation.setEmulatedMedia', { media: '', features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
   await client.send('Page.navigate', { url: BASE_URL });
   await waitForDocument(client);
@@ -299,7 +577,7 @@ try {
   assert(reducedMotion.proof && reducedMotion.form, 'Reduced motion removed critical content.');
   assert(pageExceptions.length === 0, `Page exceptions: ${pageExceptions.join(' | ')}`);
 
-  const payload = { chromePath, results, interaction, reducedMotion };
+  const payload = { chromePath, results, socialLayoutResults, interaction, reducedMotion };
   await writeFile(`${SCREENSHOT_DIR}/results.json`, JSON.stringify(payload, null, 2));
   console.log(JSON.stringify(payload, null, 2));
 } finally {

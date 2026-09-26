@@ -1,0 +1,203 @@
+/* A single source of truth for GhoulHouse analytics consent.
+   This deliberately does not inherit generic .button, .kicker or heading styles. */
+.analyticsConsent {
+  position: fixed;
+  z-index: 190;
+  inset: auto 16px 16px auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 15px;
+  width: min(480px, calc(100vw - 32px));
+  max-width: none;
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  padding: 20px 23px 21px;
+  margin: 0;
+  border: 1px solid #ccc5bc;
+  border-left: 4px solid #c9282d;
+  border-radius: 0;
+  background: #f7f4ef;
+  box-shadow: 0 14px 45px rgba(17, 17, 17, .17);
+  color: #111;
+  font-family: var(--font-body), Arial, sans-serif;
+  text-align: left;
+}
+.analyticsConsent__copy {
+  display: grid;
+  min-width: 0;
+  gap: 8px;
+}
+.analyticsConsent__eyebrow {
+  color: #a82025;
+  font-family: var(--font-body), Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.4;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+}
+.analyticsConsent__copy h2 {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip-path: none;
+  color: #111;
+  font-family: var(--font-body), Arial, sans-serif;
+  font-size: clamp(18px, 2.1vw, 22px);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -.038em;
+  text-transform: none;
+  text-wrap: pretty;
+}
+.analyticsConsent__copy p:not(.analyticsConsent__eyebrow) {
+  max-width: 63ch;
+  color: #39342f;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.analyticsConsent__copy a {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  width: fit-content;
+  min-height: 30px;
+  border-bottom: 1px solid #39342f;
+  color: #25211f;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
+  text-underline-offset: 3px;
+}
+.analyticsConsent__copy a:hover { color: #a82025; border-color: #a82025; }
+.analyticsConsent__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+.analyticsConsent__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 48px;
+  width: 100%;
+  margin: 0;
+  padding: 11px 13px;
+  border: 1px solid #111;
+  border-radius: 0;
+  font-family: var(--font-body), Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: .015em;
+  text-align: center;
+  text-transform: none;
+  white-space: normal;
+  cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+}
+.analyticsConsent__accept { background: #c9282d; border-color: #c9282d; color: #fff; }
+.analyticsConsent__accept:hover { background: #ab2025; border-color: #ab2025; }
+.analyticsConsent__reject { background: transparent; color: #111; }
+.analyticsConsent__reject:hover { background: #111; color: #fff; }
+.analyticsConsent :is(button, a):focus-visible,
+.analyticsSettings:focus-visible { outline: 3px solid #c9282d; outline-offset: 4px; }
+.analyticsSettings {
+  position: fixed;
+  inset: auto 14px 14px auto;
+  z-index: 180;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
+  min-height: 44px;
+  padding: 10px 13px;
+  margin: 0;
+  border: 1px solid #bcb5ad;
+  border-radius: 0;
+  background: #f7f4ef;
+  box-shadow: 0 6px 18px rgba(17,17,17,.10);
+  color: #111;
+  font-family: var(--font-body), Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .015em;
+  text-transform: none;
+  cursor: pointer;
+}
+.analyticsSettings:hover { border-color: #111; background: #fffdf9; }
+
+/* The homepage choice remains a slender editorial strip after the hero;
+   it must never obscure a lead CTA, even at 320px and on short screens. */
+.homePage .ghConsentSlot:not(:empty) {
+  width: min(calc(100% - 108px), 1440px);
+  min-width: 0;
+  margin: 0 auto;
+  padding: 0 0 clamp(16px, 2.5vw, 36px);
+}
+.homePage .ghConsentSlot .analyticsConsent {
+  position: static;
+  inset: auto;
+  z-index: auto;
+  width: 100%;
+  max-width: none;
+  max-height: none;
+  overflow: visible;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+  gap: clamp(22px, 3vw, 48px);
+  align-items: center;
+  padding: clamp(19px, 2vw, 27px);
+  background: #f7f4ef;
+  border: 1px solid #d0c8bf;
+  border-left: 4px solid #c9282d;
+  box-shadow: none;
+}
+.homePage .ghConsentSlot .analyticsConsent__copy h2 { font-size: 19px; }
+.homePage .ghConsentSlot .analyticsConsent__actions { align-self: center; }
+.homePage .ghConsentSlot .analyticsSettings {
+  position: static;
+  inset: auto;
+  z-index: auto;
+  border-color: #c9c1b9;
+  box-shadow: none;
+}
+@media (max-width: 1199px) {
+  .homePage .ghConsentSlot:not(:empty) { width: calc(100% - 72px); }
+}
+@media (max-width: 767px) {
+  .analyticsConsent {
+    inset: auto 10px 10px;
+    width: auto;
+    max-height: min(calc(100dvh - 20px), 420px);
+    gap: 12px;
+    padding: 15px 16px 17px;
+    border-left-width: 3px;
+  }
+  .analyticsConsent__copy { gap: 6px; }
+  .analyticsConsent__copy h2 { font-size: 17px; line-height: 1.3; }
+  .analyticsConsent__copy p:not(.analyticsConsent__eyebrow) { font-size: 12px; line-height: 1.47; }
+  .analyticsConsent__copy a { font-size: 12px; }
+  .analyticsConsent__actions { gap: 8px; }
+  .analyticsConsent__button { min-height: 46px; padding: 9px 8px; font-size: 12px; }
+  .analyticsSettings { right: 10px; bottom: 10px; }
+  .homePage .ghConsentSlot:not(:empty) { width: calc(100% - 40px); padding-bottom: 23px; }
+  .homePage .ghConsentSlot .analyticsConsent {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 15px;
+    padding: 16px 17px;
+    border-left-width: 3px;
+  }
+  .homePage .ghConsentSlot .analyticsConsent__copy h2 { font-size: 17px; }
+}
+@media (max-width: 359px) {
+  .homePage .ghConsentSlot:not(:empty) { width: calc(100% - 32px); }
+  .analyticsConsent__button { font-size: 11px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .analyticsConsent__button { transition: none; }
+}
