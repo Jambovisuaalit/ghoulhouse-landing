@@ -186,7 +186,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
               <div className="ghSelectedCaseDisplay">
                 <Image src="/ghoulhouse-site-proof.png" alt="Kuvakaappaus GhoulHousen aiemmin julkaistusta ghoulhouse.fi-etusivusta." width={1440} height={900} sizes="(max-width: 767px) 100vw, 50vw" className="ghSelectedScreenshot" />
               </div>
-              <div className="ghSelectedCaseFoot"><strong>GhoulHousen julkaistu verkkosivusto</strong><span>Oma sivusto, aiemman version kuvakaappaus — ei asiakasreferenssi.</span></div>
+              <div className="ghSelectedCaseFoot"><strong>GhoulHousen julkaistu verkkosivusto</strong><span>Oma sivusto — ei asiakasreferenssi. Kuvakaappaus aiemmasta versiosta.</span></div>
             </a>
           </div>
         </section>
