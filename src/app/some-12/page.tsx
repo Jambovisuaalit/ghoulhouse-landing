@@ -14,5 +14,41 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <SeoLandingPage page={page} />;
+  const offerSchema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Service',
+        '@id': 'https://ghoulhouse.fi/some-12#service',
+        name: 'GhoulHouse SOME 12',
+        serviceType: 'Kiinteä 30 päivän some-sisältöpaketti',
+        description: page.description,
+        provider: { '@id': 'https://ghoulhouse.fi/#organization' },
+        areaServed: { '@type': 'Country', name: 'Finland' },
+        offers: { '@id': 'https://ghoulhouse.fi/some-12#offer' },
+      },
+      {
+        '@type': 'Offer',
+        '@id': 'https://ghoulhouse.fi/some-12#offer',
+        name: 'SOME 12 — 12 sisältöä / 30 päivää',
+        price: '490',
+        priceCurrency: 'EUR',
+        priceSpecification: {
+          '@type': 'UnitPriceSpecification',
+          price: '490',
+          priceCurrency: 'EUR',
+          valueAddedTaxIncluded: false,
+        },
+        url: 'https://ghoulhouse.fi/some-12',
+        itemOffered: { '@id': 'https://ghoulhouse.fi/some-12#service' },
+      },
+    ],
+  };
+
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(offerSchema) }} />
+      <SeoLandingPage page={page} />
+    </>
+  );
 }
