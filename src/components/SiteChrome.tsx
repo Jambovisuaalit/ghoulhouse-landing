@@ -24,8 +24,7 @@ export default function SiteChrome({ children }: { children: ReactNode }) {
       <header className="ghGlobalHeader">
         <div className="ghGlobalShell ghGlobalHeaderInner">
           <Link className="ghGlobalBrand" href="/" aria-label="GhoulHouse — etusivu">
-            <Image src="/favicon.svg" alt="" width={36} height={36} />
-            <span>GHOULHOUSE</span>
+            <Image className="ghOfficialHeaderLogo" src="/ghoulhouse-logo.svg" alt="" width={175} height={58} />
           </Link>
           <nav className="ghGlobalDesktopNav" aria-label="Päänavigaatio">
             {siteNavigation.map(({ href, label }) => (
