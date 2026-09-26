@@ -63,7 +63,7 @@ for (const route of ['/referenssit','/resurssit','/verkkosivut/hinta']) {
 const ownCaseResponse = await fetch(BASE_URL + '/tyot/ghoulhouse-verkkosivut', { cache:'no-store' });
 assert(ownCaseResponse.status === 200, 'No-JS QA: dedicated own-site case page not found.');
 const ownCase = await ownCaseResponse.text();
-assert(ownCase.includes('oma') && ownCase.includes('ei asiakasreferenssi') && ownCase.includes('Aiempi'),
+assert(ownCase.includes('oma') && ownCase.includes('ei asiakasreferenssi') && /aiemm/i.test(ownCase),
   'No-JS QA: case must distinguish own work, prior screenshot and lack of customer claims.');
 const references = await fetch(BASE_URL + '/referenssit', {cache:'no-store'}).then(res=>res.text());
 assert(references.includes('href="/tyot/ghoulhouse-verkkosivut"'), 'No-JS QA: references page must lead to own-site detail.');
