@@ -155,6 +155,8 @@ try {
         return { top:r.top, right:r.right, bottom:r.bottom, left:r.left, width:r.width, height:r.height };
       };
       const hero = document.querySelector('#top');
+      const dotGrid = hero?.querySelector('.ghHeroDotGrid');
+      const dotCanvas = dotGrid?.querySelector('canvas');
       const h1 = hero?.querySelector('h1');
       const brandHeadline = h1;
       const heroCta = hero?.querySelector('a.ghButton[href="#yhteys"]');
@@ -195,6 +197,13 @@ try {
         innerWidth,
         innerHeight,
         scrollWidth: document.documentElement.scrollWidth,
+        dotGrid: {
+          image: hero ? getComputedStyle(hero).backgroundImage : '',
+          heroRect: rect(hero),
+          overlayRect: rect(dotGrid),
+          canvasWidth: dotCanvas?.width || 0,
+          canvasHeight: dotCanvas?.height || 0,
+        },
         colors: {
           ink: root.getPropertyValue('--ink').trim(),
           paper: root.getPropertyValue('--paper').trim(),
@@ -205,6 +214,9 @@ try {
       };
     })()`);
 
+    assert(metrics.dotGrid.image.includes('hero-dot-grid.svg'), `${viewport.width}x${viewport.height}: the visible hero must retain its static dot pattern regardless of JS.`);
+    assert(metrics.dotGrid.overlayRect?.width >= metrics.dotGrid.heroRect?.width - 1 && metrics.dotGrid.overlayRect?.height >= metrics.dotGrid.heroRect?.height - 1,
+      `${viewport.width}x${viewport.height}: the interactive dot layer does not cover the hero: ${JSON.stringify(metrics.dotGrid)}`);
     assert(metrics.h1Count === 1, `${viewport.width}x${viewport.height}: expected exactly one H1.`);
     assert(metrics.brandHeadlineText.includes('HYVÄ TYÖ') && metrics.brandHeadlineText.includes('PITÄÄ NÄKYÄ.'), `${viewport.width}x${viewport.height}: company headline missing.`);
     assert(metrics.h1Text.includes('HYVÄ TYÖ') && metrics.h1Text.includes('PITÄÄ NÄKYÄ'), `${viewport.width}x${viewport.height}: H1 copy changed unexpectedly.`);
