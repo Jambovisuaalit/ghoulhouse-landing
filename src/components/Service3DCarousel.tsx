@@ -68,8 +68,9 @@ export default function Service3DCarousel({ items }: { items: readonly CarouselI
           const isWebsite = label === 'WEBSITES';
           const isSocial = label === 'SOCIAL';
           return (
-            <article key={href} className="ghEditorialCard gh3dCard" data-slot={slot}
+            <article key={href} className="gh3dCard" data-slot={slot}
               data-skip={skipTransition === index ? 'true' : 'false'}
+              aria-hidden={enhanced && slot !== 'center'}
               aria-label={`${label}: ${title}, ${index + 1} / ${items.length}`}>
               <div className={`gh3dCardMedia${isWebsite ? ' gh3dCardMedia--web' : ''}${isSocial ? ' gh3dCardMedia--social' : ''}`}
                 aria-hidden="true">
@@ -93,7 +94,8 @@ export default function Service3DCarousel({ items }: { items: readonly CarouselI
               <span className="gh3dCardType">{label} / {String(index + 1).padStart(2, '0')}</span>
               <h3>{title}</h3>
               <p>{description}</p>
-              <a href={href} className="gh3dCardLink" aria-label={`Tutustu: ${title}`}>
+              <a href={href} className="gh3dCardLink" aria-label={`Tutustu: ${title}`}
+                tabIndex={enhanced && slot !== 'center' ? -1 : 0}>
                 Tutustu <span aria-hidden="true">↗</span>
               </a>
               <small className="gh3dDisclosure">{isWebsite
