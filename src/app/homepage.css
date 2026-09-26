@@ -1378,17 +1378,20 @@ body:has(.homePage) .analyticsSettings {
   position: relative;
   isolation: isolate;
   overflow: hidden;
+  /* Paint base dots on the hero itself: the static grid cannot disappear when
+     the enhancement canvas mounts or when JavaScript is unavailable. */
+  background-color: #f7f4ef;
+  background-image: url('/hero-dot-grid.svg');
+  background-repeat: repeat;
+  background-size: 44px 44px;
 }
 .homePage .ghHeroDotGrid {
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url('/hero-dot-grid.svg');
-  background-size: 44px 44px;
-  opacity: 0.78;
+  opacity: 0.95;
 }
-.homePage .ghHeroDotGrid.is-enhanced { background-image: none; }
 .homePage .ghHeroDotGrid canvas {
   display: block;
   width: 100%;
@@ -1400,10 +1403,8 @@ body:has(.homePage) .analyticsSettings {
   z-index: 1;
 }
 @media (max-width: 767px) {
-  .homePage .ghHeroDotGrid { background-size: 56px 56px; opacity: 0.56; }
+  .homePage .ghHeroEditorial { background-size: 56px 56px; }
 }
 @media (prefers-reduced-motion: reduce), (pointer: coarse) {
-  .homePage .ghHeroDotGrid,
-  .homePage .ghHeroDotGrid.is-enhanced { background-image: url('/hero-dot-grid.svg'); }
   .homePage .ghHeroDotGrid canvas { display: none; }
 }
