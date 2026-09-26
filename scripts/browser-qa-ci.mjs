@@ -431,6 +431,68 @@ try {
   const wrappedCounter = await evaluate(client, 'document.querySelector(".gh3dCounter")?.textContent?.replace(/\\s+/g," ").trim()');
   assert(wrappedCounter === '01 / 03', `3D carousel did not navigate backward: ${wrappedCounter}`);
 
+  // True CDP mobile emulation: Chrome's --window-size 390 screenshots can
+  // preserve a ~500px desktop layout and crop the right edge. Measure real
+  // CSS viewport metrics and every Social H2 rather than only static PNG size.
+  const socialLayoutResults = [];
+  await evaluate(client, 'localStorage.setItem("ghoulhouse_analytics_consent","rejected")');
+  for (const path of [
+    '/some-sisallontuotanto', '/some-12', '/rakennusyrityksille',
+    '/lvi-yrityksille', '/instagram-sisallontuotanto',
+  ]) {
+    for (const width of [320, 390, 768, 1440]) {
+      const height = width < 768 ? 844 : 900;
+      await client.send('Emulation.setDeviceMetricsOverride', {
+        width, height, deviceScaleFactor: 1, mobile: width < 768,
+      });
+      await client.send('Page.navigate', {url: BASE_URL + path});
+      await waitForDocument(client);
+      const layout = await evaluate(client, `(() => {
+        const hero = document.querySelector('main.seoPage .seoHeroCopy');
+        const h1 = hero?.querySelector('h1');
+        const brand = document.querySelector('main.seoPage .seoBrandBlock');
+        const h2 = [...document.querySelectorAll('main.seoPage h2')];
+        const r = (el) => {
+          if (!el) return null;
+          const b = el.getBoundingClientRect();
+          return { left:b.left, right:b.right, top:b.top, bottom:b.bottom };
+        };
+        return {
+          viewport: innerWidth,
+          documentWidth: document.documentElement.scrollWidth,
+          h1: r(h1),
+          h1ScrollWidth: h1?.scrollWidth,
+          h1ClientWidth: h1?.clientWidth,
+          brand: r(brand),
+          brandScrollWidth: brand?.scrollWidth,
+          brandClientWidth: brand?.clientWidth,
+          brandSpans: [...(brand?.querySelectorAll('span') || [])].map(r),
+          h2Count: h2.length,
+          overflowHeadings: h2.filter(x => x.scrollWidth > x.clientWidth + 1).map(x => x.textContent?.trim()),
+        };
+      })()`);
+      assert(layout.viewport === width && layout.h1 && layout.brand &&
+        layout.documentWidth <= width + 1 && layout.h1ScrollWidth <= layout.h1ClientWidth + 1 &&
+        layout.brandScrollWidth <= layout.brandClientWidth + 1,
+        `${path} ${width}px: horizontal overflow in Social hero: ${JSON.stringify(layout)}`);
+      assert(layout.h1.left >= -1 && layout.h1.right <= width + 1 &&
+        layout.brand.left >= -1 && layout.brand.right <= width + 1 &&
+        layout.brandSpans.every(rect => rect.left >= -1 && rect.right <= width + 1),
+        `${path} ${width}px: Social heading or brand extends offscreen: ${JSON.stringify(layout)}`);
+      const disjoint = layout.h1.right < layout.brand.left - 4 ||
+        layout.h1.bottom < layout.brand.top - 4 ||
+        layout.brand.bottom < layout.h1.top - 4;
+      assert(disjoint && layout.overflowHeadings.length === 0 && layout.h2Count >= 5,
+        `${path} ${width}px: Social H1/illustration overlap or H2 clipping: ${JSON.stringify(layout)}`);
+      if (width === 390 || width === 768) {
+        const name = path.split('/').pop();
+        const image = await client.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
+        await writeFile(`${SCREENSHOT_DIR}/social-${name}-${width}.png`, Buffer.from(image.data, 'base64'));
+      }
+      socialLayoutResults.push({ path, width, status: 'PASS' });
+    }
+  }
+
   // Consent is an accessible branded in-flow strip on the homepage,
   // but a compact fixed notice on inner pages. Verify both at realistic widths.
   const innerConsentResults = [];
@@ -528,7 +590,7 @@ try {
   assert(reducedMotion.proof && reducedMotion.form, 'Reduced motion removed critical content.');
   assert(pageExceptions.length === 0, `Page exceptions: ${pageExceptions.join(' | ')}`);
 
-  const payload = { chromePath, results, interaction, reducedMotion };
+  const payload = { chromePath, results, socialLayoutResults, interaction, reducedMotion };
   await writeFile(`${SCREENSHOT_DIR}/results.json`, JSON.stringify(payload, null, 2));
   console.log(JSON.stringify(payload, null, 2));
 } finally {
