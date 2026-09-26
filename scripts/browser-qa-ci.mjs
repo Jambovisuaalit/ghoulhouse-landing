@@ -189,6 +189,9 @@ try {
         carouselCards: document.querySelectorAll('.gh3dCarousel .gh3dCard').length,
         carouselLinks: [...document.querySelectorAll('.gh3dCarousel .gh3dCardLink')].map((a) => a.getAttribute('href')),
         carouselRegion: document.querySelector('.gh3dCarousel')?.getAttribute('aria-roledescription') || '',
+        primaryNavDesktop: [...document.querySelectorAll('.ghDesktopNav a')].map((a) => [a.textContent?.trim(),a.getAttribute('href')]),
+        primaryNavMobile: [...document.querySelectorAll('.ghMobileNav nav a')].slice(0,4).map((a) => [a.textContent?.trim(),a.getAttribute('href')]),
+        proofCardHref: proof?.getAttribute('href'),
         resourceLinks: document.querySelectorAll('.ghGuideRow').length,
         proposalIntent: form?.querySelector('[name="intent"]')?.value === 'booking',
         schemaTypes: [...document.querySelectorAll('script[type="application/ld+json"]')].map((script) => script.textContent || '').join(' '),
@@ -227,8 +230,12 @@ try {
     assert(/pyydä ehdotus/i.test(metrics.heroCtaText), `${viewport.width}x${viewport.height}: company CTA missing.`);
     assert(metrics.serviceLinks && metrics.serviceCards === 3, `${viewport.width}x${viewport.height}: three service links missing.`);
     assert(metrics.carouselCards === 3 && metrics.carouselRegion === 'karuselli', `${viewport.width}x${viewport.height}: 3D carousel cards or semantics missing.`);
-    assert(['/verkkosivut-yritykselle','/some-sisallontuotanto','/verkkosivut/rakennus'].every((href) => metrics.carouselLinks.includes(href)), `${viewport.width}x${viewport.height}: a carousel link is missing.`);
-    assert(metrics.resourceLinks === 3 && metrics.proposalIntent, `${viewport.width}x${viewport.height}: resources or general proposal intent missing.`);
+    assert(JSON.stringify(metrics.primaryNavDesktop) === JSON.stringify(metrics.primaryNavMobile),
+      `${viewport.width}x${viewport.height}: desktop/mobile primary navigation diverged: ${JSON.stringify(metrics.primaryNavDesktop)} / ${JSON.stringify(metrics.primaryNavMobile)}`);
+    assert(metrics.proofCardHref === '/tyot/ghoulhouse-verkkosivut',
+      `${viewport.width}x${viewport.height}: own work must open a useful case study instead of the current homepage.`);
+    assert(['/tyot/ghoulhouse-verkkosivut','/some-sisallontuotanto','/verkkosivut/rakennus'].every((href) => metrics.carouselLinks.includes(href)), `${viewport.width}x${viewport.height}: a carousel link is missing.`);
+    assert(metrics.resourceLinks === 2 && metrics.proposalIntent, `${viewport.width}x${viewport.height}: resources or general proposal intent missing.`);
     assert(metrics.formExists && metrics.formMethod === 'post' && metrics.formAction === '/api/leads', `${viewport.width}x${viewport.height}: native lead form contract missing.`);
     assert(metrics.requiredFields, `${viewport.width}x${viewport.height}: required lead fields missing.`);
     assert(metrics.submitRect?.height >= 44, `${viewport.width}x${viewport.height}: submit target below 44px.`);
