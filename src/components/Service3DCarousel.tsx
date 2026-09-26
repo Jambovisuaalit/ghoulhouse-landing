@@ -20,16 +20,14 @@ export default function Service3DCarousel({ items }: { items: readonly CarouselI
   useEffect(() => setEnhanced(true), []);
 
   const move = (direction: -1 | 1) => {
-    setActive((current) => {
-      // The card crossing behind the carousel is repositioned without
-      // travelling visibly from one outer edge to the other.
-      setSkipTransition((current + (direction === 1 ? items.length - 1 : 1)) % items.length);
-      return (current + direction + items.length) % items.length;
-    });
+    // The old outer card crosses behind the carousel, so its repositioning
+    // must not animate from one visible edge to the other.
+    setSkipTransition((active + (direction === 1 ? items.length - 1 : 1)) % items.length);
+    setActive((current) => (current + direction + items.length) % items.length);
   };
 
   const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
-    if (!enhanced || event.pointerType === 'mouse' && event.button !== 0) return;
+    if (!enhanced || (event.pointerType === 'mouse' && event.button !== 0)) return;
     dragStart.current = { x: event.clientX, y: event.clientY };
   };
 
