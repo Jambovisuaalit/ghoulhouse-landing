@@ -41,16 +41,15 @@ export default function HeroDotGrid() {
           const distance = Math.hypot(dx, dy);
           const proximity = Math.max(0, 1 - distance / impactRadius);
           const strength = proximity * proximity * influence;
+          if (strength <= 0.035) continue; // Base dots live in CSS, not the canvas.
           const offset = strength * 9;
           const norm = distance > 0 ? distance : 1;
           const drawX = x + (dx / norm) * offset;
           const drawY = y + (dy / norm) * offset;
 
           context.beginPath();
-          context.arc(drawX, drawY, 1.25 + 1.3 * strength, 0, Math.PI * 2);
-          context.fillStyle = strength > 0.035
-            ? `rgba(201, 40, 45, ${Math.min(0.55, 0.16 + strength * 0.42)})`
-            : 'rgba(17, 17, 17, 0.19)';
+          context.arc(drawX, drawY, 1.25 + 1.8 * strength, 0, Math.PI * 2);
+          context.fillStyle = `rgba(201, 40, 45, ${Math.min(0.68, 0.22 + strength * 0.55)})`;
           context.fill();
         }
       }
@@ -87,8 +86,6 @@ export default function HeroDotGrid() {
       canvas.height = Math.round(height * dpr);
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
       render();
-      // Swap out the static SVG only after the canvas has drawn successfully.
-      wrapper.classList.add('is-enhanced');
     };
 
     const onPointerMove = (event: PointerEvent) => {
@@ -116,7 +113,6 @@ export default function HeroDotGrid() {
       hero.removeEventListener('pointermove', onPointerMove);
       hero.removeEventListener('pointerleave', onPointerLeave);
       if (frame) window.cancelAnimationFrame(frame);
-      wrapper.classList.remove('is-enhanced');
     };
   }, []);
 
