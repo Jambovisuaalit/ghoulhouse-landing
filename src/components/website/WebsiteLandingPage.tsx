@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import LeadForm from '@/components/LeadForm';
-import { websiteMainFacts, websiteResources, type WebsiteVertical } from '@/data/website';
+import { websiteMainFacts, websiteResources, websiteDeliverableDescriptions, type WebsiteVertical } from '@/data/website';
 
 type Props = {
   vertical?: WebsiteVertical;
@@ -60,7 +60,11 @@ export default function WebsiteLandingPage({ vertical, heading, introduction, ey
           <div className="sectionIntro"><p className="kicker kicker--inverse">TOTEUTUS</p><div><h2>MITÄ SIVUSTOON RAKENNETAAN?</h2></div></div>
           <div className="websiteCards">
             {(vertical?.deliverables ?? ['Sivustorakenne ja navigaatio', 'Palvelusivut ja ostamista tukeva copy', 'Referenssit ja työnäyttö', 'Yhteydenotto ja tarjouspyyntö', 'Mobiilioptimointi', 'Tekninen SEO ja julkaisu']).map((item, i) => (
-              <article key={item}><span>{String(i + 1).padStart(2, '0')}</span><h3>{item}</h3><p>Suunnitellaan osaksi samaa käyttäjäpolkua, ei irralliseksi ominaisuudeksi.</p></article>
+              <article key={item}>
+                <span>{String(i + 1).padStart(2, '0')}</span>
+                <h3>{item}</h3>
+                <p>{websiteDeliverableDescriptions[item] ?? 'Sisältö ja toteutustapa määritellään yrityksen hyväksyttyjen lähtötietojen perusteella.'}</p>
+              </article>
             ))}
           </div>
         </div>
