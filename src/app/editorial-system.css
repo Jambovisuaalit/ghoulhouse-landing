@@ -153,6 +153,14 @@ body { background: var(--gh-ed-paper); }
 .ghGlobalContent .seoHeroCopy, .ghGlobalContent .websiteHeroCopy { min-width: 0; }
 .ghGlobalContent .seoBrandBlock { min-width: 0; overflow-wrap: anywhere; }
 .ghGlobalContent .seoPage .seoHeroCopy h1 { font-size: clamp(45px,5.3vw,82px); }
+.ghGlobalContent .seoPage .seoHeroCopy h1 {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  hyphens: auto;
+}
 .ghGlobalContent .proofDetailHero h1 { font-family: var(--gh-ed-serif); line-height: 1.1; }
 /* Preserve the previous glass-footer structure while giving it an editorial
  * square silhouette and more print-like metadata. */
@@ -192,7 +200,7 @@ body .ghLiquidFooter .ghLiquidFooterStatement h2 {
     line-height: 1.13;
   }
   .ghGlobalContent :is(.websiteCards,.seoCards) article { border-right: 0; padding: 22px 8px; }
-  .ghGlobalContent .seoPage .seoHeroCopy h1 { font-size: clamp(37px,9vw,51px); }
+  .ghGlobalContent .seoPage .seoHeroCopy h1 { font-size: clamp(31px,8vw,46px); }
   body .ghLiquidFooter .ghLiquidFooterStatement h2 { font-size: clamp(36px,8.3vw,55px); }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
