@@ -189,6 +189,8 @@ try {
         carouselCards: document.querySelectorAll('.gh3dCarousel .gh3dCard').length,
         carouselLinks: [...document.querySelectorAll('.gh3dCarousel .gh3dCardLink')].map((a) => a.getAttribute('href')),
         carouselRegion: document.querySelector('.gh3dCarousel')?.getAttribute('aria-roledescription') || '',
+        centeredCarouselRect: rect(document.querySelector('.gh3dCarousel.is-ready .gh3dCard[data-slot="center"]')),
+        carouselStageRect: rect(document.querySelector('.gh3dCarousel.is-ready .gh3dStage')),
         primaryNavDesktop: [...document.querySelectorAll('.ghDesktopNav a')].map((a) => [a.textContent?.trim(),a.getAttribute('href')]),
         primaryNavMobile: [...document.querySelectorAll('.ghMobileNav nav a')].slice(0,4).map((a) => [a.textContent?.trim(),a.getAttribute('href')]),
         proofCardHref: proof?.getAttribute('href'),
@@ -230,6 +232,11 @@ try {
     assert(/pyydä ehdotus/i.test(metrics.heroCtaText), `${viewport.width}x${viewport.height}: company CTA missing.`);
     assert(metrics.serviceLinks && metrics.serviceCards === 3, `${viewport.width}x${viewport.height}: three service links missing.`);
     assert(metrics.carouselCards === 3 && metrics.carouselRegion === 'karuselli', `${viewport.width}x${viewport.height}: 3D carousel cards or semantics missing.`);
+    if (metrics.centeredCarouselRect && metrics.carouselStageRect) {
+      assert(metrics.centeredCarouselRect.left >= metrics.carouselStageRect.left - 1 &&
+        metrics.centeredCarouselRect.right <= metrics.carouselStageRect.right + 1,
+        `${viewport.width}x${viewport.height}: focused carousel card escapes stage on hydration.`);
+    }
     assert(JSON.stringify(metrics.primaryNavDesktop) === JSON.stringify(metrics.primaryNavMobile),
       `${viewport.width}x${viewport.height}: desktop/mobile primary navigation diverged: ${JSON.stringify(metrics.primaryNavDesktop)} / ${JSON.stringify(metrics.primaryNavMobile)}`);
     assert(metrics.proofCardHref === '/tyot/ghoulhouse-verkkosivut',
