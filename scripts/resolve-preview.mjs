@@ -1,4 +1,4 @@
-import { mkdir, writeFile, appendFile } from 'node:fs/promises';
+import { mkdir, writeFile, appendFile, readFile } from 'node:fs/promises';
 
 const { GITHUB_REPOSITORY: repo, GITHUB_TOKEN: token, QA_HEAD_SHA: sha, QA_PR_NUMBER: pr } = process.env;
 if (!/^[\w.-]+\/[\w.-]+$/.test(repo || '') || !/^[a-f0-9]{40}$/.test(sha || '') || !/^\d+$/.test(pr || '')) throw Error('Missing PR identity');
@@ -26,6 +26,15 @@ const record = async (url, deploymentId) => {
   await appendFile(process.env.GITHUB_OUTPUT, `url=${url}\n`);
   console.log(`QA bound to PR #${pr}, SHA ${sha}, deployment ${deploymentId}`);
 };
+if (process.env.QA_RECHECK_URL) {
+  const evidence = JSON.parse(await readFile('qa-artifacts/preview/deployment.json', 'utf8'));
+  const expected = process.env.QA_RECHECK_URL;
+  if (evidence.url !== expected || evidence.sha !== sha || String(evidence.pr) !== pr) throw Error('Tested deployment evidence mismatch');
+  await checkHead();
+  if (await verifyIdentity(expected) !== expected) throw Error('Tested deployment identity changed');
+  console.log(`Rechecked the tested deployment: ${expected} at ${sha}`);
+  process.exit(0);
+}
 const deadline = Date.now() + 360_000;
 while (Date.now() < deadline) {
   await checkHead();
@@ -36,8 +45,10 @@ while (Date.now() < deadline) {
     const status = statuses[0];
     if (status?.state !== 'success') continue;
     const url = new URL(status.environment_url);
-    if (url.protocol !== 'https:' || !/^ghoulhouse-home-[a-z0-9]+-info-32533854s-projects\.vercel\.app$/.test(url.hostname)) throw Error('Unexpected deployment URL');
-    await record(url.origin, deployment.id);
+    if (url.protocol !== 'https:' || !/^ghoulhouse-home-[a-z0-9-]+-info-32533854s-projects\.vercel\.app$/.test(url.hostname)) throw Error('Unexpected deployment URL');
+    const immutable = await verifyIdentity(url.origin);
+    if (!immutable) continue;
+    await record(immutable, deployment.id);
     process.exit(0);
   }
   // Some Vercel installations publish PR comments but no deployment records.

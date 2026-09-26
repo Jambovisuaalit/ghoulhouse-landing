@@ -260,6 +260,7 @@ jobs:
       - name: Recheck preview SHA after QA
         if: github.event_name == 'pull_request'
         env:
+          QA_RECHECK_URL: ${{ steps.preview.outputs.url }}
           GITHUB_TOKEN: ${{ github.token }}
           QA_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           QA_PR_NUMBER: ${{ github.event.pull_request.number }}
