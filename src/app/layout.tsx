@@ -8,6 +8,7 @@ import SiteChrome from '@/components/SiteChrome';
 import './site.css';
 import './global-chrome.css';
 import './liquid-glass-footer.css';
+import './analytics-consent.css';
 
 const anton = Anton({
   weight: '400',
