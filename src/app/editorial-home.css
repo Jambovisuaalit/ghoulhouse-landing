@@ -174,7 +174,7 @@
   border-color: var(--gh-ed-red);
 }
 .homePage .ghArtHero .ghButton:hover { background: var(--gh-ed-paper); border-color: var(--gh-ed-paper); color: var(--gh-ed-black); }
-.homePage .ghArtHero .ghHeroFootnote { margin: 0; max-width: 24ch; color: #c7bdb7; font-family: var(--gh-ed-label); font-size: 11px; line-height: 1.55; }
+.homePage .ghArtHero .ghHeroFootnote { margin: 0; max-width: 27ch; color: #e5dcd6; font-family: var(--gh-ed-label); font-size: 13px; line-height: 1.55; }
 .homePage .ghArtHeroVisual {
   align-self: stretch;
   display: grid;
@@ -303,7 +303,7 @@
 }
 .homePage .ghSelectedCaseDisplay {
   display:block;
-  aspect-ratio:1.42;
+  aspect-ratio:16 / 10;
   overflow:hidden;
   margin:13px 0 0;
   border:1px solid var(--gh-ed-ink);
@@ -312,8 +312,8 @@
 .homePage .ghSelectedCaseDisplay .ghSelectedScreenshot {
   width:100%;
   height:100%;
-  object-fit:cover;
-  object-position:top;
+  object-fit:contain;
+  object-position:top center;
   filter:grayscale(1) contrast(1.05);
   border:0;
 }
@@ -327,7 +327,7 @@
   color:var(--gh-ed-ink);
 }
 .homePage .ghSelectedCaseFoot strong { font-family:var(--gh-ed-serif); font-size:clamp(23px,2.3vw,36px); font-weight:700; line-height:1.2; }
-.homePage .ghSelectedCaseFoot span { color:#48413c; font-family:var(--gh-ed-label); font-size:11px; line-height:1.6; }
+.homePage .ghSelectedCaseFoot span { color:#48413c; font-family:var(--gh-ed-label); font-size:12px; line-height:1.6; }
 
 /* Four steps as one typographic black interlude. */
 .homePage .ghProcess {
@@ -478,7 +478,7 @@
   .homePage .ghArtHero .ghLead { max-width:37ch; font-size:14px; line-height:1.57; }
   .homePage .ghArtHeroAction { gap:10px; }
   .homePage .ghArtHero .ghButton { min-height:49px; min-width:205px; padding:11px 14px; font-size:12px; }
-  .homePage .ghArtHero .ghHeroFootnote { font-size:10px; line-height:1.45; }
+  .homePage .ghArtHero .ghHeroFootnote { font-size:13px; line-height:1.55; }
   .homePage .ghArtHeroVisual { width:100%; gap:9px; }
   .homePage .ghArtHeroImage { min-height:0; height:clamp(185px,48vw,325px); }
   .homePage .ghArtHeroImage img { object-position:50% 55%; }
@@ -499,7 +499,7 @@
   .homePage .ghServiceOutputs { margin-top:17px; }
   .homePage .ghSelectedGrid { gap:34px; }
   .homePage .ghSelected .ghSectionIntro h2 { font-size:clamp(49px,11vw,72px); }
-  .homePage .ghSelectedCaseDisplay { aspect-ratio:1.14; }
+  .homePage .ghSelectedCaseDisplay { aspect-ratio:16 / 10; }
   .homePage .ghSelectedCaseFoot strong { font-size:26px; }
   .homePage .ghProcess .ghSectionIntro h2 { font-size:clamp(45px,10.5vw,67px); }
   .homePage .ghProcess .ghSteps { grid-template-columns:minmax(0,1fr); gap:24px; margin-top:39px; }
