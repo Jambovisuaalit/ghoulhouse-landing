@@ -8,6 +8,7 @@ export interface LeadInput {
   name: string;
   email: string;
   profile: string;
+  noProfile: boolean;
   phone?: string;
   website?: string;
   instagram?: string;
@@ -94,6 +95,9 @@ export function validateLead(input: unknown): LeadValidationResult {
   }
 
   const source = input as Record<string, unknown>;
+  const noProfile = source.noProfile === true || source.noProfile === 'true' || source.noProfile === 'on';
+  const profile = noProfile ? '' : clean(source.profile, limits.profile);
+  const classifiedProfile = profile ? classifyProfile(profile) : null;
   const profile = clean(source.profile, limits.profile);
   const noProfileYet = profile === NO_PROFILE_YET;
   const classifiedProfile = noProfileYet ? { website: '', instagram: '' } : profile ? classifyProfile(profile) : null;
@@ -107,10 +111,11 @@ export function validateLead(input: unknown): LeadValidationResult {
     name: clean(source.name, limits.name),
     email: clean(source.email, limits.email).toLowerCase(),
     profile,
+    noProfile,
     phone: clean(source.phone, limits.phone),
     website: classifiedProfile?.website || '',
     instagram: classifiedProfile?.instagram || '',
-    message: clean(source.message, limits.message),
+    message: clean(source.message, limits.message + 1),
   };
 
   const errors: Record<string, string> = {};
@@ -123,11 +128,16 @@ export function validateLead(input: unknown): LeadValidationResult {
     errors.email = 'Tarkista sähköpostiosoite.';
   }
 
+  if (!noProfile && !profile) {
+    errors.profile = 'Anna verkkosivu tai Instagram tai valitse, ettei niitä vielä ole.';
+  } else if (!noProfile && !classifiedProfile) {
   if (!profile) {
     errors.profile = 'Anna verkkosivu, Instagram tai valitse Ei vielä kumpaakaan.';
   } else if (!classifiedProfile) {
     errors.profile = 'Anna verkkosivu (esim. yritys.fi) tai Instagram (@yritys).';
   }
+
+  if ((data.message?.length || 0) > limits.message) errors.message = 'Viesti saa olla enintään 1 200 merkkiä.';
 
   if (Object.keys(errors).length > 0) {
     return { ok: false, errors };

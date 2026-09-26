@@ -187,7 +187,8 @@ try {
         formMethod: form?.getAttribute('method')?.toLowerCase() || '',
         formAction: form?.getAttribute('action') || '',
         submitRect: rect(submit),
-        requiredFields: ['company','name','email','profile'].every((name) => Boolean(form?.querySelector('[name="' + name + '"][required]'))),
+        profileChoice: Boolean(form?.querySelector('input[name="profile"][maxlength="300"]')) && Boolean(form?.querySelector('input[name="noProfile"][type="checkbox"]')),
+        requiredFields: ['company','name','email'].every((name) => Boolean(form?.querySelector('[name="' + name + '"][required]'))),
         proofExists: Boolean(proof),
         proofImageLoaded: document.querySelector('.ghSelectedScreenshot')?.naturalWidth > 100,
         seoSelected: form?.querySelector('select[name="service"]') !== null,
@@ -312,6 +313,7 @@ try {
       `${viewport.width}x${viewport.height}: own work must open a useful case study instead of the current homepage.`);
     assert(metrics.resourceLinks === 2 && metrics.proposalIntent, `${viewport.width}x${viewport.height}: resources or general proposal intent missing.`);
     assert(metrics.formExists && metrics.formMethod === 'post' && metrics.formAction === '/api/leads', `${viewport.width}x${viewport.height}: native lead form contract missing.`);
+    assert(metrics.profileChoice, `${viewport.width}x${viewport.height}: profile or explicit no-profile choice missing.`);
     assert(metrics.requiredFields, `${viewport.width}x${viewport.height}: required lead fields missing.`);
     assert(metrics.submitRect?.height >= 44, `${viewport.width}x${viewport.height}: submit target below 44px.`);
     assert(metrics.proofExists && metrics.logoLoaded, `${viewport.width}x${viewport.height}: company proof or logo missing.`);

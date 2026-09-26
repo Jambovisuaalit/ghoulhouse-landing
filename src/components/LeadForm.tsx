@@ -1,6 +1,7 @@
 'use client';
 
 import { FormEvent, useRef, useState } from 'react';
+import ProfileChoice from '@/components/ProfileChoice';
 import { trackEvent } from '@/lib/analytics';
 import { confirmationPath, type LeadService } from '@/lib/lead-confirmation';
 import { NO_PROFILE_YET } from '@/lib/lead';
@@ -201,7 +202,6 @@ export default function LeadForm({ compact = false, mode = 'social', defaultServ
           <input
             id="lead-profile"
             name="profile"
-            required
             maxLength={300}
             list="lead-profile-options"
             value={profileValue}
@@ -210,6 +210,7 @@ export default function LeadForm({ compact = false, mode = 'social', defaultServ
             placeholder="yritys.fi tai @yritys"
             {...a11yErrorProps('profile', fieldErrors)}
           />
+          <ProfileChoice />
           <datalist id="lead-profile-options">
             <option value={NO_PROFILE_YET} />
           </datalist>
@@ -228,6 +229,7 @@ export default function LeadForm({ compact = false, mode = 'social', defaultServ
           <FieldError name="profile" errors={fieldErrors} />
         </div>
 
+        {!proposal && <input type="hidden" name="service" value="social" />}
         {proposal && (
           <div className="fieldGroup">
             <label htmlFor="lead-service">Mistä palvelusta olet kiinnostunut?</label>
@@ -273,7 +275,7 @@ export default function LeadForm({ compact = false, mode = 'social', defaultServ
         ) : (
           <>
             <div className="fieldGroup">
-              <label htmlFor="lead-message">Mitä materiaalia sinulla on?</label>
+              <label htmlFor="lead-message">{proposal ? "Mitä haluat parantaa?" : "Mitä materiaalia sinulla on?"}</label>
               <textarea
                 id="lead-message"
                 name="message"

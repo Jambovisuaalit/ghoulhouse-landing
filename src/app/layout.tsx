@@ -1,3 +1,4 @@
+import FunnelAnalytics from '@/components/analytics/FunnelAnalytics';
 import type { Metadata, Viewport } from 'next';
 import { Anton, Montserrat } from 'next/font/google';
 import { siteConfig } from '@/config/site';
@@ -123,6 +124,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="fi">
       <body className={anton.variable + ' ' + montserrat.variable}>
         <GoogleAnalytics />
+        <FunnelAnalytics />
         <ResponsiveNavState />
         <SiteChrome>{children}</SiteChrome>
         <AnalyticsConsent />

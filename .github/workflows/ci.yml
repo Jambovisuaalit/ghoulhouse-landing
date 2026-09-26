@@ -10,15 +10,19 @@ on:
 
 permissions:
   contents: read
+  deployments: read
+  pull-requests: read
 
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -30,6 +34,9 @@ jobs:
 
       - name: Audit production dependencies
         run: npm audit --omit=dev --audit-level=high
+
+      - name: Lead regression tests
+        run: node --test tests/*.test.mjs
 
       - name: Typecheck
         run: npm run typecheck
@@ -243,6 +250,21 @@ jobs:
       - name: Full-page responsive and consent QA
         run: node scripts/homepage-fullpage-qa.mjs
 
+      - name: Resolve exact PR preview
+        if: github.event_name == 'pull_request'
+        id: preview
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          QA_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          QA_PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: node scripts/resolve-preview.mjs
+
+      - name: Vercel Preview full-page responsive QA
+        if: github.event_name == 'pull_request'
+        env:
+          QA_BASE_URL: ${{ steps.preview.outputs.url }}
+          QA_SCREENSHOT_DIR: qa-artifacts/preview
+        run: node scripts/homepage-fullpage-qa.mjs
       # Never run release assertions against a hard-coded, older Preview SHA.
       # The full-page job above tests this exact checkout's production build;
       # the matching Vercel Preview is checked by SHA before PR merge.
@@ -266,6 +288,15 @@ jobs:
           }
           console.log('Consent CSS single-source QA PASS');
           NODE
+
+      - name: Recheck preview SHA after QA
+        if: github.event_name == 'pull_request'
+        env:
+          QA_RECHECK_URL: ${{ steps.preview.outputs.url }}
+          GITHUB_TOKEN: ${{ github.token }}
+          QA_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          QA_PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: node scripts/resolve-preview.mjs
 
       - name: Launch visual and accessibility QA
         run: node scripts/launch-visual-a11y-qa.mjs

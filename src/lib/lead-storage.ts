@@ -40,7 +40,7 @@ function getSupabaseConfig() {
 export async function storeLead(lead: LeadInput) {
   const { url, publishableKey } = getSupabaseConfig();
 
-  const response = await fetch(`${url}/rest/v1/rpc/submit_ghoulhouse_lead`, {
+  const response = await fetch(`${url}/rest/v1/rpc/submit_ghoulhouse_lead_v2`, {
     method: 'POST',
     headers: {
       apikey: publishableKey,
@@ -56,9 +56,9 @@ export async function storeLead(lead: LeadInput) {
       p_phone: lead.phone || null,
       p_website: lead.website || null,
       p_instagram: lead.instagram || null,
-      p_message: lead.service
-        ? `Palvelu: ${{ websites: 'Verkkosivut', social: 'Social', seo: 'SEO' }[lead.service]}\n${lead.message || ''}`.trim()
-        : lead.message || null,
+      p_message: lead.message || null,
+      p_service: lead.service || (lead.intent === 'photos' ? 'social' : null),
+      p_no_profile: lead.noProfile,
     }),
     cache: 'no-store',
   });
