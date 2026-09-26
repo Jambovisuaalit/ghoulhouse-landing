@@ -1,5 +1,6 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import { trackEvent, type FunnelEvent } from '@/lib/analytics';
 
@@ -12,6 +13,7 @@ const observedSections: Array<{
 ];
 
 export default function FunnelAnalytics() {
+  const pathname = usePathname();
   useEffect(() => {
     const handleAnalyticsReady = () => trackEvent('page_view');
     if (window.localStorage.getItem('ghoulhouse_analytics_consent') === 'accepted') {
@@ -26,10 +28,10 @@ export default function FunnelAnalytics() {
       const link = target.closest<HTMLAnchorElement>('a[href="#yhteys"]');
       if (!link) return;
 
-      trackEvent('primary_cta_click', {
+      const intent = document.querySelector<HTMLInputElement>('form input[name="intent"]')?.value === 'photos' ? 'photos' : 'booking';
+      trackEvent(intent === 'photos' ? 'photo_demo_cta_click' : 'proposal_cta_click', {
         location: link.closest('header') ? 'navigation' : link.closest('#top') ? 'hero' : 'page',
       });
-      trackEvent('photo_demo_cta_click');
     };
 
     document.addEventListener('click', handleClick);
@@ -71,7 +73,7 @@ export default function FunnelAnalytics() {
       document.removeEventListener('click', handleClick);
       observer.disconnect();
     };
-  }, []);
+  }, [pathname]);
 
   return null;
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { FormEvent, useRef, useState } from 'react';
+import ProfileChoice from '@/components/ProfileChoice';
 import { trackEvent } from '@/lib/analytics';
 import { confirmationPath, type LeadService } from '@/lib/lead-confirmation';
 
@@ -199,14 +200,15 @@ export default function LeadForm({ compact = false, mode = 'social', defaultServ
           <input
             id="lead-profile"
             name="profile"
-            required
             maxLength={300}
             placeholder="yritys.fi tai @yritys"
             {...a11yErrorProps('profile', fieldErrors)}
           />
+          <ProfileChoice />
           <FieldError name="profile" errors={fieldErrors} />
         </div>
 
+        {!proposal && <input type="hidden" name="service" value="social" />}
         {proposal && (
           <div className="fieldGroup">
             <label htmlFor="lead-service">Mistä palvelusta olet kiinnostunut?</label>

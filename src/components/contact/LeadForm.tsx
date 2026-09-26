@@ -2,6 +2,7 @@
 
 import { FormEvent, useRef, useState } from 'react';
 import { siteConfig } from '@/config/site';
+import ProfileChoice from '@/components/ProfileChoice';
 import { trackEvent } from '@/lib/analytics';
 import { validateLead } from '@/lib/lead';
 
@@ -129,7 +130,8 @@ export default function LeadForm() {
         error={fieldErrors.profile}
         hint="Esim. yritys.fi tai @yritys"
       >
-        <input id="lead-profile" name="profile" required maxLength={300} autoComplete="url" placeholder="yritys.fi tai @yritys" className="form-control" />
+        <input id="lead-profile" name="profile" maxLength={300} autoComplete="url" placeholder="yritys.fi tai @yritys" className="form-control" />
+        <ProfileChoice />
       </Field>
 
       <details className="border-y border-white/20">

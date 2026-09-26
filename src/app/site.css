@@ -25,3 +25,5 @@
 @media (min-width:640px){.websiteCards{grid-template-columns:repeat(2,1fr)}.websiteResourceGrid{grid-template-columns:repeat(3,1fr)}}
 @media (min-width:768px){.websiteHero{padding:82px 0 100px}.websiteHeroGrid{grid-template-columns:1.12fr .88fr;gap:70px}.websiteFactGrid{grid-template-columns:repeat(3,1fr);gap:0}.websiteFactGrid>div{min-height:128px;border-right:1px solid rgba(255,255,255,.14);border-bottom:0;padding:24px 24px 24px 0}.websiteFactGrid>div+div{padding-left:24px}.websiteFactGrid>div:last-child{border-right:0}.websiteSection{padding:96px 0}.websiteTwoCol{grid-template-columns:.8fr 1.2fr;gap:72px}.websiteCards{grid-template-columns:repeat(3,1fr)}.websiteVerticalNav{grid-template-columns:1fr}.websitePriceGrid{grid-template-columns:.8fr 1.2fr;gap:72px}}
 @media (min-width:1024px){.websiteCards article{min-height:220px}.websiteHeroCopy h1{font-size:clamp(62px,6vw,92px)}}
+
+.leadForm .profileChoice{display:flex;align-items:center;gap:12px;min-height:44px;font-size:14px;font-weight:500}.leadForm .profileChoice input[type=checkbox]{width:20px;height:20px;min-height:20px;padding:0;flex-shrink:0;accent-color:#C9282D}

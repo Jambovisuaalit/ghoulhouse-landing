@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import LeadForm from '@/components/LeadForm';
-import FunnelAnalytics from '@/components/analytics/FunnelAnalytics';
 import './homepage.css';
 
 const navigation = [
@@ -79,7 +78,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
   return (
     <div className="homePage">
       <a className="skipLink" href="#main">Siirry pääsisältöön</a>
-      <FunnelAnalytics />
+
       <header className="ghHeader">
         <div className="ghShell ghHeaderInner">
           <Brand />
