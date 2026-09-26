@@ -444,3 +444,35 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Visual-QA refinement: legacy homepage/global h3 rules were making footer
+   column headings twice as large and clipping the contact column on mobile. */
+.homePage .ghFooter.ghLiquidFooter :is(.ghLiquidFooterNav,.ghLiquidFooterContact) h3,
+.ghGlobalFooter.ghLiquidFooter :is(.ghLiquidFooterNav,.ghLiquidFooterContact) h3 {
+  margin: 7px 0 18px;
+  max-width: 100%;
+  color: #f7f4ef;
+  font-family: var(--font-body), Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: .095em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 767px) {
+  .homePage .ghFooter.ghLiquidFooter :is(.ghLiquidFooterNav,.ghLiquidFooterContact) h3,
+  .ghGlobalFooter.ghLiquidFooter :is(.ghLiquidFooterNav,.ghLiquidFooterContact) h3 {
+    margin: 0 0 11px;
+    font-size: 11px;
+    letter-spacing: .055em;
+  }
+}
+@media (max-width: 359px) {
+  .ghLiquidFooterLinks {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 29px;
+  }
+  .ghLiquidFooterBrandBlock { grid-column: 1; }
+  .ghLiquidFooterContact>a { overflow-wrap: normal; }
+}
