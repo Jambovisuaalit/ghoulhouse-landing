@@ -1408,3 +1408,213 @@ body:has(.homePage) .analyticsSettings {
 @media (prefers-reduced-motion: reduce), (pointer: coarse) {
   .homePage .ghHeroDotGrid canvas { display: none; }
 }
+
+/* 3D service carousel: editorial cards are real links; non-JS mode is a
+   readable three-column layout, with no hidden text or external library. */
+.homePage .gh3dCarousel {
+  margin-top: 56px;
+  width: 100%;
+  min-width: 0;
+}
+.homePage .gh3dStage {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.homePage .gh3dCard {
+  min-width: 0;
+  min-height: 420px;
+  background: #fffdf9;
+  border: 1px solid #11111135;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  color: #111111;
+}
+.homePage .gh3dCardMedia {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  background: #e6dfd5;
+  overflow: hidden;
+  flex: none;
+}
+.homePage .gh3dCardMedia--web {
+  background: #111111;
+}
+.homePage .gh3dScreenshot {
+  object-fit: cover;
+  object-position: center top;
+}
+.homePage .gh3dSocialConcept,
+.homePage .gh3dIndustryConcept {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 17px 19px;
+}
+.homePage .gh3dSocialConcept { background: #e6dfd5; }
+.homePage .gh3dIndustryConcept { background: #111111; color: #f7f4ef; }
+.homePage .gh3dSocialConcept > span,
+.homePage .gh3dIndustryConcept > span {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  line-height: 1.35;
+}
+.homePage .gh3dSocialConcept strong,
+.homePage .gh3dIndustryConcept strong {
+  font-family: var(--font-display), Impact, sans-serif;
+  font-size: clamp(25px, 2.5vw, 38px);
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: -.01em;
+}
+.homePage .gh3dSocialConcept strong { color: #111111; }
+.homePage .gh3dIndustryConcept > span:first-child { color: #f7f4ef; }
+.homePage .gh3dIndustryConcept > span:last-child { color: #f7f4ef; border-top: 2px solid #c9282d; padding-top: 8px; }
+.homePage .gh3dCardType {
+  margin-top: 18px;
+  color: #625a53;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .065em;
+}
+.homePage .gh3dCard h3 {
+  margin-top: 7px;
+  font-size: 23px;
+  line-height: 1.26;
+}
+.homePage .gh3dCard > p {
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #514e49;
+}
+.homePage .gh3dCardLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: fit-content;
+  min-height: 44px;
+  margin-top: auto;
+  border-bottom: 1px solid #111111;
+  font-size: 14px;
+  font-weight: 700;
+}
+.homePage .gh3dCardLink:hover { color: #c9282d; border-color: #c9282d; }
+.homePage .gh3dCardLink span { font-size: 22px; line-height: 1; }
+.homePage .gh3dDisclosure {
+  display: block;
+  font-size: 10px;
+  line-height: 1.45;
+  margin-top: 6px;
+  color: #514e49;
+}
+.homePage .gh3dControls {
+  display: none;
+  align-items: center;
+  gap: 16px;
+  min-height: 56px;
+  margin-top: 14px;
+}
+.homePage .gh3dCounter {
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.homePage .gh3dHint { font-size: 12px; color: #514e49; }
+.homePage .gh3dButtons { display: flex; gap: 8px; margin-left: auto; }
+.homePage .gh3dButtons button {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #111111;
+  border-radius: 0;
+  background: transparent;
+  color: #111111;
+  font-size: 23px;
+  cursor: pointer;
+}
+.homePage .gh3dButtons button:hover { background: #c9282d; color: #ffffff; border-color: #c9282d; }
+.homePage .gh3dCarousel.is-ready .gh3dStage {
+  display: block;
+  isolation: isolate;
+  height: 490px;
+  overflow: hidden;
+  perspective: 1400px;
+  touch-action: pan-y;
+}
+.homePage .gh3dCarousel.is-ready .gh3dCard {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  width: min(53%, 550px);
+  height: 462px;
+  min-height: 0;
+  overflow: hidden;
+  will-change: transform;
+  transform-origin: center center;
+  transition: transform 450ms cubic-bezier(.22, .61, .36, 1),
+    opacity 450ms ease, border-color 150ms ease;
+}
+.homePage .gh3dCarousel.is-ready .gh3dCard[data-slot="center"] {
+  z-index: 3;
+  opacity: 1;
+  border-color: #111111;
+  transform: translateX(-50%) translateZ(52px) rotateY(0deg) scale(1);
+}
+.homePage .gh3dCarousel.is-ready .gh3dCard[data-slot="left"] {
+  z-index: 1;
+  opacity: .73;
+  transform: translateX(calc(-50% - min(20vw, 260px))) rotateY(25deg) scale(.82);
+}
+.homePage .gh3dCarousel.is-ready .gh3dCard[data-slot="right"] {
+  z-index: 2;
+  opacity: .73;
+  transform: translateX(calc(-50% + min(20vw, 260px))) rotateY(-25deg) scale(.82);
+}
+.homePage .gh3dCarousel.is-ready .gh3dCard[data-skip="true"] { transition: none; }
+.homePage .gh3dCarousel.is-ready .gh3dControls { display: flex; }
+/* Side cards provide visual depth; only the centered card can be opened. */
+.homePage .gh3dCarousel.is-ready .gh3dCard:not([data-slot="center"]) .gh3dCardLink { display: none; }
+@media (max-width: 1023px) {
+  .homePage .gh3dCarousel.is-ready .gh3dCard { width: min(67%, 470px); }
+}
+@media (max-width: 767px) {
+  .homePage .gh3dCarousel { margin-top: 38px; }
+  .homePage .gh3dStage { grid-template-columns: 1fr; gap: 12px; }
+  .homePage .gh3dCarousel.is-ready .gh3dStage { height: 445px; }
+  .homePage .gh3dCarousel.is-ready .gh3dCard {
+    width: min(82%, 365px);
+    height: 422px;
+    padding: 15px;
+    top: 6px;
+  }
+  /* Below tablet widths a single readable focused card is preferable to
+     half-clipped side CTAs; controls still wrap through all three items. */
+  .homePage .gh3dCarousel.is-ready .gh3dCard:not([data-slot="center"]) { display: none; }
+  .homePage .gh3dCardMedia { height: 162px; }
+  .homePage .gh3dCard h3 { font-size: 21px; }
+  .homePage .gh3dSocialConcept strong,
+  .homePage .gh3dIndustryConcept strong { font-size: 30px; }
+  .homePage .gh3dHint { font-size: 11px; }
+}
+@media (max-width: 359px) {
+  .homePage .gh3dCarousel.is-ready .gh3dCard { width: 82%; }
+  /* Perspective magnifies and displaces the focused card at 320px.
+     Keep the centered card flat and fully inside the viewport. */
+  .homePage .gh3dCarousel.is-ready .gh3dCard[data-slot="center"] {
+    transform: translateX(-50%) translateZ(0) rotateY(0) scale(1);
+  }
+  .homePage .gh3dCard h3 { font-size: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .homePage .gh3dCarousel.is-ready .gh3dCard { transition: none; }
+}

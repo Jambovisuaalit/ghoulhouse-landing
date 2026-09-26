@@ -186,6 +186,9 @@ try {
         seoSelected: form?.querySelector('select[name="service"]') !== null,
         serviceLinks: ['/verkkosivut-yritykselle','/some-sisallontuotanto','/?service=seo#yhteys'].every((href) => document.querySelector('.ghServiceCard a[href="' + href + '"]')),
         serviceCards: document.querySelectorAll('.ghServiceCard').length,
+        carouselCards: document.querySelectorAll('.gh3dCarousel .gh3dCard').length,
+        carouselLinks: [...document.querySelectorAll('.gh3dCarousel .gh3dCardLink')].map((a) => a.getAttribute('href')),
+        carouselRegion: document.querySelector('.gh3dCarousel')?.getAttribute('aria-roledescription') || '',
         resourceLinks: document.querySelectorAll('.ghGuideRow').length,
         proposalIntent: form?.querySelector('[name="intent"]')?.value === 'booking',
         schemaTypes: [...document.querySelectorAll('script[type="application/ld+json"]')].map((script) => script.textContent || '').join(' '),
@@ -223,6 +226,8 @@ try {
     assert(metrics.heroCtaHref === '#yhteys', `${viewport.width}x${viewport.height}: primary CTA must target #yhteys.`);
     assert(/pyydä ehdotus/i.test(metrics.heroCtaText), `${viewport.width}x${viewport.height}: company CTA missing.`);
     assert(metrics.serviceLinks && metrics.serviceCards === 3, `${viewport.width}x${viewport.height}: three service links missing.`);
+    assert(metrics.carouselCards === 3 && metrics.carouselRegion === 'karuselli', `${viewport.width}x${viewport.height}: 3D carousel cards or semantics missing.`);
+    assert(['/verkkosivut-yritykselle','/some-sisallontuotanto','/verkkosivut/rakennus'].every((href) => metrics.carouselLinks.includes(href)), `${viewport.width}x${viewport.height}: a carousel link is missing.`);
     assert(metrics.resourceLinks === 3 && metrics.proposalIntent, `${viewport.width}x${viewport.height}: resources or general proposal intent missing.`);
     assert(metrics.formExists && metrics.formMethod === 'post' && metrics.formAction === '/api/leads', `${viewport.width}x${viewport.height}: native lead form contract missing.`);
     assert(metrics.requiredFields, `${viewport.width}x${viewport.height}: required lead fields missing.`);
@@ -290,6 +295,25 @@ try {
   assert(interaction.focused, 'Primary CTA is not keyboard-focusable.');
   assert(interaction.hash === '#yhteys', 'Primary CTA did not navigate to #yhteys.');
   assert(interaction.formExists && interaction.submitTabIndex >= 0, 'Lead form or submit keyboard access missing.');
+
+  // An infinite carousel must wrap in both directions without changing links.
+  const carouselInteraction = await evaluate(client, `(() => {
+    const region = document.querySelector('.gh3dCarousel');
+    const next = region?.querySelector('[aria-label="Seuraava palveluesittely"]');
+    const previous = region?.querySelector('[aria-label="Edellinen palveluesittely"]');
+    const counter = () => region?.querySelector('.gh3dCounter')?.textContent?.replace(/\\s+/g,' ').trim();
+    const before = counter();
+    next?.click();
+    return { before, nextExists: Boolean(next), previousExists: Boolean(previous) };
+  })()`);
+  assert(carouselInteraction.nextExists && carouselInteraction.previousExists, 'Carousel navigation controls missing after hydration.');
+  await sleep(120);
+  const nextCounter = await evaluate(client, 'document.querySelector(".gh3dCounter")?.textContent?.replace(/\\s+/g," ").trim()');
+  assert(nextCounter === '02 / 03', `3D carousel did not advance: ${nextCounter}`);
+  await evaluate(client, 'document.querySelector("[aria-label=\\"Edellinen palveluesittely\\"]")?.click()');
+  await sleep(120);
+  const wrappedCounter = await evaluate(client, 'document.querySelector(".gh3dCounter")?.textContent?.replace(/\\s+/g," ").trim()');
+  assert(wrappedCounter === '01 / 03', `3D carousel did not navigate backward: ${wrappedCounter}`);
 
   await client.send('Emulation.setEmulatedMedia', { media: '', features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
   await client.send('Page.navigate', { url: BASE_URL });

@@ -46,6 +46,9 @@ for (const name of ['company', 'name', 'email', 'profile']) {
   assert(html.includes(`name="${name}"`), `No-JS QA: ${name} field is missing.`);
 }
 assert(/Oma sivusto — ei asiakasreferenssi/i.test(html), 'No-JS QA: honest own-work disclosure is missing.');
+assert((html.match(/gh3dCardLink/g) || []).length >= 3, 'No-JS QA: the three carousel items are not rendered as ordinary static service links.');
+assert(html.includes('Palvelun havainne-esittely — ei asiakastyö.'), 'No-JS QA: carousel concept disclosure missing.');
+assert(html.includes('href="/verkkosivut/rakennus"'), 'No-JS QA: industry carousel link missing.');
 assert(!html.includes('Kuva luotu tekoälyllä'), 'No-JS QA: AI concept still dominates company homepage.');
 assert(!html.includes('logo-horizontal.svg') && !html.includes('logo-horizontal-white.svg'), 'No-JS QA: unavailable/fabricated logo lockup referenced.');
 
