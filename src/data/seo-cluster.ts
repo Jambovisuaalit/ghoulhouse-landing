@@ -64,7 +64,7 @@ export const seoClusterPages: Record<string, SeoClusterPage> = {
     headings: {
       challenge: 'MIKSI INSTAGRAM-PROFIILI HILJENEE?',
       examples: 'FEEDIIN SOPIVAT JULKAISUMUODOT.',
-      process: 'KUVISTA INSTAGRAMIN JULKAISURYTMIIIN.',
+      process: 'KUVISTA INSTAGRAMIN JULKAISURYTMIIN.',
       faq: 'INSTAGRAM-SISÄLTÖJEN KÄYTÄNNÖN KYSYMYKSET.',
       related: 'INSTAGRAMIN RINNALLA MYÖS NÄMÄ.',
     },
