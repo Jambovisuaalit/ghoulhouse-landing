@@ -296,6 +296,21 @@ try {
   assert(interaction.hash === '#yhteys', 'Primary CTA did not navigate to #yhteys.');
   assert(interaction.formExists && interaction.submitTabIndex >= 0, 'Lead form or submit keyboard access missing.');
 
+  // The previously mandatory profile field must support companies with no channels.
+  const noProfile = await evaluate(client, `(() => ({
+    control: Boolean(document.querySelector('#yhteys .leadProfileNoWebsite')),
+    initiallyEmpty: document.querySelector('#yhteys input[name="profile"]')?.value === '',
+  }))()`);
+  assert(noProfile.control && noProfile.initiallyEmpty, 'Accessible no-profile choice missing from proposal form.');
+  await evaluate(client, 'document.querySelector("#yhteys .leadProfileNoWebsite")?.click()');
+  await sleep(100);
+  const selectedNoProfile = await evaluate(client, `(() => ({
+    profile: document.querySelector('#yhteys input[name="profile"]')?.value,
+    pressed: document.querySelector('#yhteys .leadProfileNoWebsite')?.getAttribute('aria-pressed'),
+  }))()`);
+  assert(selectedNoProfile.profile === 'Ei vielä verkkosivua tai Instagramia' && selectedNoProfile.pressed === 'true',
+    'No-profile selection did not set the lead value.');
+
   // An infinite carousel must wrap in both directions without changing links.
   const carouselInteraction = await evaluate(client, `(() => {
     const region = document.querySelector('.gh3dCarousel');

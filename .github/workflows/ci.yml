@@ -37,6 +37,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Lead profile validation QA
+        run: node scripts/lead-profile-qa.mjs
+
       - name: Build
         run: npm run build
 

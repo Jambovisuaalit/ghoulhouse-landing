@@ -4,7 +4,9 @@ import { siteConfig } from '@/config/site';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import AnalyticsConsent from '@/components/analytics/AnalyticsConsent';
 import ResponsiveNavState from '@/components/ResponsiveNavState';
+import SiteChrome from '@/components/SiteChrome';
 import './site.css';
+import './global-chrome.css';
 
 const anton = Anton({
   weight: '400',
@@ -117,7 +119,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={anton.variable + ' ' + montserrat.variable}>
         <GoogleAnalytics />
         <ResponsiveNavState />
-        {children}
+        <SiteChrome>{children}</SiteChrome>
         <AnalyticsConsent />
         <script
           type="application/ld+json"

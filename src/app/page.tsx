@@ -17,14 +17,14 @@ const services = [
   {
     index: '01',
     title: 'VERKKOSIVUT',
-    body: 'Selkeä palvelurakenne, oma työnäyttö ja yhteydenotto samassa toimivassa kokonaisuudessa.',
+    body: 'Mobiilissa toimiva sivusto: palvelurakenne, hyväksytty työnäyttö, yhteydenotto ja tekninen SEO samassa toteutuksessa.',
     href: '/verkkosivut-yritykselle',
     link: 'Tutustu verkkosivuihin',
   },
   {
     index: '02',
     title: 'SOCIAL',
-    body: 'Oman työn kuvat ja faktat suunnitelluiksi julkaisuiksi Instagramiin ja Facebookiin.',
+    body: '12 suunniteltua sisältöä 30 päivässä asiakkaan omista kuvista ja faktoista, Instagramiin ja Facebookiin. Yksi korjauskierros.',
     meta: 'SOME 12 · 12 sisältöä / 30 päivää · 490 € + ALV',
     href: '/some-sisallontuotanto',
     link: 'Tutustu sisällöntuotantoon',
@@ -32,7 +32,7 @@ const services = [
   {
     index: '03',
     title: 'SEO',
-    body: 'Hakukonenäkyvyyden perusta: ymmärrettävät sisällöt, sivurakenne ja löydettävät palvelut.',
+    body: 'Hakukonenäkyvyyden tekninen ja sisällöllinen perusta: sivurakenne, palvelutekstit, metatiedot ja sisäinen linkitys.',
     href: '/?service=seo#yhteys',
     link: 'Pyydä SEO-ehdotus',
   },
@@ -137,11 +137,13 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
                 </div>
                 <figcaption>02 / GHOULHOUSE — VISUAALINEN IDENTITEETTI</figcaption>
               </figure>
-              <figure className="ghSwissTile ghSwissTile--site">
-                <div className="ghSwissTileImage">
-                  <Image src="/ghoulhouse-site-proof.png" alt="GhoulHousen aiemmin julkaistun etusivun kuvakaappaus." fill sizes="(max-width: 767px) 33vw, 34vw" priority />
+              <figure className="ghSwissTile ghSwissTile--system">
+                <div className="ghSwissTileSystem" aria-label="GhoulHousen palvelumallin visuaalinen esitys">
+                  <span className="ghSwissTileSerial">GH / 003 — SERVICE SYSTEM</span>
+                  <strong>WEB.<br />SOCIAL.<br />SEO<span>.</span></strong>
+                  <span className="ghSwissTileSystemRule">YKSI SELKEÄ KOKONAISUUS <span aria-hidden="true">↗</span></span>
                 </div>
-                <figcaption>03 / OMA VERKKOSIVUTOTEUTUS</figcaption>
+                <figcaption>03 / PALVELUMALLI — HAVAINNE</figcaption>
               </figure>
             </aside>
           </div>
