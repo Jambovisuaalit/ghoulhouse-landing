@@ -175,6 +175,15 @@ try {
         heroCtaRect: rect(heroCta),
         priceRect: rect(price),
         h1Rect: rect(h1),
+        heroLineMetrics: (() => {
+          const lines = [...(h1?.querySelectorAll(':scope > span') || [])];
+          const style = h1 ? getComputedStyle(h1) : null;
+          return {
+            lines: lines.map((line) => ({ text: line.textContent?.trim(), rect: rect(line), display: getComputedStyle(line).display })),
+            fontSize: style ? parseFloat(style.fontSize) : null,
+            lineHeight: style ? parseFloat(style.lineHeight) : null,
+          };
+        })(),
         brandRect: rect(brandLink),
         formExists: Boolean(form),
         formMethod: form?.getAttribute('method')?.toLowerCase() || '',
@@ -250,6 +259,15 @@ try {
     assert(metrics.h1Count === 1, `${viewport.width}x${viewport.height}: expected exactly one H1.`);
     assert(metrics.brandHeadlineText.includes('HYVÄ TYÖ') && metrics.brandHeadlineText.includes('PITÄÄ NÄKYÄ.'), `${viewport.width}x${viewport.height}: company headline missing.`);
     assert(metrics.h1Text.includes('HYVÄ TYÖ') && metrics.h1Text.includes('PITÄÄ NÄKYÄ'), `${viewport.width}x${viewport.height}: H1 copy changed unexpectedly.`);
+    const heroLines = metrics.heroLineMetrics;
+    assert(heroLines.lines.length === 2 &&
+      heroLines.lines[0].text === 'HYVÄ TYÖ' && heroLines.lines[1].text === 'PITÄÄ NÄKYÄ.' &&
+      heroLines.lines.every((line) => line.display === 'block'),
+      `${viewport.width}x${viewport.height}: Finnish hero must render as two separate blocks: ${JSON.stringify(heroLines)}`);
+    assert(heroLines.lineHeight / heroLines.fontSize >= 1.10 &&
+      heroLines.lines[0].rect.bottom <= heroLines.lines[1].rect.top + 1 &&
+      heroLines.lines[1].rect.top - heroLines.lines[0].rect.top >= heroLines.fontSize * 1.10 - 1,
+      `${viewport.width}x${viewport.height}: hero Ä/Ö accents risk overlapping due to line spacing: ${JSON.stringify(heroLines)}`);
     assert(metrics.heroCtaHref === '#yhteys', `${viewport.width}x${viewport.height}: primary CTA must target #yhteys.`);
     assert(/pyydä ehdotus/i.test(metrics.heroCtaText), `${viewport.width}x${viewport.height}: company CTA missing.`);
     assert(metrics.serviceLinks && metrics.serviceCards === 3, `${viewport.width}x${viewport.height}: three service links missing.`);
