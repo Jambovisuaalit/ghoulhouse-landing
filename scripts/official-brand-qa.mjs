@@ -26,6 +26,7 @@ const svg = [
   ['/ghoulhouse-mark.svg', '512', '#C83830'],
   ['/ghoulhouse-mark-reverse.svg', '512', '#FFFFFF'],
   ['/ghoulhouse-wordmark-white.svg', '1000', '#FFFFFF'],
+  ['/ghoulhouse-wordmark-black.svg', '1000', '#161411'],
 ];
 for (const [path, width, fill] of svg) {
   const response = await fetch(BASE + path);
@@ -48,7 +49,9 @@ const results = await Promise.all(pages.map(async path => {
   const response = await fetch(BASE + path, { headers: { Accept: 'text/html' } });
   const html = await response.text();
   assert.equal(response.status, 200, 'Page HTTP status: ' + path);
-  assert(html.includes('/ghoulhouse-logo.svg'), 'Official primary logo missing from header: ' + path);
+  assert(html.includes('/ghoulhouse-logo.svg'), 'Official desktop logo missing from header: ' + path);
+  assert(html.includes('/ghoulhouse-wordmark-black.svg') && html.includes('ghOfficialMobileLockup'),
+    'Official compact mobile wordmark missing from header: ' + path);
   assert(html.includes('/ghoulhouse-logo-reverse.svg'),
     'Official reverse logo missing from shared footer: ' + path);
   assert(html.includes('/ghoulhouse-wordmark-white.svg'),
@@ -62,5 +65,5 @@ assert.equal(manifestResponse.status, 200, 'Manifest unavailable');
 const manifest = await manifestResponse.json();
 assert(['/favicon.svg', '/brand-icons/192', '/brand-icons/512'].every(p =>
   manifest.icons.some(icon => icon.src === p)), 'Manifest does not point to official logo assets.');
-console.log('Official brand QA PASS: 19/19 page headers, shared footers, 6 SVGs, Apple/PWA PNGs, metadata, manifest and sitemap coverage.');
+console.log('Official brand QA PASS: 19/19 page headers, shared footers, 7 SVGs, Apple/PWA PNGs, metadata, manifest and sitemap coverage.');
 console.log(JSON.stringify(results));
