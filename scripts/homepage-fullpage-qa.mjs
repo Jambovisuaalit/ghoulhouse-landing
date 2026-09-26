@@ -73,12 +73,21 @@ async function auditViewport() {
   else {
     const style=getComputedStyle(consent),r=rect(consent);
     if(style.position==='fixed'||style.position==='absolute')errors.push('Consent is overlaid: position='+style.position);
+    if(style.backgroundColor !== 'rgb(247, 244, 239)' || style.borderLeftColor !== 'rgb(201, 40, 45)' ||
+       style.boxShadow !== 'none')errors.push('Home consent is not the approved in-flow GhoulHouse editorial strip');
+    const heading=consent.querySelector('h2'),headingStyle=heading?getComputedStyle(heading):null;
+    if(!heading || !headingStyle || headingStyle.position!=='static' || rect(heading).height < 18)
+      errors.push('Consent heading hidden or inheriting obsolete default styles');
+    if(consent.querySelector('.kicker,.button'))errors.push('Default kicker/button classes leaked into branded consent');
     if(r.left < -1||r.right>innerWidth+1)errors.push('Consent overflows horizontally');
     const heroCTA=rect(document.querySelector('#top .ghHeroActions a'));
     if(intersects(r,heroCTA))errors.push('Consent overlaps hero CTA');
     const controls=[...consent.querySelectorAll('button')];
     if(controls.length!==2||!consent.querySelector('a[href="/tietosuoja"]'))errors.push('Consent actions or privacy link missing');
     if(controls.length===2&&intersects(rect(controls[0]),rect(controls[1])))errors.push('Consent buttons overlap');
+    if(controls.length===2 && (controls.some(btn=>rect(btn).height<44) ||
+       Math.abs(rect(controls[0]).height-rect(controls[1]).height)>2))
+      errors.push('Consent accept and reject controls must be equally prominent and at least 44px tall');
     consent.scrollIntoView({behavior:'instant',block:'center'});
     await sleep(75);
     for(const control of [...controls,...consent.querySelectorAll('a[href="/tietosuoja"]')])
