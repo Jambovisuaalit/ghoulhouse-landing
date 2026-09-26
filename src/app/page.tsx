@@ -46,9 +46,9 @@ const steps = [
 ] as const;
 
 const proofLinks = [
-  ['WEBSITES', 'Palvelut ja yhteydenotto', 'Julkaistu GhoulHousen verkkosivurakenne.', '/verkkosivut-yritykselle'],
-  ['SOCIAL', 'Sisältötuotannon malli', 'SOME 12 -palvelun sisältö ja toimitustapa.', '/some-sisallontuotanto'],
-  ['TOIMIALA', 'Työn näyttäminen verkossa', 'Rakennusalan verkkosivujen toimialakohtainen rakenne.', '/verkkosivut/rakennus'],
+  ['WEBSITES', 'Valmis verkkosivupolku', 'Oman sivustomme toteutettu polku: palvelut, työnäyte ja tarjouspyyntö. Avaa tarkempi toteutusesittely.', '/tyot/ghoulhouse-verkkosivut'],
+  ['SOCIAL', 'Työmaakuvasta julkaisuksi', 'Havainne-esimerkki siitä, miten työmaakuvasta muodostuu otsikoitu ja brändätty somejulkaisu.', '/some-sisallontuotanto'],
+  ['SEO', 'Palvelusta toimialasivuksi', 'Esimerkkirakenne: rakennusalan palvelusivu, siihen liittyvä sisältö ja selkeä yhteydenotto. Ei hakusijalupaus.', '/verkkosivut/rakennus'],
 ] as const;
 
 const guides = [
@@ -204,7 +204,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
 
         <section className="ghProofGridSection ghSection" id="referenssit" aria-labelledby="proof-grid-title">
           <div className="ghShell">
-            <div className="ghSectionIntro"><p className="ghEyebrow">03 / Sisältö ja ratkaisut</p><h2 id="proof-grid-title">KOLME TAPAA.<br />YKSI SUUNTA.</h2><p>Alla olevat nostot esittelevät palveluita ja toimialaratkaisuja, eivät toteutuneita asiakastöitä tai asiakastuloksia.</p></div>
+            <div className="ghSectionIntro"><p className="ghEyebrow">03 / Toimitusesimerkit</p><h2 id="proof-grid-title">NÄIN TYÖ<br />VALMISTUU.</h2><p>Katso kolme konkreettista esitystapaa: oman verkkosivumme käyttäjäpolku, kuvasta tehtävän somejulkaisun konsepti sekä toimialasivun rakenne. Vain oma julkaistu työ on merkitty toteutukseksi.</p></div>
             <Service3DCarousel items={proofLinks} />
             <a className="ghTextLink ghSectionLink" href="/referenssit">Katso erilliset työnäytteet ja referenssit <span aria-hidden="true">↗</span></a>
           </div>
