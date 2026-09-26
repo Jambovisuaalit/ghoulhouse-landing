@@ -1,0 +1,198 @@
+/*
+ * GhoulHouse / Editorial System 2026
+ * Shared design tokens and reusable primitives for all internal routes.
+ * New presentation layer only: no edits to routing, canonical metadata,
+ * lead processing, consent behaviour or SEO page copy.
+ */
+:root {
+  --gh-ed-black: #0b0b0b;
+  --gh-ed-ink: #171513;
+  --gh-ed-paper: #f6f4ef;
+  --gh-ed-white: #fffcf8;
+  --gh-ed-red: #b80f1a;
+  --gh-ed-rule: rgba(23,21,19,.27);
+  --gh-ed-label: 'Courier New', Courier, monospace;
+  --gh-ed-serif: Georgia, 'Times New Roman', serif;
+  --gh-ed-sans: var(--font-body), Arial, sans-serif;
+  --gh-ed-shell: min(calc(100% - 96px), 1440px);
+  --gh-ed-section: clamp(74px, 8.3vw, 138px);
+}
+html { scroll-behavior: smooth; }
+body { background: var(--gh-ed-paper); }
+.ghGlobalContent, .ghGlobalHeader, .ghGlobalFooter { --gh-ed-accent: var(--gh-ed-red); }
+.ghGlobalShell { width: var(--gh-ed-shell); }
+.ghGlobalHeader {
+  background: var(--gh-ed-paper);
+  border-bottom: 1px solid var(--gh-ed-ink);
+  box-shadow: none;
+}
+.ghGlobalHeaderInner { min-height: 74px; }
+.ghGlobalDesktopNav a,
+.ghGlobalInquiry,
+.ghGlobalMobileNav summary,
+.ghGlobalContent .kicker,
+.ghGlobalContent .seoSection .kicker,
+.ghGlobalContent .websiteSection .kicker {
+  font-family: var(--gh-ed-label);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  line-height: 1.35;
+}
+.ghGlobalDesktopNav a[aria-current='page'],
+.ghGlobalDesktopNav a:hover,
+.ghGlobalInquiry:hover { color: var(--gh-ed-red); }
+.ghGlobalContent { background: var(--gh-ed-paper); color: var(--gh-ed-ink); }
+.ghGlobalContent :is(.seoPage,.websitePage,.proofPage) { background: var(--gh-ed-paper); color: var(--gh-ed-ink); }
+.ghGlobalContent :is(.websiteHero,.seoHero) {
+  background: var(--gh-ed-paper);
+  padding-top: clamp(64px,8vw,116px);
+  padding-bottom: clamp(70px,9vw,140px);
+  border-bottom: 1px solid var(--gh-ed-rule);
+}
+.ghGlobalContent :is(.websiteHeroCopy h1,.seoHeroCopy h1,.proofIntro h1) {
+  max-width: 15ch;
+  font-family: var(--gh-ed-serif);
+  font-weight: 700;
+  font-size: clamp(51px, 6.6vw, 100px);
+  line-height: 1.09;
+  letter-spacing: -.063em;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+.ghGlobalContent :is(.websiteSection h2,.seoSection h2,.seoClusterNav h2,.proofPage h2) {
+  max-width: 17ch;
+  font-family: var(--gh-ed-serif);
+  font-weight: 700;
+  font-size: clamp(43px, 4.9vw, 82px);
+  line-height: 1.1;
+  letter-spacing: -.056em;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+.ghGlobalContent :is(.websiteLead,.seoLead,.proofIntro p) {
+  max-width: 56ch;
+  font-size: clamp(16px,1.4vw,19px);
+  line-height: 1.72;
+}
+.ghGlobalContent :is(.websiteSection,.seoSection) { padding-block: var(--gh-ed-section); }
+.ghGlobalContent :is(.websiteSection--soft,.seoSection--soft) { background: #ebe6de; }
+.ghGlobalContent :is(.websiteSection--dark,.seoSection--dark) {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--gh-ed-black);
+  color: var(--gh-ed-paper);
+}
+.ghGlobalContent :is(.websiteSection--dark,.seoSection--dark)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: .10;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.73' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.48'/%3E%3C/svg%3E");
+}
+.ghGlobalContent :is(.websiteSection--dark,.seoSection--dark) :is(h2,h3) { color: var(--gh-ed-paper); }
+.ghGlobalContent :is(.websiteCards,.seoCards) {
+  gap: 0;
+  border: 0;
+  background: transparent;
+  border-top: 1px solid rgba(255,255,255,.42);
+}
+.ghGlobalContent :is(.websiteCards,.seoCards) article {
+  min-width: 0;
+  min-height: 0;
+  padding: clamp(23px,2.8vw,42px) clamp(15px,2.4vw,32px);
+  border: 0;
+  border-right: 1px solid rgba(255,255,255,.30);
+  border-bottom: 1px solid rgba(255,255,255,.30);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.ghGlobalContent :is(.websiteCards,.seoCards) article h3 {
+  font-family: var(--gh-ed-serif);
+  font-weight: 700;
+  font-size: clamp(24px,2.6vw,40px);
+  letter-spacing: -.048em;
+  line-height: 1.15;
+}
+.ghGlobalContent :is(.websiteCards,.seoCards) article p { font-size: 15px; line-height: 1.65; color: #dfd9d2; }
+.ghGlobalContent :is(.websiteCards,.seoCards) article span,
+.ghGlobalContent .seoSteps li>span {
+  color: #ea7d83;
+  font-family: var(--gh-ed-label);
+  font-size: 12px;
+}
+.ghGlobalContent :is(.websiteVerticalNav,.websiteResourceGrid,.seoClusterNav nav) {
+  gap: 0;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--gh-ed-ink);
+}
+.ghGlobalContent :is(.websiteVerticalNav,.websiteResourceGrid,.seoClusterNav nav) a {
+  border: 0;
+  border-bottom: 1px solid var(--gh-ed-rule);
+  background: transparent;
+  border-radius: 0;
+  color: var(--gh-ed-ink);
+  box-shadow: none;
+}
+.ghGlobalContent :is(.websiteVerticalNav,.websiteResourceGrid,.seoClusterNav nav) a:hover {
+  background: #e9e1d7;
+  color: var(--gh-ed-ink);
+}
+.ghGlobalContent :is(.button--signal,.seoPage .button--signal) { background: var(--gh-ed-red); border-color: var(--gh-ed-red); color: #fff; }
+.ghGlobalContent :is(.websitePage,.seoPage,.proofPage) :is(.button,.textLink) { border-radius: 0; }
+.ghGlobalContent :is(.websitePage,.seoPage,.proofPage) a:focus-visible,
+.ghGlobalHeader a:focus-visible { outline: 3px solid var(--gh-ed-red); outline-offset: 4px; }
+.ghGlobalContent :is(.websitePage,.seoPage,.proofPage) :is(img,figure) { max-width: 100%; }
+.ghGlobalContent .seoHeroGrid, .ghGlobalContent .websiteHeroGrid { min-width: 0; }
+.ghGlobalContent .seoHeroCopy, .ghGlobalContent .websiteHeroCopy { min-width: 0; }
+.ghGlobalContent .seoBrandBlock { min-width: 0; overflow-wrap: anywhere; }
+.ghGlobalContent .seoPage .seoHeroCopy h1 { font-size: clamp(45px,5.3vw,82px); }
+.ghGlobalContent .proofDetailHero h1 { font-family: var(--gh-ed-serif); line-height: 1.1; }
+/* Preserve the previous glass-footer structure while giving it an editorial
+ * square silhouette and more print-like metadata. */
+body .ghLiquidFooter .ghLiquidFooterRim { border-radius: 3px; }
+body .ghLiquidFooter .ghLiquidFooterSurface { border-radius: 2px; }
+body .ghLiquidFooter .ghLiquidFooterButton { border-radius: 2px; }
+body .ghLiquidFooter .ghLiquidFooterSocial>a { border-radius: 2px; }
+body .ghLiquidFooter :is(.ghLiquidFooterMeta,.ghLiquidFooterEyebrow,.ghLiquidFooterNav h3,.ghLiquidFooterContact h3,.ghLiquidFooterBottom) {
+  font-family: var(--gh-ed-label);
+  letter-spacing: .045em;
+}
+body .ghLiquidFooter .ghLiquidFooterStatement h2 {
+  font-family: var(--gh-ed-serif);
+  font-size: clamp(48px,6vw,96px);
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -.068em;
+}
+@media(max-width: 1023px) {
+  :root { --gh-ed-shell: calc(100% - 64px); }
+  .ghGlobalContent :is(.websiteHeroCopy h1,.seoHeroCopy h1,.proofIntro h1) { font-size: clamp(42px,6.7vw,70px); }
+  .ghGlobalContent .seoHeroGrid { gap: 34px; }
+}
+@media(max-width: 767px) {
+  :root { --gh-ed-shell: calc(100% - 36px); --gh-ed-section: 74px; }
+  .ghGlobalHeaderInner { min-height: 65px; }
+  .ghGlobalContent :is(.websiteHero,.seoHero) { padding: 46px 0 75px; }
+  .ghGlobalContent :is(.websiteHeroCopy h1,.seoHeroCopy h1,.proofIntro h1) {
+    max-width: 100%;
+    font-size: clamp(38px,9.4vw,55px);
+    line-height: 1.12;
+    letter-spacing: -.05em;
+  }
+  .ghGlobalContent :is(.websiteSection h2,.seoSection h2,.seoClusterNav h2,.proofPage h2) {
+    max-width: 100%;
+    font-size: clamp(35px,9.1vw,50px);
+    line-height: 1.13;
+  }
+  .ghGlobalContent :is(.websiteCards,.seoCards) article { border-right: 0; padding: 22px 8px; }
+  .ghGlobalContent .seoPage .seoHeroCopy h1 { font-size: clamp(37px,9vw,51px); }
+  body .ghLiquidFooter .ghLiquidFooterStatement h2 { font-size: clamp(36px,8.3vw,55px); }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
