@@ -1,3 +1,6 @@
+/** Explicit valid state when a company has not launched either channel. */
+export const NO_PROFILE_YET = 'Ei vielä verkkosivua tai Instagramia';
+
 export interface LeadInput {
   intent: 'booking' | 'photos';
   service?: 'websites' | 'social' | 'seo';
@@ -92,7 +95,8 @@ export function validateLead(input: unknown): LeadValidationResult {
 
   const source = input as Record<string, unknown>;
   const profile = clean(source.profile, limits.profile);
-  const classifiedProfile = profile ? classifyProfile(profile) : null;
+  const noProfileYet = profile === NO_PROFILE_YET;
+  const classifiedProfile = noProfileYet ? { website: '', instagram: '' } : profile ? classifyProfile(profile) : null;
 
   const data: LeadInput = {
     intent: source.intent === 'photos' ? 'photos' : 'booking',
@@ -120,7 +124,7 @@ export function validateLead(input: unknown): LeadValidationResult {
   }
 
   if (!profile) {
-    errors.profile = 'Verkkosivu tai Instagram on pakollinen.';
+    errors.profile = 'Anna verkkosivu, Instagram tai valitse Ei vielä kumpaakaan.';
   } else if (!classifiedProfile) {
     errors.profile = 'Anna verkkosivu (esim. yritys.fi) tai Instagram (@yritys).';
   }
