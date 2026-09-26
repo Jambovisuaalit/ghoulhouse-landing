@@ -57,11 +57,14 @@ const guides = [
   ['03 / OPAS', 'Työmaakuvat sosiaaliseen mediaan', 'Mitä kuvata, jotta omasta työstä syntyy julkaistavaa sisältöä.', '/oppaat/tyomaakuvat-sosiaaliseen-mediaan'],
 ] as const;
 
-function Brand({ footer = false }: { footer?: boolean }) {
+function Brand() {
   return (
-    <a className="ghBrand" href={footer ? '#top' : '/'} aria-label="GhoulHouse — etusivu">
-      <Image src="/favicon.svg" alt="" width={40} height={40} priority={!footer} />
-      <span>GhoulHouse</span>
+    <a className="ghBrand" href="/" aria-label="GhoulHouse — etusivu">
+      <Image className="ghOfficialHeaderLogo" src="/ghoulhouse-logo.svg" alt="" width={175} height={58} priority />
+      <span className="ghOfficialMobileLockup" aria-hidden="true">
+        <Image className="ghOfficialMobileMark" src="/favicon.svg" alt="" width={35} height={35} priority />
+        <Image className="ghOfficialMobileWordmark" src="/ghoulhouse-wordmark-black.svg" alt="" width={148} height={30} priority />
+      </span>
     </a>
   );
 }
@@ -129,7 +132,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
               <figure className="ghSwissTile ghSwissTile--brand">
                 <div className="ghSwissTileBrand">
                   <span className="ghSwissTileSerial">GH / 002</span>
-                  <Image src="/ghoulhouse-mark.svg" alt="" width={112} height={112} priority />
+                  <Image src="/ghoulhouse-mark-reverse.svg" alt="" width={112} height={112} priority />
                   <strong>GHOUL<br />HOUSE<span>.</span></strong>
                 </div>
                 <figcaption>02 / GHOULHOUSE — VISUAALINEN IDENTITEETTI</figcaption>

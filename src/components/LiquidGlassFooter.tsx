@@ -51,8 +51,7 @@ export default function LiquidGlassFooter({ home = false }: Props) {
             <div className="ghLiquidFooterLinks">
               <div className="ghLiquidFooterBrandBlock">
                 <Link className="ghLiquidFooterBrand" href="/" aria-label="GhoulHouse — etusivu">
-                  <Image src="/favicon.svg" width={36} height={36} alt="" />
-                  <span>GHOULHOUSE</span>
+                  <Image className="ghOfficialFooterLogo" src="/ghoulhouse-logo-reverse.svg" width={205} height={67} alt="" />
                 </Link>
                 <p>Hyvä työ pitää näkyä.<br />Rakennamme näkyvyyttä oikealle työlle.</p>
                 <div className="ghLiquidFooterSocial" aria-label="Sosiaalisen median kanavat">
@@ -90,7 +89,7 @@ export default function LiquidGlassFooter({ home = false }: Props) {
           </div>
         </div>
 
-        <div className="ghLiquidFooterWordmark" aria-hidden="true">GHOULHOUSE<span>.</span></div>
+        <div className="ghLiquidFooterWordmark" aria-hidden="true"><Image className="ghOfficialWordmark" src="/ghoulhouse-wordmark-white.svg" width={1000} height={200} alt="" /></div>
         <div className="ghLiquidFooterBottom">
           <span>© 2026 GhoulHouse Oy. Kaikki oikeudet pidätetään.</span>
           <span>HELSINKI · VERKKOSIVUT / SOCIAL / SEO</span>
