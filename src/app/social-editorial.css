@@ -74,3 +74,60 @@
   hyphens: auto;
   line-height: 1.12;
 }
+
+/* The two-column legacy Social hero allowed long Finnish compounds to paint
+   across the second column at 768–1440px. Constrain both columns, scale
+   editorial text deliberately, and stack below 1100px. */
+.ghGlobalContent .seoHeroGrid,
+.ghGlobalContent .seoHeroCopy,
+.ghGlobalContent .seoBrandBlock {
+  min-width: 0;
+}
+.ghGlobalContent .seoHeroCopy h1 {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  font-family: var(--font-body), Arial, sans-serif;
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -.062em;
+  font-size: clamp(36px, 4.1vw, 62px);
+}
+.ghGlobalContent .seoBrandBlock {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  font-size: clamp(43px, 4.9vw, 70px);
+  line-height: 1.09;
+}
+@media (min-width: 1100px) {
+  .ghGlobalContent .seoHeroGrid {
+    grid-template-columns: minmax(0, 1.13fr) minmax(0, .87fr);
+    column-gap: clamp(76px, 6vw, 118px);
+  }
+}
+@media (max-width: 1099px) {
+  .ghGlobalContent .seoHeroGrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(31px, 5vw, 55px);
+  }
+  .ghGlobalContent .seoBrandBlock {
+    justify-self: start;
+    max-width: min(100%, 600px);
+    font-size: clamp(42px, 6vw, 64px);
+  }
+  .ghGlobalContent .seoHeroCopy h1 {
+    font-size: clamp(40px, 6vw, 66px);
+  }
+}
+@media (max-width: 767px) {
+  .ghGlobalContent .seoHeroCopy h1 {
+    font-size: clamp(29px, 8.2vw, 45px);
+    line-height: 1.14;
+    letter-spacing: -.05em;
+  }
+  .ghGlobalContent .seoBrandBlock {
+    font-size: clamp(38px, 10vw, 58px);
+    line-height: 1.12;
+  }
+  .ghGlobalContent .seoHero { padding-top: 46px; }
+}
