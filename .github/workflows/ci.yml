@@ -101,6 +101,9 @@ jobs:
           test "$form_status" = "303"
           grep -Eqi '^location: .*\/kiitos' "$form_headers"
 
+      - name: Official brand and full sitemap page QA
+        run: node scripts/official-brand-qa.mjs
+
       - name: Lead confirmation and service-specific routing QA
         run: node scripts/lead-confirmation-qa.mjs
 
