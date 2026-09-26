@@ -72,28 +72,6 @@
 }
 @media(prefers-reduced-motion:reduce){.ghGlobalContent *, .ghGlobalHeader *{scroll-behavior:auto}}
 
-/* Compact, non-modal analytics choice on every inner page. Homepage preserves
-   the in-flow placement already covered by no-JS and viewport QA. */
-.analyticsConsent{
- display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;
- gap:16px;max-width:850px;padding:15px 17px;border:1px solid #111;
- background:#f7f4ef;box-shadow:0 7px 32px #11111119;
-}
-.analyticsConsent__copy{gap:4px}
-.analyticsConsent__copy .kicker{font-size:10px}
-.analyticsConsent__copy h2{
- position:static;overflow:visible;clip-path:none;white-space:normal;
- width:auto;height:auto;font-family:var(--font-body),Arial,sans-serif;
- font-size:16px;line-height:1.24;font-weight:800;letter-spacing:-.035em;
-}
-.analyticsConsent__copy p:not(.kicker){font-size:12px;line-height:1.4}
-.analyticsConsent__copy a{min-height:24px;font-size:11px}
-.analyticsConsent__actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;min-width:250px}
-.analyticsConsent__actions .button{
- min-width:0;min-height:44px;flex:none;padding:10px;
- white-space:normal;font-size:11px;line-height:1.2;
-}
-.analyticsConsent__reject{background:transparent;border-color:#111}
 .leadProfileNoWebsite{
  display:inline-flex;align-items:center;justify-self:start;gap:10px;
  width:fit-content;min-height:44px;border:1px solid currentColor;
@@ -108,20 +86,6 @@
 .homePage .ghForm .leadProfileNoWebsite{color:#f7f4ef;border-color:#aaa49c}
 .homePage .ghForm .leadProfileNoWebsite[aria-pressed="true"]{color:#fff;border-color:#c9282d}
 .homePage .ghForm input[readonly]{background:#292622}
-@media(max-width:767px){
- .analyticsConsent{
-  right:9px;left:9px;bottom:9px;gap:9px;
-  grid-template-columns:minmax(0,1fr);padding:13px;
-  max-height:min(43svh,300px);overflow-y:auto;
- }
- .analyticsConsent__copy{gap:4px}
- .analyticsConsent__copy h2{font-size:15px;line-height:1.25}
- .analyticsConsent__copy p:not(.kicker){font-size:12px;line-height:1.35}
- .analyticsConsent__actions{min-width:0}
- .analyticsConsent__actions .button{min-height:44px;font-size:11px}
- .analyticsSettings{bottom:9px;right:9px}
-}
-
 /* Match navigation text and tablet behavior to the canonical homepage menu. */
 .ghGlobalDesktopNav{gap:clamp(17px,2.1vw,32px)}
 .ghGlobalDesktopNav a{font-size:13px;letter-spacing:.025em;font-weight:700}
