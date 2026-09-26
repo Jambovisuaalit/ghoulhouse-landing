@@ -1,7 +1,7 @@
 export type SeoClusterPage = {
   slug: string; title: string; description: string; h1: string; eyebrow: string; intro: string;
   painPoints: string[]; examples: string[]; process: string[]; faq: Array<[string, string]>;
-  headings?: { challenge: string; examples: string; process: string; faq: string; related: string };
+  headings?: { challenge: string; examples: string; process: string; faq: string; related: string; contact: string };
 };
 
 export const seoClusterPages: Record<string, SeoClusterPage> = {
@@ -16,6 +16,7 @@ export const seoClusterPages: Record<string, SeoClusterPage> = {
       process: 'TYÖMAALTA JULKAISUUN NELJÄSSÄ VAIHEESSA.',
       faq: 'RAKENNUSYRITYKSEN SISÄLTÖKYSYMYKSET.',
       related: 'LISÄÄ RAKENNUSALAN NÄKYVYYDESTÄ.',
+      contact: 'TEHDÄÄN TYÖMAAKUVISTA JULKAISUJA.',
     },
     painPoints: ['Työmaakuvat syntyvät, mutta kukaan ei ehdi tehdä niistä julkaisuja.', 'Referenssit jäävät irrallisiksi kuvapinoiksi ilman selkeää tarinaa.', 'Yrittäjän ei tarvitse saada uutta markkinointiprojektia hoidettavakseen.'],
     examples: ['Työmaa nyt: mitä kohteessa tapahtuu juuri tällä viikolla.', 'Valmis kohde: työn jälki, ratkaisu ja lopputulos samassa julkaisussa.', 'Ennen / jälkeen: muutos näkyväksi ilman raskasta videotuotantoa.', 'Tekijä ja prosessi: yrityksen osaaminen esiin työn kautta.'],
@@ -33,6 +34,7 @@ export const seoClusterPages: Record<string, SeoClusterPage> = {
       process: 'LVI-KUVISTA VALMIIKSI SOME-ERÄKSI.',
       faq: 'LVI-SISÄLTÖJEN TAVALLISET KYSYMYKSET.',
       related: 'LISÄÄ LVI-YRITYKSEN NÄKYVYYDESTÄ.',
+      contact: 'NÄYTÄ ASENNUKSET JA VALMIIT KOHTEET.',
     },
     painPoints: ['Putki- ja märkätilatyöstä syntyy kuvia, mutta ne eivät muutu julkaisuiksi.', 'Asiakkaalle vaikea tekninen työ pitäisi pystyä näyttämään ymmärrettävästi.', 'Sisällön tekeminen ei saa viedä asentajien tai yrittäjän työaikaa.'],
     examples: ['Työvaihe: mitä tehdään ja miksi sillä on merkitystä.', 'Kylpyhuoneremontti: lähtötilanne, ratkaisu ja valmis pinta.', 'Yksityiskohta: putkisto, kaluste, materiaali tai tekninen toteutus.', 'Usein kysytty: yksi asiakkaan kysymys yhdeksi hyödylliseksi julkaisuksi.'],
@@ -50,6 +52,7 @@ export const seoClusterPages: Record<string, SeoClusterPage> = {
       process: 'NÄIN ULKOISTETTU SISÄLLÖNTUOTANTO TOIMII.',
       faq: 'KYSYMYKSIÄ SISÄLLÖNTUOTANNON ULKOISTAMISESTA.',
       related: 'VERTAA PALVELUA, PAKETTIA JA KANAVIA.',
+      contact: 'ALOITETAAN YRITYKSEN OMISTA KUVISTA.',
     },
     painPoints: ['Sisällöntuotanto on epäsäännöllistä, vaikka materiaalia syntyy.', 'Yrittäjä joutuu itse miettimään mitä julkaistaan ja milloin.', 'Ulkoistaminen tuntuu raskaalta, jos jokainen julkaisu vaatii uuden briiffin.'],
     examples: ['Työmaapäivitykset, referenssit ja valmiit kohteet.', 'Prosessi- ja materiaalisisällöt, jotka näyttävät miten työ tehdään.', 'Usein kysytyt kysymykset muutettuna lyhyiksi julkaisuiksi.', 'CTA-sisällöt, jotka ohjaavat kiinnostuneen yhteydenottoon.'],
@@ -67,6 +70,7 @@ export const seoClusterPages: Record<string, SeoClusterPage> = {
       process: 'KUVISTA INSTAGRAMIN JULKAISURYTMIIN.',
       faq: 'INSTAGRAM-SISÄLTÖJEN KÄYTÄNNÖN KYSYMYKSET.',
       related: 'INSTAGRAMIN RINNALLA MYÖS NÄMÄ.',
+      contact: 'SUUNNITELLAAN INSTAGRAM-SISÄLLÖT.',
     },
     painPoints: ['Instagram-profiili ei päivity työn tahdissa.', 'Hyvät kuvat eivät muodosta tunnistettavaa kokonaisuutta.', 'Postauksen kirjoittaminen jää aina viimeiseksi tehtäväksi.'],
     examples: ['Carousel: lähtötilanne → työvaihe → valmis kohde.', 'Yksittäinen referenssikuva vahvalla projektifaktalla.', 'Tekijä- ja prosessisisältö, joka näyttää yrityksen osaamista.', 'FAQ-postaus, joka vastaa asiakkaan ennen ostoa esittämään kysymykseen.'],
@@ -113,9 +117,10 @@ export const seoClusterPages: Record<string, SeoClusterPage> = {
     headings: {
       challenge: 'MITÄ 490 EUROLLA SAA?',
       examples: 'MITEN 12 JULKAISUA VOI JAKAA?',
-      process: 'NÄIN ENSIMMÄINEN 30 PÄIVÄÄ ETENEE.',
+      process: 'NÄIN ENSIMMÄISET 30 PÄIVÄÄ ETENEVÄT.',
       faq: 'PAKETIN SISÄLTÖ, MATERIAALIT JA JATKO.',
       related: 'VIELÄKÖ VERTAILET VAI OLETKO VALMIS ALOITTAMAAN?',
+      contact: 'SOVITAAN ENSIMMÄISET 30 PÄIVÄÄ.',
     },
     painPoints: ['12 alkuperäistä julkaisua Instagramiin ja Facebookiin 30 päivän erässä.', 'Suunnittelu, kuvankäsittely, tekstit, ajastus ja yksi koottu korjauskierros kuuluvat 490 € + ALV -hintaan.', 'Asiakas toimittaa omat kuvat ja kohteiden olennaiset faktat; jatko sovitaan erikseen.'],
     examples: ['4 sisältöroolia: työmaa, valmis kohde, prosessi ja hyödyllinen tieto.', '12 julkaisua, jotka muodostavat yhden kuukauden rytmin.', 'Instagram + Facebook ilman erillistä kanavakohtaista tuotantoprojektia.', 'Yksi koottu korjauskierros ennen ajastusta.'],
