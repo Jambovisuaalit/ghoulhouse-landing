@@ -129,15 +129,6 @@
   display: grid;
   align-items: center;
 }
-.ghHeroGrid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  align-items: center;
-  gap: 64px;
-}
-.ghHeroCopy > .ghEyebrow {
-  margin-bottom: 24px;
-}
 .homePage .ghHero h1 {
   font-family: var(--font-display), Impact, sans-serif;
   font-weight: 400;
@@ -160,101 +151,6 @@
 .ghHeroActions {
   margin-top: 30px;
 }
-.ghHeroPrice {
-  display: grid;
-  gap: 4px;
-  margin-top: 22px;
-  font-size: 16px;
-  line-height: 1.65;
-}
-.ghHeroPrice strong {
-  font-weight: 600;
-}
-.ghHeroPrice > span {
-  color: var(--gh-copy);
-  font-size: 14px;
-}
-.ghProof {
-  width: 100%;
-  align-self: center;
-}
-.ghProofComposition {
-  display: grid;
-  grid-template-columns: 0.36fr 1fr;
-  gap: 20px;
-  align-items: center;
-}
-.ghImageLabel {
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  line-height: 1.4;
-}
-.ghRaw {
-  padding-top: 76px;
-}
-.ghRaw img {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 4/5;
-  object-fit: cover;
-}
-.ghProofArrow {
-  display: block;
-  font-size: 30px;
-  text-align: right;
-  margin-top: 8px;
-  color: #77736c;
-}
-.ghPost {
-  background: #e6dfd5;
-  overflow: hidden;
-}
-.ghPostPhoto {
-  position: relative;
-  aspect-ratio: 1.35;
-}
-.ghPostPhoto img {
-  object-fit: cover;
-  object-position: center 46%;
-}
-.ghPostCopy {
-  padding: 24px 26px 28px;
-}
-.ghPostCopy > span {
-  display: block;
-  font-size: 12px;
-  font-weight: 500;
-  margin-bottom: 10px;
-}
-.ghPostCopy strong {
-  display: block;
-  font-family: var(--font-body), Arial, sans-serif;
-  font-weight: 600;
-  font-size: clamp(22px, 2.05vw, 30px);
-  letter-spacing: -0.05em;
-  line-height: 1.18;
-}
-.ghPostCopy p {
-  font-size: 13px;
-  line-height: 1.5;
-  margin-top: 14px;
-}
-.ghProof figcaption {
-  margin-top: 18px;
-  padding-left: calc(26.47% + 14px);
-  color: var(--gh-copy);
-  font-size: 12px;
-  line-height: 1.6;
-}
-.ghBenefits {
-  background: #fffdf9;
-}
-.ghBenefitsGrid {
-  display: grid;
-  grid-template-columns: 1.05fr 1fr;
-  gap: 130px;
-}
 .ghSectionIntro > .ghEyebrow {
   margin-bottom: 24px;
 }
@@ -262,79 +158,6 @@
   max-width: 49ch;
   margin-top: 24px;
   color: var(--gh-copy);
-}
-.ghBenefitList {
-  display: grid;
-  gap: 38px;
-}
-.ghBenefitList p {
-  max-width: 48ch;
-  margin-top: 12px;
-  color: var(--gh-copy);
-  font-size: 17px;
-  line-height: 1.75;
-}
-.ghOffer {
-  background: #171716;
-  color: #f7f4ef;
-  padding-block: 132px;
-}
-.ghOfferGrid {
-  display: grid;
-  grid-template-columns: 1.05fr 1fr;
-  gap: 130px;
-}
-.ghOffer .ghEyebrow {
-  color: #c5c0b8;
-}
-.homePage .ghOffer h2 {
-  font-family: var(--font-display), Impact, sans-serif;
-  font-size: clamp(60px, 6.1vw, 84px);
-  font-weight: 400;
-  line-height: 1.12;
-  letter-spacing: -0.01em;
-  margin-top: 30px;
-  text-transform: uppercase;
-}
-.ghOffer h2 span {
-  font-size: 0.6em;
-  white-space: nowrap;
-}
-.ghOfferAnchor > p:not(.ghEyebrow) {
-  max-width: 35ch;
-  color: #c5c0b8;
-  margin-top: 28px;
-  font-size: 17px;
-}
-.ghOfferAnchor .ghButton {
-  margin-top: 34px;
-}
-.ghOfferAnchor .ghButton:hover {
-  background: #f7f4ef;
-  color: #111111;
-}
-.ghInclusions ul {
-  list-style: none;
-  margin-top: 12px;
-}
-.ghInclusions li {
-  padding: 24px 0;
-  border-bottom: 1px solid #ffffff24;
-}
-.ghInclusions li h3 {
-  font-size: 22px;
-  font-weight: 500;
-}
-.ghInclusions li p {
-  color: #c5c0b8;
-  font-size: 16px;
-  margin-top: 8px;
-}
-.ghScope {
-  margin-top: 26px;
-  font-size: 14px;
-  color: #c5c0b8;
-  max-width: 49ch;
 }
 .ghSteps {
   list-style: none;
@@ -407,52 +230,6 @@
 .ghTextLink:hover {
   color: var(--signal);
   border-color: var(--signal);
-}
-.ghClosing {
-  background: #fffdf9;
-}
-.ghFaq {
-  padding-bottom: 0;
-}
-.ghFaqGrid {
-  display: grid;
-  grid-template-columns: 0.75fr 1.25fr;
-  gap: 100px;
-}
-.ghFaqList {
-  border-top: 1px solid #11111126;
-}
-.ghFaqList details {
-  border-bottom: 1px solid #11111126;
-}
-.ghFaqList summary {
-  display: flex;
-  gap: 24px;
-  justify-content: space-between;
-  align-items: center;
-  min-height: 76px;
-  padding-block: 20px;
-  font-size: 17px;
-  line-height: 1.5;
-  font-weight: 600;
-  cursor: pointer;
-  list-style: none;
-}
-.ghFaqList summary::-webkit-details-marker {
-  display: none;
-}
-.ghFaqList summary span {
-  font-size: 24px;
-  font-weight: 400;
-  flex: none;
-}
-.ghFaqList details[open] summary span {
-  transform: rotate(45deg);
-}
-.ghFaqList details p {
-  font-size: 16px;
-  color: var(--gh-copy);
-  padding: 0 44px 26px 0;
 }
 .ghContactGrid {
   display: grid;
@@ -544,73 +321,14 @@
   gap: 24px;
   padding-top: 12px;
 }
-.ghFooter {
-  padding: 64px 0 28px;
-  border-top: 1px solid #11111126;
-}
-.ghFooterMain {
-  display: grid;
-  grid-template-columns: 1.3fr 1fr 0.6fr;
-  gap: 70px;
-}
-.ghFooterTagline {
-  font-size: 16px;
-  color: var(--gh-copy);
-  margin-top: 24px;
-  line-height: 1.6;
-}
-.ghFooterCompany {
-  font-size: 14px;
-  line-height: 1.8;
-  padding-top: 8px;
-}
-.ghFooterCompany a {
-  display: inline-flex;
-  min-height: 44px;
-  align-items: center;
-  margin-top: 8px;
-}
-.ghFooter nav {
-  display: grid;
-  grid-template-columns: 1fr;
-  align-content: start;
-}
-.ghFooter nav a {
-  font-size: 14px;
-  min-height: 36px;
-  display: flex;
-  align-items: center;
-}
-.ghFooterBottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  padding-top: 40px;
-  margin-top: 50px;
-  border-top: 1px solid #11111120;
-  font-size: 13px;
-  color: var(--gh-copy);
-}
-.ghFooterBottom a {
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-}
 @media (min-width: 1600px) {
   .ghHero {
     padding-block: 90px;
-  }
-  .ghHeroGrid {
-    gap: 100px;
   }
 }
 @media (max-width: 1199px) {
   .ghShell {
     width: calc(100% - 72px);
-  }
-  .ghHeroGrid {
-    gap: 40px;
   }
   .ghDesktopNav {
     gap: 18px;
@@ -624,10 +342,6 @@
   .ghHeaderCta {
     font-size: 13px;
   }
-  .ghBenefitsGrid,
-  .ghOfferGrid {
-    gap: 72px;
-  }
   .ghSteps {
     gap: 28px;
   }
@@ -638,12 +352,6 @@
   }
   .ghHero h1 {
     font-size: 60px;
-  }
-  .ghPostCopy {
-    padding: 22px;
-  }
-  .ghProofComposition {
-    gap: 16px;
   }
 }
 @media (max-width: 1023px) {
@@ -657,42 +365,14 @@
     min-height: auto;
     padding-block: 60px 80px;
   }
-  .ghHeroGrid {
-    gap: 44px;
-    grid-template-columns: 1fr;
-  }
-  .ghHeroCopy {
-    max-width: 620px;
-  }
   .homePage .ghHero h1 {
     font-size: 72px;
   }
   .ghLead {
     max-width: 550px;
   }
-  .ghProof {
-    max-width: 620px;
-    justify-self: end;
-  }
-  .ghProofComposition {
-    grid-template-columns: 0.34fr 1fr;
-    gap: 26px;
-  }
-  .ghRaw {
-    padding-top: 50px;
-  }
-  .ghPostPhoto {
-    aspect-ratio: 1.15;
-  }
-  .ghPostCopy strong {
-    font-size: 30px;
-  }
   .ghSection {
     padding-block: 96px;
-  }
-  .ghBenefitsGrid,
-  .ghOfferGrid {
-    gap: 48px;
   }
   .ghSteps {
     grid-template-columns: repeat(2, 1fr);
@@ -711,15 +391,9 @@
     grid-template-columns: 1fr;
     gap: 44px;
   }
-  .ghFaq {
-    padding-bottom: 0;
-  }
   .ghForm {
     max-width: 780px;
     width: 100%;
-  }
-  .ghFooterMain {
-    gap: 40px;
   }
   .ghContact .ghSectionIntro > p {
     max-width: 58ch;
@@ -772,13 +446,6 @@
   .ghHero {
     padding: 36px 0 64px;
   }
-  .ghHeroGrid {
-    gap: 52px;
-  }
-  .ghHeroCopy > .ghEyebrow {
-    margin-bottom: 20px;
-    font-size: 13px;
-  }
   .homePage .ghHero h1 {
     font-size: clamp(42px, 12.6vw, 72px);
     line-height: 1.07;
@@ -797,49 +464,6 @@
     min-height: 56px;
     padding: 16px 20px;
   }
-  .ghHeroPrice {
-    margin-top: 20px;
-    font-size: 16px;
-  }
-  .ghHeroPrice > span {
-    font-size: 13px;
-  }
-  .ghProof {
-    max-width: 520px;
-  }
-  .ghProofComposition {
-    gap: 16px;
-    grid-template-columns: 0.34fr 1fr;
-  }
-  .ghRaw {
-    padding-top: 34px;
-  }
-  .ghImageLabel {
-    font-size: 12px;
-    margin-bottom: 10px;
-  }
-  .ghPostPhoto {
-    aspect-ratio: 1/1.1;
-  }
-  .ghPostCopy {
-    padding: 20px;
-  }
-  .ghPostCopy strong {
-    font-size: 24px;
-  }
-  .ghPostCopy > span {
-    font-size: 12px;
-    margin-bottom: 8px;
-  }
-  .ghPostCopy p {
-    font-size: 12px;
-    margin-top: 12px;
-  }
-  .ghProof figcaption {
-    padding-left: 0;
-    font-size: 12px;
-    margin-top: 20px;
-  }
   .ghSection {
     padding-block: 72px;
   }
@@ -849,32 +473,8 @@
   .ghSectionIntro > p:not(.ghEyebrow) {
     margin-top: 20px;
   }
-  .ghBenefitsGrid,
-  .ghOfferGrid {
-    grid-template-columns: 1fr;
-    gap: 44px;
-  }
-  .ghBenefitList {
-    gap: 30px;
-  }
   .homePage h3 {
     font-size: 22px;
-  }
-  .ghBenefitList p {
-    font-size: 16px;
-  }
-  .ghOffer {
-    padding-block: 76px;
-  }
-  .homePage .ghOffer h2 {
-    font-size: 64px;
-    margin-top: 24px;
-  }
-  .ghOfferAnchor > p:not(.ghEyebrow) {
-    font-size: 16px;
-  }
-  .ghInclusions li h3 {
-    font-size: 21px;
   }
   .ghSteps {
     gap: 36px 28px;
@@ -909,17 +509,6 @@
   .ghFounderIdentity p {
     text-align: left;
   }
-  .ghFaq {
-    padding-bottom: 0;
-  }
-  .ghFaqList summary {
-    font-size: 16px;
-    min-height: 72px;
-    gap: 20px;
-  }
-  .ghFaqList details p {
-    padding-right: 24px;
-  }
   .ghContactGrid {
     gap: 36px;
   }
@@ -936,28 +525,6 @@
   .ghForm .formSubmit {
     font-size: 14px;
   }
-  .ghFooter {
-    padding-top: 44px;
-  }
-  .ghFooterMain {
-    grid-template-columns: 1fr 1fr;
-    gap: 36px 20px;
-  }
-  .ghFooterMain > div:first-child {
-    grid-column: 1/-1;
-  }
-  .ghFooterCompany {
-    font-size: 13px;
-  }
-  .ghFooterBottom {
-    margin-top: 32px;
-    padding-top: 24px;
-    font-size: 12px;
-    gap: 16px;
-  }
-  .ghFooter nav a {
-    min-height: 44px;
-  }
 }
 @media (max-width: 359px) {
   .ghShell {
@@ -971,17 +538,8 @@
   .ghSteps {
     grid-template-columns: 1fr;
   }
-  .ghPostCopy {
-    padding: 16px;
-  }
-  .ghPostCopy strong {
-    font-size: 21px;
-  }
   .ghBrand span {
     font-size: 18px;
-  }
-  .homePage .ghOffer h2 {
-    font-size: 56px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -997,15 +555,9 @@
 /* Homepage v2 company-level composition. Existing editorial typography, header,
    form and consent rules remain shared with the approved visual foundation. */
 .homePage .ghHeroEditorial { min-height: calc(85svh - 96px); }
-.homePage .ghHeroEditorial .ghHeroGrid { grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: clamp(40px, 5vw, 88px); }
 .homePage .ghHeroEditorial h1 { font-size: clamp(56px, 5.4vw, 88px); line-height: 1.08; }
 .ghHeroEditorial .ghLead { max-width: 46ch; }
 .ghHeroFootnote { margin-top: 20px; color: var(--gh-copy); font-size: 14px; line-height: 1.6; }
-.ghHeroEditorialPanel { min-width: 0; min-height: 490px; background: #e6dfd5; padding: clamp(26px, 3.1vw, 46px); display: flex; flex-direction: column; justify-content: space-between; }
-.ghHeroPanelTop, .ghHeroPanelBottom { display: flex; align-items: center; justify-content: space-between; gap: 14px; font-size: 12px; font-weight: 600; letter-spacing: .025em; }
-.ghHeroPanelMark { width: 116px; height: 116px; align-self: flex-start; }
-.ghHeroEditorialPanel > p { font-family: var(--font-body),Arial,sans-serif; font-weight: 700; font-size: clamp(22px, 2.15vw, 34px); letter-spacing: -.045em; line-height: 1.28; }
-.ghHeroPanelBottom { padding-top: 24px; border-top: 1px solid #11111140; font-size: 11px; }
 .ghSelected { background: #fffdf9; }
 .ghSelectedGrid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(48px, 8vw, 128px); align-items: center; }
 .ghSelectedCase { display: flex; flex-direction: column; min-height: 410px; color: #f7f4ef; background: #171716; padding: clamp(24px, 3vw, 42px); transition: background .15s ease; }
@@ -1029,12 +581,6 @@
 .ghProcess { background: #fffdf9; }
 .ghProofGridSection { background: #f7f4ef; }
 .ghProofGridSection .ghSectionIntro { max-width: 720px; }
-.ghEditorialGrid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 20px; margin-top: 56px; }
-.ghEditorialCard { min-height: 290px; display: flex; flex-direction: column; align-items: flex-start; padding: 30px; border: 1px solid #11111135; background: #fffdf9; transition: border-color .15s ease; }
-.ghEditorialCard:hover { border-color: #111; }
-.ghEditorialCard h3 { margin-top: 40px; font-size: 23px; line-height: 1.35; }
-.ghEditorialCard p { font-size: 15px; color: var(--gh-copy); margin-top: 12px; }
-.ghEditorialCardArrow { margin-top: auto; align-self: flex-end; font-size: 23px; }
 .ghSectionLink { margin-top: 34px; }
 .ghResources { background: #fffdf9; }
 .ghResources .ghSectionIntro { max-width: 700px; }
@@ -1055,31 +601,20 @@
 .homePage .ghContact h2 { font-size: clamp(36px, 3.65vw, 56px); line-height: 1.17; }
 @media (max-width: 1023px) {
   .homePage .ghHeroEditorial { min-height: auto; }
-  .homePage .ghHeroEditorial .ghHeroGrid { grid-template-columns: 1fr; }
-  .ghHeroEditorialPanel { max-width: 620px; min-height: 340px; width: 100%; justify-self: end; }
   .ghSelectedGrid { grid-template-columns: 1fr; gap: 48px; }
   .ghSelectedCase { max-width: 700px; width: 100%; }
   .ghServiceCard { grid-template-columns: 65px minmax(0,1fr); gap: 24px; }
   .ghServiceCard .ghTextLink { grid-column: 2; justify-self: start; }
-  .ghEditorialGrid { gap: 12px; }
-  .ghEditorialCard { padding: 22px; }
 }
 @media (max-width: 767px) {
   .homePage .ghHeroEditorial h1 { font-size: clamp(43px, 11.5vw, 70px); }
   .homePage .ghHeroEditorial { padding-block: 44px 76px; }
-  .homePage .ghHeroEditorial .ghHeroGrid { gap: 50px; }
-  .ghHeroEditorialPanel { min-height: 300px; padding: 24px; }
-  .ghHeroPanelMark { width: 66px; height: 66px; }
-  .ghHeroEditorialPanel > p { font-size: 24px; }
   .ghSelectedCase { min-height: 340px; }
   .ghSelectedCaseDisplay { padding-block: 24px; }
   .ghServiceList { margin-top: 40px; }
   .ghServiceCard { grid-template-columns: 1fr; gap: 12px; padding-block: 38px; }
   .homePage .ghServiceCard h3 { font-size: 52px; }
   .ghServiceCard .ghTextLink { grid-column: 1; margin-top: 6px; }
-  .ghEditorialGrid { grid-template-columns: 1fr; gap: 12px; margin-top: 38px; }
-  .ghEditorialCard { min-height: 225px; }
-  .ghEditorialCard h3 { margin-top: 20px; }
   .ghGuideList { margin-top: 36px; }
   .ghGuideRow { grid-template-columns: minmax(0,1fr) 28px; gap: 12px; padding-block: 22px; }
   .ghGuideRow > .ghEyebrow { grid-column: 1 / -1; }
@@ -1144,236 +679,16 @@
   background-repeat: repeat;
   background-size: 44px 44px;
 }
-.homePage .ghHeroDotGrid {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.95;
-}
-.homePage .ghHeroDotGrid canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-.homePage .ghHeroEditorial > .ghHeroGrid {
-  position: relative;
-  z-index: 1;
-}
 @media (max-width: 767px) {
   .homePage .ghHeroEditorial { background-size: 56px 56px; }
 }
 @media (prefers-reduced-motion: reduce), (pointer: coarse) {
-  .homePage .ghHeroDotGrid canvas { display: none; }
 }
-
-/* 3D service carousel: editorial cards are real links; non-JS mode is a
-   readable three-column layout, with no hidden text or external library. */
-.homePage .gh3dCarousel {
-  margin-top: 56px;
-  width: 100%;
-  min-width: 0;
-}
-.homePage .gh3dStage {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-.homePage .gh3dCard {
-  min-width: 0;
-  min-height: 420px;
-  background: #fffdf9;
-  border: 1px solid #11111135;
-  padding: 18px;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 0;
-  color: #111111;
-}
-.homePage .gh3dCardMedia {
-  position: relative;
-  width: 100%;
-  height: 180px;
-  background: #e6dfd5;
-  overflow: hidden;
-  flex: none;
-}
-.homePage .gh3dCardMedia--web {
-  background: #111111;
-}
-.homePage .gh3dScreenshot {
-  object-fit: cover;
-  object-position: center top;
-}
-.homePage .gh3dSocialConcept,
-.homePage .gh3dIndustryConcept {
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 17px 19px;
-}
-.homePage .gh3dSocialConcept { background: #e6dfd5; }
-.homePage .gh3dIndustryConcept { background: #111111; color: #f7f4ef; }
-.homePage .gh3dSocialConcept > span,
-.homePage .gh3dIndustryConcept > span {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: .06em;
-  line-height: 1.35;
-}
-.homePage .gh3dSocialConcept strong,
-.homePage .gh3dIndustryConcept strong {
-  font-family: var(--font-display), Impact, sans-serif;
-  font-size: clamp(25px, 2.5vw, 38px);
-  font-weight: 400;
-  line-height: 1.02;
-  letter-spacing: -.01em;
-}
-.homePage .gh3dSocialConcept strong { color: #111111; }
-.homePage .gh3dIndustryConcept > span:first-child { color: #f7f4ef; }
-.homePage .gh3dIndustryConcept > span:last-child { color: #f7f4ef; border-top: 2px solid #c9282d; padding-top: 8px; }
-.homePage .gh3dCardType {
-  margin-top: 18px;
-  color: #625a53;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .065em;
-}
-.homePage .gh3dCard h3 {
-  margin-top: 7px;
-  font-size: 23px;
-  line-height: 1.26;
-}
-.homePage .gh3dCard > p {
-  margin-top: 10px;
-  font-size: 14px;
-  line-height: 1.55;
-  color: #514e49;
-}
-.homePage .gh3dCardLink {
-  display: inline-flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  width: fit-content;
-  min-height: 44px;
-  margin-top: auto;
-  border-bottom: 1px solid #111111;
-  font-size: 14px;
-  font-weight: 700;
-}
-.homePage .gh3dCardLink:hover { color: #c9282d; border-color: #c9282d; }
-.homePage .gh3dCardLink span { font-size: 22px; line-height: 1; }
-.homePage .gh3dDisclosure {
-  display: block;
-  font-size: 10px;
-  line-height: 1.45;
-  margin-top: 6px;
-  color: #514e49;
-}
-.homePage .gh3dControls {
-  display: none;
-  align-items: center;
-  gap: 16px;
-  min-height: 56px;
-  margin-top: 14px;
-}
-.homePage .gh3dCounter {
-  font-size: 14px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-.homePage .gh3dHint { font-size: 12px; color: #514e49; }
-.homePage .gh3dButtons { display: flex; gap: 8px; margin-left: auto; }
-.homePage .gh3dButtons button {
-  width: 48px;
-  height: 48px;
-  display: grid;
-  place-items: center;
-  border: 1px solid #111111;
-  border-radius: 0;
-  background: transparent;
-  color: #111111;
-  font-size: 23px;
-  cursor: pointer;
-}
-.homePage .gh3dButtons button:hover { background: #c9282d; color: #ffffff; border-color: #c9282d; }
-.homePage .gh3dCarousel.is-ready .gh3dStage {
-  display: block;
-  isolation: isolate;
-  height: 490px;
-  overflow: hidden;
-  perspective: 1400px;
-  touch-action: pan-y;
-}
-.homePage .gh3dCarousel.is-ready .gh3dCard {
-  position: absolute;
-  top: 8px;
-  left: 50%;
-  width: min(53%, 550px);
-  height: 462px;
-  min-height: 0;
-  overflow: hidden;
-  will-change: transform;
-  transform-origin: center center;
-  transition: transform 450ms cubic-bezier(.22, .61, .36, 1),
-    opacity 450ms ease, border-color 150ms ease;
-}
-.homePage .gh3dCarousel.is-ready .gh3dCard[data-slot="center"] {
-  z-index: 3;
-  opacity: 1;
-  border-color: #111111;
-  transform: translateX(-50%) translateZ(52px) rotateY(0deg) scale(1);
-}
-.homePage .gh3dCarousel.is-ready .gh3dCard[data-slot="left"] {
-  z-index: 1;
-  opacity: .73;
-  transform: translateX(calc(-50% - min(20vw, 260px))) rotateY(25deg) scale(.82);
-}
-.homePage .gh3dCarousel.is-ready .gh3dCard[data-slot="right"] {
-  z-index: 2;
-  opacity: .73;
-  transform: translateX(calc(-50% + min(20vw, 260px))) rotateY(-25deg) scale(.82);
-}
-.homePage .gh3dCarousel.is-ready .gh3dCard[data-skip="true"] { transition: none; }
-.homePage .gh3dCarousel.is-ready .gh3dControls { display: flex; }
-/* Side cards provide visual depth; only the centered card can be opened. */
-.homePage .gh3dCarousel.is-ready .gh3dCard:not([data-slot="center"]) .gh3dCardLink { display: none; }
 @media (max-width: 1023px) {
-  .homePage .gh3dCarousel.is-ready .gh3dCard { width: min(67%, 470px); }
 }
 @media (max-width: 767px) {
-  .homePage .gh3dCarousel { margin-top: 38px; }
-  .homePage .gh3dStage { grid-template-columns: 1fr; gap: 12px; }
-  .homePage .gh3dCarousel.is-ready .gh3dStage { height: 445px; }
-  .homePage .gh3dCarousel.is-ready .gh3dCard {
-    width: min(82%, 365px);
-    height: 422px;
-    padding: 15px;
-    top: 6px;
-  }
-  /* Below tablet widths a single readable focused card is preferable to
-     half-clipped side CTAs; controls still wrap through all three items. */
-  .homePage .gh3dCarousel.is-ready .gh3dCard:not([data-slot="center"]) { display: none; }
-  .homePage .gh3dCardMedia { height: 162px; }
-  .homePage .gh3dCard h3 { font-size: 21px; }
-  .homePage .gh3dSocialConcept strong,
-  .homePage .gh3dIndustryConcept strong { font-size: 30px; }
-  .homePage .gh3dHint { font-size: 11px; }
 }
 @media (max-width: 359px) {
-  .homePage .gh3dCarousel.is-ready .gh3dCard { width: 82%; }
-  /* Perspective magnifies and displaces the focused card at 320px.
-     Keep the centered card flat and fully inside the viewport. */
-  .homePage .gh3dCarousel.is-ready .gh3dCard[data-slot="center"] {
-    transform: translateX(-50%) translateZ(0) rotateY(0) scale(1);
-  }
-  .homePage .gh3dCard h3 { font-size: 20px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .homePage .gh3dCarousel.is-ready .gh3dCard { transition: none; }
 }
