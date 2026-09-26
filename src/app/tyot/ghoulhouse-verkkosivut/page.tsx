@@ -32,7 +32,7 @@ export default function GhoulHouseCasePage() {
         <div className="contentShell">
           <Link className="proofBackLink" href="/referenssit">← Kaikki työnäytteet</Link>
           <p className="kicker">GH / 001 · OMA TOTEUTUS</p>
-          <h1>GhoulHouse.fi: työn näyttämisen rakenne.</h1>
+          <h1>GhoulHouse.fi: oma toteutus.</h1>
           <p className="proofDetailLead">Oman yrityksemme julkaistu verkkosivusto. Tällä sivulla avaamme, mitä sivustolle rakennettiin ja mitä esimerkki todellisuudessa osoittaa.</p>
           <p className="proofTruthTag">Oma verkkosivutoteutus — ei asiakasreferenssi, asiakaspalaute eikä tulosväite.</p>
         </div>
