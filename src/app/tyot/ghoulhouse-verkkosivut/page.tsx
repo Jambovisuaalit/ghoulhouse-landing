@@ -34,7 +34,7 @@ export default function GhoulHouseCasePage() {
           <p className="kicker">GH / 001 · OMA TOTEUTUS</p>
           <h1>GhoulHouse.fi: työn näyttämisen rakenne.</h1>
           <p className="proofDetailLead">Oman yrityksemme julkaistu verkkosivusto. Tällä sivulla avaamme, mitä sivustolle rakennettiin ja mitä esimerkki todellisuudessa osoittaa.</p>
-          <p className="proofTruthTag">Oma verkkosivutoteutus – ei asiakkaan työ, asiakaspalaute eikä tulosväite.</p>
+          <p className="proofTruthTag">Oma verkkosivutoteutus — ei asiakasreferenssi, asiakaspalaute eikä tulosväite.</p>
         </div>
       </section>
 
