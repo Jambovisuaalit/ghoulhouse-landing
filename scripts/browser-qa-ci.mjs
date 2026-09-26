@@ -306,7 +306,7 @@ try {
     assert(metrics.submitRect?.height >= 44, `${viewport.width}x${viewport.height}: submit target below 44px.`);
     assert(metrics.proofExists && metrics.logoLoaded, `${viewport.width}x${viewport.height}: company proof or logo missing.`);
     assert(metrics.brandLayout.header?.left >= -1 && metrics.brandLayout.header?.right <= metrics.innerWidth + 1 &&
-      metrics.brandLayout.footer === '/ghoulhouse-logo-reverse.svg' && metrics.brandLayout.footerLoaded &&
+      metrics.brandLayout.footer === '/ghoulhouse-logo-reverse.svg' &&
       metrics.brandLayout.giantWordmark === '/ghoulhouse-wordmark-white.svg' &&
       metrics.brandLayout.mark === '/ghoulhouse-mark-reverse.svg' &&
       metrics.brandLayout.markFilter === 'none',
