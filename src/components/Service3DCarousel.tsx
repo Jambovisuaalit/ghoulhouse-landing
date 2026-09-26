@@ -1,11 +1,12 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
 
 /**
  * An original, dependency-free Next.js interpretation of a 3D infinite carousel.
- * Every item is server-rendered as a readable card when JavaScript is unavailable.
- * All cards are service overviews, not unverified customer references.
+ * Every item is server-rendered as a readable example when JavaScript is unavailable.
+ * Published own work is distinguished from synthetic service concepts.
  */
 type CarouselItem = readonly [label: string, title: string, description: string, href: string];
 
@@ -51,7 +52,7 @@ export default function Service3DCarousel({ items }: { items: readonly CarouselI
 
   return (
     <div className={`gh3dCarousel${enhanced ? ' is-ready' : ''}`} role="region"
-      aria-roledescription="karuselli" aria-label="GhoulHousen palveluesittelyt"
+      aria-roledescription="karuselli" aria-label="GhoulHousen toimitusesimerkit"
       onKeyDown={onKeyDown}>
       <div className="gh3dStage" onPointerDown={onPointerDown} onPointerUp={onPointerUp}
         onPointerCancel={() => { dragStart.current = null; }}
@@ -66,42 +67,51 @@ export default function Service3DCarousel({ items }: { items: readonly CarouselI
           const slot = distance === 0 ? 'center' : distance <= items.length / 2 ? 'right' : 'left';
           const isWebsite = label === 'WEBSITES';
           const isSocial = label === 'SOCIAL';
+          const isSeo = label === 'SEO';
           return (
             <article key={href} className="gh3dCard" data-slot={slot}
               data-skip={skipTransition === index ? 'true' : 'false'}
               aria-hidden={enhanced && slot !== 'center'}
               aria-label={`${label}: ${title}, ${index + 1} / ${items.length}`}>
-              <div className={`gh3dCardMedia${isWebsite ? ' gh3dCardMedia--web' : ''}${isSocial ? ' gh3dCardMedia--social' : ''}`}
+              <div className={`gh3dCardMedia gh3dCardMedia--deliverable${isWebsite ? ' gh3dCardMedia--web' : ''}${isSocial ? ' gh3dCardMedia--social' : ''}`}
                 aria-hidden="true">
                 {isWebsite ? (
-                  <div className="gh3dWebsiteConcept">
-                    <span>GH / OMA SIVUSTORAKENNE</span>
-                    <strong>PALVELUT<br />TYÖNÄYTTÖ<br />YHTEYS<span>.</span></strong>
-                    <span>GHOULHOUSE.FI / OMA TOTEUTUS</span>
+                  <div className="gh3dDeliverable gh3dDeliverable--website">
+                    <div className="gh3dMiniChrome"><span>GH / OMA JULKAISTU RAKENNE</span><span>GHOULHOUSE ↗</span></div>
+                    <div className="gh3dMiniHero"><strong>HYVÄ TYÖ.<br />NÄKYVÄKSI.</strong><span>Palvelusta tarjouspyyntöön.</span></div>
+                    <div className="gh3dMiniFlow"><span>01 / PALVELUT</span><span>02 / TYÖNÄYTTEET</span><span>03 / YHTEYS</span></div>
                   </div>
                 ) : isSocial ? (
-                  <div className="gh3dSocialConcept">
-                    <span>GH / SOME 12</span>
-                    <strong>TYÖMAAKUVAT<br />→ VALMIS SOME</strong>
-                    <span>12 SISÄLTÖÄ · 30 PÄIVÄÄ</span>
+                  <div className="gh3dDeliverable gh3dDeliverable--social">
+                    <div className="gh3dSocialPhoto">
+                      <Image src="/bathroom-concept-v2.webp" alt="" fill sizes="(max-width:767px) 82vw,480px" />
+                      <span>TYÖMAA / KONSEPTIKUVA</span>
+                    </div>
+                    <div className="gh3dSocialPublication">
+                      <span>GH / SOME 12</span>
+                      <strong>TYÖ NÄKYY.<br />ILMAN ARVAILUA.</strong>
+                      <span>ESIMERKKIJULKAISU →</span>
+                    </div>
                   </div>
-                ) : (
-                  <div className="gh3dIndustryConcept">
-                    <span>GH / TOIMIALARATKAISUT</span>
-                    <strong>HYVÄ TYÖ.<br />NÄKYVÄKSI.</strong>
-                    <span>RAKENNUS · LVI · SÄHKÖ</span>
+                ) : isSeo ? (
+                  <div className="gh3dDeliverable gh3dDeliverable--seo">
+                    <span className="gh3dMiniChrome">GH / ESIMERKKIRAKENNE</span>
+                    <div className="gh3dSeoFlow">
+                      <span>ETUSIVU</span><span>PALVELU</span><span>TOIMIALASIVU</span><span>YHTEYS ↗</span>
+                    </div>
+                    <span className="gh3dMiniCaption">Sisäinen linkitys · sivun otsikointi · yhteydenottopolku</span>
                   </div>
-                )}
+                ) : null}
               </div>
               <span className="gh3dCardType">{label} / {String(index + 1).padStart(2, '0')}</span>
               <h3>{title}</h3>
               <p>{description}</p>
-              <a href={href} className="gh3dCardLink" aria-label={`Tutustu: ${title}`}
+              <a href={href} className="gh3dCardLink" aria-label={`Avaa esimerkin lisätiedot: ${title}`}
                 tabIndex={enhanced && slot !== 'center' ? -1 : 0}>
                 Tutustu <span aria-hidden="true">↗</span>
               </a>
               <small className="gh3dDisclosure">{isWebsite
-                ? 'Oma julkaistu sivusto — ei asiakasreferenssi.'
+                ? 'Oma julkaistu sivusto — ei asiakasreferenssi. Graafinen esitys omasta käyttäjäpolusta.'
                 : 'Palvelun havainne-esittely — ei asiakastyö.'}</small>
             </article>
           );
