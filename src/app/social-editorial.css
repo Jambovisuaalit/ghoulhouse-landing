@@ -1,0 +1,76 @@
+/* Editorial related-content cards: concrete routes and distinct link purposes. */
+.seoClusterNav { align-items: start; }
+.seoRelatedIntro {
+  max-width: 36ch;
+  margin-top: 19px;
+  color: var(--copy, #4f4944);
+  font-size: 15px;
+  line-height: 1.66;
+}
+.seoClusterNav nav {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  border: 0;
+  border-top: 2px solid #111;
+  background: transparent;
+}
+.seoClusterNav nav a {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 24px;
+  align-content: center;
+  align-items: center;
+  gap: 7px 16px;
+  min-width: 0;
+  min-height: 107px;
+  padding: 19px 8px 20px 0;
+  border-bottom: 1px solid rgba(17, 17, 17, .3);
+  background: transparent;
+  color: #111;
+  text-decoration: none;
+}
+.seoClusterNav nav a strong {
+  grid-column: 1;
+  font-family: var(--font-body), Arial, sans-serif;
+  font-size: clamp(16px, 1.5vw, 20px);
+  line-height: 1.23;
+  font-weight: 800;
+  letter-spacing: -.035em;
+}
+.seoClusterNav nav a > span:not(.seoRelatedArrow) {
+  grid-column: 1;
+  color: #544e49;
+  font-family: var(--font-body), Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.58;
+}
+.seoClusterNav nav a .seoRelatedArrow {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  justify-self: end;
+  color: #c9282d;
+  font-size: 23px;
+  font-weight: 500;
+  line-height: 1;
+}
+.seoClusterNav nav a:hover,
+.seoClusterNav nav a:focus-visible {
+  background: #ede8e1;
+  color: #111;
+}
+.seoClusterNav nav a:hover strong { color: #aa2025; }
+@media (max-width: 767px) {
+  .seoRelatedIntro { font-size: 14px; }
+  .seoClusterNav nav a { min-height: 99px; padding: 16px 5px 17px 0; }
+  .seoClusterNav nav a strong { font-size: 17px; }
+  .seoClusterNav nav a > span:not(.seoRelatedArrow) { font-size: 13px; }
+}
+/* Focused social H2 wording may contain long Finnish compounds. */
+.ghGlobalContent .seoSection h2,
+.ghGlobalContent .seoClusterNav h2 {
+  overflow-wrap: break-word;
+  hyphens: auto;
+  line-height: 1.12;
+}
