@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
 
 /**
@@ -75,8 +74,11 @@ export default function Service3DCarousel({ items }: { items: readonly CarouselI
               <div className={`gh3dCardMedia${isWebsite ? ' gh3dCardMedia--web' : ''}${isSocial ? ' gh3dCardMedia--social' : ''}`}
                 aria-hidden="true">
                 {isWebsite ? (
-                  <Image src="/ghoulhouse-site-proof.png" alt="" fill sizes="(max-width: 767px) 82vw, 480px"
-                    className="gh3dScreenshot" />
+                  <div className="gh3dWebsiteConcept">
+                    <span>GH / OMA SIVUSTORAKENNE</span>
+                    <strong>PALVELUT<br />TYÖNÄYTTÖ<br />YHTEYS<span>.</span></strong>
+                    <span>GHOULHOUSE.FI / OMA TOTEUTUS</span>
+                  </div>
                 ) : isSocial ? (
                   <div className="gh3dSocialConcept">
                     <span>GH / SOME 12</span>
@@ -109,7 +111,7 @@ export default function Service3DCarousel({ items }: { items: readonly CarouselI
         <span className="gh3dCounter" aria-live="polite" aria-atomic="true">
           {String(active + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}
         </span>
-        <span className="gh3dHint">Vedä tai selaa</span>
+        <span className="gh3dHint">Pyyhkäise tai käytä nuolia</span>
         <div className="gh3dButtons">
           <button type="button" onClick={() => move(-1)} aria-label="Edellinen palveluesittely">←</button>
           <button type="button" onClick={() => move(1)} aria-label="Seuraava palveluesittely">→</button>
