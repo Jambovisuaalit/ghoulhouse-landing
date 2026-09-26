@@ -392,6 +392,85 @@ try {
   const wrappedCounter = await evaluate(client, 'document.querySelector(".gh3dCounter")?.textContent?.replace(/\\s+/g," ").trim()');
   assert(wrappedCounter === '01 / 03', `3D carousel did not navigate backward: ${wrappedCounter}`);
 
+  // Consent is an accessible branded in-flow strip on the homepage,
+  // but a compact fixed notice on inner pages. Verify both at realistic widths.
+  const innerConsentResults = [];
+  for (const vp of [{ width: 320, height: 568 }, { width: 390, height: 844 }, { width: 1440, height: 900 }]) {
+    await client.send('Emulation.setDeviceMetricsOverride', {
+      width: vp.width, height: vp.height, deviceScaleFactor: 1, mobile: vp.width < 768,
+    });
+    await evaluate(client, 'localStorage.removeItem("ghoulhouse_analytics_consent")');
+    await client.send('Page.navigate', { url: BASE_URL + '/referenssit' });
+    await waitForDocument(client);
+    let hasConsent = false;
+    for (let i = 0; i < 25; i++) {
+      hasConsent = await evaluate(client, '!!document.querySelector(".analyticsConsent")');
+      if (hasConsent) break;
+      await sleep(120);
+    }
+    assert(hasConsent, `${vp.width}x${vp.height}: inner-page consent notice missing on first visit.`);
+    const styled = await evaluate(client, `(() => {
+      const el = document.querySelector('.analyticsConsent');
+      const st = getComputedStyle(el);
+      const box = el.getBoundingClientRect();
+      const title = el.querySelector('h2');
+      const titleStyle = getComputedStyle(title);
+      const buttons = [...el.querySelectorAll('.analyticsConsent__actions button')];
+      const sizes = buttons.map(b => b.getBoundingClientRect().height);
+      return {
+        position: st.position, background: st.backgroundColor,
+        accent: st.borderLeftColor, borderRadius: st.borderRadius,
+        box: {left:box.left,right:box.right,height:box.height},
+        viewportWidth: innerWidth, viewportHeight: innerHeight,
+        headingVisible: titleStyle.position === 'static' &&
+          title.getBoundingClientRect().height >= 18,
+        brandedControls: buttons.length === 2 &&
+          buttons.every(b => b.classList.contains('analyticsConsent__button')),
+        buttonHeights: sizes,
+        privacy: Boolean(el.querySelector('a[href="/tietosuoja"]')),
+        genericStyles: Boolean(el.querySelector('.button,.kicker')),
+        prematureGA: Boolean(document.querySelector('#google-analytics-src')),
+      };
+    })()`);
+    assert(styled.position === 'fixed' && styled.background === 'rgb(247, 244, 239)' &&
+      styled.accent === 'rgb(201, 40, 45)' && styled.borderRadius === '0px',
+      `${vp.width}x${vp.height}: inner consent still inherits a default popup skin: ${JSON.stringify(styled)}`);
+    assert(styled.headingVisible && styled.brandedControls && styled.privacy && !styled.genericStyles &&
+      !styled.prematureGA, `${vp.width}x${vp.height}: consent copy, controls, privacy or GA gate invalid.`);
+    assert(styled.box.left >= -1 && styled.box.right <= styled.viewportWidth + 1 &&
+      styled.box.height <= styled.viewportHeight - 20 &&
+      styled.buttonHeights.every(h => h >= 44) &&
+      Math.max(...styled.buttonHeights) - Math.min(...styled.buttonHeights) <= 2,
+      `${vp.width}x${vp.height}: consent overflow or unequal buttons: ${JSON.stringify(styled)}`);
+    const shot = await client.send('Page.captureScreenshot', {format:'png',captureBeyondViewport:false});
+    await writeFile(`${SCREENSHOT_DIR}/consent-inner-${vp.width}x${vp.height}.png`,Buffer.from(shot.data,'base64'));
+    if (vp.width === 390) {
+      await evaluate(client, 'document.querySelector(".analyticsConsent__reject").click()');
+      await sleep(110);
+      const rejected = await evaluate(client, `({
+        saved: localStorage.getItem('ghoulhouse_analytics_consent'),
+        dismissed: !document.querySelector('.analyticsConsent'),
+        settings: !!document.querySelector('.analyticsSettings'),
+      })`);
+      assert(rejected.saved === 'rejected' && rejected.dismissed && rejected.settings,
+        'Inner page: rejection was not saved or the settings control disappeared.');
+      await evaluate(client, 'document.querySelector(".analyticsSettings").click()');
+      await sleep(100);
+      assert(await evaluate(client,'!!document.querySelector(".analyticsConsent__accept")'),
+        'Inner page: consent cannot be reopened.');
+      await evaluate(client, 'document.querySelector(".analyticsConsent__accept").click()');
+      await sleep(130);
+      const accepted = await evaluate(client, `({
+        saved: localStorage.getItem('ghoulhouse_analytics_consent'),
+        dismissed: !document.querySelector('.analyticsConsent'),
+        settings: !!document.querySelector('.analyticsSettings'),
+      })`);
+      assert(accepted.saved === 'accepted' && accepted.dismissed && accepted.settings,
+        'Inner page: acceptance was not saved or the settings control disappeared.');
+    }
+    innerConsentResults.push({viewport:vp.width+'x'+vp.height,status:'PASS'});
+  }
+
   await client.send('Emulation.setEmulatedMedia', { media: '', features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
   await client.send('Page.navigate', { url: BASE_URL });
   await waitForDocument(client);
