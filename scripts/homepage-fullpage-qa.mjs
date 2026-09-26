@@ -59,7 +59,7 @@ async function auditViewport() {
     if(intersects(rect(card.querySelector('h3')),rect(card.querySelector('a.ghTextLink'))))
       errors.push('Service title/link overlap: '+card.querySelector('h3')?.textContent);
   }
-  const elementsOutside=[...document.querySelectorAll('main>section,.ghServiceCard,.gh3dCarousel.is-ready .gh3dCard[data-slot="center"],.ghGuideRow,.ghSelectedCase,.ghForm,.ghFooterMain')]
+  const elementsOutside=[...document.querySelectorAll('main>section,.ghServiceCard,.ghArtRouteList,.ghGuideRow,.ghSelectedCase,.ghForm,.ghFooterMain')]
     .filter(el=>{const r=rect(el);return r&&r.width>0&&(r.left < -1||r.right>innerWidth+1)})
     .map(el=>({element:el.id||el.className,rect:rect(el)}));
   if(elementsOutside.length)errors.push('Horizontal element overflow: '+JSON.stringify(elementsOutside));
@@ -106,7 +106,7 @@ async function auditViewport() {
   }
   // Only test fully visible links. An element passing behind a sticky header
   // while scrolling is expected; it must be targetable after scrollIntoView.
-  const selectors=['#top .ghHeroActions a.ghButton','.ghServiceCard a.ghTextLink','.ghSelectedCase','.gh3dCarousel.is-ready .gh3dCard[data-slot="center"] .gh3dCardLink','.ghGuideRow','.ghSectionLink','#yhteys button[type="submit"]'];
+  const selectors=['#top .ghHeroActions a.ghButton','.ghServiceCard a.ghTextLink','.ghSelectedCase','.ghArtRoute','.ghGuideRow','.ghSectionLink','#yhteys button[type="submit"]'];
   const targets=selectors.flatMap(s=>[...document.querySelectorAll(s)]);
   let scrollSteps=0, midPageRootMax=rootWidth;
   for(let y=0;y<document.documentElement.scrollHeight;y+=Math.max(180,Math.floor(innerHeight*.68))){

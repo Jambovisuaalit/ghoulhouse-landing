@@ -1,0 +1,544 @@
+/*
+ * GhoulHouse / Home Editorial Redesign 2026
+ * Two art-directed masters: 390px portrait and 1440px desktop.
+ * Uses the official brand assets, a clearly labelled existing concept image,
+ * the existing lead form and verified own-site work only.
+ */
+.homePage { background: var(--gh-ed-paper); color: var(--gh-ed-ink); font-family: var(--gh-ed-sans); }
+.homePage .ghShell { width: var(--gh-ed-shell); max-width: 1440px; }
+.homePage .ghSection { padding-block: var(--gh-ed-section); }
+.homePage .ghEyebrow,
+.homePage .ghServiceIndex,
+.homePage .ghStepTop,
+.homePage .ghGuideRow>.ghEyebrow {
+  font-family: var(--gh-ed-label);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .07em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+.homePage .ghSectionIntro h2 {
+  font-family: var(--gh-ed-serif);
+  font-weight: 700;
+  font-size: clamp(48px, 5.8vw, 94px);
+  line-height: 1.12;
+  letter-spacing: -.066em;
+  text-transform: none;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+.homePage .ghSectionIntro h2 em { font-weight: 400; letter-spacing: -.076em; }
+.homePage .ghSectionIntro>p:not(.ghEyebrow) { font-size: clamp(16px,1.3vw,19px); line-height: 1.75; }
+.homePage .ghSectionIntro>.ghEyebrow { margin-bottom: clamp(20px,2.8vw,38px); }
+.homePage .ghHeader { background: var(--gh-ed-paper); border-bottom: 1px solid var(--gh-ed-ink); }
+.homePage .ghHeaderInner { min-height: 74px; }
+.homePage .ghDesktopNav a,
+.homePage .ghHeader a.ghHeaderCta,
+.homePage .ghMobileNav summary {
+  font-family: var(--gh-ed-label);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .045em;
+}
+.homePage .ghHeader a.ghHeaderCta { color: var(--gh-ed-ink); border-color: var(--gh-ed-ink); }
+.homePage .ghHeader a.ghHeaderCta:hover { color: var(--gh-ed-red); border-color: var(--gh-ed-red); }
+.homePage .ghButton { min-height: 54px; border-radius: 0; background: var(--gh-ed-red); border-color: var(--gh-ed-red); font-family: var(--gh-ed-label); font-size: 13px; }
+.homePage .ghButton:hover { background: var(--gh-ed-ink); border-color: var(--gh-ed-ink); }
+.homePage .ghTextLink { border-color: currentColor; font-family: var(--gh-ed-label); font-size: 12px; }
+.homePage .ghTextLink:hover { color: var(--gh-ed-red); border-color: var(--gh-ed-red); }
+
+/* Hero: noir editorial spread — real commercial clarity, not a forest-shop
+ * mockup. The current synthetic worksite image is explicitly disclosed. */
+.homePage .ghArtHero {
+  position: relative;
+  display: block;
+  isolation: isolate;
+  min-height: 0;
+  padding: 0 0 21px;
+  overflow: hidden;
+  background: var(--gh-ed-black);
+  background-image: none;
+  color: var(--gh-ed-paper);
+}
+.homePage .ghArtGrain {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: .18;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.77' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)' opacity='.72'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 170px 170px;
+}
+.homePage .ghArtHero::before,
+.homePage .ghArtRoutesSection::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background: radial-gradient(ellipse 70% 66% at 12% 40%, #23201f 0%, transparent 80%);
+}
+.homePage .ghArtHeroMeta,
+.homePage .ghArtHeroRule {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  color: #eae2da;
+  font-family: var(--gh-ed-label);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.homePage .ghArtHeroMeta { padding-top: 20px; padding-bottom: 14px; border-bottom: 1px solid rgba(246,244,239,.36); }
+.homePage .ghArtHeroRule { padding-top: 17px; border-top: 1px solid rgba(246,244,239,.36); }
+.homePage .ghArtHeroLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.23fr) minmax(0, .82fr);
+  gap: clamp(31px,4vw,72px);
+  align-items: stretch;
+  min-height: min(675px, calc(100svh - 171px));
+  padding-block: clamp(35px,4vw,66px);
+}
+.homePage .ghArtHeroCopy {
+  min-width: 0;
+  align-self: center;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.homePage .ghArtHeroEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  margin: 0 0 clamp(18px,2.5vw,35px);
+  color: #e3dcd5;
+  font-family: var(--gh-ed-label);
+  font-size: 11px;
+  line-height: 1.5;
+  letter-spacing: .12em;
+}
+.homePage .ghArtHeroEyebrow span { color: var(--gh-ed-red); font-family: var(--gh-ed-serif); font-size: 26px; line-height: .85; }
+.homePage .ghArtHero h1 {
+  max-width: none;
+  width: max-content;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  color: var(--gh-ed-paper);
+  font-family: var(--gh-ed-serif);
+  font-size: clamp(53px, 6.35vw, 110px);
+  font-weight: 700;
+  line-height: 1.13;
+  letter-spacing: -.071em;
+  text-transform: uppercase;
+  text-wrap: initial;
+  white-space: nowrap;
+}
+.homePage .ghArtHero h1>span { display: block; color: var(--gh-ed-paper); }
+.homePage .ghArtHero h1>span+span { color: #e12433; }
+.homePage .ghArtHeroBottom {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 26px;
+  max-width: 570px;
+  margin-top: clamp(27px,3.7vw,51px);
+}
+.homePage .ghArtHero .ghLead {
+  max-width: 43ch;
+  margin: 0;
+  color: #e9e3da;
+  font-family: var(--gh-ed-sans);
+  font-size: clamp(16px,1.35vw,19px);
+  font-weight: 500;
+  line-height: 1.72;
+}
+.homePage .ghArtHeroAction { display: flex; align-items: center; flex-wrap: wrap; gap: 13px 23px; }
+.homePage .ghArtHero .ghHeroActions { margin: 0; }
+.homePage .ghArtHero .ghButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 222px;
+  gap: 32px;
+  min-height: 57px;
+  background: var(--gh-ed-red);
+  color: #fff;
+  border-color: var(--gh-ed-red);
+}
+.homePage .ghArtHero .ghButton:hover { background: var(--gh-ed-paper); border-color: var(--gh-ed-paper); color: var(--gh-ed-black); }
+.homePage .ghArtHero .ghHeroFootnote { margin: 0; max-width: 24ch; color: #c7bdb7; font-family: var(--gh-ed-label); font-size: 11px; line-height: 1.55; }
+.homePage .ghArtHeroVisual {
+  align-self: stretch;
+  display: grid;
+  grid-template-rows: minmax(0,1fr) auto;
+  gap: 10px;
+  margin: 0;
+  min-width: 0;
+}
+.homePage .ghArtHeroImage {
+  position: relative;
+  min-height: 445px;
+  overflow: hidden;
+  background: #292725;
+}
+.homePage .ghArtHeroImage::after {
+  content:'';
+  position: absolute;
+  inset:0;
+  pointer-events:none;
+  background: linear-gradient(180deg,transparent 36%,rgba(0,0,0,.63));
+}
+.homePage .ghArtHeroImage img {
+  display: block;
+  object-fit: cover;
+  object-position: 52% 52%;
+  filter: grayscale(1) contrast(1.28) brightness(.78);
+}
+.homePage .ghArtHeroImageMark {
+  position: absolute;
+  z-index: 1;
+  top: 17px;
+  right: 24px;
+  color: #e12433;
+  font-family: var(--gh-ed-serif);
+  font-size: 58px;
+  line-height: 1;
+  font-weight: 400;
+}
+.homePage .ghArtHeroImageSerial {
+  position: absolute;
+  z-index: 1;
+  bottom: 21px;
+  left: 23px;
+  color: #fff;
+  font-family: var(--gh-ed-label);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+}
+.homePage .ghArtHeroVisual figcaption {
+  color: #d0c6c0;
+  font-family: var(--gh-ed-label);
+  font-size: 10px;
+  line-height: 1.45;
+  font-weight: 700;
+  letter-spacing: .07em;
+}
+.homePage .ghArtHero h1>span { overflow: visible; }
+.homePage .ghConsentSlot:not(:empty) { background: var(--gh-ed-paper); }
+
+/* Services: a print index, not product-card UI. */
+.homePage .ghServices { background: var(--gh-ed-paper); }
+.homePage .ghServicesIntro {
+  display: grid;
+  grid-template-columns: minmax(105px,.19fr) minmax(0,1.1fr) minmax(0,.7fr);
+  column-gap: clamp(20px,3.5vw,64px);
+  align-items: start;
+  max-width: none;
+}
+.homePage .ghServicesIntro>.ghEyebrow { grid-column:1; grid-row:1; margin-top:12px; }
+.homePage .ghServicesIntro h2 { grid-column:2; grid-row:1; font-size:clamp(53px,5.8vw,94px); }
+.homePage .ghServicesIntro>p:not(.ghEyebrow) { grid-column:3; grid-row:1; margin-top:12px; max-width:36ch; }
+.homePage .ghServiceList { margin-top: clamp(48px,5.4vw,82px); border-top:2px solid var(--gh-ed-ink); }
+.homePage .ghServiceCard {
+  display: grid;
+  grid-template-columns: minmax(50px,.11fr) minmax(0,1fr) minmax(165px,.3fr);
+  gap:clamp(13px,3vw,43px);
+  align-items:start;
+  padding:clamp(29px,3.4vw,53px) 0;
+  border-bottom:1px solid var(--gh-ed-rule);
+  background:transparent;
+}
+.homePage .ghServiceIndex { margin-top: 9px; color:var(--gh-ed-red); font-size:12px; }
+.homePage .ghServiceCard h3 {
+  color: var(--gh-ed-ink);
+  font-family: var(--gh-ed-serif);
+  font-size: clamp(43px,5.1vw,85px);
+  font-weight:700;
+  line-height:1.11;
+  letter-spacing:-.058em;
+}
+.homePage .ghServiceCard p { max-width:51ch; margin-top:20px; color:#393530; font-size:16px; line-height:1.7; }
+.homePage .ghServiceOutputs { max-width:640px; gap:8px 23px; border-color:#d5ccc2; }
+.homePage .ghServiceOutputs li { font-size:13px; line-height:1.55; }
+.homePage .ghServiceOutputs li::before { color:var(--gh-ed-red); }
+.homePage .ghServiceCard .ghServiceMeta { font-family:var(--gh-ed-label); font-size:11px; font-weight:700; letter-spacing:.01em; text-transform:uppercase; }
+.homePage .ghServiceCard .ghTextLink { justify-self:end; align-self:start; margin-top:10px; min-height:46px; max-width:210px; font-size:12px; }
+
+/* Only the verified own-site case is a case study. */
+.homePage .ghSelected { background:#eae5dc; }
+.homePage .ghSelectedGrid { display:grid; grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr); gap:clamp(48px,6vw,105px); align-items:center; }
+.homePage .ghSelected .ghSectionIntro h2 { font-size:clamp(52px,5.8vw,91px); }
+.homePage .ghSelected .ghSectionIntro h2 em { color:var(--gh-ed-red); }
+.homePage .ghSelected .ghSectionIntro>p:not(.ghEyebrow) { max-width:46ch; }
+.homePage .ghSelectedInquiry { border-color:var(--gh-ed-ink); font-family:var(--gh-ed-label); font-size:12px; }
+.homePage .ghSelectedCase {
+  display:block;
+  margin:0;
+  padding:0;
+  min-width:0;
+  background:transparent;
+  border:0;
+  color:var(--gh-ed-ink);
+}
+.homePage .ghSelectedCase:hover { background:transparent; }
+.homePage .ghSelectedCaseTop {
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:0 0 13px;
+  border-bottom:1px solid var(--gh-ed-ink);
+  color:var(--gh-ed-ink);
+  font-family:var(--gh-ed-label);
+  font-size:10px;
+  font-weight:700;
+}
+.homePage .ghSelectedCaseDisplay {
+  display:block;
+  aspect-ratio:1.42;
+  overflow:hidden;
+  margin:13px 0 0;
+  border:1px solid var(--gh-ed-ink);
+  background:#ede9e3;
+}
+.homePage .ghSelectedCaseDisplay .ghSelectedScreenshot {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:top;
+  filter:grayscale(1) contrast(1.05);
+  border:0;
+}
+.homePage .ghSelectedCase:hover .ghSelectedScreenshot { filter:grayscale(.65) contrast(1.05); }
+.homePage .ghSelectedCaseFoot {
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  padding-top:13px;
+  border-top:0;
+  color:var(--gh-ed-ink);
+}
+.homePage .ghSelectedCaseFoot strong { font-family:var(--gh-ed-serif); font-size:clamp(23px,2.3vw,36px); font-weight:700; line-height:1.2; }
+.homePage .ghSelectedCaseFoot span { color:#48413c; font-family:var(--gh-ed-label); font-size:11px; line-height:1.6; }
+
+/* Four steps as one typographic black interlude. */
+.homePage .ghProcess {
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  background:var(--gh-ed-black);
+  color:var(--gh-ed-paper);
+}
+.homePage .ghProcess::before, .homePage .ghContact::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  opacity:.13;
+  pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.62' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='150' height='150' filter='url(%23n)' opacity='.67'/%3E%3C/svg%3E");
+}
+.homePage .ghProcess .ghSectionIntro h2 {
+  max-width:15ch;
+  color:var(--gh-ed-paper);
+  font-family:var(--gh-ed-serif);
+  font-size:clamp(53px,6.1vw,98px);
+  font-weight:700;
+  line-height:1.11;
+}
+.homePage .ghProcess .ghEyebrow { color:#d8cec7; }
+.homePage .ghProcess .ghSteps { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:clamp(17px,3.1vw,54px); margin-top:clamp(55px,6vw,95px); }
+.homePage .ghProcess .ghSteps li { border-top:1px solid #aaa098; padding-top:17px; }
+.homePage .ghProcess .ghStepTop { margin-bottom:clamp(30px,4.2vw,63px); color:#e2d8d0; font-size:12px; }
+.homePage .ghProcess .ghSteps h3 { font-family:var(--gh-ed-serif); font-size:clamp(27px,2.5vw,38px); font-weight:700; letter-spacing:-.045em; color:#fffaf6; }
+.homePage .ghProcess .ghSteps p { margin-top:16px; font-size:14px; line-height:1.7; color:#ddd3cb; }
+.homePage .ghProcessInquiry { border-color:rgba(246,244,239,.56); }
+.homePage .ghProcessInquiry>span { color:#d5cac4; }
+.homePage .ghProcessInquiry>a { font-family:var(--gh-ed-label); font-size:12px; }
+
+/* Saturated red editorial index replaces the decorative 3D carousel.
+ * Each destination is an actual maintained industry or channel landing. */
+.homePage .ghArtRoutesSection {
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  background:var(--gh-ed-red);
+  color:#fff9f2;
+}
+.homePage .ghArtRoutesSection::before { background:radial-gradient(ellipse 70% 50% at 100% 0%,rgba(0,0,0,.13),transparent 85%); }
+.homePage .ghArtRoutesSection .ghArtGrain { opacity:.16; }
+.homePage .ghArtRoutesLayout { display:grid; grid-template-columns:minmax(0,.96fr) minmax(0,1.04fr); gap:clamp(49px,6.3vw,107px); align-items:start; }
+.homePage .ghArtRoutesSection .ghEyebrow { color:#fff9f2; }
+.homePage .ghArtRoutesSection .ghSectionIntro h2 { font-family:var(--gh-ed-serif); font-size:clamp(48px,5.3vw,89px); font-weight:700; line-height:1.11; color:#fff9f2; }
+.homePage .ghArtRoutesSection .ghSectionIntro h2 em { color:#211011; font-weight:400; }
+.homePage .ghArtRoutesSection .ghSectionIntro>p:not(.ghEyebrow) { max-width:43ch; color:#fff5ee; font-size:16px; line-height:1.75; }
+.homePage .ghArtRoutesSection .ghSectionLink { margin-top:25px; border-color:#fff9f2; color:#fff9f2; }
+.homePage .ghArtRoutesSection .ghSectionLink:hover { color:#211011; border-color:#211011; }
+.homePage .ghArtRouteList { display:block; min-width:0; border-top:1px solid rgba(255,255,255,.72); }
+.homePage .ghArtRoute {
+  display:grid;
+  grid-template-columns:60px minmax(0,1fr) 36px;
+  gap:clamp(10px,2vw,22px);
+  align-items:start;
+  min-width:0;
+  min-height:166px;
+  padding:clamp(24px,3vw,43px) 0;
+  border-bottom:1px solid rgba(255,255,255,.72);
+  color:#fff9f2;
+}
+.homePage .ghArtRouteIndex { font-family:var(--gh-ed-label); font-size:11px; font-weight:700; letter-spacing:.03em; }
+.homePage .ghArtRouteMain { display:grid; gap:12px; min-width:0; }
+.homePage .ghArtRouteMain strong { font-family:var(--gh-ed-serif); font-size:clamp(38px,4.4vw,72px); font-weight:700; line-height:1.1; letter-spacing:-.065em; }
+.homePage .ghArtRouteMain small { display:block; max-width:38ch; font-size:14px; line-height:1.65; color:#fceae5; }
+.homePage .ghArtRouteArrow { justify-self:end; font-size:29px; font-weight:400; line-height:1; transition:transform .2s ease; }
+.homePage .ghArtRoute:hover .ghArtRouteArrow { transform:translate(4px,-4px); }
+.homePage .ghArtRoute:focus-visible { outline:3px solid #fff; outline-offset:-4px; }
+
+/* Asymmetric magazine-style resources / founder signature. */
+.homePage .ghResources { background:var(--gh-ed-paper); }
+.homePage .ghResources .ghSectionIntro h2 { font-family:var(--gh-ed-serif); font-size:clamp(51px,6vw,95px); }
+.homePage .ghGuideList { border-top:2px solid var(--gh-ed-ink); }
+.homePage .ghGuideRow { min-height:132px; border-color:var(--gh-ed-rule); }
+.homePage .ghGuideRow strong { font-family:var(--gh-ed-serif); font-size:clamp(23px,2.55vw,39px); font-weight:700; letter-spacing:-.04em; line-height:1.18; }
+.homePage .ghGuideRow small { font-size:14px; line-height:1.6; }
+.homePage .ghFounder { background:#e9e4db; }
+.homePage .ghFounderGrid { border-top:1px solid var(--gh-ed-ink); grid-template-columns:minmax(0,.45fr) minmax(0,1.55fr); gap:clamp(42px,8vw,125px); }
+.homePage .ghFounderIdentity img { width:clamp(98px,13vw,192px); height:auto; filter:none; }
+.homePage .ghFounderIdentity p { font-family:var(--gh-ed-label); font-size:11px; line-height:1.65; letter-spacing:.06em; }
+.homePage .ghFounder .ghSectionIntro h2 { font-family:var(--gh-ed-serif); font-size:clamp(55px,6.7vw,105px); }
+.homePage .ghFounder .ghSectionIntro>.ghTextLink { font-family:var(--gh-ed-label); }
+
+/* Existing lead form and routing remain intact; only its skin changes. */
+.homePage .ghContact {
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  background:var(--gh-ed-black);
+  color:var(--gh-ed-paper);
+  border-top:5px solid var(--gh-ed-red);
+}
+.homePage .ghContactGrid { grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr); gap:clamp(50px,7vw,117px); }
+.homePage .ghContact .ghSectionIntro h2 { font-family:var(--gh-ed-serif); font-size:clamp(63px,7.4vw,114px); font-weight:700; line-height:1.12; letter-spacing:-.068em; color:var(--gh-ed-paper); }
+.homePage .ghContact .ghSectionIntro>p:not(.ghEyebrow) { color:#ddd4ce; font-size:17px; }
+.homePage .ghContact .ghEyebrow { color:#ded5cf; }
+.homePage .ghContact .ghForm input,
+.homePage .ghContact .ghForm select,
+.homePage .ghContact .ghForm textarea { border-color:#afa59f; background:transparent; color:#f6f4ef; }
+.homePage .ghContact .ghForm .formSubmit { background:var(--gh-ed-red); border-color:var(--gh-ed-red); border-radius:0; font-family:var(--gh-ed-label); font-size:12px; min-height:52px; }
+.homePage .ghContact .ghForm :is(input,select,textarea,button):focus-visible { outline:3px solid #ef727e; outline-offset:3px; }
+
+/* 1440 design master — layout stays asymmetrical without sacrificing copy. */
+@media(max-width:1199px){
+  .homePage .ghArtHeroLayout { grid-template-columns:minmax(0,1.04fr) minmax(0,.9fr); gap:35px; }
+  .homePage .ghArtHero h1 { font-size:clamp(46px,6.9vw,87px); }
+  .homePage .ghArtHeroImage { min-height:410px; }
+  .homePage .ghServicesIntro { grid-template-columns:minmax(100px,.2fr) minmax(0,1.4fr); }
+  .homePage .ghServicesIntro>p:not(.ghEyebrow) { grid-column:2; grid-row:2; margin-top:17px; }
+  .homePage .ghArtRoutesLayout { gap:42px; }
+}
+@media(max-width:1023px){
+  .homePage .ghArtHeroLayout { grid-template-columns:minmax(0,1fr) minmax(0,.76fr); min-height:0; gap:26px; padding-block:43px; }
+  .homePage .ghArtHero h1 { font-size:clamp(40px,5.7vw,68px); }
+  .homePage .ghArtHeroImage { min-height:400px; }
+  .homePage .ghArtHeroBottom { gap:19px; }
+  .homePage .ghServiceCard { grid-template-columns:55px minmax(0,1fr); gap:18px; }
+  .homePage .ghServiceCard .ghTextLink { grid-column:2; justify-self:start; }
+  .homePage .ghSelectedGrid, .homePage .ghArtRoutesLayout, .homePage .ghContactGrid { grid-template-columns:minmax(0,1fr); gap:45px; }
+  .homePage .ghSelectedCase { max-width:840px; }
+  .homePage .ghArtRoutesSection .ghSectionIntro { max-width:700px; }
+  .homePage .ghArtRouteList { max-width:780px; }
+  .homePage .ghFounderGrid { grid-template-columns:minmax(0,.45fr) minmax(0,1.55fr); gap:48px; }
+}
+@media(max-width:767px){
+  .homePage .ghSection { padding-block:76px; }
+  .homePage .ghShell { width:calc(100% - 36px); }
+  .homePage .ghHeaderInner { min-height:65px; }
+  .homePage .ghArtHero { padding-bottom:17px; }
+  .homePage .ghArtHeroMeta { padding-top:13px; padding-bottom:11px; font-size:9px; }
+  .homePage .ghArtHeroMeta span:last-child { max-width:142px; text-align:right; }
+  .homePage .ghArtHeroLayout { display:flex; flex-direction:column; min-height:0; gap:25px; padding-top:28px; padding-bottom:22px; }
+  .homePage .ghArtHeroCopy { width:100%; align-items:flex-start; align-self:stretch; }
+  .homePage .ghArtHeroEyebrow { margin-bottom:15px; font-size:10px; letter-spacing:.055em; }
+  .homePage .ghArtHeroEyebrow span { font-size:21px; }
+  .homePage .ghArtHero h1 {
+    font-size:clamp(32px,9.05vw,59px);
+    line-height:1.16;
+    letter-spacing:-.067em;
+    white-space:nowrap;
+  }
+  .homePage .ghArtHeroBottom { margin-top:19px; gap:18px; }
+  .homePage .ghArtHero .ghLead { max-width:37ch; font-size:14px; line-height:1.57; }
+  .homePage .ghArtHeroAction { gap:10px; }
+  .homePage .ghArtHero .ghButton { min-height:49px; min-width:205px; padding:11px 14px; font-size:12px; }
+  .homePage .ghArtHero .ghHeroFootnote { font-size:10px; line-height:1.45; }
+  .homePage .ghArtHeroVisual { width:100%; gap:9px; }
+  .homePage .ghArtHeroImage { min-height:0; height:clamp(185px,48vw,325px); }
+  .homePage .ghArtHeroImage img { object-position:50% 55%; }
+  .homePage .ghArtHeroImageMark { font-size:38px; top:12px; right:15px; }
+  .homePage .ghArtHeroImageSerial { font-size:9px; bottom:12px; left:13px; }
+  .homePage .ghArtHeroVisual figcaption { font-size:9px; }
+  .homePage .ghArtHeroRule { padding-top:12px; font-size:9px; }
+  .homePage .ghServicesIntro { display:block; }
+  .homePage .ghServicesIntro>.ghEyebrow { margin-bottom:18px; }
+  .homePage .ghServicesIntro h2 { font-size:clamp(43px,10.6vw,69px); }
+  .homePage .ghServicesIntro>p:not(.ghEyebrow) { margin-top:17px; font-size:16px; }
+  .homePage .ghServiceList { margin-top:39px; }
+  .homePage .ghServiceCard { display:grid; grid-template-columns:minmax(0,1fr); gap:12px; padding:25px 0 35px; }
+  .homePage .ghServiceIndex { margin:0; }
+  .homePage .ghServiceCard h3 { font-size:clamp(42px,11.1vw,60px); }
+  .homePage .ghServiceCard p { margin-top:14px; font-size:15px; line-height:1.68; }
+  .homePage .ghServiceCard .ghTextLink { grid-column:1; margin-top:8px; max-width:100%; }
+  .homePage .ghServiceOutputs { margin-top:17px; }
+  .homePage .ghSelectedGrid { gap:34px; }
+  .homePage .ghSelected .ghSectionIntro h2 { font-size:clamp(49px,11vw,72px); }
+  .homePage .ghSelectedCaseDisplay { aspect-ratio:1.14; }
+  .homePage .ghSelectedCaseFoot strong { font-size:26px; }
+  .homePage .ghProcess .ghSectionIntro h2 { font-size:clamp(45px,10.5vw,67px); }
+  .homePage .ghProcess .ghSteps { grid-template-columns:minmax(0,1fr); gap:24px; margin-top:39px; }
+  .homePage .ghProcess .ghSteps li { padding-top:18px; }
+  .homePage .ghProcess .ghStepTop { margin-bottom:13px; }
+  .homePage .ghProcess .ghSteps h3 { font-size:32px; }
+  .homePage .ghProcess .ghSteps p { font-size:15px; }
+  .homePage .ghArtRoutesSection .ghSectionIntro h2 { font-size:clamp(40px,9.65vw,67px); }
+  .homePage .ghArtRoutesSection .ghSectionIntro>p:not(.ghEyebrow) { font-size:15px; }
+  .homePage .ghArtRoute { grid-template-columns:39px minmax(0,1fr) 25px; gap:12px; min-height:125px; padding:24px 0; }
+  .homePage .ghArtRouteMain strong { font-size:clamp(32px,8.8vw,52px); }
+  .homePage .ghArtRouteMain small { font-size:13px; }
+  .homePage .ghArtRouteIndex { font-size:9px; }
+  .homePage .ghArtRouteArrow { font-size:22px; }
+  .homePage .ghResources .ghSectionIntro h2 { font-size:clamp(46px,10.4vw,68px); }
+  .homePage .ghGuideRow { min-height:117px; }
+  .homePage .ghGuideRow strong { font-size:clamp(23px,6.2vw,32px); }
+  .homePage .ghFounderGrid { grid-template-columns:minmax(0,1fr); gap:28px; padding-top:38px; }
+  .homePage .ghFounderIdentity { gap:13px; }
+  .homePage .ghFounderIdentity img { width:80px; height:auto; }
+  .homePage .ghFounder .ghSectionIntro h2 { font-size:clamp(44px,10.3vw,64px); }
+  .homePage .ghContactGrid { gap:37px; }
+  .homePage .ghContact .ghSectionIntro h2 { font-size:clamp(53px,12vw,79px); }
+  .homePage .ghContact .ghSectionIntro>p:not(.ghEyebrow) { font-size:16px; }
+}
+@media(max-width:359px){
+  .homePage .ghArtHero h1 { font-size:8.75vw; }
+  .homePage .ghArtHeroMeta { font-size:8px; }
+  .homePage .ghArtHeroMeta span:last-child { max-width:120px; }
+  .homePage .ghArtHeroVisual figcaption { font-size:8px; }
+  .homePage .ghArtRouteMain strong { font-size:30px; }
+  .homePage .ghArtRoutesSection .ghSectionIntro h2 { font-size:37px; }
+}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+  .homePage .ghSelectedCaseDisplay .ghSelectedScreenshot { transition:filter .28s ease; }
+  .homePage .ghArtHeroImage img { transition:transform .65s ease; }
+  .homePage .ghArtHeroVisual:hover .ghArtHeroImage img { transform:scale(1.025); }
+}
+@media(prefers-reduced-motion:reduce){
+  .homePage .ghArtRouteArrow,
+  .homePage .ghArtHeroImage img { transition:none; }
+}
