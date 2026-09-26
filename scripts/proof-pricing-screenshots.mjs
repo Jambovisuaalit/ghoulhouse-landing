@@ -14,6 +14,11 @@ for (const [name, path] of [
   ['referenssit', '/referenssit'],
   ['oma-tyo', '/tyot/ghoulhouse-verkkosivut'],
   ['hinta', '/verkkosivut/hinta'],
+  ['social-overview', '/some-sisallontuotanto'],
+  ['some-12', '/some-12'],
+  ['rakennus-some', '/rakennusyrityksille'],
+  ['lvi-some', '/lvi-yrityksille'],
+  ['instagram-some', '/instagram-sisallontuotanto'],
 ]) {
   const response = await fetch('http://127.0.0.1:3000' + path);
   if (!response.ok) throw new Error(`${path} returned ${response.status}`);
