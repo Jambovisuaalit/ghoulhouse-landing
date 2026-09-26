@@ -22,7 +22,7 @@ const pageComponent = readFileSync('src/components/seo/SeoLandingPage.tsx', 'utf
 const websiteComponent = readFileSync('src/components/website/WebsiteLandingPage.tsx', 'utf8');
 
 const tailored = ['rakennusyrityksille', 'lvi-yrityksille', 'instagram-sisallontuotanto'];
-const fields = ['challenge', 'examples', 'process', 'faq', 'related'];
+const fields = ['challenge', 'examples', 'process', 'faq', 'related', 'contact'];
 for (const slug of [...tailored, 'some-sisallontuotanto', 'some-12']) {
   const h = pages[slug].headings;
   check(h && fields.every((field) => h[field]), slug + ': H2 structure is incomplete');
@@ -99,7 +99,7 @@ for (const slug of relatedSlugs) {
   }
   if (slug === 'some-12') {
     check(html.includes('PYYDÄ SOME 12 -ALOITUSTA') &&
-      html.includes('SOVITAAN ENSIMMÄINEN 30 PÄIVÄÄ.') &&
+      html.includes('SOVITAAN ENSIMMÄISET 30 PÄIVÄÄ.') &&
       html.includes('some-12#offer') &&
       html.includes('name="intent" value="booking"') &&
       html.includes('value="social" selected'),
