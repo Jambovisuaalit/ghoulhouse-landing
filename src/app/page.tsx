@@ -4,6 +4,7 @@ import FunnelAnalytics from '@/components/analytics/FunnelAnalytics';
 import HeroDotGrid from '@/components/HeroDotGrid';
 import Service3DCarousel from '@/components/Service3DCarousel';
 import { siteNavigation } from '@/data/site-navigation';
+import LiquidGlassFooter from '@/components/LiquidGlassFooter';
 import './homepage.css';
 import './homepage-swiss.css';
 
@@ -232,11 +233,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
           </div>
         </section>
       </main>
-      <footer className="ghFooter">
-        <div className="ghShell ghSwissFooterMasthead" aria-hidden="true">GHOULHOUSE<span>.</span></div>
-        <div className="ghShell ghFooterMain"><div><Brand footer /><p className="ghFooterTagline">Hyvä työ pitää näkyä.<br />Verkkosivut · Social · SEO.</p></div><div className="ghFooterCompany"><p>GhoulHouse Oy</p><p>Y-tunnus 3651127-5 · Helsinki</p><a href="mailto:hello@ghoulhouse.fi">hello@ghoulhouse.fi</a></div><nav aria-label="Alatunnisteen navigaatio">{siteNavigation.map(({ href, label }) => <a key={href} href={href}>{label}</a>)}<a href="/#yritys">GhoulHouse / tekijä</a><a href="/tietosuoja">Tietosuoja</a></nav></div>
-        <div className="ghShell ghFooterBottom"><span>© 2026 GhoulHouse Oy</span><a href="#top">Takaisin ylös ↑</a></div>
-      </footer>
+      <LiquidGlassFooter home />
     </div>
   );
 }
