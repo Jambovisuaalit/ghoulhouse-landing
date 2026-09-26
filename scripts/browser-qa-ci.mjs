@@ -206,7 +206,25 @@ try {
         resourceLinks: document.querySelectorAll('.ghGuideRow').length,
         proposalIntent: form?.querySelector('[name="intent"]')?.value === 'booking',
         schemaTypes: [...document.querySelectorAll('script[type="application/ld+json"]')].map((script) => script.textContent || '').join(' '),
-        logoLoaded: document.querySelector('header .ghBrand img')?.getAttribute('src') === '/favicon.svg',
+        logoLoaded: (() => {
+          const image = document.querySelector('header .ghBrand img');
+          return image?.getAttribute('src') === '/ghoulhouse-logo.svg' && image.complete &&
+            image.naturalWidth > 200 && image.naturalHeight > 50;
+        })(),
+        brandLayout: (() => {
+          const logo = document.querySelector('header .ghBrand img');
+          const footer = document.querySelector('footer .ghOfficialFooterLogo');
+          const wordmark = document.querySelector('footer .ghOfficialWordmark');
+          const heroMark = document.querySelector('.ghSwissTileBrand img');
+          return {
+            header: rect(logo),
+            footer: footer?.getAttribute('src'),
+            footerLoaded: Boolean(footer?.complete && footer.naturalWidth > 200),
+            giantWordmark: wordmark?.getAttribute('src'),
+            mark: heroMark?.getAttribute('src'),
+            markFilter: heroMark ? getComputedStyle(heroMark).filter : '',
+          };
+        })(),
         glassFooter: (() => {
           const footer = document.querySelector('footer.ghLiquidFooter');
           const rim = footer?.querySelector('.ghLiquidFooterRim');
@@ -287,6 +305,12 @@ try {
     assert(metrics.requiredFields, `${viewport.width}x${viewport.height}: required lead fields missing.`);
     assert(metrics.submitRect?.height >= 44, `${viewport.width}x${viewport.height}: submit target below 44px.`);
     assert(metrics.proofExists && metrics.logoLoaded, `${viewport.width}x${viewport.height}: company proof or logo missing.`);
+    assert(metrics.brandLayout.header?.left >= -1 && metrics.brandLayout.header?.right <= metrics.innerWidth + 1 &&
+      metrics.brandLayout.footer === '/ghoulhouse-logo-reverse.svg' && metrics.brandLayout.footerLoaded &&
+      metrics.brandLayout.giantWordmark === '/ghoulhouse-wordmark-white.svg' &&
+      metrics.brandLayout.mark === '/ghoulhouse-mark-reverse.svg' &&
+      metrics.brandLayout.markFilter === 'none',
+      `${viewport.width}x${viewport.height}: official logo contrast, load or clipping failed: ${JSON.stringify(metrics.brandLayout)}`);
     assert(metrics.glassFooter.exists && metrics.glassFooter.rimBackground.includes('gradient') &&
       metrics.glassFooter.brandLink === '/' && metrics.glassFooter.navItems === 4 && metrics.glassFooter.privacy,
       `${viewport.width}x${viewport.height}: shared glass footer contents/rim missing: ${JSON.stringify(metrics.glassFooter)}`);
