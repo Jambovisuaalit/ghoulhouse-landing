@@ -12,11 +12,15 @@ mkdirSync(output, { recursive: true });
 
 for (const [name, path] of [
   ['referenssit', '/referenssit'],
+  ['oma-tyo', '/tyot/ghoulhouse-verkkosivut'],
   ['hinta', '/verkkosivut/hinta'],
 ]) {
   const response = await fetch('http://127.0.0.1:3000' + path);
   if (!response.ok) throw new Error(`${path} returned ${response.status}`);
   const html = await response.text();
+  if (name === 'oma-tyo' && (!html.includes('ei asiakasreferenssi') || !html.includes('href="/verkkosivut-yritykselle#yhteys"'))) {
+    throw new Error('Own-work case must disclose provenance and offer the actual inquiry path.');
+  }
   const headings = [...html.matchAll(/<h1\b[^>]*>/g)];
   if (headings.length !== 1) throw new Error(`${path} has ${headings.length} H1 headings`);
 
