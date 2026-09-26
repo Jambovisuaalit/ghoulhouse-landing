@@ -1,0 +1,446 @@
+/* GhoulHouse liquid-glass footer
+   Original CSS inspired by Framer's Liquid Glass Footer concept:
+   a metallic light-catching rim, layered translucent surface and tactile links.
+   No dependency, shaders, heavy animation or third-party code. */
+.ghLiquidFooter.ghGlobalFooter,
+.homePage .ghFooter.ghLiquidFooter {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  margin: 0;
+  padding: clamp(70px, 8vw, 124px) 0 29px;
+  background: #111112;
+  border: 0;
+  color: #f7f4ef;
+  font-family: var(--font-body), Arial, sans-serif;
+}
+.ghLiquidFooter *,
+.ghLiquidFooter *::before,
+.ghLiquidFooter *::after {
+  box-sizing: border-box;
+}
+.ghLiquidFooterAmbient {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 54% 36% at 77% 1%, rgba(247,244,239,.18), transparent 76%),
+    radial-gradient(ellipse 50% 39% at 12% 42%, rgba(126,134,145,.16), transparent 76%),
+    radial-gradient(ellipse 25% 34% at 103% 73%, rgba(201,40,45,.18), transparent 80%),
+    linear-gradient(180deg, #141414 0%, #101011 76%, #070708 100%);
+}
+.ghLiquidFooterShell {
+  position: relative;
+  width: min(calc(100% - 108px), 1440px);
+  margin: 0 auto;
+  min-width: 0;
+}
+.ghLiquidFooterRim {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 1.5px;
+  border-radius: 23px;
+  background:
+    linear-gradient(134deg,
+      rgba(255,255,255,.88) 0%,
+      rgba(195,201,207,.56) 13%,
+      rgba(80,80,81,.58) 28%,
+      rgba(255,255,255,.34) 47%,
+      rgba(111,112,119,.38) 64%,
+      rgba(242,240,237,.76) 82%,
+      rgba(102,101,106,.66) 100%);
+  box-shadow:
+    0 35px 95px rgba(0,0,0,.48),
+    0 8px 30px rgba(0,0,0,.35),
+    inset 0 1px 0 rgba(255,255,255,.58);
+}
+.ghLiquidFooterRim::before {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(118deg, transparent 24%, rgba(255,255,255,.25) 47%, transparent 59%);
+  background-size: 175% 100%;
+  opacity: .65;
+}
+.ghLiquidFooterSurface {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  min-width: 0;
+  padding: clamp(25px, 4.3vw, 64px);
+  border-radius: 21.5px;
+  border: 1px solid rgba(255,255,255,.13);
+  background:
+    linear-gradient(126deg, rgba(255,255,255,.18) 0%, rgba(255,255,255,.055) 28%, rgba(255,255,255,.025) 70%, rgba(255,255,255,.10) 100%),
+    linear-gradient(155deg, rgba(49,49,53,.94), rgba(23,23,26,.96) 58%, rgba(33,30,31,.94));
+  -webkit-backdrop-filter: blur(20px) saturate(120%);
+  backdrop-filter: blur(20px) saturate(120%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.26), inset 1px 0 0 rgba(255,255,255,.08);
+}
+.ghLiquidFooterSurface::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 44%;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255,255,255,.055), transparent);
+  opacity: .85;
+}
+.ghLiquidFooterMeta {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 11px;
+  min-width: 0;
+  padding-bottom: 22px;
+  border-bottom: 1px solid rgba(246,243,237,.32);
+  color: rgba(247,244,239,.75);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.4;
+  letter-spacing: .12em;
+}
+.ghLiquidFooterInvite {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, .32fr);
+  gap: clamp(34px, 5vw, 80px);
+  align-items: end;
+  padding: clamp(50px, 7vw, 100px) 0 clamp(62px, 7vw, 106px);
+}
+.ghLiquidFooterStatement { min-width: 0; }
+.ghLiquidFooterEyebrow {
+  margin: 0 0 23px;
+  color: #e4deda;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  line-height: 1.5;
+}
+.ghLiquidFooterStatement h2 {
+  margin: 0;
+  max-width: 970px;
+  color: #f7f4ef;
+  font-family: var(--font-body), Arial, sans-serif;
+  font-size: clamp(50px, 6.65vw, 104px);
+  font-weight: 900;
+  line-height: .995;
+  letter-spacing: -.085em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+.ghLiquidFooterStatement h2 span {
+  color: #f7f4ef;
+  text-shadow: 0 0 35px rgba(243,240,233,.14);
+}
+.ghLiquidFooterStatement>p:last-child {
+  max-width: 46ch;
+  margin: clamp(25px, 3vw, 38px) 0 0;
+  color: #e0dcda;
+  font-size: clamp(15px, 1.33vw, 18px);
+  line-height: 1.65;
+}
+.ghLiquidFooterInviteActions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 13px;
+  min-width: 0;
+  padding-bottom: 6px;
+}
+.ghLiquidFooterButton {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  min-height: 64px;
+  padding: 16px 19px 16px 22px;
+  overflow: hidden;
+  border: 1px solid rgba(247,244,239,.73);
+  border-radius: 15px;
+  background:
+    linear-gradient(123deg, rgba(247,244,239,.32), rgba(247,244,239,.10) 46%, rgba(247,244,239,.27));
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.44), 0 10px 30px rgba(0,0,0,.17);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: .035em;
+  text-transform: uppercase;
+}
+.ghLiquidFooterButton::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(100deg, transparent 20%, rgba(255,255,255,.14), transparent 70%);
+  pointer-events: none;
+}
+.ghLiquidFooterButton span:last-child { font-size: 24px; font-weight: 400; line-height: 1; }
+.ghLiquidFooterMail {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  gap: 8px;
+  padding: 5px 2px;
+  border-bottom: 1px solid rgba(247,244,239,.45);
+  color: #e8e4df;
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.5;
+}
+.ghLiquidFooterLinks {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) repeat(3, minmax(0, .75fr));
+  gap: clamp(25px, 3.5vw, 58px);
+  min-width: 0;
+  padding: 33px 0 6px;
+  border-top: 1px solid rgba(247,244,239,.27);
+}
+.ghLiquidFooterBrandBlock,
+.ghLiquidFooterContact {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+.ghLiquidFooterBrand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: -.07em;
+  color: #f7f4ef;
+}
+.ghLiquidFooterBrand img {
+  width: 36px;
+  height: 36px;
+  filter: grayscale(1) brightness(0) invert(1);
+}
+.ghLiquidFooterBrandBlock>p {
+  margin: 21px 0 0;
+  max-width: 27ch;
+  color: #d1ccca;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.ghLiquidFooterSocial {
+  display: flex;
+  gap: 9px;
+  margin-top: 27px;
+}
+.ghLiquidFooterSocial:empty { display: none; }
+.ghLiquidFooterSocial>a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 55px;
+  height: 44px;
+  border: 1px solid rgba(247,244,239,.37);
+  border-radius: 11px;
+  background: linear-gradient(135deg, rgba(255,255,255,.17), rgba(255,255,255,.04));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.22);
+  font-size: 12px;
+  font-weight: 850;
+  color: #f7f4ef;
+}
+.ghLiquidFooterSocial>a span { font-size: 14px; font-weight: 400; }
+.ghLiquidFooterNav,
+.ghLiquidFooterContact {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-content: start;
+  gap: 6px;
+  min-width: 0;
+}
+.ghLiquidFooterNav h3,
+.ghLiquidFooterContact h3 {
+  margin: 7px 0 18px;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: .12em;
+  line-height: 1.5;
+  color: #f7f4ef;
+}
+.ghLiquidFooter.ghGlobalFooter .ghLiquidFooterNav a,
+.homePage .ghFooter.ghLiquidFooter .ghLiquidFooterNav a,
+.ghLiquidFooterContact a {
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 0;
+  width: 100%;
+  min-height: 39px;
+  gap: 8px;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(247,244,239,.09);
+  color: #e4dfda;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.45;
+  text-decoration: none;
+  text-transform: none;
+  overflow-wrap: anywhere;
+}
+.ghLiquidFooterNav a span,
+.ghLiquidFooterContact a span { opacity: .8; font-weight: 400; }
+.ghLiquidFooterContact>p {
+  margin: 0 0 6px;
+  color: #ddd7d1;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.ghLiquidFooterBusinessId {
+  display: block;
+  margin-top: 22px;
+  color: #bcb5b0;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .07em;
+}
+.ghLiquidFooterWordmark {
+  overflow: hidden;
+  margin: clamp(62px, 8vw, 122px) -5px 0;
+  padding: 0 0 clamp(27px, 3vw, 45px);
+  border-bottom: 1px solid rgba(247,244,239,.27);
+  color: #f7f4ef;
+  font-size: clamp(36px, 10.65vw, 165px);
+  font-weight: 900;
+  line-height: .84;
+  letter-spacing: -.116em;
+  white-space: nowrap;
+  text-align: center;
+}
+.ghLiquidFooterWordmark span { color: #c9282d; }
+.ghLiquidFooterBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px 28px;
+  padding-top: 22px;
+  color: #c8c1bb;
+  font-size: 11px;
+  font-weight: 550;
+  line-height: 1.5;
+}
+.ghLiquidFooterBottom>a {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 44px;
+  border-bottom: 1px solid rgba(247,244,239,.38);
+  color: #f7f4ef;
+  font-size: 12px;
+  font-weight: 750;
+}
+.ghLiquidFooter :is(a, button):focus-visible {
+  outline: 3px solid #ef7c7e;
+  outline-offset: 4px;
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .ghLiquidFooterButton,
+  .ghLiquidFooterSocial>a {
+    transition: transform .22s ease, border-color .22s ease, background .22s ease, box-shadow .22s ease;
+  }
+  .ghLiquidFooterButton:hover {
+    transform: translateY(-3px);
+    border-color: #fff;
+    background: linear-gradient(123deg, rgba(247,244,239,.36), rgba(247,244,239,.16) 46%, rgba(247,244,239,.33));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 15px 38px rgba(0,0,0,.26);
+  }
+  .ghLiquidFooterSocial>a:hover {
+    transform: translateY(-3px);
+    border-color: rgba(247,244,239,.95);
+    box-shadow: 0 8px 25px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.4);
+  }
+}
+.ghLiquidFooter :is(.ghLiquidFooterNav a,.ghLiquidFooterContact a,.ghLiquidFooterMail,.ghLiquidFooterBottom>a):hover {
+  color: #fff;
+  border-color: rgba(247,244,239,.65);
+}
+@media (max-width: 1199px) {
+  .ghLiquidFooterShell { width: calc(100% - 72px); }
+  .ghLiquidFooterInvite { grid-template-columns: minmax(0,1fr) minmax(205px,.32fr); gap: 40px; }
+  .ghLiquidFooterLinks { grid-template-columns: 1.15fr repeat(3,minmax(0,.8fr)); gap: 24px; }
+  .ghLiquidFooterStatement h2 { font-size: clamp(46px, 7vw, 86px); }
+}
+@media (max-width: 1023px) {
+  .ghLiquidFooterInvite { grid-template-columns: 1fr; gap: 37px; }
+  .ghLiquidFooterInviteActions { max-width: 320px; }
+  .ghLiquidFooterLinks { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 38px 48px; }
+  .ghLiquidFooterStatement h2 { font-size: clamp(54px, 8.9vw, 82px); }
+  .ghLiquidFooterWordmark { font-size: 10.4vw; }
+}
+@media (max-width: 767px) {
+  .ghLiquidFooter.ghGlobalFooter,
+  .homePage .ghFooter.ghLiquidFooter { padding: 53px 0 21px; }
+  .ghLiquidFooterShell { width: calc(100% - 36px); }
+  .ghLiquidFooterRim { border-radius: 18px; }
+  .ghLiquidFooterSurface { padding: clamp(20px, 5.8vw, 34px); border-radius: 16px; }
+  .ghLiquidFooterMeta { gap: 8px 14px; font-size: 9px; letter-spacing: .045em; }
+  .ghLiquidFooterMeta span:last-child { white-space: nowrap; }
+  .ghLiquidFooterInvite { padding: 44px 0 49px; gap: 30px; }
+  .ghLiquidFooterEyebrow { font-size: 10px; margin-bottom: 22px; }
+  .ghLiquidFooterStatement h2 {
+    max-width: none;
+    font-size: clamp(34px, 9.35vw, 65px);
+    line-height: 1.025;
+    letter-spacing: -.071em;
+    overflow-wrap: normal;
+  }
+  .ghLiquidFooterStatement>p:last-child { font-size: 15px; margin-top: 25px; }
+  .ghLiquidFooterInviteActions { width: 100%; max-width: none; }
+  .ghLiquidFooterButton { min-height: 61px; padding: 15px 19px; font-size: 13px; }
+  .ghLiquidFooterLinks { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 32px 18px; padding-top: 27px; }
+  .ghLiquidFooterBrandBlock { grid-column: 1 / -1; }
+  .ghLiquidFooterBrandBlock>p { margin-top: 11px; font-size: 14px; }
+  .ghLiquidFooterSocial { margin-top: 19px; }
+  .ghLiquidFooterNav h3, .ghLiquidFooterContact h3 { font-size: 10px; letter-spacing: .055em; margin: 0 0 9px; }
+  .ghLiquidFooter.ghGlobalFooter .ghLiquidFooterNav a,
+  .homePage .ghFooter.ghLiquidFooter .ghLiquidFooterNav a,
+  .ghLiquidFooterContact a { font-size: 12px; min-height: 44px; }
+  .ghLiquidFooterContact>p { font-size: 12px; }
+  .ghLiquidFooterBusinessId { margin-top: 12px; font-size: 9px; }
+  .ghLiquidFooterWordmark {
+    margin-top: 69px;
+    font-size: 10.5vw;
+    padding-bottom: 26px;
+    letter-spacing: -.12em;
+  }
+  .ghLiquidFooterBottom { padding-top: 17px; gap: 13px 20px; font-size: 10px; }
+}
+@media (max-width: 359px) {
+  .ghLiquidFooterMeta { font-size: 8px; }
+  .ghLiquidFooterStatement h2 { font-size: 8.7vw; }
+  .ghLiquidFooterWordmark { font-size: 10vw; }
+  .ghLiquidFooterLinks { gap: 27px 13px; }
+  .ghLiquidFooter.ghGlobalFooter .ghLiquidFooterNav a,
+  .homePage .ghFooter.ghLiquidFooter .ghLiquidFooterNav a,
+  .ghLiquidFooterContact a { font-size: 11px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ghLiquidFooter *, .ghLiquidFooter *::before, .ghLiquidFooter *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
