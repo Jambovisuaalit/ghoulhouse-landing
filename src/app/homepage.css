@@ -1573,15 +1573,17 @@ body:has(.homePage) .analyticsSettings {
 .homePage .gh3dCarousel.is-ready .gh3dCard[data-slot="left"] {
   z-index: 1;
   opacity: .73;
-  transform: translateX(calc(-50% - min(32vw, 390px))) rotateY(25deg) scale(.82);
+  transform: translateX(calc(-50% - min(20vw, 260px))) rotateY(25deg) scale(.82);
 }
 .homePage .gh3dCarousel.is-ready .gh3dCard[data-slot="right"] {
   z-index: 2;
   opacity: .73;
-  transform: translateX(calc(-50% + min(32vw, 390px))) rotateY(-25deg) scale(.82);
+  transform: translateX(calc(-50% + min(20vw, 260px))) rotateY(-25deg) scale(.82);
 }
 .homePage .gh3dCarousel.is-ready .gh3dCard[data-skip="true"] { transition: none; }
 .homePage .gh3dCarousel.is-ready .gh3dControls { display: flex; }
+/* Side cards provide visual depth; only the centered card can be opened. */
+.homePage .gh3dCarousel.is-ready .gh3dCard:not([data-slot="center"]) .gh3dCardLink { display: none; }
 @media (max-width: 1023px) {
   .homePage .gh3dCarousel.is-ready .gh3dCard { width: min(67%, 470px); }
 }
@@ -1595,12 +1597,9 @@ body:has(.homePage) .analyticsSettings {
     padding: 15px;
     top: 6px;
   }
-  .homePage .gh3dCarousel.is-ready .gh3dCard[data-slot="left"] {
-    transform: translateX(calc(-50% - 62vw)) rotateY(18deg) scale(.87);
-  }
-  .homePage .gh3dCarousel.is-ready .gh3dCard[data-slot="right"] {
-    transform: translateX(calc(-50% + 62vw)) rotateY(-18deg) scale(.87);
-  }
+  /* Below tablet widths a single readable focused card is preferable to
+     half-clipped side CTAs; controls still wrap through all three items. */
+  .homePage .gh3dCarousel.is-ready .gh3dCard:not([data-slot="center"]) { display: none; }
   .homePage .gh3dCardMedia { height: 162px; }
   .homePage .gh3dCard h3 { font-size: 21px; }
   .homePage .gh3dSocialConcept strong,
