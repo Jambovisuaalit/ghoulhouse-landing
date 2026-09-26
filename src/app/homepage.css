@@ -1607,7 +1607,12 @@ body:has(.homePage) .analyticsSettings {
   .homePage .gh3dHint { font-size: 11px; }
 }
 @media (max-width: 359px) {
-  .homePage .gh3dCarousel.is-ready .gh3dCard { width: 86%; }
+  .homePage .gh3dCarousel.is-ready .gh3dCard { width: 82%; }
+  /* Perspective magnifies and displaces the focused card at 320px.
+     Keep the centered card flat and fully inside the viewport. */
+  .homePage .gh3dCarousel.is-ready .gh3dCard[data-slot="center"] {
+    transform: translateX(-50%) translateZ(0) rotateY(0) scale(1);
+  }
   .homePage .gh3dCard h3 { font-size: 20px; }
 }
 @media (prefers-reduced-motion: reduce) {
