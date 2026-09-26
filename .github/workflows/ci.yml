@@ -246,7 +246,7 @@ jobs:
           const fs = require('fs');
           const old = ['src/app/site.css','src/app/global-chrome.css','src/app/homepage.css','src/app/homepage-swiss.css'];
           for (const path of old) {
-            if (/\\.analytics(?:Consent|Settings)/.test(fs.readFileSync(path,'utf8'))) {
+            if (/\.analytics(?:Consent|Settings)/.test(fs.readFileSync(path,'utf8'))) {
               throw new Error('Legacy consent CSS reintroduced in ' + path);
             }
           }
