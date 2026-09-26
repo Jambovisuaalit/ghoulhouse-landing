@@ -584,3 +584,118 @@
  .homePage .ghSwissTile figcaption{font-size:11px}
  .homePage .gh3dCarousel.is-ready .gh3dCard[data-slot="right"]{left:calc(100% + 56px)}
 }
+
+/* P0: delivery-example visuals. Each illustration reveals an actual step of
+   production; synthetic photos and SEO schematics are labelled as concepts. */
+.homePage .gh3dCardMedia--deliverable{height:190px;background:#e8e7e3}
+.homePage .gh3dDeliverable{width:100%;height:100%;min-width:0;overflow:hidden}
+.homePage .gh3dDeliverable--website{
+  padding:12px 15px;display:grid;grid-template-rows:auto 1fr auto;
+  background:#fffdf9;border:1px solid #111
+}
+.homePage .gh3dMiniChrome{display:flex;justify-content:space-between;align-items:center;gap:8px;
+  padding-bottom:8px;border-bottom:1px solid #111;font-size:9px;line-height:1.3;font-weight:800;letter-spacing:.045em}
+.homePage .gh3dMiniHero{display:flex;flex-direction:column;justify-content:center;gap:7px}
+.homePage .gh3dMiniHero strong{font-size:clamp(25px,2.9vw,40px);letter-spacing:-.09em;font-weight:900;line-height:.95}
+.homePage .gh3dMiniHero>span{font-size:11px;font-weight:600}
+.homePage .gh3dMiniFlow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.homePage .gh3dMiniFlow span{min-width:0;border-top:1px solid #111;padding-top:5px;
+  font-size:9px;font-weight:750;line-height:1.35}
+.homePage .gh3dDeliverable--social{display:grid;grid-template-columns:.95fr 1.05fr;background:#111;color:#f7f4ef}
+.homePage .gh3dSocialPhoto{position:relative;min-width:0;height:100%;overflow:hidden}
+.homePage .gh3dSocialPhoto img{object-fit:cover;object-position:center;filter:grayscale(1) contrast(1.05)}
+.homePage .gh3dSocialPhoto>span{position:absolute;top:10px;left:9px;right:9px;padding:6px 7px;
+  background:#f7f4ef;color:#111;font-size:9px;line-height:1.25;font-weight:800}
+.homePage .gh3dSocialPublication{display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;
+  padding:12px 10px;min-width:0}
+.homePage .gh3dSocialPublication>span{font-size:9px;line-height:1.35;font-weight:750;letter-spacing:.03em}
+.homePage .gh3dSocialPublication>strong{font-size:clamp(20px,2.45vw,31px);line-height:1.01;font-weight:900;letter-spacing:-.06em}
+.homePage .gh3dSocialPublication>span:last-child{padding-top:7px;border-top:2px solid #c9282d}
+.homePage .gh3dDeliverable--seo{display:flex;flex-direction:column;justify-content:space-between;
+  padding:14px 15px;background:#e3e0d9}
+.homePage .gh3dDeliverable--seo>.gh3dMiniChrome{display:block}
+.homePage .gh3dSeoFlow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:stretch;gap:6px}
+.homePage .gh3dSeoFlow span{display:flex;align-items:center;justify-content:center;min-width:0;min-height:70px;
+  border:1px solid #111;background:#f7f4ef;padding:8px 4px;text-align:center;
+  font-size:clamp(8px,.85vw,11px);font-weight:850;line-height:1.35;overflow-wrap:anywhere}
+.homePage .gh3dSeoFlow span:last-child{background:#111;color:#fff;border-color:#111}
+.homePage .gh3dMiniCaption{font-size:9px;font-weight:750;line-height:1.35}
+.homePage .gh3dCardType{font-size:12px}
+.homePage .gh3dDisclosure{font-size:12px;line-height:1.45}
+.homePage .gh3dCard>p{font-size:15px;line-height:1.55}
+@media(max-width:767px){
+ .homePage .gh3dCardMedia--deliverable{height:172px}
+ .homePage .gh3dDeliverable--website{padding:10px 12px}
+ .homePage .gh3dMiniHero strong{font-size:28px}
+ .homePage .gh3dMiniFlow span{font-size:8px}
+ .homePage .gh3dSocialPublication>strong{font-size:21px}
+ .homePage .gh3dSeoFlow{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
+ .homePage .gh3dSeoFlow span{min-height:42px;font-size:10px}
+ .homePage .gh3dDeliverable--seo{padding:9px 12px}
+ .homePage .gh3dCard>p{font-size:14px}
+ .homePage .gh3dDisclosure{font-size:11px}
+}
+
+/* P1/P2 audit: readable navigation, a calmer headline cadence and explicit
+   service outputs. CTA variants have distinct roles rather than repeated blocks. */
+.homePage .ghDesktopNav{gap:clamp(17px,2.1vw,32px)}
+.homePage .ghDesktopNav a{font-size:13px;letter-spacing:.025em;font-weight:700}
+.homePage .ghHeader a.ghHeaderCta{font-size:13px;letter-spacing:.025em}
+.homePage .ghSwissHeroMeta,.homePage .ghSwissHeroRule{font-size:11px;letter-spacing:.055em}
+.homePage .ghSwissTile figcaption{font-size:13px;line-height:1.48;font-weight:750}
+.homePage .ghSwissHero .ghHeroFootnote{font-size:13px;line-height:1.5}
+.homePage .ghServiceDetail{min-width:0}
+.homePage .ghServiceOutputs{display:flex;flex-wrap:wrap;gap:7px 19px;list-style:none;
+  margin:24px 0 0;padding:16px 0 0;border-top:1px solid #d5d0ca}
+.homePage .ghServiceOutputs li{position:relative;min-width:0;padding-left:15px;
+  font-size:14px;font-weight:700;line-height:1.48;letter-spacing:-.01em}
+.homePage .ghServiceOutputs li::before{content:'+';position:absolute;left:0;top:0;color:#c9282d;font-weight:850}
+.homePage .ghServiceCard .ghServiceMeta{margin-top:17px;font-size:14px;font-weight:650;line-height:1.55}
+.homePage .ghServiceCard .ghTextLink{max-width:235px;font-size:14px}
+.homePage .ghSelectedInquiry{display:inline-flex;align-items:center;justify-content:space-between;
+  gap:16px;min-height:48px;max-width:340px;width:100%;margin-top:17px;
+  border-bottom:1px solid #111;font-size:14px;font-weight:750}
+.homePage .ghSelectedInquiry:hover{color:#c9282d;border-color:#c9282d}
+.homePage .ghSelected .ghSectionIntro h2{font-size:clamp(46px,5.1vw,80px)}
+.homePage .ghProcess .ghSectionIntro h2{font-size:clamp(47px,5.3vw,83px)}
+.homePage .ghProofGridSection .ghSectionIntro h2{font-size:clamp(46px,5.6vw,88px)}
+.homePage .ghResources .ghSectionIntro h2{font-size:clamp(43px,5.2vw,80px)}
+.homePage .ghFounder .ghSectionIntro h2{font-size:clamp(46px,5.8vw,91px)}
+.homePage .ghProcessInquiry{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;
+  gap:18px 28px;margin-top:clamp(44px,5vw,73px);padding-top:24px;border-top:1px solid #8b847e}
+.homePage .ghProcessInquiry>span{max-width:40ch;font-size:16px;line-height:1.65;color:#e4dfd7}
+.homePage .ghProcessInquiry>a{display:inline-flex;justify-content:space-between;align-items:center;
+  gap:28px;min-height:48px;border-bottom:1px solid #f7f4ef;font-size:14px;font-weight:800}
+.homePage .ghProcessInquiry>a:hover{color:#e45559;border-color:#e45559}
+.homePage .ghFounderIdentity p{letter-spacing:.04em;font-size:13px;line-height:1.6}
+.homePage .ghGuideRow small{font-size:15px}
+.homePage .ghGuideRow strong{font-size:clamp(21px,2vw,29px)}
+@media (min-width:768px) and (max-width:1023px){
+  .homePage .ghDesktopNav{display:none}
+  .homePage .ghMobileNav{display:block}
+  .homePage .ghMobileNav summary{display:flex;align-items:center;gap:9px;min-height:44px;
+    border:1px solid #111;padding:0 12px;font-size:13px;font-weight:750;cursor:pointer}
+  .homePage .ghMobileNav nav{min-width:250px;right:0;top:calc(100% + 7px);background:#f7f4ef}
+  .homePage .ghHeader a.ghHeaderCta{margin-left:auto}
+}
+@media (max-width:767px){
+  .homePage .ghMobileNav summary{font-size:13px;font-weight:750}
+  .homePage .ghSwissHeroMeta,.homePage .ghSwissHeroRule{font-size:10px}
+  .homePage .ghSwissTile figcaption{font-size:12px}
+  .homePage .ghSwissHero .ghHeroFootnote{font-size:12px}
+  .homePage .ghServiceOutputs{gap:8px 18px;margin-top:20px;padding-top:14px}
+  .homePage .ghServiceOutputs li{font-size:13px}
+  .homePage .ghServiceCard .ghServiceMeta{font-size:13px}
+  .homePage .ghSelected .ghSectionIntro h2{font-size:clamp(42px,9.5vw,67px)}
+  .homePage .ghProcess .ghSectionIntro h2{font-size:clamp(40px,9.2vw,67px)}
+  .homePage .ghProofGridSection .ghSectionIntro h2{font-size:clamp(39px,9.3vw,65px)}
+  .homePage .ghResources .ghSectionIntro h2{font-size:clamp(39px,9.3vw,65px)}
+  .homePage .ghFounder .ghSectionIntro h2{font-size:clamp(41px,9.6vw,69px)}
+  .homePage .ghProcessInquiry{margin-top:44px}
+  .homePage .ghSelectedInquiry{font-size:13px}
+}
+
+/* Full-page viewport QA: the first hydration must not animate CSS transforms
+   from the static three-column fallback into the 3D layout. Only deliberate
+   next/previous/swipe actions animate. This also prevents motion at page load. */
+.homePage .gh3dCarousel.is-ready[data-interacted="false"] .gh3dCard{transition:none!important}

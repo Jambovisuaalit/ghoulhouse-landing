@@ -8,6 +8,7 @@ const INDEXABLE_CLUSTER_SLUGS = [
   'some-sisallontuotanto',
   'instagram-sisallontuotanto',
   'referenssit',
+  'tyot/ghoulhouse-verkkosivut',
   'some-12',
   'verkkosivut-yritykselle',
   'verkkosivut/hinta',

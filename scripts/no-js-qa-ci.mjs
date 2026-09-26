@@ -51,6 +51,7 @@ assert(/Oma sivusto — ei asiakasreferenssi/i.test(html), 'No-JS QA: honest own
 assert((html.match(/gh3dCardLink/g) || []).length >= 3, 'No-JS QA: the three carousel items are not rendered as ordinary static service links.');
 assert(html.includes('Palvelun havainne-esittely — ei asiakastyö.'), 'No-JS QA: carousel concept disclosure missing.');
 assert(html.includes('href="/verkkosivut/rakennus"'), 'No-JS QA: industry carousel link missing.');
+assert(html.includes('href="/tyot/ghoulhouse-verkkosivut"'), 'No-JS QA: own-site case detail link missing.');
 assert(!html.includes('Kuva luotu tekoälyllä'), 'No-JS QA: AI concept still dominates company homepage.');
 assert(!html.includes('logo-horizontal.svg') && !html.includes('logo-horizontal-white.svg'), 'No-JS QA: unavailable/fabricated logo lockup referenced.');
 
@@ -59,6 +60,13 @@ for (const route of ['/referenssit','/resurssit','/verkkosivut/hinta']) {
   assert(inner.includes('class="ghGlobalHeader"') && inner.includes('class="ghGlobalFooter"'), 'No-JS QA: shared navigation/footer missing on ' + route);
   assert(inner.includes('href="/#yhteys"'), 'No-JS QA: inquiry link missing on ' + route);
 }
+const ownCaseResponse = await fetch(BASE_URL + '/tyot/ghoulhouse-verkkosivut', { cache:'no-store' });
+assert(ownCaseResponse.status === 200, 'No-JS QA: dedicated own-site case page not found.');
+const ownCase = await ownCaseResponse.text();
+assert(ownCase.includes('oma') && ownCase.includes('ei asiakasreferenssi') && /aiemm/i.test(ownCase),
+  'No-JS QA: case must distinguish own work, prior screenshot and lack of customer claims.');
+const references = await fetch(BASE_URL + '/referenssit', {cache:'no-store'}).then(res=>res.text());
+assert(references.includes('href="/tyot/ghoulhouse-verkkosivut"'), 'No-JS QA: references page must lead to own-site detail.');
 const seoPage = await fetch(BASE_URL + '/?service=seo#yhteys', { cache: 'no-store' }).then((res) => res.text());
 assert(/<option[^>]*value="seo"[^>]*selected/i.test(seoPage), 'No-JS QA: SEO CTA does not preselect the service.');
 const invalidPage = await fetch(BASE_URL + '/?lead=validation#yhteys', { cache: 'no-store' }).then((res) => res.text());

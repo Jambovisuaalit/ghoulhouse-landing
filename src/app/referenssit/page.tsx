@@ -51,13 +51,13 @@ export default function Page() {
               <div><dt>Tila</dt><dd>Oma työnäyte — ei asiakasreferenssi</dd></div>
             </dl>
             <div className="heroActions">
-              <a className="button button--signal" href="https://ghoulhouse.fi/" target="_blank" rel="noopener noreferrer">AVAA JULKAISTU SIVUSTO ↗</a>
+              <Link className="button button--signal" href="/tyot/ghoulhouse-verkkosivut">LUE TOTEUTUSESITTELY ↗</Link>
               <Link className="textLink" href="/verkkosivut-yritykselle">Miten toteutamme verkkosivut →</Link>
             </div>
           </div>
           <figure className="proofCaseImage">
-            <Image src="/ghoulhouse-site-proof.png" alt="Kuvakaappaus GhoulHousen julkaistun etusivun ylänäkymästä." width={1440} height={900} sizes="(max-width: 767px) 100vw, 55vw" />
-            <figcaption>Kuvakaappaus omasta sivustosta. Avaa nykyinen versio yllä olevasta linkistä.</figcaption>
+            <Image src="/ghoulhouse-site-proof.png" alt="Kuvakaappaus GhoulHousen aiemmin julkaistun etusivun ylänäkymästä." width={1440} height={900} sizes="(max-width: 767px) 100vw, 55vw" />
+            <figcaption>Oman sivuston aiemman version kuvakaappaus. Toteutusesittely avaa työn rakenteen; nykyinen sivusto löytyy erikseen.</figcaption>
           </figure>
         </div>
       </section>

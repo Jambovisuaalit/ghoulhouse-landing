@@ -121,3 +121,24 @@
  .analyticsConsent__actions .button{min-height:44px;font-size:11px}
  .analyticsSettings{bottom:9px;right:9px}
 }
+
+/* Match navigation text and tablet behavior to the canonical homepage menu. */
+.ghGlobalDesktopNav{gap:clamp(17px,2.1vw,32px)}
+.ghGlobalDesktopNav a{font-size:13px;letter-spacing:.025em;font-weight:700}
+.ghGlobalInquiry{font-size:13px;letter-spacing:.025em}
+.ghGlobalFooterGrid nav a{min-height:44px;font-size:13px}
+@media (min-width:768px) and (max-width:1023px){
+ .ghGlobalDesktopNav,.ghGlobalInquiry{display:none}
+ .ghGlobalMobileNav{display:block;position:relative;margin-left:auto}
+ .ghGlobalMobileNav summary{min-height:44px;min-width:104px;display:flex;align-items:center;
+   justify-content:space-between;gap:12px;padding:0 12px;border:1px solid #111;
+   font-size:13px;font-weight:750;cursor:pointer}
+ .ghGlobalMobileNav summary span{font-size:20px}
+ .ghGlobalMobileNav nav{position:absolute;top:calc(100% + 9px);right:0;z-index:101;
+   width:min(280px,calc(100vw - 72px));min-width:0;background:#f7f4ef;border:1px solid #111}
+ .ghGlobalMobileNav nav a{display:flex;align-items:center;min-height:48px;padding:0 16px;font-size:14px}
+}
+@media (max-width:767px){
+ .ghGlobalMobileNav summary{font-size:13px}
+ .ghGlobalMobileNav nav a{font-size:14px}
+}

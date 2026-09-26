@@ -4,13 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
-
-const navigation = [
-  { href: '/verkkosivut-yritykselle', label: 'Verkkosivut' },
-  { href: '/some-sisallontuotanto', label: 'Social' },
-  { href: '/resurssit', label: 'SEO & resurssit' },
-  { href: '/referenssit', label: 'Työt' },
-] as const;
+import { siteNavigation } from '@/data/site-navigation';
 
 /** One common navigation and footer on every inner route.
  * The homepage keeps its existing anchored Swiss-editorial navigation.
@@ -18,7 +12,10 @@ const navigation = [
 export default function SiteChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   if (!pathname || pathname === '/') return <>{children}</>;
-  const active = (href: string) => pathname === href || (href === '/resurssit' && pathname.startsWith('/oppaat/'));
+  const active = (href: string) => pathname === href
+    || (href === '/resurssit' && pathname.startsWith('/oppaat/'))
+    || (href === '/referenssit' && pathname.startsWith('/tyot/'))
+    || (href === '/verkkosivut-yritykselle' && pathname.startsWith('/verkkosivut/'));
 
   return (
     <>
@@ -30,7 +27,7 @@ export default function SiteChrome({ children }: { children: ReactNode }) {
             <span>GHOULHOUSE</span>
           </Link>
           <nav className="ghGlobalDesktopNav" aria-label="Päänavigaatio">
-            {navigation.map(({ href, label }) => (
+            {siteNavigation.map(({ href, label }) => (
               <Link key={href} href={href} aria-current={active(href) ? 'page' : undefined}>{label}</Link>
             ))}
           </nav>
@@ -38,7 +35,7 @@ export default function SiteChrome({ children }: { children: ReactNode }) {
           <details className="mobileNav ghGlobalMobileNav">
             <summary aria-label="Avaa valikko">VALIKKO <span aria-hidden="true">+</span></summary>
             <nav aria-label="Mobiilinavigaatio">
-              {navigation.map(({ href, label }) => (
+              {siteNavigation.map(({ href, label }) => (
                 <Link key={href} href={href} aria-current={active(href) ? 'page' : undefined}>{label}</Link>
               ))}
               <Link href="/#yhteys">Pyydä ehdotus</Link>
@@ -64,7 +61,8 @@ export default function SiteChrome({ children }: { children: ReactNode }) {
               <a href="mailto:hello@ghoulhouse.fi">hello@ghoulhouse.fi</a>
             </div>
             <nav aria-label="Alatunnisteen navigaatio">
-              {navigation.map(({ href, label }) => <Link key={href} href={href}>{label}</Link>)}
+              {siteNavigation.map(({ href, label }) => <Link key={href} href={href}>{label}</Link>)}
+              <Link href="/#yritys">GhoulHouse / tekijä</Link>
               <Link href="/tietosuoja">Tietosuoja</Link>
               <Link href="/#yhteys">Pyydä ehdotus ↗</Link>
             </nav>
