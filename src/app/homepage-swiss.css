@@ -94,6 +94,23 @@
   padding-inline: 23px;
 }
 .homePage .ghButton:hover { background: #111; border-color: #111; color: #fff; }
+/* A quiet editorial header: reserve the red fill for the main hero CTA. */
+.homePage .ghHeader a.ghHeaderCta {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #111;
+  color: #111;
+  padding: 0;
+  min-height: 44px;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: .09em;
+}
+.homePage .ghHeader a.ghHeaderCta:hover {
+  background: transparent;
+  color: #c9282d;
+  border-bottom-color: #c9282d;
+}
 
 /* A large, typography-led opening with an image triptych replaces the old
    text-and-box hero. The requested dot grid remains subtle and usable. */
