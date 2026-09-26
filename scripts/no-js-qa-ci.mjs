@@ -45,6 +45,8 @@ assert(
 for (const name of ['company', 'name', 'email', 'profile']) {
   assert(html.includes(`name="${name}"`), `No-JS QA: ${name} field is missing.`);
 }
+assert(html.includes('Ei vielä verkkosivua tai Instagramia') && html.includes('lead-profile-options'), 'No-JS QA: explicit no-profile choice is missing.');
+assert(!html.includes('ghSwissTile--site'), 'No-JS QA: duplicate self-site screenshot in hero is still present.');
 assert(/Oma sivusto — ei asiakasreferenssi/i.test(html), 'No-JS QA: honest own-work disclosure is missing.');
 assert((html.match(/gh3dCardLink/g) || []).length >= 3, 'No-JS QA: the three carousel items are not rendered as ordinary static service links.');
 assert(html.includes('Palvelun havainne-esittely — ei asiakastyö.'), 'No-JS QA: carousel concept disclosure missing.');
@@ -52,6 +54,11 @@ assert(html.includes('href="/verkkosivut/rakennus"'), 'No-JS QA: industry carous
 assert(!html.includes('Kuva luotu tekoälyllä'), 'No-JS QA: AI concept still dominates company homepage.');
 assert(!html.includes('logo-horizontal.svg') && !html.includes('logo-horizontal-white.svg'), 'No-JS QA: unavailable/fabricated logo lockup referenced.');
 
+for (const route of ['/referenssit','/resurssit','/verkkosivut/hinta']) {
+  const inner = await fetch(BASE_URL + route, { cache: 'no-store' }).then((res) => res.text());
+  assert(inner.includes('class="ghGlobalHeader"') && inner.includes('class="ghGlobalFooter"'), 'No-JS QA: shared navigation/footer missing on ' + route);
+  assert(inner.includes('href="/#yhteys"'), 'No-JS QA: inquiry link missing on ' + route);
+}
 const seoPage = await fetch(BASE_URL + '/?service=seo#yhteys', { cache: 'no-store' }).then((res) => res.text());
 assert(/<option[^>]*value="seo"[^>]*selected/i.test(seoPage), 'No-JS QA: SEO CTA does not preselect the service.');
 const invalidPage = await fetch(BASE_URL + '/?lead=validation#yhteys', { cache: 'no-store' }).then((res) => res.text());
