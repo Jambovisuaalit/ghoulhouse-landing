@@ -3,15 +3,9 @@ import LeadForm from '@/components/LeadForm';
 import FunnelAnalytics from '@/components/analytics/FunnelAnalytics';
 import HeroDotGrid from '@/components/HeroDotGrid';
 import Service3DCarousel from '@/components/Service3DCarousel';
+import { siteNavigation } from '@/data/site-navigation';
 import './homepage.css';
 import './homepage-swiss.css';
-
-const navigation = [
-  ['/verkkosivut-yritykselle', 'Verkkosivut'],
-  ['/some-sisallontuotanto', 'Social'],
-  ['/resurssit', 'SEO & resurssit'],
-  ['/referenssit', 'Referenssit'],
-] as const;
 
 const services = [
   {
@@ -87,16 +81,13 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
         <div className="ghShell ghHeaderInner">
           <Brand />
           <nav className="ghDesktopNav" aria-label="Päänavigaatio">
-            <a href="#palvelut">PALVELUT</a>
-            <a href="#esimerkit">TYÖT</a>
-            <a href="#yritys">MEISTÄ</a>
-            <a href="#yhteys">YHTEYS</a>
+            {siteNavigation.map(({ href, label }) => <a key={href} href={href}>{label}</a>)}
           </nav>
           <a className="ghButton ghHeaderCta" href="#yhteys">Pyydä ehdotus <span aria-hidden="true">↗</span></a>
           <details className="mobileNav ghMobileNav">
             <summary aria-label="Avaa valikko">Valikko <span aria-hidden="true">+</span></summary>
             <nav aria-label="Mobiilinavigaatio">
-              {navigation.map(([url, label]) => <a key={url} href={url}>{label}</a>)}
+              {siteNavigation.map(({ href, label }) => <a key={href} href={href}>{label}</a>)}
               <a href="#yhteys">Pyydä ehdotus</a>
             </nav>
           </details>
@@ -236,7 +227,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
       </main>
       <footer className="ghFooter">
         <div className="ghShell ghSwissFooterMasthead" aria-hidden="true">GHOULHOUSE<span>.</span></div>
-        <div className="ghShell ghFooterMain"><div><Brand footer /><p className="ghFooterTagline">Hyvä työ pitää näkyä.<br />Verkkosivut · Social · SEO.</p></div><div className="ghFooterCompany"><p>GhoulHouse Oy</p><p>Y-tunnus 3651127-5 · Helsinki</p><a href="mailto:hello@ghoulhouse.fi">hello@ghoulhouse.fi</a></div><nav aria-label="Alatunnisteen navigaatio">{navigation.map(([url, label]) => <a key={url} href={url}>{label}</a>)}<a href="/tietosuoja">Tietosuoja</a></nav></div>
+        <div className="ghShell ghFooterMain"><div><Brand footer /><p className="ghFooterTagline">Hyvä työ pitää näkyä.<br />Verkkosivut · Social · SEO.</p></div><div className="ghFooterCompany"><p>GhoulHouse Oy</p><p>Y-tunnus 3651127-5 · Helsinki</p><a href="mailto:hello@ghoulhouse.fi">hello@ghoulhouse.fi</a></div><nav aria-label="Alatunnisteen navigaatio">{navigation.map(([url, label]) => <a key={url} href={url}>{label}</a>)}<a href="/#yritys">GhoulHouse / tekijä</a><a href="/tietosuoja">Tietosuoja</a></nav></div>
         <div className="ghShell ghFooterBottom"><span>© 2026 GhoulHouse Oy</span><a href="#top">Takaisin ylös ↑</a></div>
       </footer>
     </div>
