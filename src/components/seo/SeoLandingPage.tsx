@@ -70,7 +70,7 @@ export default function SeoLandingPage({ page }: { page: SeoClusterPage }) {
       <section className="contact" id="yhteys" aria-labelledby="seo-contact-title"><div className="contentShell contactGrid">
         <div className="contactCopy">
           <p className="kicker">{packagePage ? 'SOME 12 / ALOITUS' : 'ALOITA'}</p>
-          <h2 id="seo-contact-title">{packagePage ? 'SOVITAAN ENSIMMÄINEN 30 PÄIVÄÄ.' : 'NÄE OMA TYÖSI VALMIINA JULKAISUNA.'}</h2>
+          <h2 id="seo-contact-title">{headings?.contact ?? 'NÄE OMA TYÖSI VALMIINA JULKAISUNA.'}</h2>
           <p>{packagePage
             ? 'Kerro yrityksesi ja käytössä oleva kuvamateriaali. Varmistamme materiaalit ja sovimme SOME 12 -erän aloituksesta ennen tuotantoa.'
             : 'Saat kaksi maksutonta sisältöesimerkkiä yrityksesi nykyisestä materiaalista. Näet ensin lopputuloksen suunnan.'}</p>
