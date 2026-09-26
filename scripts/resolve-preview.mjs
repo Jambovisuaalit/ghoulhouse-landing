@@ -10,6 +10,22 @@ const api = async path => {
 const checkHead = async () => {
   if ((await api(`pulls/${pr}`)).head.sha !== sha) throw Error('PR head changed; rerun QA for the latest commit');
 };
+const verifyIdentity = async url => {
+  const response = await fetch(`${url}/api/qa-version`, { cache: 'no-store' });
+  if (!response.ok) return null;
+  const identity = await response.json();
+  if (identity.sha !== sha || identity.environment !== 'preview') return null;
+  if (!/^ghoulhouse-home-[a-z0-9]+-info-32533854s-projects\.vercel\.app$/.test(identity.url || '')) return null;
+  return `https://${identity.url}`;
+};
+const record = async (url, deploymentId) => {
+  if (await verifyIdentity(url) !== url) throw Error('Preview build identity mismatch');
+  await checkHead();
+  await mkdir('qa-artifacts/preview', { recursive: true });
+  await writeFile('qa-artifacts/preview/deployment.json', JSON.stringify({ sha, pr, deploymentId, url }, null, 2));
+  await appendFile(process.env.GITHUB_OUTPUT, `url=${url}\n`);
+  console.log(`QA bound to PR #${pr}, SHA ${sha}, deployment ${deploymentId}`);
+};
 const deadline = Date.now() + 360_000;
 while (Date.now() < deadline) {
   await checkHead();
@@ -21,12 +37,22 @@ while (Date.now() < deadline) {
     if (status?.state !== 'success') continue;
     const url = new URL(status.environment_url);
     if (url.protocol !== 'https:' || !/^ghoulhouse-home-[a-z0-9]+-info-32533854s-projects\.vercel\.app$/.test(url.hostname)) throw Error('Unexpected deployment URL');
-    await checkHead();
-    await mkdir('qa-artifacts/preview', { recursive: true });
-    await writeFile('qa-artifacts/preview/deployment.json', JSON.stringify({ sha, pr, deploymentId: deployment.id, url: url.origin }, null, 2));
-    await appendFile(process.env.GITHUB_OUTPUT, `url=${url.origin}\n`);
-    console.log(`QA bound to PR #${pr}, SHA ${sha}, deployment ${deployment.id}`);
+    await record(url.origin, deployment.id);
     process.exit(0);
+  }
+  // Some Vercel installations publish PR comments but no deployment records.
+  // The bot URL is discovery only: the hosted build must attest the exact SHA,
+  // Preview environment and immutable deployment URL, which is checked again.
+  const comments = await api(`issues/${pr}/comments?per_page=100`);
+  for (const comment of comments) {
+    if (comment.user?.id !== 35613825 || comment.performed_via_github_app?.id !== 8329) continue;
+    const matches = comment.body.matchAll(/https:\/\/ghoulhouse-home-[a-z0-9-]+-info-32533854s-projects\.vercel\.app/g);
+    for (const match of matches) {
+      const immutable = await verifyIdentity(match[0]).catch(() => null);
+      if (!immutable) continue;
+      await record(immutable, `verified-build:${immutable}`);
+      process.exit(0);
+    }
   }
   await new Promise(resolve => setTimeout(resolve, 10_000));
 }
