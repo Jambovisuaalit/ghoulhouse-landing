@@ -198,6 +198,28 @@ try {
         proposalIntent: form?.querySelector('[name="intent"]')?.value === 'booking',
         schemaTypes: [...document.querySelectorAll('script[type="application/ld+json"]')].map((script) => script.textContent || '').join(' '),
         logoLoaded: document.querySelector('header .ghBrand img')?.getAttribute('src') === '/favicon.svg',
+        glassFooter: (() => {
+          const footer = document.querySelector('footer.ghLiquidFooter');
+          const rim = footer?.querySelector('.ghLiquidFooterRim');
+          const surface = footer?.querySelector('.ghLiquidFooterSurface');
+          const inquiry = footer?.querySelector('.ghLiquidFooterButton');
+          const cols = footer?.querySelector('.ghLiquidFooterLinks');
+          return {
+            exists: Boolean(footer),
+            rimBackground: rim ? getComputedStyle(rim).backgroundImage : '',
+            glassBackdrop: surface ? (getComputedStyle(surface).backdropFilter || getComputedStyle(surface).webkitBackdropFilter) : '',
+            inquiry: inquiry?.getAttribute('href'),
+            inquiryRect: rect(inquiry),
+            brandLink: footer?.querySelector('.ghLiquidFooterBrand')?.getAttribute('href'),
+            navItems: footer?.querySelectorAll('.ghLiquidFooterNav[aria-label="Alatunnisteen navigaatio"] a').length || 0,
+            privacy: Boolean(footer?.querySelector('a[href="/tietosuoja"]')),
+            columns: cols ? getComputedStyle(cols).gridTemplateColumns : '',
+            unclippedHeadings: [...(cols?.querySelectorAll('h3') || [])].every((heading) =>
+              heading.scrollWidth <= heading.clientWidth + 1 &&
+              parseFloat(getComputedStyle(heading).fontSize) <= 13),
+            fakeNewsletter: Boolean(footer?.querySelector('form[action="#"], form[action=""]')),
+          };
+        })(),
         disclosure: /Oma sivusto — ei asiakasreferenssi/i.test(document.body.innerText),
         bodyText: document.body.innerText.replace(/\\s+/g, ' ').trim(),
         viewportMeta: document.querySelector('meta[name="viewport"]')?.getAttribute('content') || '',
@@ -247,6 +269,14 @@ try {
     assert(metrics.requiredFields, `${viewport.width}x${viewport.height}: required lead fields missing.`);
     assert(metrics.submitRect?.height >= 44, `${viewport.width}x${viewport.height}: submit target below 44px.`);
     assert(metrics.proofExists && metrics.logoLoaded, `${viewport.width}x${viewport.height}: company proof or logo missing.`);
+    assert(metrics.glassFooter.exists && metrics.glassFooter.rimBackground.includes('gradient') &&
+      metrics.glassFooter.brandLink === '/' && metrics.glassFooter.navItems === 4 && metrics.glassFooter.privacy,
+      `${viewport.width}x${viewport.height}: shared glass footer contents/rim missing: ${JSON.stringify(metrics.glassFooter)}`);
+    assert(metrics.glassFooter.unclippedHeadings,
+      `${viewport.width}x${viewport.height}: footer column headings are too large or clipped.`);
+    assert(metrics.glassFooter.inquiry === '#yhteys' && metrics.glassFooter.inquiryRect?.height >= 44 &&
+      !metrics.glassFooter.fakeNewsletter,
+      `${viewport.width}x${viewport.height}: glass footer must have working inquiry CTA and no fake signup.`);
     assert(metrics.seoSelected, `${viewport.width}x${viewport.height}: service-interest selector missing.`);
     assert(metrics.disclosure, `${viewport.width}x${viewport.height}: honest own-work disclosure missing.`);
     assert(!metrics.schemaTypes.includes('some-12-service') && !metrics.schemaTypes.includes('some-12-offer'), `${viewport.width}x${viewport.height}: product-specific schema remains on homepage.`);

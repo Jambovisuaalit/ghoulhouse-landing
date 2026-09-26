@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { siteNavigation } from '@/data/site-navigation';
+import LiquidGlassFooter from '@/components/LiquidGlassFooter';
 
 /** One common navigation and footer on every inner route.
  * The homepage keeps its existing anchored Swiss-editorial navigation.
@@ -44,32 +45,7 @@ export default function SiteChrome({ children }: { children: ReactNode }) {
         </div>
       </header>
       <div id="site-content" className="ghGlobalContent" tabIndex={-1}>{children}</div>
-      <footer className="ghGlobalFooter">
-        <div className="ghGlobalShell">
-          <div className="ghGlobalFooterMasthead" aria-hidden="true">GHOULHOUSE<span>.</span></div>
-          <div className="ghGlobalFooterGrid">
-            <div>
-              <Link className="ghGlobalBrand" href="/" aria-label="GhoulHouse — etusivu">
-                <Image src="/favicon.svg" alt="" width={32} height={32} />
-                <span>GHOULHOUSE</span>
-              </Link>
-              <p>Hyvä työ pitää näkyä.<br />Verkkosivut · Social · SEO.</p>
-            </div>
-            <div>
-              <strong>YHTEYSTIEDOT</strong>
-              <p>GhoulHouse Oy · Helsinki<br />Y-tunnus 3651127-5</p>
-              <a href="mailto:hello@ghoulhouse.fi">hello@ghoulhouse.fi</a>
-            </div>
-            <nav aria-label="Alatunnisteen navigaatio">
-              {siteNavigation.map(({ href, label }) => <Link key={href} href={href}>{label}</Link>)}
-              <Link href="/#yritys">GhoulHouse / tekijä</Link>
-              <Link href="/tietosuoja">Tietosuoja</Link>
-              <Link href="/#yhteys">Pyydä ehdotus ↗</Link>
-            </nav>
-          </div>
-          <div className="ghGlobalFooterBottom"><span>© 2026 GhoulHouse Oy</span><Link href="/">Takaisin etusivulle ↑</Link></div>
-        </div>
-      </footer>
+      <LiquidGlassFooter />
     </>
   );
 }
