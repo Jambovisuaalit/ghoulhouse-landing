@@ -70,3 +70,49 @@ body .homePage .ghFounderIdentity img {
     width: 112px;
   }
 }
+
+/* At narrow widths the supplied compact mark + vector wordmark has a more
+   legible glyph height than scaling the full 1400×460 lockup to ~110px. */
+.ghOfficialMobileLockup { display: none; }
+@media (max-width: 767px) {
+  body .homePage .ghBrand img.ghOfficialHeaderLogo,
+  body .ghGlobalHeader .ghGlobalBrand img.ghOfficialHeaderLogo {
+    display: none;
+  }
+  body .homePage .ghBrand span.ghOfficialMobileLockup,
+  body .ghGlobalHeader .ghGlobalBrand span.ghOfficialMobileLockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    width: auto;
+    max-width: 100%;
+    line-height: 1;
+  }
+  body .homePage .ghBrand .ghOfficialMobileLockup img.ghOfficialMobileMark,
+  body .ghGlobalHeader .ghGlobalBrand .ghOfficialMobileLockup img.ghOfficialMobileMark {
+    display: block;
+    width: 35px;
+    height: 35px;
+    flex: none;
+    object-fit: contain;
+  }
+  body .homePage .ghBrand .ghOfficialMobileLockup img.ghOfficialMobileWordmark,
+  body .ghGlobalHeader .ghGlobalBrand .ghOfficialMobileLockup img.ghOfficialMobileWordmark {
+    display: block;
+    width: clamp(125px, 34vw, 145px);
+    height: auto;
+    flex: none;
+    object-fit: contain;
+  }
+}
+@media (max-width: 359px) {
+  body .homePage .ghBrand .ghOfficialMobileLockup img.ghOfficialMobileMark,
+  body .ghGlobalHeader .ghGlobalBrand .ghOfficialMobileLockup img.ghOfficialMobileMark {
+    width: 30px;
+    height: 30px;
+  }
+  body .homePage .ghBrand .ghOfficialMobileLockup img.ghOfficialMobileWordmark,
+  body .ghGlobalHeader .ghGlobalBrand .ghOfficialMobileLockup img.ghOfficialMobileWordmark {
+    width: 119px;
+  }
+}
