@@ -237,11 +237,29 @@ jobs:
       - name: Full-page responsive and consent QA
         run: node scripts/homepage-fullpage-qa.mjs
 
-      - name: Vercel Preview full-page responsive QA
-        env:
-          QA_BASE_URL: https://ghoulhouse-home-aswhc7zam-info-32533854s-projects.vercel.app
-          QA_SCREENSHOT_DIR: qa-artifacts/preview
-        run: node scripts/homepage-fullpage-qa.mjs
+      # Never run release assertions against a hard-coded, older Preview SHA.
+      # The full-page job above tests this exact checkout's production build;
+      # the matching Vercel Preview is checked by SHA before PR merge.
+      - name: Consent CSS single-source QA
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const old = ['src/app/site.css','src/app/global-chrome.css','src/app/homepage.css','src/app/homepage-swiss.css'];
+          for (const path of old) {
+            if (/\\.analytics(?:Consent|Settings)/.test(fs.readFileSync(path,'utf8'))) {
+              throw new Error('Legacy consent CSS reintroduced in ' + path);
+            }
+          }
+          const styles = fs.readFileSync('src/app/analytics-consent.css','utf8');
+          const component = fs.readFileSync('src/components/analytics/AnalyticsConsent.tsx','utf8');
+          for (const token of ['.analyticsConsent__eyebrow','.analyticsConsent__accept','.analyticsConsent__reject','.homePage .ghConsentSlot .analyticsConsent']) {
+            if (!styles.includes(token)) throw new Error('Missing canonical consent selector: ' + token);
+          }
+          if (component.includes('className="button ') || component.includes('className="kicker"')) {
+            throw new Error('Consent still inherits default utility styling');
+          }
+          console.log('Consent CSS single-source QA PASS');
+          NODE
 
       - name: Launch visual and accessibility QA
         run: node scripts/launch-visual-a11y-qa.mjs
