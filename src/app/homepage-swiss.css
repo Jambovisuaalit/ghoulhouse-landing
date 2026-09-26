@@ -694,3 +694,8 @@
   .homePage .ghProcessInquiry{margin-top:44px}
   .homePage .ghSelectedInquiry{font-size:13px}
 }
+
+/* Full-page viewport QA: the first hydration must not animate CSS transforms
+   from the static three-column fallback into the 3D layout. Only deliberate
+   next/previous/swipe actions animate. This also prevents motion at page load. */
+.homePage .gh3dCarousel.is-ready[data-interacted="false"] .gh3dCard{transition:none!important}
