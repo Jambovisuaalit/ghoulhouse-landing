@@ -104,6 +104,9 @@ jobs:
       - name: Official brand and full sitemap page QA
         run: node scripts/official-brand-qa.mjs
 
+      - name: Social content, intent and internal links QA
+        run: node scripts/social-content-qa.mjs
+
       - name: Lead confirmation and service-specific routing QA
         run: node scripts/lead-confirmation-qa.mjs
 
