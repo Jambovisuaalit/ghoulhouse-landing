@@ -110,7 +110,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
           <div className="ghShell ghHeroGrid">
             <div className="ghHeroCopy">
               <p className="ghEyebrow">Digitaalinen näkyvyys suomalaisille palveluyrityksille</p>
-              <h1 id="hero-title">HYVÄ TYÖ<br /><span>PITÄÄ NÄKYÄ.</span></h1>
+              <h1 id="hero-title"><span>HYVÄ TYÖ</span>{' '}<span>PITÄÄ NÄKYÄ.</span></h1>
               <div className="ghSwissHeroBelow">
                 <p className="ghLead">Verkkosivut, sisältö ja hakukonenäkyvyys. Vähemmän kohinaa. Enemmän näkyvyyttä oikealle työlle.</p>
                 <div className="ghSwissHeroAction">
