@@ -95,12 +95,18 @@ export function validateLead(input: unknown): LeadValidationResult {
   }
 
   const source = input as Record<string, unknown>;
-  const noProfile = source.noProfile === true || source.noProfile === 'true' || source.noProfile === 'on';
-  const profile = noProfile ? '' : clean(source.profile, limits.profile);
-  const classifiedProfile = profile ? classifyProfile(profile) : null;
-  const profile = clean(source.profile, limits.profile);
-  const noProfileYet = profile === NO_PROFILE_YET;
-  const classifiedProfile = noProfileYet ? { website: '', instagram: '' } : profile ? classifyProfile(profile) : null;
+  // Both the checkbox and the existing datalist choice express an explicit
+  // no-profile state. A checked box takes precedence over stale URL input.
+  const explicitNoProfile =
+    source.noProfile === true || source.noProfile === 'true' || source.noProfile === 'on';
+  const rawProfile = clean(source.profile, limits.profile);
+  const noProfile = explicitNoProfile || rawProfile === NO_PROFILE_YET;
+  const profile = explicitNoProfile ? '' : rawProfile;
+  const classifiedProfile = noProfile
+    ? { website: '', instagram: '' }
+    : profile
+      ? classifyProfile(profile)
+      : null;
 
   const data: LeadInput = {
     intent: source.intent === 'photos' ? 'photos' : 'booking',
@@ -131,9 +137,6 @@ export function validateLead(input: unknown): LeadValidationResult {
   if (!noProfile && !profile) {
     errors.profile = 'Anna verkkosivu tai Instagram tai valitse, ettei niitä vielä ole.';
   } else if (!noProfile && !classifiedProfile) {
-  if (!profile) {
-    errors.profile = 'Anna verkkosivu, Instagram tai valitse Ei vielä kumpaakaan.';
-  } else if (!classifiedProfile) {
     errors.profile = 'Anna verkkosivu (esim. yritys.fi) tai Instagram (@yritys).';
   }
 

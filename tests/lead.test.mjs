@@ -27,3 +27,22 @@ test('opt-out clears stale profile data', () => {
   assert.equal(result.data.website, '');
   assert.equal(result.data.instagram, '');
 });
+
+test('existing no-profile datalist value survives and uses the same explicit opt-out flag', () => {
+  const result = validateLead({ ...base, profile: 'Ei vielä verkkosivua tai Instagramia' });
+  assert.equal(result.ok, true);
+  assert.equal(result.data.noProfile, true);
+  assert.equal(result.data.profile, 'Ei vielä verkkosivua tai Instagramia');
+  assert.equal(result.data.website, '');
+  assert.equal(result.data.instagram, '');
+});
+
+test('checkbox takes precedence over a stale profile and validation stays active otherwise', () => {
+  const checked = validateLead({ ...base, noProfile: 'true', profile: '@stale_profile' });
+  assert.equal(checked.ok, true);
+  assert.equal(checked.data.noProfile, true);
+  assert.equal(checked.data.profile, '');
+  assert.equal(checked.data.instagram, '');
+  assert.equal(validateLead({ ...base, noProfile: 'false', profile: '@valid_profile' }).ok, true);
+  assert.equal(validateLead({ ...base, noProfile: 'false', profile: 'invalid value' }).ok, false);
+});

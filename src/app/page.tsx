@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import LeadForm from '@/components/LeadForm';
-import FunnelAnalytics from '@/components/analytics/FunnelAnalytics';
 import { siteNavigation } from '@/data/site-navigation';
 import LiquidGlassFooter from '@/components/LiquidGlassFooter';
 import './homepage.css';
