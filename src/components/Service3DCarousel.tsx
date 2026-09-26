@@ -13,6 +13,7 @@ type CarouselItem = readonly [label: string, title: string, description: string,
 export default function Service3DCarousel({ items }: { items: readonly CarouselItem[] }) {
   const [active, setActive] = useState(0);
   const [enhanced, setEnhanced] = useState(false);
+  const [interacted, setInteracted] = useState(false);
   const [skipTransition, setSkipTransition] = useState<number | null>(null);
   const dragStart = useRef<{ x: number; y: number } | null>(null);
   const suppressClick = useRef(false);
@@ -20,6 +21,7 @@ export default function Service3DCarousel({ items }: { items: readonly CarouselI
   useEffect(() => setEnhanced(true), []);
 
   const move = (direction: -1 | 1) => {
+    setInteracted(true);
     // The old outer card crosses behind the carousel, so its repositioning
     // must not animate from one visible edge to the other.
     setSkipTransition((active + (direction === 1 ? items.length - 1 : 1)) % items.length);
@@ -51,7 +53,7 @@ export default function Service3DCarousel({ items }: { items: readonly CarouselI
   if (!items.length) return null;
 
   return (
-    <div className={`gh3dCarousel${enhanced ? ' is-ready' : ''}`} role="region"
+    <div className={`gh3dCarousel${enhanced ? ' is-ready' : ''}`} data-interacted={interacted} role="region"
       aria-roledescription="karuselli" aria-label="GhoulHousen toimitusesimerkit"
       onKeyDown={onKeyDown}>
       <div className="gh3dStage" onPointerDown={onPointerDown} onPointerUp={onPointerUp}
