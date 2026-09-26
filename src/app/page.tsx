@@ -2,6 +2,7 @@ import Image from 'next/image';
 import LeadForm from '@/components/LeadForm';
 import FunnelAnalytics from '@/components/analytics/FunnelAnalytics';
 import HeroDotGrid from '@/components/HeroDotGrid';
+import Service3DCarousel from '@/components/Service3DCarousel';
 import './homepage.css';
 
 const navigation = [
@@ -172,9 +173,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
         <section className="ghProofGridSection ghSection" id="referenssit" aria-labelledby="proof-grid-title">
           <div className="ghShell">
             <div className="ghSectionIntro"><p className="ghEyebrow">Palveluiden esittely</p><h2 id="proof-grid-title">Kolme tapaa tehdä<br />työ näkyväksi.</h2><p>Alla olevat nostot esittelevät palveluita ja toimialaratkaisuja, eivät toteutuneita asiakastöitä tai asiakastuloksia.</p></div>
-            <div className="ghEditorialGrid">
-              {proofLinks.map(([type, title, copy, href]) => <a className="ghEditorialCard" href={href} key={type}><span className="ghEyebrow">{type}</span><h3>{title}</h3><p>{copy}</p><span className="ghEditorialCardArrow" aria-hidden="true">↗</span></a>)}
-            </div>
+            <Service3DCarousel items={proofLinks} />
             <a className="ghTextLink ghSectionLink" href="/referenssit">Katso erilliset työnäytteet ja referenssit <span aria-hidden="true">↗</span></a>
           </div>
         </section>
