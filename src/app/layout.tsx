@@ -11,6 +11,7 @@ import './liquid-glass-footer.css';
 import './analytics-consent.css';
 import './official-brand.css';
 import './social-editorial.css';
+import './editorial-system.css';
 
 const anton = Anton({
   weight: '400',
