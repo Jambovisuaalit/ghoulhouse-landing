@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import LeadForm from '@/components/LeadForm';
 import FunnelAnalytics from '@/components/analytics/FunnelAnalytics';
+import HeroDotGrid from '@/components/HeroDotGrid';
 import './homepage.css';
 
 const navigation = [
@@ -99,6 +100,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
 
       <main id="main">
         <section className="ghHero ghHeroEditorial" id="top" aria-labelledby="hero-title">
+          <HeroDotGrid />
           <div className="ghShell ghHeroGrid">
             <div className="ghHeroCopy">
               <p className="ghEyebrow">GhoulHouse Oy · Digitaalinen näkyvyys palveluyrityksille</p>
