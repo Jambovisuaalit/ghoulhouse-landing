@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   manifest: '/manifest.webmanifest',
   icons: {
     icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
-    apple: [{ url: '/apple-touch-icon-180.png', sizes: '180x180', type: 'image/png' }],
+    apple: [{ url: '/brand-icons/180', sizes: '180x180', type: 'image/png' }],
   },
   creator: siteConfig.company.legalName,
   publisher: siteConfig.company.legalName,
