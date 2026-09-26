@@ -46,6 +46,11 @@ for (const name of ['company', 'name', 'email', 'profile']) {
   assert(html.includes(`name="${name}"`), `No-JS QA: ${name} field is missing.`);
 }
 assert(html.includes('Ei vielä verkkosivua tai Instagramia') && html.includes('lead-profile-options'), 'No-JS QA: explicit no-profile choice is missing.');
+assert(html.includes('class="ghFooter ghLiquidFooter"') && html.includes('ghLiquidFooterRim'),
+  'No-JS QA: homepage liquid-glass footer not server rendered.');
+assert(html.includes('class="ghLiquidFooterButton"') && html.includes('href="#yhteys"'),
+  'No-JS QA: glass footer inquiry must link to actual homepage form.');
+
 assert(!html.includes('ghSwissTile--site'), 'No-JS QA: duplicate self-site screenshot in hero is still present.');
 assert(/Oma sivusto — ei asiakasreferenssi/i.test(html), 'No-JS QA: honest own-work disclosure is missing.');
 assert((html.match(/gh3dCardLink/g) || []).length >= 3, 'No-JS QA: the three carousel items are not rendered as ordinary static service links.');
@@ -57,7 +62,12 @@ assert(!html.includes('logo-horizontal.svg') && !html.includes('logo-horizontal-
 
 for (const route of ['/referenssit','/resurssit','/verkkosivut/hinta']) {
   const inner = await fetch(BASE_URL + route, { cache: 'no-store' }).then((res) => res.text());
-  assert(inner.includes('class="ghGlobalHeader"') && inner.includes('class="ghGlobalFooter"'), 'No-JS QA: shared navigation/footer missing on ' + route);
+  assert(inner.includes('class="ghGlobalHeader"') && inner.includes('class="ghGlobalFooter ghLiquidFooter"'),
+    'No-JS QA: shared navigation/liquid-glass footer missing on ' + route);
+  assert(inner.includes('class="ghLiquidFooterButton"') && inner.includes('href="/#yhteys"'),
+    'No-JS QA: footer inquiry must reach homepage proposal form on ' + route);
+  assert(inner.includes('href="/tietosuoja"') && !inner.includes('action="#"'),
+    'No-JS QA: real privacy link missing or dummy signup present on ' + route);
   assert(inner.includes('href="/#yhteys"'), 'No-JS QA: inquiry link missing on ' + route);
 }
 const ownCaseResponse = await fetch(BASE_URL + '/tyot/ghoulhouse-verkkosivut', { cache:'no-store' });
