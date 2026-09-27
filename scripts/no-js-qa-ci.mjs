@@ -46,7 +46,8 @@ assert(
 for (const name of ['company', 'name', 'email', 'profile']) {
   assert(html.includes(`name="${name}"`), `No-JS QA: ${name} field is missing.`);
 }
-assert(html.includes('Ei vielä verkkosivua tai Instagramia') && html.includes('lead-profile-options'), 'No-JS QA: explicit no-profile choice is missing.');
+assert(html.includes('Ei vielä verkkosivua tai Instagramia') && /<input\b[^>]*type="checkbox"[^>]*name="noProfile"/.test(html),
+  'No-JS QA: explicit no-profile checkbox is missing.');
 assert(html.includes('class="ghFooter ghLiquidFooter"') && html.includes('ghLiquidFooterRim'),
   'No-JS QA: homepage liquid-glass footer not server rendered.');
 assert(html.includes('class="ghLiquidFooterButton"') && html.includes('href="#yhteys"'),
