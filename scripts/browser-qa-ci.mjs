@@ -328,7 +328,7 @@ try {
       metrics.brandLayout.markFilter === 'none',
       `${viewport.width}x${viewport.height}: official logo contrast, load or clipping failed: ${JSON.stringify(metrics.brandLayout)}`);
     assert(metrics.glassFooter.exists && metrics.glassFooter.rimBackground.includes('gradient') &&
-      metrics.glassFooter.brandLink === '/' && metrics.glassFooter.navItems === 4 && metrics.glassFooter.privacy,
+      metrics.glassFooter.brandLink === '/' && metrics.glassFooter.navItems === 5 && metrics.glassFooter.privacy,
       `${viewport.width}x${viewport.height}: shared glass footer contents/rim missing: ${JSON.stringify(metrics.glassFooter)}`);
     assert(metrics.glassFooter.unclippedHeadings,
       `${viewport.width}x${viewport.height}: footer column headings are too large or clipped.`);
