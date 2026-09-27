@@ -166,6 +166,23 @@
   border-color: #c9c1b9;
   box-shadow: none;
 }
+/* Inner pages place consent after the header in normal document flow. */
+.ghGlobalHeader + .ghConsentSlot:not(:empty) { padding-top: 16px; padding-bottom: 16px; }
+.ghGlobalHeader + .ghConsentSlot .analyticsConsent {
+  position: static;
+  inset: auto;
+  width: 100%;
+  max-height: none;
+  overflow: visible;
+  grid-template-columns: minmax(0, 1fr) minmax(230px, 300px);
+  align-items: center;
+  box-shadow: none;
+}
+.ghGlobalHeader + .ghConsentSlot .analyticsSettings {
+  position: static;
+  inset: auto;
+  box-shadow: none;
+}
 @media (max-width: 1199px) {
   .homePage .ghConsentSlot:not(:empty) { width: calc(100% - 72px); }
 }
@@ -193,6 +210,9 @@
     border-left-width: 3px;
   }
   .homePage .ghConsentSlot .analyticsConsent__copy h2 { font-size: 17px; }
+  .ghGlobalHeader + .ghConsentSlot .analyticsConsent {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 @media (max-width: 359px) {
   .homePage .ghConsentSlot:not(:empty) { width: calc(100% - 32px); }

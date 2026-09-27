@@ -35,6 +35,7 @@ assert(html.includes('490 €'), 'No-JS QA: Social card pricing is missing.');
 for (const href of ['/verkkosivut-yritykselle','/some-sisallontuotanto','/resurssit','/referenssit']) {
   assert(html.includes('href="' + href + '"'), 'No-JS QA: required company navigation missing: ' + href);
 }
+assert(html.includes('href="/?service=seo#yhteys"'), 'No-JS QA: SEO proposal navigation missing.');
 assert(/<a\b[^>]*href=["']#yhteys["'][^>]*>/i.test(html), 'No-JS QA: #yhteys CTA anchor is missing.');
 assert(html.includes('PYYDÄ EHDOTUS') || html.includes('Pyydä ehdotus'), 'No-JS QA: primary CTA copy is missing.');
 assert(
@@ -74,6 +75,9 @@ for (const route of ['/referenssit','/resurssit','/verkkosivut/hinta']) {
     'No-JS QA: real privacy link missing or dummy signup present on ' + route);
   assert(inner.includes('href="/#yhteys"'), 'No-JS QA: inquiry link missing on ' + route);
 }
+const priceHtml = await fetch(BASE_URL + '/verkkosivut/hinta').then((res) => res.text());
+assert(priceHtml.includes('Mistä verkkosivujen hinta muodostuu?') && priceHtml.includes('Tällä sivulla ei ole kiinteää hintaa'),
+  'No-JS QA: price heading and content do not match.');
 const ownCaseResponse = await fetch(BASE_URL + '/tyot/ghoulhouse-verkkosivut', { cache:'no-store' });
 assert(ownCaseResponse.status === 200, 'No-JS QA: dedicated own-site case page not found.');
 const ownCase = await ownCaseResponse.text();

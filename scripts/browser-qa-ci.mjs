@@ -196,7 +196,7 @@ try {
         serviceCards: document.querySelectorAll('.ghServiceCard').length,
         editorialRoutes: [...document.querySelectorAll('.ghArtRouteList .ghArtRoute')].map((a) => a.getAttribute('href')),
         primaryNavDesktop: [...document.querySelectorAll('.ghDesktopNav a')].map((a) => [a.textContent?.trim(),a.getAttribute('href')]),
-        primaryNavMobile: [...document.querySelectorAll('.ghMobileNav nav a')].slice(0,4).map((a) => [a.textContent?.trim(),a.getAttribute('href')]),
+        primaryNavMobile: [...document.querySelectorAll('.ghMobileNav nav a')].slice(0,5).map((a) => [a.textContent?.trim(),a.getAttribute('href')]),
         proofCardHref: proof?.getAttribute('href'),
         resourceLinks: document.querySelectorAll('.ghGuideRow').length,
         proposalIntent: form?.querySelector('[name="intent"]')?.value === 'booking',
@@ -413,8 +413,9 @@ try {
     profile: document.querySelector('#yhteys input[name="profile"]')?.value,
     readOnly: document.querySelector('#yhteys input[name="profile"]')?.readOnly,
     checked: document.querySelector('#yhteys input[name="noProfile"]')?.checked,
+    formValue: new FormData(document.querySelector('#yhteys form')).get('noProfile'),
   }))()`);
-  assert(selectedNoProfile.profile === '' && selectedNoProfile.checked && selectedNoProfile.readOnly,
+  assert(selectedNoProfile.profile === '' && selectedNoProfile.checked && selectedNoProfile.readOnly && selectedNoProfile.formValue === 'true',
     'Opt-out must check exactly one box and clear or lock stale URLs.');
   await evaluate(client, 'document.querySelector("#yhteys input[name=noProfile]")?.click()');
   const clearedNoProfile = await evaluate(client, `(() => ({
@@ -423,6 +424,12 @@ try {
   }))()`);
   assert(!clearedNoProfile.checked && !clearedNoProfile.readOnly,
     'Unchecking opt-out must allow entering a profile again.');
+
+  const primaryLinks = await evaluate(client, `(() => [...document.querySelectorAll('.ghDesktopNav a')]
+    .map((a) => [a.textContent.trim(), a.getAttribute('href')]))()`);
+  assert(primaryLinks.some(([label, href]) => label === 'SEO-ehdotus' && href === '/?service=seo#yhteys') &&
+    primaryLinks.some(([label, href]) => label === 'Oppaat' && href === '/resurssit'),
+    'SEO proposal and guides must have distinct navigation destinations.');
 
   const routeNavigation = await evaluate(client, `(() => [...document.querySelectorAll('.ghArtRouteList a')]
     .map((a) => ({href:a.getAttribute('href'),focusable:a.tabIndex>=0})))()`);
@@ -491,8 +498,7 @@ try {
     }
   }
 
-  // Consent is an accessible branded in-flow strip on the homepage,
-  // but a compact fixed notice on inner pages. Verify both at realistic widths.
+  // Consent remains in document flow on both homepage and inner routes.
   const innerConsentResults = [];
   for (const vp of [{ width: 320, height: 568 }, { width: 390, height: 844 }, { width: 1440, height: 900 }]) {
     await client.send('Emulation.setDeviceMetricsOverride', {
@@ -531,9 +537,9 @@ try {
         prematureGA: Boolean(document.querySelector('#google-analytics-src')),
       };
     })()`);
-    assert(styled.position === 'fixed' && styled.background === 'rgb(247, 244, 239)' &&
+    assert(styled.position === 'static' && styled.background === 'rgb(247, 244, 239)' &&
       styled.accent === 'rgb(201, 40, 45)' && styled.borderRadius === '0px',
-      `${vp.width}x${vp.height}: inner consent still inherits a default popup skin: ${JSON.stringify(styled)}`);
+      `${vp.width}x${vp.height}: inner consent does not remain in flow: ${JSON.stringify(styled)}`);
     assert(styled.headingVisible && styled.brandedControls && styled.privacy && !styled.genericStyles &&
       !styled.prematureGA, `${vp.width}x${vp.height}: consent copy, controls, privacy or GA gate invalid.`);
     assert(styled.box.left >= -1 && styled.box.right <= styled.viewportWidth + 1 &&

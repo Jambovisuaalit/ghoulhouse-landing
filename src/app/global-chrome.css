@@ -72,19 +72,7 @@
 }
 @media(prefers-reduced-motion:reduce){.ghGlobalContent *, .ghGlobalHeader *{scroll-behavior:auto}}
 
-.leadProfileNoWebsite{
- display:inline-flex;align-items:center;justify-self:start;gap:10px;
- width:fit-content;min-height:44px;border:1px solid currentColor;
- background:transparent;color:inherit;padding:9px 13px;
- cursor:pointer;font-size:13px;font-weight:700;line-height:1.35;text-align:left;
-}
-.leadProfileNoWebsite[aria-pressed="true"]{border-color:#c9282d;background:#c9282d;color:#fff}
-.leadProfileNoWebsite span{font-size:18px;line-height:1}
-.leadProfileNoWebsite:hover{border-color:#c9282d}
-.ghGlobalContent .leadProfileNoWebsite{margin-top:3px}
 .ghGlobalContent .leadForm input[readonly]{background:#ece9e3;border-color:#c9282d}
-.homePage .ghForm .leadProfileNoWebsite{color:#f7f4ef;border-color:#aaa49c}
-.homePage .ghForm .leadProfileNoWebsite[aria-pressed="true"]{color:#fff;border-color:#c9282d}
 .homePage .ghForm input[readonly]{background:#292622}
 /* Match navigation text and tablet behavior to the canonical homepage menu. */
 .ghGlobalDesktopNav{gap:clamp(17px,2.1vw,32px)}
