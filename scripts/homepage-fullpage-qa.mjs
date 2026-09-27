@@ -100,7 +100,7 @@ async function auditViewport() {
     window.scrollTo(0,0);await sleep(100);menu.querySelector('summary')?.click();await sleep(90);
     nav.open=menu.open;
     nav.links=[...menu.querySelectorAll('nav a')].map(el=>({href:el.getAttribute('href'),bounds:rect(el),hit:hit(el)}));
-    if(!nav.open||nav.links.length!==5||nav.links.some(x=>!x.hit||x.bounds.left< -1||x.bounds.right>innerWidth+1))
+    if(!nav.open||nav.links.length!==6||nav.links.some(x=>!x.hit||x.bounds.left< -1||x.bounds.right>innerWidth+1))
       errors.push('Mobile nav open/link hit test failed: '+JSON.stringify(nav));
     menu.querySelector('summary')?.click();
   }

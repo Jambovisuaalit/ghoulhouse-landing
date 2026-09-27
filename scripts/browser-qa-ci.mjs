@@ -196,7 +196,7 @@ try {
         serviceCards: document.querySelectorAll('.ghServiceCard').length,
         editorialRoutes: [...document.querySelectorAll('.ghArtRouteList .ghArtRoute')].map((a) => a.getAttribute('href')),
         primaryNavDesktop: [...document.querySelectorAll('.ghDesktopNav a')].map((a) => [a.textContent?.trim(),a.getAttribute('href')]),
-        primaryNavMobile: [...document.querySelectorAll('.ghMobileNav nav a')].slice(0,4).map((a) => [a.textContent?.trim(),a.getAttribute('href')]),
+        primaryNavMobile: [...document.querySelectorAll('.ghMobileNav nav a')].slice(0,5).map((a) => [a.textContent?.trim(),a.getAttribute('href')]),
         proofCardHref: proof?.getAttribute('href'),
         resourceLinks: document.querySelectorAll('.ghGuideRow').length,
         proposalIntent: form?.querySelector('[name="intent"]')?.value === 'booking',
@@ -328,7 +328,7 @@ try {
       metrics.brandLayout.markFilter === 'none',
       `${viewport.width}x${viewport.height}: official logo contrast, load or clipping failed: ${JSON.stringify(metrics.brandLayout)}`);
     assert(metrics.glassFooter.exists && metrics.glassFooter.rimBackground.includes('gradient') &&
-      metrics.glassFooter.brandLink === '/' && metrics.glassFooter.navItems === 4 && metrics.glassFooter.privacy,
+      metrics.glassFooter.brandLink === '/' && metrics.glassFooter.navItems === 5 && metrics.glassFooter.privacy,
       `${viewport.width}x${viewport.height}: shared glass footer contents/rim missing: ${JSON.stringify(metrics.glassFooter)}`);
     assert(metrics.glassFooter.unclippedHeadings,
       `${viewport.width}x${viewport.height}: footer column headings are too large or clipped.`);
@@ -398,20 +398,38 @@ try {
   assert(interaction.hash === '#yhteys', 'Primary CTA did not navigate to #yhteys.');
   assert(interaction.formExists && interaction.submitTabIndex >= 0, 'Lead form or submit keyboard access missing.');
 
-  // The previously mandatory profile field must support companies with no channels.
+  // One real checkbox controls the explicit no-profile state (no duplicate button).
   const noProfile = await evaluate(client, `(() => ({
-    control: Boolean(document.querySelector('#yhteys .leadProfileNoWebsite')),
+    controls: document.querySelectorAll('#yhteys input[name="noProfile"][type="checkbox"]').length,
     initiallyEmpty: document.querySelector('#yhteys input[name="profile"]')?.value === '',
+    label: document.querySelector('#yhteys label.profileChoice')?.textContent?.trim(),
   }))()`);
-  assert(noProfile.control && noProfile.initiallyEmpty, 'Accessible no-profile choice missing from proposal form.');
-  await evaluate(client, 'document.querySelector("#yhteys .leadProfileNoWebsite")?.click()');
+  assert(noProfile.controls === 1 && noProfile.initiallyEmpty &&
+    noProfile.label === 'Ei vielä verkkosivua tai Instagramia',
+    'Exactly one accessible no-profile checkbox is required.');
+  await evaluate(client, 'document.querySelector("#yhteys input[name=noProfile]")?.click()');
   await sleep(100);
   const selectedNoProfile = await evaluate(client, `(() => ({
     profile: document.querySelector('#yhteys input[name="profile"]')?.value,
-    pressed: document.querySelector('#yhteys .leadProfileNoWebsite')?.getAttribute('aria-pressed'),
+    readOnly: document.querySelector('#yhteys input[name="profile"]')?.readOnly,
+    checked: document.querySelector('#yhteys input[name="noProfile"]')?.checked,
+    formValue: new FormData(document.querySelector('#yhteys form')).get('noProfile'),
   }))()`);
-  assert(selectedNoProfile.profile === 'Ei vielä verkkosivua tai Instagramia' && selectedNoProfile.pressed === 'true',
-    'No-profile selection did not set the lead value.');
+  assert(selectedNoProfile.profile === '' && selectedNoProfile.checked && selectedNoProfile.readOnly && selectedNoProfile.formValue === 'true',
+    'Opt-out must check exactly one box and clear or lock stale URLs.');
+  await evaluate(client, 'document.querySelector("#yhteys input[name=noProfile]")?.click()');
+  const clearedNoProfile = await evaluate(client, `(() => ({
+    checked: document.querySelector('#yhteys input[name="noProfile"]')?.checked,
+    readOnly: document.querySelector('#yhteys input[name="profile"]')?.readOnly,
+  }))()`);
+  assert(!clearedNoProfile.checked && !clearedNoProfile.readOnly,
+    'Unchecking opt-out must allow entering a profile again.');
+
+  const primaryLinks = await evaluate(client, `(() => [...document.querySelectorAll('.ghDesktopNav a')]
+    .map((a) => [a.textContent.trim(), a.getAttribute('href')]))()`);
+  assert(primaryLinks.some(([label, href]) => label === 'SEO-ehdotus' && href === '/?service=seo#yhteys') &&
+    primaryLinks.some(([label, href]) => label === 'Oppaat' && href === '/resurssit'),
+    'SEO proposal and guides must have distinct navigation destinations.');
 
   const routeNavigation = await evaluate(client, `(() => [...document.querySelectorAll('.ghArtRouteList a')]
     .map((a) => ({href:a.getAttribute('href'),focusable:a.tabIndex>=0})))()`);
@@ -480,8 +498,7 @@ try {
     }
   }
 
-  // Consent is an accessible branded in-flow strip on the homepage,
-  // but a compact fixed notice on inner pages. Verify both at realistic widths.
+  // Consent remains in document flow on both homepage and inner routes.
   const innerConsentResults = [];
   for (const vp of [{ width: 320, height: 568 }, { width: 390, height: 844 }, { width: 1440, height: 900 }]) {
     await client.send('Emulation.setDeviceMetricsOverride', {
@@ -520,9 +537,9 @@ try {
         prematureGA: Boolean(document.querySelector('#google-analytics-src')),
       };
     })()`);
-    assert(styled.position === 'fixed' && styled.background === 'rgb(247, 244, 239)' &&
+    assert(styled.position === 'static' && styled.background === 'rgb(247, 244, 239)' &&
       styled.accent === 'rgb(201, 40, 45)' && styled.borderRadius === '0px',
-      `${vp.width}x${vp.height}: inner consent still inherits a default popup skin: ${JSON.stringify(styled)}`);
+      `${vp.width}x${vp.height}: inner consent does not remain in flow: ${JSON.stringify(styled)}`);
     assert(styled.headingVisible && styled.brandedControls && styled.privacy && !styled.genericStyles &&
       !styled.prematureGA, `${vp.width}x${vp.height}: consent copy, controls, privacy or GA gate invalid.`);
     assert(styled.box.left >= -1 && styled.box.right <= styled.viewportWidth + 1 &&
