@@ -43,7 +43,7 @@ export default function OnboardingForm() {
 
     setState('submitting');
     setError('');
-    trackEvent('onboarding_form_submit');
+    trackEvent('lead_form_submit', { source: 'onboarding' });
 
     try {
       const response = await fetch('/api/leads', {
@@ -62,7 +62,7 @@ export default function OnboardingForm() {
       });
 
       if (response.ok) {
-        trackEvent('onboarding_form_success');
+        trackEvent('lead_form_success', { source: 'onboarding' });
         window.location.assign('/aloitus/kiitos');
         return;
       }
@@ -75,11 +75,11 @@ export default function OnboardingForm() {
           : 'Lähetys ei onnistunut. Lähetä tiedot Hannalle tai yritä uudelleen.'
       );
       setState('error');
-      trackEvent('onboarding_form_error');
+      trackEvent('lead_form_error', { source: 'onboarding' });
     } catch {
       setError('Yhteys katkesi. Yritä uudelleen.');
       setState('error');
-      trackEvent('onboarding_form_error');
+      trackEvent('lead_form_error', { source: 'onboarding' });
     }
   }
 
