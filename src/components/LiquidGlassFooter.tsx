@@ -24,7 +24,7 @@ export default function LiquidGlassFooter({ home = false }: Props) {
         <div className="ghLiquidFooterRim">
           <div className="ghLiquidFooterSurface">
 
-            <div className="ghLiquidFooterInvite">
+            {!home && <div className="ghLiquidFooterInvite">
               <div className="ghLiquidFooterStatement">
                 <p className="ghLiquidFooterEyebrow">SEURAAVA ASKEL / YHTEISTYÖ</p>
                 <h2>TEHDÄÄN TYÖSTÄ<br /><span>NÄKYVÄÄ.</span></h2>
@@ -39,7 +39,7 @@ export default function LiquidGlassFooter({ home = false }: Props) {
                   Tai lähetä sähköpostia <span aria-hidden="true"><ArrowUpRight /></span>
                 </a>
               </div>
-            </div>
+            </div>}
 
             <div className="ghLiquidFooterLinks">
               <div className="ghLiquidFooterBrandBlock">
@@ -82,7 +82,7 @@ export default function LiquidGlassFooter({ home = false }: Props) {
           </div>
         </div>
 
-        <div className="ghLiquidFooterWordmark" aria-hidden="true"><Image className="ghOfficialWordmark" src="/ghoulhouse-wordmark-white.svg" width={1000} height={200} alt="" /></div>
+        {!home && <div className="ghLiquidFooterWordmark" aria-hidden="true"><Image className="ghOfficialWordmark" src="/ghoulhouse-wordmark-white.svg" width={1000} height={200} alt="" /></div>}
         <div className="ghLiquidFooterBottom">
           <span>© 2026 GhoulHouse Oy. Kaikki oikeudet pidätetään.</span>
           <span>HELSINKI · SOCIAL / VERKKOSIVUT / SEO</span>
