@@ -464,3 +464,33 @@
   .ghLiquidFooterBrandBlock { grid-column: 1; }
   .ghLiquidFooterContact>a { overflow-wrap: normal; }
 }
+
+/* Inner pages: a BONE invitation separates the dark form from the dark footer. */
+.ghGlobalFooter.ghLiquidFooter { padding-top: 0; }
+.ghGlobalFooter.ghLiquidFooter > .ghLiquidFooterShell {
+  padding-top: clamp(70px, 8vw, 124px);
+}
+.ghGlobalFinalCta {
+  position: relative;
+  z-index: 1;
+  padding: clamp(70px, 8vw, 116px) 0;
+  background: var(--brand-bone);
+  color: var(--brand-ink);
+}
+.ghGlobalFinalCta .ghLiquidFooterInvite { padding: 0; }
+.ghGlobalFinalCta .ghLiquidFooterEyebrow { color: #4f4944; }
+.ghGlobalFinalCta .ghLiquidFooterStatement h2,
+.ghGlobalFinalCta .ghLiquidFooterStatement h2 span { color: var(--brand-ink); text-shadow: none; }
+.ghGlobalFinalCta .ghLiquidFooterStatement>p:last-child { color: #393530; }
+.ghGlobalFinalCta .ghLiquidFooterMail {
+  color: var(--brand-ink);
+  border-color: rgba(17,17,17,.55);
+}
+.ghGlobalFinalCta .ghLiquidFooterMail:hover { color: #9a211c; border-color: #9a211c; }
+.ghGlobalFinalCta .ghLiquidFooterButton:hover { border-color: #a81f25; }
+.ghGlobalFinalCta :is(a,button):focus-visible { outline-color: var(--brand-signal); }
+@media (max-width: 767px) {
+  .ghGlobalFooter.ghLiquidFooter { padding-top: 0; }
+  .ghGlobalFooter.ghLiquidFooter > .ghLiquidFooterShell { padding-top: 53px; }
+  .ghGlobalFinalCta { padding: 64px 0; }
+}
