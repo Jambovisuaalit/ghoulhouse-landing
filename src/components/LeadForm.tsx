@@ -6,7 +6,7 @@ import { confirmationPath, type LeadService } from '@/lib/lead-confirmation';
 
 type FieldErrors = Record<string, string>;
 
-export default function LeadForm({ mode = 'social', defaultService }: { compact?: boolean; mode?: 'social' | 'proposal'; defaultService?: LeadService }) {
+export default function LeadForm({ mode = 'social', defaultService }: { mode?: 'social' | 'proposal'; defaultService?: LeadService }) {
   const proposal = mode === 'proposal';
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
