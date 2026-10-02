@@ -391,12 +391,22 @@ try {
     cta?.focus();
     const focused = document.activeElement === cta;
     cta?.click();
-    const form = document.querySelector('#yhteys form[action="/api/leads"]');
-    return { focused, hash: location.hash, formExists: Boolean(form), submitTabIndex: form?.querySelector('button[type="submit"]')?.tabIndex ?? -1 };
+    return { focused };
   })()`);
   assert(interaction.focused, 'Primary CTA is not keyboard-focusable.');
-  assert(interaction.hash === '#yhteys', 'Primary CTA did not navigate to #yhteys.');
-  assert(interaction.formExists && interaction.submitTabIndex >= 0, 'Lead form or submit keyboard access missing.');
+  let ctaDestination;
+  for (let attempt = 0; attempt < 100; attempt++) {
+    try {
+      ctaDestination = await evaluate(client, `(() => {
+        const form = document.querySelector('#yhteys form[action="/api/leads"]');
+        return { hash: location.hash, intent: location.search, ready: document.readyState === 'complete', formExists: Boolean(form), submitTabIndex: form?.querySelector('button[type="submit"]')?.tabIndex ?? -1 };
+      })()`);
+      if (ctaDestination.hash === '#yhteys' && ctaDestination.intent === '?intent=photos' && ctaDestination.ready) break;
+    } catch { /* The navigation can replace the evaluation context. */ }
+    await sleep(100);
+  }
+  assert(ctaDestination.hash === '#yhteys' && ctaDestination.intent === '?intent=photos', 'Primary CTA did not navigate to photo-intent form.');
+  assert(ctaDestination.formExists && ctaDestination.submitTabIndex >= 0, 'Lead form or submit keyboard access missing.');
 
   // Instagram is optional, with no extra selector or checkbox.
   const noProfile = await evaluate(client, `(() => ({
