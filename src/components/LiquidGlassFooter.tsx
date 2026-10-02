@@ -1,3 +1,4 @@
+import ArrowUpRight from '@/components/ArrowUpRight';
 import Image from 'next/image';
 import Link from 'next/link';
 import { siteNavigation } from '@/data/site-navigation';
@@ -12,24 +13,16 @@ const socialLinks = [
   Boolean(item.url && /^https:\/\//i.test(item.url)),
 );
 
-/** Original, dependency-free adaptation of a layered glass/metal footer.
- * Every link and CTA works in SSR without JavaScript. No fake newsletter
- * signup: use the existing enquiry form and email until opt-in is implemented.
- */
+/** Shared contact section and site navigation. */
 export default function LiquidGlassFooter({ home = false }: Props) {
   const contactHref = home ? '/?intent=photos#yhteys' : '/#yhteys';
   const topHref = home ? '#top' : '/#top';
 
   return (
     <footer className={home ? 'ghFooter ghLiquidFooter' : 'ghGlobalFooter ghLiquidFooter'}>
-      <div className="ghLiquidFooterAmbient" aria-hidden="true" />
       <div className="ghLiquidFooterShell">
         <div className="ghLiquidFooterRim">
           <div className="ghLiquidFooterSurface">
-            <div className="ghLiquidFooterMeta" aria-hidden="true">
-              <span>GH / 2026 — INDEPENDENT DIGITAL STUDIO</span>
-              <span>HELSINKI, FINLAND</span>
-            </div>
 
             <div className="ghLiquidFooterInvite">
               <div className="ghLiquidFooterStatement">
@@ -40,10 +33,10 @@ export default function LiquidGlassFooter({ home = false }: Props) {
               <div className="ghLiquidFooterInviteActions">
                 <a href={contactHref} className="ghLiquidFooterButton">
                   <span>{home ? 'Pyydä 2 sisältöesimerkkiä' : 'Pyydä ehdotus'}</span>
-                  <span aria-hidden="true">↗</span>
+                  <span aria-hidden="true"><ArrowUpRight /></span>
                 </a>
                 <a href="mailto:hello@ghoulhouse.fi" className="ghLiquidFooterMail">
-                  Tai lähetä sähköpostia <span aria-hidden="true">↗</span>
+                  Tai lähetä sähköpostia <span aria-hidden="true"><ArrowUpRight /></span>
                 </a>
               </div>
             </div>
@@ -58,7 +51,7 @@ export default function LiquidGlassFooter({ home = false }: Props) {
                   {socialLinks.map(({ name, symbol, url }) => (
                     <a key={name} href={url} target="_blank" rel="noopener noreferrer"
                        aria-label={`GhoulHouse ${name}, avautuu uuteen välilehteen`}>
-                      {symbol}<span aria-hidden="true">↗</span>
+                      {symbol}<span aria-hidden="true"><ArrowUpRight /></span>
                     </a>
                   ))}
                 </div>
@@ -67,23 +60,23 @@ export default function LiquidGlassFooter({ home = false }: Props) {
               <nav className="ghLiquidFooterNav" aria-label="Alatunnisteen navigaatio">
                 <h3>PALVELUT & SISÄLTÖ</h3>
                 {siteNavigation.map(({ href, label }) => (
-                  <Link key={href} href={href}>{label}<span aria-hidden="true">↗</span></Link>
+                  <Link key={href} href={href}>{label}<span aria-hidden="true"><ArrowUpRight /></span></Link>
                 ))}
               </nav>
 
               <div className="ghLiquidFooterContact">
                 <h3>YHTEYSTIEDOT</h3>
                 <p>GhoulHouse Oy<br />Helsinki, Suomi</p>
-                <a href="mailto:hanna@ghoulhouse.fi">Hanna Nyholm <span aria-hidden="true">↗</span></a>
+                <a href="mailto:hanna@ghoulhouse.fi">Hanna Nyholm <span aria-hidden="true"><ArrowUpRight /></span></a>
                 <a href="mailto:hello@ghoulhouse.fi">hello@ghoulhouse.fi</a>
                 <span className="ghLiquidFooterBusinessId">Y-TUNNUS 3651127-5</span>
               </div>
 
               <nav className="ghLiquidFooterNav ghLiquidFooterUtility" aria-label="Muut linkit">
                 <h3>LISÄTIETOJA</h3>
-                <Link href="/#yritys">GhoulHouse / tekijä <span aria-hidden="true">↗</span></Link>
-                <Link href="/tietosuoja">Tietosuoja <span aria-hidden="true">↗</span></Link>
-                <a href={contactHref}>Yhteydenotto <span aria-hidden="true">↗</span></a>
+                <Link href="/#yritys">GhoulHouse / tekijä <span aria-hidden="true"><ArrowUpRight /></span></Link>
+                <Link href="/tietosuoja">Tietosuoja <span aria-hidden="true"><ArrowUpRight /></span></Link>
+                <a href={contactHref}>Yhteydenotto <span aria-hidden="true"><ArrowUpRight /></span></a>
               </nav>
             </div>
           </div>
