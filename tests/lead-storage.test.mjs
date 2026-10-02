@@ -16,17 +16,9 @@ const lead = {
   message: 'timeout-test',
 };
 
-function withOidcToken(value = 'test-vercel-oidc-token') {
-  const original = process.env.VERCEL_OIDC_TOKEN;
-  process.env.VERCEL_OIDC_TOKEN = value;
-  return () => {
-    if (original === undefined) delete process.env.VERCEL_OIDC_TOKEN;
-    else process.env.VERCEL_OIDC_TOKEN = original;
-  };
-}
+const workloadToken = 'test-vercel-oidc-token';
 
-test('lead storage forwards Vercel workload identity and server-derived rate key', async () => {
-  const restoreToken = withOidcToken();
+test('lead storage forwards request-scoped Vercel workload identity and server-derived rate key', async () => {
   const originalFetch = globalThis.fetch;
   let seen;
 
@@ -39,7 +31,7 @@ test('lead storage forwards Vercel workload identity and server-derived rate key
   };
 
   try {
-    const id = await storeLead(lead, 'a'.repeat(64));
+    const id = await storeLead(lead, 'a'.repeat(64), workloadToken);
     assert.equal(id, '11111111-1111-4111-8111-111111111111');
     assert.match(seen.url, /\/functions\/v1\/ghoulhouse-lead-ingest$/);
     assert.equal(seen.init.headers.authorization, 'Bearer test-vercel-oidc-token');
@@ -47,12 +39,17 @@ test('lead storage forwards Vercel workload identity and server-derived rate key
     assert.equal(seen.init.headers.apikey, undefined);
   } finally {
     globalThis.fetch = originalFetch;
-    restoreToken();
   }
 });
 
+test('missing request-scoped workload identity fails closed', async () => {
+  await assert.rejects(
+    () => storeLead(lead, 'a'.repeat(64), null),
+    (error) => error instanceof LeadStorageError && error.code === 'not_configured'
+  );
+});
+
 test('lead storage preserves distributed rate-limit Retry-After', async () => {
-  const restoreToken = withOidcToken();
   const originalFetch = globalThis.fetch;
 
   globalThis.fetch = async () =>
@@ -63,7 +60,7 @@ test('lead storage preserves distributed rate-limit Retry-After', async () => {
 
   try {
     await assert.rejects(
-      () => storeLead(lead, 'b'.repeat(64)),
+      () => storeLead(lead, 'b'.repeat(64), workloadToken),
       (error) =>
         error instanceof LeadStorageError &&
         error.code === 'rate_limited' &&
@@ -71,12 +68,10 @@ test('lead storage preserves distributed rate-limit Retry-After', async () => {
     );
   } finally {
     globalThis.fetch = originalFetch;
-    restoreToken();
   }
 });
 
 test('lead storage converts an upstream timeout into a typed failure', async () => {
-  const restoreToken = withOidcToken();
   const originalFetch = globalThis.fetch;
 
   globalThis.fetch = async () => {
@@ -87,17 +82,15 @@ test('lead storage converts an upstream timeout into a typed failure', async () 
 
   try {
     await assert.rejects(
-      () => storeLead(lead, 'c'.repeat(64)),
+      () => storeLead(lead, 'c'.repeat(64), workloadToken),
       (error) => error instanceof LeadStorageError && error.code === 'storage_timeout'
     );
   } finally {
     globalThis.fetch = originalFetch;
-    restoreToken();
   }
 });
 
-test('health check uses the same OIDC-authenticated edge boundary', async () => {
-  const restoreToken = withOidcToken();
+test('health check uses the same request-scoped OIDC-authenticated edge boundary', async () => {
   const originalFetch = globalThis.fetch;
   let method;
 
@@ -107,10 +100,9 @@ test('health check uses the same OIDC-authenticated edge boundary', async () => 
   };
 
   try {
-    await checkLeadStorageHealth();
+    await checkLeadStorageHealth(workloadToken);
     assert.equal(method, 'GET');
   } finally {
     globalThis.fetch = originalFetch;
-    restoreToken();
   }
 });
