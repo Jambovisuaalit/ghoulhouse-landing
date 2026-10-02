@@ -11,5 +11,6 @@ test('homepage contact section has one heading and one intent-aware form', () =>
   assert.equal((contact.match(/id="contact-title"/g) || []).length, 1);
   assert.equal((contact.match(/<LeadForm\b/g) || []).length, 1);
   assert.match(contact, /mode=\{params\.intent === 'photos' \? 'social' : 'proposal'\}/);
+  assert.doesNotMatch(contact, /\bcompact\b/);
   assert.equal((contact.match(/className="ghServerFormError"/g) || []).length, 1);
 });
