@@ -19,24 +19,33 @@ export class LeadStorageError extends Error {
   }
 }
 
-function getTrustedIngestConfig() {
+function getTrustedIngestUrl() {
   const url =
     process.env.SUPABASE_URL ||
     process.env.NEXT_PUBLIC_SUPABASE_URL ||
     DEFAULT_SUPABASE_URL;
-  const oidcToken = process.env.VERCEL_OIDC_TOKEN;
 
-  if (!url || !oidcToken) {
+  if (!url) {
     throw new LeadStorageError(
       'not_configured',
       'Trusted lead ingest is not configured.'
     );
   }
 
-  return {
-    url: url.replace(/\/$/, ''),
-    oidcToken,
-  };
+  return url.replace(/\/$/, '');
+}
+
+function requireWorkloadToken(workloadToken: string | null | undefined) {
+  const token = workloadToken?.trim();
+
+  if (!token) {
+    throw new LeadStorageError(
+      'not_configured',
+      'Vercel workload identity is not available for this request.'
+    );
+  }
+
+  return token;
 }
 
 function retryAfterSeconds(response: Response) {
@@ -44,8 +53,9 @@ function retryAfterSeconds(response: Response) {
   return Number.isFinite(value) && value > 0 ? Math.ceil(value) : 600;
 }
 
-export async function checkLeadStorageHealth() {
-  const { url, oidcToken } = getTrustedIngestConfig();
+export async function checkLeadStorageHealth(workloadToken: string | null | undefined) {
+  const url = getTrustedIngestUrl();
+  const token = requireWorkloadToken(workloadToken);
 
   let response: Response;
 
@@ -53,7 +63,7 @@ export async function checkLeadStorageHealth() {
     response = await fetch(`${url}/functions/v1/ghoulhouse-lead-ingest`, {
       method: 'GET',
       headers: {
-        authorization: `Bearer ${oidcToken}`,
+        authorization: `Bearer ${token}`,
         accept: 'application/json',
       },
       cache: 'no-store',
@@ -72,8 +82,13 @@ export async function checkLeadStorageHealth() {
   }
 }
 
-export async function storeLead(lead: LeadInput, clientRateKey: string) {
-  const { url, oidcToken } = getTrustedIngestConfig();
+export async function storeLead(
+  lead: LeadInput,
+  clientRateKey: string,
+  workloadToken: string | null | undefined
+) {
+  const url = getTrustedIngestUrl();
+  const token = requireWorkloadToken(workloadToken);
 
   if (!/^[0-9a-f]{64}$/.test(clientRateKey)) {
     throw new LeadStorageError('storage_failed', 'Trusted lead ingest client key is invalid.');
@@ -85,7 +100,7 @@ export async function storeLead(lead: LeadInput, clientRateKey: string) {
     response = await fetch(`${url}/functions/v1/ghoulhouse-lead-ingest`, {
       method: 'POST',
       headers: {
-        authorization: `Bearer ${oidcToken}`,
+        authorization: `Bearer ${token}`,
         accept: 'application/json',
         'content-type': 'application/json',
         'x-gh-client-key': clientRateKey,
