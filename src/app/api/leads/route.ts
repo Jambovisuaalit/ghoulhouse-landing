@@ -111,7 +111,11 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    await storeLead(validation.data, getClientRateKey(request));
+    await storeLead(
+      validation.data,
+      getClientRateKey(request),
+      request.headers.get('x-vercel-oidc-token')
+    );
 
     if (parsed.htmlForm) {
       return redirect(request, confirmationPath(validation.data.intent, validation.data.service));
