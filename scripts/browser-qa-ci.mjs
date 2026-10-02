@@ -227,7 +227,7 @@ try {
             footer: footer?.getAttribute('src'),
             footerLoaded: Boolean(footer?.complete && footer.naturalWidth > 200),
             giantWordmark: wordmark?.getAttribute('src'),
-            mark: heroMark?.getAttribute('src'),
+            mark: heroMark ? (new URL(heroMark.src, location.origin).searchParams.get('url') || heroMark.getAttribute('src')) : null,
             markFilter: heroMark ? getComputedStyle(heroMark).filter : '',
           };
         })(),
