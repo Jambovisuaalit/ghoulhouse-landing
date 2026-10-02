@@ -259,6 +259,13 @@ jobs:
           QA_PR_NUMBER: ${{ github.event.pull_request.number }}
         run: node scripts/resolve-preview.mjs
 
+      - name: Trusted lead ingest health QA
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          health="$(curl --fail --silent "${{ steps.preview.outputs.url }}/api/health/lead-storage")"
+          printf '%s' "$health" | grep -q '"ok":true'
+
       - name: Vercel Preview full-page responsive QA
         if: github.event_name == 'pull_request'
         env:
