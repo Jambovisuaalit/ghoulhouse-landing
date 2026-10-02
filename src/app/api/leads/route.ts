@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { validateLead } from '@/lib/lead';
 import { storeLead, LeadStorageError } from '@/lib/lead-storage';
@@ -5,11 +6,6 @@ import { confirmationPath } from '@/lib/lead-confirmation';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-
-const WINDOW_MS = 10 * 60 * 1000;
-const MAX_REQUESTS = 5;
-const MAX_BUCKETS_BEFORE_PRUNE = 1_000;
-const buckets = new Map<string, { count: number; resetAt: number }>();
 
 function json(
   body: Record<string, unknown>,
@@ -37,40 +33,16 @@ function leadFailureRedirect(request: NextRequest, code: string, intent?: unknow
   return redirect(request, `/?${params.toString()}#yhteys`);
 }
 
-function getClientKey(request: NextRequest) {
-  return (
+function getClientRateKey(request: NextRequest) {
+  const ip =
+    request.headers.get('x-vercel-forwarded-for')?.split(',')[0]?.trim() ||
     request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
     request.headers.get('x-real-ip') ||
-    'unknown'
-  );
-}
+    'unknown';
 
-function pruneExpiredBuckets(now: number) {
-  if (buckets.size < MAX_BUCKETS_BEFORE_PRUNE) return;
-
-  for (const [key, value] of buckets) {
-    if (value.resetAt <= now) buckets.delete(key);
-  }
-}
-
-function checkRateLimit(key: string) {
-  const now = Date.now();
-  pruneExpiredBuckets(now);
-
-  const current = buckets.get(key);
-
-  if (!current || current.resetAt <= now) {
-    buckets.set(key, { count: 1, resetAt: now + WINDOW_MS });
-    return { limited: false, retryAfter: 0 };
-  }
-
-  current.count += 1;
-  buckets.set(key, current);
-
-  return {
-    limited: current.count > MAX_REQUESTS,
-    retryAfter: Math.max(1, Math.ceil((current.resetAt - now) / 1000)),
-  };
+  return createHash('sha256')
+    .update(`ghoulhouse-lead-v1:${ip}`)
+    .digest('hex');
 }
 
 function isCrossSiteRequest(request: NextRequest) {
@@ -106,19 +78,8 @@ export async function POST(request: NextRequest) {
     return json({ ok: false, code: 'payload_too_large' }, 413);
   }
 
-  const clientKey = getClientKey(request);
-  const rateLimit = checkRateLimit(clientKey);
   const contentType = request.headers.get('content-type') || '';
   const htmlForm = !contentType.includes('application/json');
-
-  if (rateLimit.limited) {
-    if (htmlForm) return leadFailureRedirect(request, 'rate_limited');
-    return json(
-      { ok: false, code: 'rate_limited' },
-      429,
-      { 'retry-after': String(rateLimit.retryAfter) }
-    );
-  }
 
   let parsed: { htmlForm: boolean; body: Record<string, unknown> };
 
@@ -151,9 +112,12 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    await storeLead(validation.data);
+    await storeLead(validation.data, getClientRateKey(request));
 
-    if (parsed.htmlForm) return redirect(request, confirmationPath(validation.data.intent, validation.data.service));
+    if (parsed.htmlForm) {
+      return redirect(request, confirmationPath(validation.data.intent, validation.data.service));
+    }
+
     return json({ ok: true }, 201);
   } catch (error) {
     if (error instanceof LeadStorageError) {
@@ -161,7 +125,12 @@ export async function POST(request: NextRequest) {
         if (parsed.htmlForm) {
           return leadFailureRedirect(request, 'rate_limited', parsed.body.intent, parsed.body.service);
         }
-        return json({ ok: false, code: 'rate_limited' }, 429);
+
+        return json(
+          { ok: false, code: 'rate_limited' },
+          429,
+          { 'retry-after': String(error.retryAfterSeconds || 600) }
+        );
       }
 
       if (parsed.htmlForm) {
