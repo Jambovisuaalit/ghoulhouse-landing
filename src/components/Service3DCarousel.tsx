@@ -1,4 +1,5 @@
 'use client';
+import ArrowUpRight from '@/components/ArrowUpRight';
 
 import Image from 'next/image';
 import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
@@ -79,7 +80,7 @@ export default function Service3DCarousel({ items }: { items: readonly CarouselI
                 aria-hidden="true">
                 {isWebsite ? (
                   <div className="gh3dDeliverable gh3dDeliverable--website">
-                    <div className="gh3dMiniChrome"><span>GH / OMA JULKAISTU RAKENNE</span><span>GHOULHOUSE ↗</span></div>
+                    <div className="gh3dMiniChrome"><span>GH / OMA JULKAISTU RAKENNE</span><span>GHOULHOUSE <ArrowUpRight /></span></div>
                     <div className="gh3dMiniHero"><strong>HYVÄ TYÖ.<br />NÄKYVÄKSI.</strong><span>Palvelusta tarjouspyyntöön.</span></div>
                     <div className="gh3dMiniFlow"><span>01 / PALVELUT</span><span>02 / TYÖNÄYTTEET</span><span>03 / YHTEYS</span></div>
                   </div>
@@ -99,7 +100,7 @@ export default function Service3DCarousel({ items }: { items: readonly CarouselI
                   <div className="gh3dDeliverable gh3dDeliverable--seo">
                     <span className="gh3dMiniChrome">GH / ESIMERKKIRAKENNE</span>
                     <div className="gh3dSeoFlow">
-                      <span>ETUSIVU</span><span>PALVELU</span><span>TOIMIALASIVU</span><span>YHTEYS ↗</span>
+                      <span>ETUSIVU</span><span>PALVELU</span><span>TOIMIALASIVU</span><span>YHTEYS <ArrowUpRight /></span>
                     </div>
                     <span className="gh3dMiniCaption">Sisäinen linkitys · sivun otsikointi · yhteydenottopolku</span>
                   </div>
@@ -110,7 +111,7 @@ export default function Service3DCarousel({ items }: { items: readonly CarouselI
               <p>{description}</p>
               <a href={href} className="gh3dCardLink" aria-label={`Avaa esimerkin lisätiedot: ${title}`}
                 tabIndex={enhanced && slot !== 'center' ? -1 : 0}>
-                Tutustu <span aria-hidden="true">↗</span>
+                Tutustu <span aria-hidden="true"><ArrowUpRight /></span>
               </a>
               <small className="gh3dDisclosure">{isWebsite
                 ? 'Oma julkaistu sivusto — ei asiakasreferenssi. Graafinen esitys omasta käyttäjäpolusta.'
