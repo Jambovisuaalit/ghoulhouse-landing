@@ -6,7 +6,8 @@ test('lead route no longer relies on per-instance in-memory rate buckets', () =>
   const source = readFileSync(new URL('../src/app/api/leads/route.ts', import.meta.url), 'utf8');
 
   assert.doesNotMatch(source, /new Map</);
-  assert.match(source, /x-vercel-forwarded-for/);
+  assert.match(source, /x-forwarded-for/);
+  assert.doesNotMatch(source, /x-vercel-forwarded-for/);
   assert.match(source, /createHash\('sha256'\)/);
   assert.match(source, /storeLead\(validation\.data, getClientRateKey\(request\)\)/);
 });
