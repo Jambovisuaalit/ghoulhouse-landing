@@ -283,7 +283,7 @@ try {
       };
     })()`);
 
-    assert(metrics.artDirection.grain.includes('data:image/svg+xml') &&
+    assert(metrics.artDirection.grain === '' &&
       metrics.artDirection.background === 'rgb(11, 11, 11)' &&
       /Georgia/i.test(metrics.artDirection.headingFont) &&
       metrics.artDirection.imageLoaded && metrics.artDirection.imageDisclosure,
@@ -327,9 +327,9 @@ try {
       metrics.brandLayout.mark === '/ghoulhouse-mark.svg' &&
       metrics.brandLayout.markFilter === 'none',
       `${viewport.width}x${viewport.height}: official logo contrast, load or clipping failed: ${JSON.stringify(metrics.brandLayout)}`);
-    assert(metrics.glassFooter.exists && metrics.glassFooter.rimBackground.includes('gradient') &&
+    assert(metrics.glassFooter.exists && metrics.glassFooter.rimBackground === 'none' && metrics.glassFooter.glassBackdrop === 'none' &&
       metrics.glassFooter.brandLink === '/' && metrics.glassFooter.navItems === 4 && metrics.glassFooter.privacy,
-      `${viewport.width}x${viewport.height}: shared glass footer contents/rim missing: ${JSON.stringify(metrics.glassFooter)}`);
+      `${viewport.width}x${viewport.height}: shared footer contents or flat surface incorrect: ${JSON.stringify(metrics.glassFooter)}`);
     assert(metrics.glassFooter.unclippedHeadings,
       `${viewport.width}x${viewport.height}: footer column headings are too large or clipped.`);
     assert(metrics.glassFooter.inquiry === '/?intent=photos#yhteys' && metrics.glassFooter.inquiryRect?.height >= 44 &&
