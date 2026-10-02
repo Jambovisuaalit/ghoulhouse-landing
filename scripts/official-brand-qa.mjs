@@ -54,7 +54,7 @@ const results = await Promise.all(pages.map(async path => {
     'Official compact mobile wordmark missing from header: ' + path);
   assert(html.includes('/ghoulhouse-logo-reverse.svg'),
     'Official reverse logo missing from shared footer: ' + path);
-  assert(html.includes('/ghoulhouse-wordmark-white.svg'),
+  assert(path === '/' ? !html.includes('ghLiquidFooterWordmark') : html.includes('/ghoulhouse-wordmark-white.svg'),
     'Official white wordmark missing from shared footer: ' + path);
   assert(html.includes('/favicon.svg'), 'Official favicon metadata missing: ' + path);
   assert(html.includes('href="/brand-icons/180"'), 'Official Apple touch icon missing: ' + path);
