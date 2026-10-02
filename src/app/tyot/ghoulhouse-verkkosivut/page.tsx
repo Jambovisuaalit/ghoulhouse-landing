@@ -1,3 +1,4 @@
+import ArrowUpRight from '@/components/ArrowUpRight';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -80,7 +81,7 @@ export default function GhoulHouseCasePage() {
             <p>Kerrotte palveluistanne ja olemassa olevasta materiaalista. Ehdotamme tilanteeseenne rajattua toteutusta ilman keksittyjä referenssejä tai tuloslupauksia.</p>
           </div>
           <div className="proofDetailActions">
-            <Link className="button button--signal" href="/verkkosivut-yritykselle#yhteys">Pyydä oma ehdotus ↗</Link>
+            <Link className="button button--signal" href="/verkkosivut-yritykselle#yhteys">Pyydä oma ehdotus <ArrowUpRight /></Link>
             <Link className="textLink" href="/">Katso nykyinen etusivu →</Link>
           </div>
         </div>
