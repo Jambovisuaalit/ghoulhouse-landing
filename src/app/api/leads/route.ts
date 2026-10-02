@@ -35,7 +35,6 @@ function leadFailureRedirect(request: NextRequest, code: string, intent?: unknow
 
 function getClientRateKey(request: NextRequest) {
   const ip =
-    request.headers.get('x-vercel-forwarded-for')?.split(',')[0]?.trim() ||
     request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
     request.headers.get('x-real-ip') ||
     'unknown';
