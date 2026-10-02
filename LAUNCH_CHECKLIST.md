@@ -23,7 +23,7 @@
 
 ## 2. Trust assets
 
-- [ ] Add verified Hanna Nyholm founder portrait
+- [x] Add verified Hanna Nyholm founder portrait
 - [ ] Replace concept RAW → VALMIS material with verified customer-approved real worksite material when available
 - [x] Current concept material is explicitly labelled `KONSEPTIESIMERKKI — EI ASIAKASTYÖ`
 - [x] No generated/stock material is presented as customer proof
@@ -51,7 +51,7 @@ Production flow:
 ```text
 Browser
 → POST /api/leads
-→ Supabase RPC submit_ghoulhouse_lead
+→ Supabase RPC submit_ghoulhouse_lead_v3
 → public.leads
 → database notification trigger
 → Resend
@@ -60,7 +60,8 @@ Browser
 
 - [x] Supabase lead table created with RLS enabled
 - [x] anonymous clients cannot read/update/delete lead rows
-- [x] restricted public submit RPC enabled
+- [x] restricted public submit RPC v3 enabled
+- [x] obsolete v1/v2 anonymous RPC execution revoked
 - [x] lead rate limiting enabled
 - [x] restricted Resend key stored in Supabase Vault
 - [x] live production POST returns HTTP 201
@@ -119,7 +120,7 @@ Domains:              PASS
 Lead delivery E2E:    PASS
 Security/privacy/SEO: PASS
 Runtime errors:       CLEAN
-Verified trust media: PENDING — non-blocking
+Verified trust media: FOUNDER PASS / REAL CUSTOMER RAW→FINAL PENDING — non-blocking
 GA4 runtime events:   PENDING — release gate for analytics patch
 Persistent Git link:  VERIFY — maintenance item
 ```

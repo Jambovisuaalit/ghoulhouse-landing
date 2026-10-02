@@ -17,6 +17,14 @@ export function isProductionDeployment() {
   return process.env.VERCEL_ENV === 'production';
 }
 
+/**
+ * Emergency indexing kill switch. Canonical production remains indexable when
+ * SITE_INDEXABLE is unset or true; an explicit false disables indexing.
+ */
+export function isIndexingEnabled() {
+  return process.env.SITE_INDEXABLE?.trim().toLowerCase() !== 'false';
+}
+
 export function isCanonicalHost(value: string | null | undefined) {
   return normalizeHost(value) === SITE_HOST;
 }
@@ -29,7 +37,7 @@ export function shouldRedirectToCanonical(
 }
 
 export function shouldIndexRequest(value: string | null | undefined) {
-  return isProductionDeployment() && isCanonicalHost(value);
+  return isProductionDeployment() && isIndexingEnabled() && isCanonicalHost(value);
 }
 
 export function productionUrl(path = '/') {

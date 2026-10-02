@@ -2,6 +2,7 @@ import FunnelAnalytics from '@/components/analytics/FunnelAnalytics';
 import type { Metadata, Viewport } from 'next';
 import { Montserrat } from 'next/font/google';
 import { siteConfig } from '@/config/site';
+import { isIndexingEnabled, isProductionDeployment } from '@/lib/seo';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import AnalyticsConsent from '@/components/analytics/AnalyticsConsent';
 import ResponsiveNavState from '@/components/ResponsiveNavState';
@@ -24,7 +25,7 @@ const montserrat = Montserrat({
 const title = 'GhoulHouse | Social remontti- ja LVI-yrityksille Uudellamaalla';
 const description =
   'Työmaakuvat sisään, valmis some ulos. 12 sisältöä Instagramiin ja Facebookiin 30 päivässä, 490 € + ALV. Verkkosivut ja SEO lisäpalveluina.';
-const indexable = process.env.VERCEL_ENV === 'production';
+const indexable = isProductionDeployment() && isIndexingEnabled();
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://ghoulhouse.fi'),

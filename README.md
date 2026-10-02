@@ -108,13 +108,13 @@ Until verified customer RAW → FINAL material is available, `Mechanism.tsx` mus
 
 `KONSEPTIESIMERKKI — EI ASIAKASTYÖ`
 
-A founder portrait may be enabled only with a verified local asset via `NEXT_PUBLIC_FOUNDER_IMAGE`. The HN fallback is intentional until that asset exists.
+The approved Hanna Nyholm founder portrait is stored as a local site asset. Replace it only with another explicitly approved portrait.
 
 ## Lead delivery
 
-`POST /api/leads` validates the request and calls the restricted Supabase RPC `submit_ghoulhouse_lead` using the public Supabase publishable key. Row-level security prevents anonymous table reads or edits.
+`POST /api/leads` validates the request and calls the restricted Supabase RPC `submit_ghoulhouse_lead_v3` using the public Supabase publishable key. Row-level security prevents anonymous table reads or edits.
 
-The RPC is an intentional anonymous **ingest-only** boundary. `anon` has no direct `SELECT`/`INSERT` access to `public.leads`, no access to the private rate-limit table, and cannot use the `private` schema. The RPC validates all input lengths, rejects unsafe line breaks in identity fields, uses an empty `search_path`, and applies a database transaction advisory lock plus a 5 submissions / 10 minutes per-IP rate limit so concurrent requests cannot race around the limiter.
+The `v3` RPC is the only intentional anonymous **ingest-only** boundary. Obsolete `submit_ghoulhouse_lead` and `submit_ghoulhouse_lead_v2` RPCs have anonymous execution revoked. `anon` has no direct `SELECT`/`INSERT` access to `public.leads`, no access to the private rate-limit table, and cannot use the `private` schema. The RPC validates all input lengths, rejects unsafe line breaks in identity fields, uses an empty `search_path`, and applies a database transaction advisory lock plus a 5 submissions / 10 minutes per-IP rate limit so concurrent requests cannot race around the limiter.
 
 The database stores the lead and sends the notification through Resend with a restricted Resend API key stored in Supabase Vault. Production does not require a Supabase service-role key, database password, JWT secret or Resend API key in the browser bundle.
 
@@ -123,7 +123,7 @@ Production flow:
 ```text
 Browser
 → POST /api/leads
-→ Supabase RPC
+→ Supabase RPC submit_ghoulhouse_lead_v3
 → public.leads
 → database notification trigger
 → Resend
