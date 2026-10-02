@@ -132,9 +132,8 @@ async function auditViewport() {
     if(!clickable)errors.push('Cannot use CTA after scrolling into view: '+JSON.stringify(centered.at(-1)));
   }
   // On-page #yhteys must remain below the sticky navigation when activated.
-  const heroLink=document.querySelector('#top .ghHeroActions a');
   document.documentElement.style.scrollBehavior='auto';
-  heroLink?.click();await sleep(180);
+  location.hash='#yhteys';await sleep(180);
   const target=document.querySelector('#yhteys'),targetR=rect(target);
   const headingR=rect(target?.querySelector('h2'));
   const anchor={hash:location.hash,sectionTop:targetR?.top,headingTop:headingR?.top,headerBottom:rect(header)?.bottom};
