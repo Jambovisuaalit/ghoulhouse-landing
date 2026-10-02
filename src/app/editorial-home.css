@@ -182,7 +182,7 @@
   border-color: var(--gh-ed-red);
 }
 .homePage .ghArtHero .ghButton:hover { background: var(--gh-ed-paper); border-color: var(--gh-ed-paper); color: var(--gh-ed-black); }
-.homePage .ghArtHero .ghHeroFootnote { margin: 0; max-width: 24ch; color: #c7bdb7; font-family: var(--gh-ed-label); font-size: 11px; line-height: 1.55; }
+.homePage .ghArtHero .ghHeroFootnote { margin: 0; max-width: 48ch; color: #d4ccc6; font-family: var(--gh-ed-label); font-size: 13px; line-height: 1.6; }
 .homePage .ghArtHeroVisual {
   align-self: stretch;
   display: grid;
@@ -488,7 +488,7 @@
   .homePage .ghArtHero .ghHeroOffer { margin:-7px 0 0; font-size:11px; }
   .homePage .ghArtHeroAction { gap:10px; }
   .homePage .ghArtHero .ghButton { min-height:49px; min-width:205px; padding:11px 14px; font-size:12px; }
-  .homePage .ghArtHero .ghHeroFootnote { font-size:10px; line-height:1.45; }
+  .homePage .ghArtHero .ghHeroFootnote { font-size:13px; line-height:1.6; }
   .homePage .ghArtHeroVisual { width:100%; gap:9px; }
   .homePage .ghArtHeroImage { min-height:0; height:clamp(185px,48vw,325px); }
   .homePage .ghArtHeroImage img { object-position:50% 55%; }
@@ -606,3 +606,14 @@
 .homePage .ghConceptCopy>p:last-child { margin:15px 0 0; color:#393530; font-size:14px; line-height:1.6; }
 @media(max-width:900px) { .homePage .ghConceptGrid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 @media(max-width:600px) { .homePage .ghConceptGrid { grid-template-columns:1fr; } .homePage .ghConceptImage { aspect-ratio:1.3; } }
+
+/* Shared action typography and calm hero surfaces. */
+.homePage .ghArtHero::before { content: none; }
+.homePage .ghArtHeroAction { align-items: flex-start; flex-direction: column; }
+.homePage .ghButton { font-weight: 700; letter-spacing: .02em; }
+.homePage .ghArtHeroEyebrow { letter-spacing: .04em; }
+@media (max-width: 767px) {
+  .homePage .ghArtHero .ghHeroActions,
+  .homePage .ghArtHero .ghHeroActions .ghButton { width: 100%; }
+  .homePage .ghArtHero .ghButton { min-width: 0; gap: 12px; }
+}
