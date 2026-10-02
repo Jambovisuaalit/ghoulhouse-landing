@@ -49,8 +49,8 @@ assert(!html.includes('lead-profile-options') && !html.includes('leadProfileNoWe
 assert((html.match(/KONSEPTIESIMERKKI — EI ASIAKASTYÖ/gi) || []).length >= 3, 'No-JS QA: three labeled concepts are missing.');
 assert(html.includes('class="ghFooter ghLiquidFooter"') && html.includes('ghLiquidFooterRim'),
   'No-JS QA: homepage liquid-glass footer not server rendered.');
-assert(html.includes('class="ghLiquidFooterButton"') && html.includes('href="/?intent=photos#yhteys"'),
-  'No-JS QA: glass footer inquiry must link to actual homepage form.');
+assert(!html.includes('class="ghLiquidFooterButton"') && html.includes('href="/?intent=photos#yhteys"'),
+  'No-JS QA: homepage must keep the form link without a duplicate footer CTA.');
 
 assert(!html.includes('ghSwissTile--site'), 'No-JS QA: duplicate self-site screenshot in hero is still present.');
 assert(/Oma sivusto — ei asiakasreferenssi/i.test(html), 'No-JS QA: honest own-work disclosure is missing.');
