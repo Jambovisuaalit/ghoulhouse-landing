@@ -1,48 +1,34 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { validateLead } from '../src/lib/lead.ts';
-const base = { intent: 'booking', service: 'websites', company: 'QA', name: 'QA', email: 'qa@example.com', profile: 'example.com' };
-test('profile or explicit opt-out is required', () => {
-  assert.equal(validateLead({ ...base, profile: '' }).ok, false);
-  for (const noProfile of [true, 'true', 'on']) {
-    const result = validateLead({ ...base, profile: '', noProfile });
-    assert.equal(result.ok, true);
-    assert.equal(result.data.noProfile, true);
-    assert.equal(result.data.website, '');
-  }
-  assert.equal(validateLead({ ...base, profile: '', noProfile: 'false' }).ok, false);
-  assert.equal(validateLead({ ...base, profile: 'invalid' }).ok, false);
+
+const base = { intent: 'photos', service: 'social', company: 'QA', name: 'QA' };
+
+test('short form accepts either email or phone with optional Instagram', () => {
+  const email = validateLead({ ...base, contact: 'qa@example.com' });
+  assert.equal(email.ok, true);
+  assert.equal(email.data.email, 'qa@example.com');
+  assert.equal(email.data.noProfile, true);
+  assert.equal(email.data.profile, 'Ei vielä verkkosivua tai Instagramia');
+  const phone = validateLead({ ...base, contact: '+358 40 123 4567', profile: '@yritys' });
+  assert.equal(phone.ok, true);
+  assert.equal(phone.data.email, '');
+  assert.equal(phone.data.phone, '+358 40 123 4567');
+  assert.equal(phone.data.instagram, '@yritys');
 });
-test('message boundary preserves 1200 characters and rejects 1201', () => {
+
+test('invalid or missing contact and invalid Instagram fail', () => {
+  assert.equal(validateLead(base).errors.contact, 'Anna sähköpostiosoite tai puhelinnumero.');
+  assert.equal(validateLead({ ...base, contact: 'abc' }).ok, false);
+  assert.equal(validateLead({ ...base, contact: '123' }).ok, false);
+  assert.equal(validateLead({ ...base, contact: 'qa@example.com', profile: 'invalid value' }).ok, false);
+});
+
+test('legacy form payload stays compatible and message limit is enforced', () => {
   const message = 'a'.repeat(1200);
-  const result = validateLead({ ...base, message });
+  const result = validateLead({ ...base, email: 'qa@example.com', profile: 'example.com', message });
   assert.equal(result.ok, true);
   assert.equal(result.data.message, message);
-  assert.equal(result.data.service, 'websites');
-  assert.equal(validateLead({ ...base, message: message + 'a' }).ok, false);
-});
-test('opt-out clears stale profile data', () => {
-  const result = validateLead({ ...base, noProfile: true });
-  assert.equal(result.data.profile, '');
-  assert.equal(result.data.website, '');
-  assert.equal(result.data.instagram, '');
-});
-
-test('existing no-profile datalist value survives and uses the same explicit opt-out flag', () => {
-  const result = validateLead({ ...base, profile: 'Ei vielä verkkosivua tai Instagramia' });
-  assert.equal(result.ok, true);
-  assert.equal(result.data.noProfile, true);
-  assert.equal(result.data.profile, 'Ei vielä verkkosivua tai Instagramia');
-  assert.equal(result.data.website, '');
-  assert.equal(result.data.instagram, '');
-});
-
-test('checkbox takes precedence over a stale profile and validation stays active otherwise', () => {
-  const checked = validateLead({ ...base, noProfile: 'true', profile: '@stale_profile' });
-  assert.equal(checked.ok, true);
-  assert.equal(checked.data.noProfile, true);
-  assert.equal(checked.data.profile, '');
-  assert.equal(checked.data.instagram, '');
-  assert.equal(validateLead({ ...base, noProfile: 'false', profile: '@valid_profile' }).ok, true);
-  assert.equal(validateLead({ ...base, noProfile: 'false', profile: 'invalid value' }).ok, false);
+  assert.equal(result.data.website, 'https://example.com');
+  assert.equal(validateLead({ ...base, email: 'qa@example.com', message: message + 'a' }).ok, false);
 });

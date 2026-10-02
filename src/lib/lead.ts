@@ -42,6 +42,10 @@ function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
+function isValidPhone(value: string) {
+  return /^\+?[\d\s()-]+$/.test(value) && value.replace(/\D/g, '').length >= 6 && value.replace(/\D/g, '').length <= 15;
+}
+
 function isInstagramProfile(value: string) {
   return (
     /^@[A-Za-z0-9._]{1,30}$/.test(value) ||
@@ -100,14 +104,17 @@ export function validateLead(input: unknown): LeadValidationResult {
   const explicitNoProfile =
     source.noProfile === true || source.noProfile === 'true' || source.noProfile === 'on';
   const rawProfile = clean(source.profile, limits.profile);
-  const noProfile = explicitNoProfile || rawProfile === NO_PROFILE_YET;
-  const profile = explicitNoProfile ? '' : rawProfile;
+  const noProfile = explicitNoProfile || !rawProfile || rawProfile === NO_PROFILE_YET;
+  const profile = noProfile ? NO_PROFILE_YET : rawProfile;
   const classifiedProfile = noProfile
     ? { website: '', instagram: '' }
     : profile
       ? classifyProfile(profile)
       : null;
 
+  const contact = clean(source.contact, limits.email);
+  const contactIsEmail = Boolean(contact && isValidEmail(contact));
+  const contactIsPhone = Boolean(contact && isValidPhone(contact));
   const data: LeadInput = {
     intent: source.intent === 'photos' ? 'photos' : 'booking',
     service: ['websites', 'social', 'seo'].includes(String(source.service))
@@ -115,10 +122,10 @@ export function validateLead(input: unknown): LeadValidationResult {
       : undefined,
     company: clean(source.company, limits.company),
     name: clean(source.name, limits.name),
-    email: clean(source.email, limits.email).toLowerCase(),
+    email: (contact ? (contactIsEmail ? contact : '') : clean(source.email, limits.email)).toLowerCase(),
     profile,
     noProfile,
-    phone: clean(source.phone, limits.phone),
+    phone: contactIsPhone ? contact : clean(source.phone, limits.phone),
     website: classifiedProfile?.website || '',
     instagram: classifiedProfile?.instagram || '',
     message: clean(source.message, limits.message + 1),
@@ -128,15 +135,17 @@ export function validateLead(input: unknown): LeadValidationResult {
 
   if (!data.company) errors.company = 'Yritys on pakollinen.';
   if (!data.name) errors.name = 'Nimi on pakollinen.';
-  if (!data.email) {
-    errors.email = 'Sähköposti on pakollinen.';
-  } else if (!isValidEmail(data.email)) {
+  if (contact && !contactIsEmail && !contactIsPhone) {
+    errors.contact = 'Anna toimiva sähköpostiosoite tai puhelinnumero.';
+  } else if (!contact && !data.email && !data.phone) {
+    errors.contact = 'Anna sähköpostiosoite tai puhelinnumero.';
+  } else if (data.email && !isValidEmail(data.email)) {
     errors.email = 'Tarkista sähköpostiosoite.';
+  } else if (data.phone && !isValidPhone(data.phone)) {
+    errors.phone = 'Tarkista puhelinnumero.';
   }
 
-  if (!noProfile && !profile) {
-    errors.profile = 'Anna verkkosivu tai Instagram tai valitse, ettei niitä vielä ole.';
-  } else if (!noProfile && !classifiedProfile) {
+  if (!noProfile && !classifiedProfile) {
     errors.profile = 'Anna verkkosivu (esim. yritys.fi) tai Instagram (@yritys).';
   }
 

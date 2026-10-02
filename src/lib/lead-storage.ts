@@ -40,7 +40,7 @@ function getSupabaseConfig() {
 export async function storeLead(lead: LeadInput) {
   const { url, publishableKey } = getSupabaseConfig();
 
-  const response = await fetch(`${url}/rest/v1/rpc/submit_ghoulhouse_lead_v2`, {
+  const response = await fetch(`${url}/rest/v1/rpc/submit_ghoulhouse_lead_v3`, {
     method: 'POST',
     headers: {
       apikey: publishableKey,
@@ -51,7 +51,7 @@ export async function storeLead(lead: LeadInput) {
       p_intent: lead.intent,
       p_company: lead.company,
       p_name: lead.name,
-      p_email: lead.email,
+      p_email: lead.email || null,
       p_profile: lead.profile,
       p_phone: lead.phone || null,
       p_website: lead.website || null,

@@ -15,7 +15,7 @@ const without = validateLead({ ...base, profile: NO_PROFILE_YET });
 assert(without.ok, 'Explicit no-profile choice must be accepted.');
 assert(without.data.profile === NO_PROFILE_YET, 'No-profile choice must be preserved for sales handoff.');
 assert(!without.data.website && !without.data.instagram, 'No-profile choice must not invent a URL.');
-assert(!validateLead({ ...base, profile: '' }).ok, 'Blank profile without explicit choice is not allowed.');
+assert(validateLead({ ...base, profile: '' }).ok, 'Optional profile must accept a blank value.');
 assert(!validateLead({ ...base, profile: 'satunnainen merkkijono' }).ok, 'Invalid arbitrary profile must remain invalid.');
 assert(validateLead({ ...base, profile: 'esimerkki.fi' }).ok, 'Existing website profiles still work.');
 assert(validateLead({ ...base, profile: '@esimerkki' }).ok, 'Existing Instagram profiles still work.');

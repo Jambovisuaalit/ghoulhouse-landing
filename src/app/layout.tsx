@@ -27,9 +27,9 @@ const montserrat = Montserrat({
   display: 'swap',
 });
 
-const title = 'GhoulHouse | Verkkosivut, Social & SEO palveluyrityksille';
+const title = 'GhoulHouse | Social remontti- ja LVI-yrityksille Uudellamaalla';
 const description =
-  'GhoulHouse toteuttaa verkkosivut, sosiaalisen median sisällöt ja hakukonenäkyvyyden suomalaisille palveluyrityksille selkeästi tuotteistettuna.';
+  'Työmaakuvat sisään, valmis some ulos. 12 sisältöä Instagramiin ja Facebookiin 30 päivässä, 490 € + ALV. Verkkosivut ja SEO lisäpalveluina.';
 const indexable = process.env.VERCEL_ENV === 'production';
 
 export const metadata: Metadata = {

@@ -157,7 +157,7 @@ try {
       const hero = document.querySelector('#top');
       const h1 = hero?.querySelector('h1');
       const brandHeadline = h1;
-      const heroCta = hero?.querySelector('a.ghButton[href="#yhteys"]');
+      const heroCta = hero?.querySelector('a.ghButton[href="/?intent=photos#yhteys"]');
       const price = [...(hero?.querySelectorAll('*') || [])].find((el) => visible(el) && el.children.length === 0 && el.textContent?.includes('490 €'));
       const brandLink = document.querySelector('header a.ghBrand');
       const form = document.querySelector('#yhteys form[action="/api/leads"]');
@@ -187,11 +187,11 @@ try {
         formMethod: form?.getAttribute('method')?.toLowerCase() || '',
         formAction: form?.getAttribute('action') || '',
         submitRect: rect(submit),
-        profileChoice: Boolean(form?.querySelector('input[name="profile"][maxlength="300"]')) && Boolean(form?.querySelector('input[name="noProfile"][type="checkbox"]')),
-        requiredFields: ['company','name','email'].every((name) => Boolean(form?.querySelector('[name="' + name + '"][required]'))),
+        profileChoice: Boolean(form?.querySelector('input[name="profile"]:not([required])')) && !form?.querySelector('select, input[name="noProfile"]'),
+        requiredFields: ['company','name','contact'].every((name) => Boolean(form?.querySelector('[name="' + name + '"][required]'))),
         proofExists: Boolean(proof),
         proofImageLoaded: document.querySelector('.ghSelectedScreenshot')?.naturalWidth > 100,
-        seoSelected: form?.querySelector('select[name="service"]') !== null,
+        seoSelected: form?.querySelector('input[name="service"]') !== null,
         serviceLinks: ['/verkkosivut-yritykselle','/some-sisallontuotanto','/?service=seo#yhteys'].every((href) => document.querySelector('.ghServiceCard a[href="' + href + '"]')),
         serviceCards: document.querySelectorAll('.ghServiceCard').length,
         editorialRoutes: [...document.querySelectorAll('.ghArtRouteList .ghArtRoute')].map((a) => a.getAttribute('href')),
@@ -289,19 +289,19 @@ try {
       metrics.artDirection.imageLoaded && metrics.artDirection.imageDisclosure,
       `${viewport.width}x${viewport.height}: editorial hero missing: ${JSON.stringify(metrics.artDirection)}`);
     assert(metrics.h1Count === 1, `${viewport.width}x${viewport.height}: expected exactly one H1.`);
-    assert(metrics.brandHeadlineText.includes('HYVÄ TYÖ') && metrics.brandHeadlineText.includes('PITÄÄ NÄKYÄ.'), `${viewport.width}x${viewport.height}: company headline missing.`);
-    assert(metrics.h1Text.includes('HYVÄ TYÖ') && metrics.h1Text.includes('PITÄÄ NÄKYÄ'), `${viewport.width}x${viewport.height}: H1 copy changed unexpectedly.`);
+    assert(metrics.brandHeadlineText.includes('TYÖMAAKUVAT') && metrics.brandHeadlineText.includes('VALMIS SOME'), `${viewport.width}x${viewport.height}: Social headline missing.`);
+    assert(metrics.h1Text.includes('TYÖMAAKUVAT') && metrics.h1Text.includes('VALMIS SOME'), `${viewport.width}x${viewport.height}: H1 copy changed unexpectedly.`);
     const heroLines = metrics.heroLineMetrics;
-    assert(heroLines.lines.length === 2 &&
-      heroLines.lines[0].text === 'HYVÄ TYÖ' && heroLines.lines[1].text === 'PITÄÄ NÄKYÄ.' &&
+    assert(heroLines.lines.length === 4 &&
+      heroLines.lines[0].text === 'TYÖMAAKUVAT' && heroLines.lines[2].text === 'VALMIS SOME' &&
       heroLines.lines.every((line) => line.display === 'block'),
-      `${viewport.width}x${viewport.height}: Finnish hero must render as two separate blocks: ${JSON.stringify(heroLines)}`);
+      `${viewport.width}x${viewport.height}: Finnish hero must render as four separate blocks: ${JSON.stringify(heroLines)}`);
     assert(heroLines.lineHeight / heroLines.fontSize >= 1.10 &&
       heroLines.lines[0].rect.bottom <= heroLines.lines[1].rect.top + 1 &&
       heroLines.lines[1].rect.top - heroLines.lines[0].rect.top >= heroLines.fontSize * 1.10 - 1,
       `${viewport.width}x${viewport.height}: hero Ä/Ö accents risk overlapping due to line spacing: ${JSON.stringify(heroLines)}`);
-    assert(metrics.heroCtaHref === '#yhteys', `${viewport.width}x${viewport.height}: primary CTA must target #yhteys.`);
-    assert(/pyydä ehdotus/i.test(metrics.heroCtaText), `${viewport.width}x${viewport.height}: company CTA missing.`);
+    assert(metrics.heroCtaHref === '/?intent=photos#yhteys', `${viewport.width}x${viewport.height}: primary CTA must target photo-intent form.`);
+    assert(/pyydä 2 sisältöesimerkkiä/i.test(metrics.heroCtaText), `${viewport.width}x${viewport.height}: primary CTA missing.`);
     assert(metrics.serviceLinks && metrics.serviceCards === 3, `${viewport.width}x${viewport.height}: three service links missing.`);
     assert(metrics.editorialRoutes.length === 3 &&
       ['/rakennusyrityksille','/lvi-yrityksille','/instagram-sisallontuotanto']
@@ -335,7 +335,7 @@ try {
     assert(metrics.glassFooter.inquiry === '#yhteys' && metrics.glassFooter.inquiryRect?.height >= 44 &&
       !metrics.glassFooter.fakeNewsletter,
       `${viewport.width}x${viewport.height}: glass footer must have working inquiry CTA and no fake signup.`);
-    assert(metrics.seoSelected, `${viewport.width}x${viewport.height}: service-interest selector missing.`);
+    assert(metrics.seoSelected, `${viewport.width}x${viewport.height}: hidden service routing missing.`);
     assert(metrics.disclosure, `${viewport.width}x${viewport.height}: honest own-work disclosure missing.`);
     assert(!metrics.schemaTypes.includes('some-12-service') && !metrics.schemaTypes.includes('some-12-offer'), `${viewport.width}x${viewport.height}: product-specific schema remains on homepage.`);
     assert(metrics.viewportMeta.includes('viewport-fit=cover'), `${viewport.width}x${viewport.height}: viewport-fit=cover missing.`);
@@ -351,7 +351,7 @@ try {
 
     if (viewport.firstView) {
       assert(metrics.heroCtaRect.bottom <= metrics.innerHeight, `${viewport.width}x${viewport.height}: primary CTA below first viewport.`);
-      assert(!metrics.h1Text.includes('TYÖMAAKUVAT'), `${viewport.width}x${viewport.height}: legacy Social-only H1 remains.`);
+      assert(metrics.h1Text.includes('TYÖMAAKUVAT'), `${viewport.width}x${viewport.height}: Social H1 missing.`);
     }
 
     const screenshot = await client.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
@@ -381,13 +381,13 @@ try {
 
   await client.send('Page.navigate', { url: BASE_URL + '/?service=seo#yhteys' });
   await waitForDocument(client);
-  assert(await evaluate(client, 'document.querySelector(\'#yhteys select[name="service"]\')?.value === "seo"'), 'SEO CTA failed to preselect the service in the proposal form.');
+  assert(await evaluate(client, 'document.querySelector(\'#yhteys input[name="service"]\')?.value === "seo"'), 'SEO CTA failed to route the service in the proposal form.');
 
   await client.send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
   await client.send('Page.navigate', { url: BASE_URL });
   await waitForDocument(client);
   const interaction = await evaluate(client, `(() => {
-    const cta = document.querySelector('#top a.ghButton[href="#yhteys"]');
+    const cta = document.querySelector('#top a.ghButton[href="/?intent=photos#yhteys"]');
     cta?.focus();
     const focused = document.activeElement === cta;
     cta?.click();
@@ -398,20 +398,12 @@ try {
   assert(interaction.hash === '#yhteys', 'Primary CTA did not navigate to #yhteys.');
   assert(interaction.formExists && interaction.submitTabIndex >= 0, 'Lead form or submit keyboard access missing.');
 
-  // The previously mandatory profile field must support companies with no channels.
+  // Instagram is optional, with no extra selector or checkbox.
   const noProfile = await evaluate(client, `(() => ({
-    control: Boolean(document.querySelector('#yhteys .leadProfileNoWebsite')),
+    control: !document.querySelector('#yhteys .leadProfileNoWebsite, #yhteys select'),
     initiallyEmpty: document.querySelector('#yhteys input[name="profile"]')?.value === '',
   }))()`);
-  assert(noProfile.control && noProfile.initiallyEmpty, 'Accessible no-profile choice missing from proposal form.');
-  await evaluate(client, 'document.querySelector("#yhteys .leadProfileNoWebsite")?.click()');
-  await sleep(100);
-  const selectedNoProfile = await evaluate(client, `(() => ({
-    profile: document.querySelector('#yhteys input[name="profile"]')?.value,
-    pressed: document.querySelector('#yhteys .leadProfileNoWebsite')?.getAttribute('aria-pressed'),
-  }))()`);
-  assert(selectedNoProfile.profile === 'Ei vielä verkkosivua tai Instagramia' && selectedNoProfile.pressed === 'true',
-    'No-profile selection did not set the lead value.');
+  assert(noProfile.control && noProfile.initiallyEmpty, 'Optional Instagram field or simplified form missing.');
 
   const routeNavigation = await evaluate(client, `(() => [...document.querySelectorAll('.ghArtRouteList a')]
     .map((a) => ({href:a.getAttribute('href'),focusable:a.tabIndex>=0})))()`);

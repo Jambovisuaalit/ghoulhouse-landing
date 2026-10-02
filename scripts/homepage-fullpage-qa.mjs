@@ -106,7 +106,7 @@ async function auditViewport() {
   }
   // Only test fully visible links. An element passing behind a sticky header
   // while scrolling is expected; it must be targetable after scrollIntoView.
-  const selectors=['#top .ghHeroActions a.ghButton','.ghServiceCard a.ghTextLink','.ghSelectedCase','.ghArtRoute','.ghGuideRow','.ghSectionLink','#yhteys button[type="submit"]'];
+  const selectors=['#top .ghHeroActions a.ghButton','.ghServiceCard a.ghServiceCta','.ghSelectedCase','.ghArtRoute','.ghGuideRow','.ghSectionLink','#yhteys button[type="submit"]'];
   const targets=selectors.flatMap(s=>[...document.querySelectorAll(s)]);
   let scrollSteps=0, midPageRootMax=rootWidth;
   for(let y=0;y<document.documentElement.scrollHeight;y+=Math.max(180,Math.floor(innerHeight*.68))){
