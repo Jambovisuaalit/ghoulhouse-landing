@@ -643,3 +643,20 @@
   color: var(--gh-ed-red);
   border-color: currentColor;
 }
+
+/* Approved founder portrait: preserve the full composition at every width. */
+.homePage .ghFounderGrid { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); align-items: center; }
+.homePage .ghFounderIdentity { width: 100%; max-width: 420px; }
+body .homePage .ghFounderIdentity img.ghFounderPortrait {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: center;
+  filter: none;
+}
+@media (max-width: 767px) {
+  .homePage .ghFounderGrid { grid-template-columns: minmax(0, 1fr); }
+  .homePage .ghFounderIdentity { max-width: 360px; }
+}

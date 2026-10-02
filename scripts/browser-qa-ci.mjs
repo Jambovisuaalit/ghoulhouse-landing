@@ -324,7 +324,7 @@ try {
     assert(metrics.brandLayout.header?.left >= -1 && metrics.brandLayout.header?.right <= metrics.innerWidth + 1 &&
       metrics.brandLayout.footer === '/ghoulhouse-logo-reverse.svg' &&
       !metrics.brandLayout.giantWordmark &&
-      metrics.brandLayout.mark === '/ghoulhouse-mark.svg' &&
+      metrics.brandLayout.mark === '/hanna-nyholm-portrait.webp' &&
       metrics.brandLayout.markFilter === 'none',
       `${viewport.width}x${viewport.height}: official logo contrast, load or clipping failed: ${JSON.stringify(metrics.brandLayout)}`);
     assert(metrics.glassFooter.exists && metrics.glassFooter.rimBackground === 'none' && metrics.glassFooter.glassBackdrop === 'none' &&
