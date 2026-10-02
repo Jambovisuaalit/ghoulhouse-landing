@@ -102,7 +102,7 @@ for (const slug of relatedSlugs) {
       html.includes('SOVITAAN ENSIMMÄISET 30 PÄIVÄÄ.') &&
       html.includes('some-12#offer') &&
       html.includes('name="intent" value="booking"') &&
-      html.includes('value="social" selected'),
+      html.includes('name="service" value="social"'),
       'SOME 12 product CTA, schema or preselected lead form was not rendered');
   }
 }

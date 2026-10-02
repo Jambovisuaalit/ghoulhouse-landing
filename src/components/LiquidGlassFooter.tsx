@@ -17,7 +17,7 @@ const socialLinks = [
  * signup: use the existing enquiry form and email until opt-in is implemented.
  */
 export default function LiquidGlassFooter({ home = false }: Props) {
-  const contactHref = home ? '#yhteys' : '/#yhteys';
+  const contactHref = home ? '/?intent=photos#yhteys' : '/#yhteys';
   const topHref = home ? '#top' : '/#top';
 
   return (
@@ -35,11 +35,11 @@ export default function LiquidGlassFooter({ home = false }: Props) {
               <div className="ghLiquidFooterStatement">
                 <p className="ghLiquidFooterEyebrow">SEURAAVA ASKEL / YHTEISTYÖ</p>
                 <h2>TEHDÄÄN TYÖSTÄ<br /><span>NÄKYVÄÄ.</span></h2>
-                <p>Verkkosivut, Social ja SEO suomalaisille palveluyrityksille. Kerro tilanteestanne — ehdotamme sopivaa seuraavaa askelta.</p>
+                <p>{home ? 'Työmaakuvat valmiiksi some-sisällöiksi remontti- ja LVI-yrityksille Uudellamaalla. Verkkosivut ja SEO ovat lisäpalveluita.' : 'Social, verkkosivut ja SEO palveluyrityksille. Kerro tilanteestanne — ehdotamme sopivaa seuraavaa askelta.'}</p>
               </div>
               <div className="ghLiquidFooterInviteActions">
                 <a href={contactHref} className="ghLiquidFooterButton">
-                  <span>Pyydä ehdotus</span>
+                  <span>{home ? 'Pyydä 2 sisältöesimerkkiä' : 'Pyydä ehdotus'}</span>
                   <span aria-hidden="true">↗</span>
                 </a>
                 <a href="mailto:hello@ghoulhouse.fi" className="ghLiquidFooterMail">
@@ -92,7 +92,7 @@ export default function LiquidGlassFooter({ home = false }: Props) {
         <div className="ghLiquidFooterWordmark" aria-hidden="true"><Image className="ghOfficialWordmark" src="/ghoulhouse-wordmark-white.svg" width={1000} height={200} alt="" /></div>
         <div className="ghLiquidFooterBottom">
           <span>© 2026 GhoulHouse Oy. Kaikki oikeudet pidätetään.</span>
-          <span>HELSINKI · VERKKOSIVUT / SOCIAL / SEO</span>
+          <span>HELSINKI · SOCIAL / VERKKOSIVUT / SEO</span>
           <a href={topHref}>Takaisin ylös <span aria-hidden="true">↑</span></a>
         </div>
       </div>

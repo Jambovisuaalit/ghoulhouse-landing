@@ -29,7 +29,7 @@ for (const [path, heading, expected, forbidden] of cases) {
 
 const websites = await fetch(base + '/verkkosivut-yritykselle', { cache: 'no-store' }).then((r) => r.text());
 assert.match(websites, /name="intent" value="booking"/, 'Website page must request a proposal, not photo examples');
-assert.match(websites, /<option value="websites" selected="">Verkkosivut<\/option>/, 'Website service must be preselected');
+assert.match(websites, /name="service" value="websites"/, 'Website service must be routed in the hidden field');
 
 const social = await fetch(base + '/some-sisallontuotanto', { cache: 'no-store' }).then((r) => r.text());
 assert.match(social, /name="intent" value="photos"/, 'Social page must retain the two-photo example workflow');

@@ -30,25 +30,26 @@ const html = execFileSync(
 );
 
 assert(/<h1\b[^>]*>[\s\S]*?<\/h1>/i.test(html), 'No-JS QA: H1 is missing.');
-assert(html.includes('HYVÄ TYÖ') && html.includes('PITÄÄ NÄKYÄ.'), 'No-JS QA: canonical headline is missing.');
+assert(html.includes('TYÖMAAKUVAT') && html.includes('VALMIS SOME'), 'No-JS QA: Social headline is missing.');
 assert(html.includes('490 €'), 'No-JS QA: Social card pricing is missing.');
 for (const href of ['/verkkosivut-yritykselle','/some-sisallontuotanto','/resurssit','/referenssit']) {
   assert(html.includes('href="' + href + '"'), 'No-JS QA: required company navigation missing: ' + href);
 }
-assert(/<a\b[^>]*href=["']#yhteys["'][^>]*>/i.test(html), 'No-JS QA: #yhteys CTA anchor is missing.');
-assert(html.includes('PYYDÄ EHDOTUS') || html.includes('Pyydä ehdotus'), 'No-JS QA: primary CTA copy is missing.');
+assert(html.includes('href="/?intent=photos#yhteys"'), 'No-JS QA: photo intent CTA anchor is missing.');
+assert(html.includes('PYYDÄ 2 SISÄLTÖESIMERKKIÄ') || html.includes('Pyydä 2 sisältöesimerkkiä'), 'No-JS QA: primary CTA copy is missing.');
 assert(
   /<form\b[^>]*method=["']POST["'][^>]*action=["']\/api\/leads["'][^>]*>/i.test(html) ||
   /<form\b[^>]*action=["']\/api\/leads["'][^>]*method=["']POST["'][^>]*>/i.test(html),
   'No-JS QA: native POST /api/leads form is missing.'
 );
-for (const name of ['company', 'name', 'email', 'profile']) {
+for (const name of ['company', 'name', 'contact', 'profile']) {
   assert(html.includes(`name="${name}"`), `No-JS QA: ${name} field is missing.`);
 }
-assert(html.includes('Ei vielä verkkosivua tai Instagramia') && html.includes('lead-profile-options'), 'No-JS QA: explicit no-profile choice is missing.');
+assert(!html.includes('lead-profile-options') && !html.includes('leadProfileNoWebsite'), 'No-JS QA: removed profile controls are still visible.');
+assert((html.match(/KONSEPTIESIMERKKI — EI ASIAKASTYÖ/gi) || []).length >= 3, 'No-JS QA: three labeled concepts are missing.');
 assert(html.includes('class="ghFooter ghLiquidFooter"') && html.includes('ghLiquidFooterRim'),
   'No-JS QA: homepage liquid-glass footer not server rendered.');
-assert(html.includes('class="ghLiquidFooterButton"') && html.includes('href="#yhteys"'),
+assert(html.includes('class="ghLiquidFooterButton"') && html.includes('href="/?intent=photos#yhteys"'),
   'No-JS QA: glass footer inquiry must link to actual homepage form.');
 
 assert(!html.includes('ghSwissTile--site'), 'No-JS QA: duplicate self-site screenshot in hero is still present.');
@@ -82,7 +83,7 @@ assert(ownCase.includes('oma') && ownCase.includes('ei asiakasreferenssi') && /a
 const references = await fetch(BASE_URL + '/referenssit', {cache:'no-store'}).then(res=>res.text());
 assert(references.includes('href="/tyot/ghoulhouse-verkkosivut"'), 'No-JS QA: references page must lead to own-site detail.');
 const seoPage = await fetch(BASE_URL + '/?service=seo#yhteys', { cache: 'no-store' }).then((res) => res.text());
-assert(/<option[^>]*value="seo"[^>]*selected/i.test(seoPage), 'No-JS QA: SEO CTA does not preselect the service.');
+assert(/name="service" value="seo"/.test(seoPage), 'No-JS QA: SEO CTA does not pass the service.');
 const invalidPage = await fetch(BASE_URL + '/?lead=validation#yhteys', { cache: 'no-store' }).then((res) => res.text());
 assert(invalidPage.includes('Lomaketta ei lähetetty.'), 'No-JS QA: form error message is missing from server-rendered homepage.');
 const invalidPost = await fetch(BASE_URL + '/api/leads', {

@@ -8,9 +8,9 @@
 .ghGlobalDesktopNav{display:flex;gap:clamp(14px,2.4vw,38px);margin-left:auto}
 .ghGlobalDesktopNav a{display:inline-flex;align-items:center;min-height:44px;font-size:11px;font-weight:750;letter-spacing:.085em;text-transform:uppercase}
 .ghGlobalDesktopNav a:hover,.ghGlobalDesktopNav a[aria-current="page"]{color:#c9282d}
-.ghGlobalInquiry{display:inline-flex;align-items:center;gap:16px;min-height:44px;flex:none;margin-left:16px;border-bottom:1px solid #111;font-size:11px;font-weight:750;letter-spacing:.09em;text-transform:uppercase}
+.ghGlobalInquiry{display:inline-flex;align-items:center;gap:16px;min-height:44px;flex:none;margin-left:16px;padding:10px 15px;border:1px solid #c9282d;background:#c9282d;color:#fff;font-size:11px;font-weight:750;letter-spacing:.09em;text-transform:uppercase}
 .ghGlobalInquiry span{font-size:20px;font-weight:400}
-.ghGlobalInquiry:hover{color:#c9282d;border-color:#c9282d}
+.ghGlobalInquiry:hover{color:#fff;background:#111;border-color:#111}
 .ghGlobalMobileNav{display:none}
 .ghGlobalContent{min-width:0;scroll-margin-top:96px}
 .ghGlobalContent:focus{outline:none}

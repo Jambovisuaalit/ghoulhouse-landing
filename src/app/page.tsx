@@ -9,25 +9,28 @@ import './editorial-home.css';
 const services = [
   {
     index: '01',
-    title: 'VERKKOSIVUT',
-    body: 'Asiakas ymmärtää palvelunne ja löytää yhteydenoton ilman etsimistä. Toteutuksen laajuus sovitaan yrityksen materiaalin ja tarpeen perusteella.',
-    outputs: ['Palvelu- ja toimialarakenne', 'Mobiilitoteutus ja yhteydenotto', 'Tekninen SEO ja julkaisu'],
-    meta: 'Tarjous toteutuksen laajuuden perusteella',
-    href: '/verkkosivut-yritykselle',
-    link: 'Katso verkkosivutoteutus',
-  },
-  {
-    index: '02',
     title: 'SOCIAL',
-    body: 'Työmaakuvat muuttuvat suunnitelluiksi julkaisuiksi. Asiakkaan materiaalista tuotetaan 12 sisältöä Instagramiin ja Facebookiin 30 päivässä.',
+    kind: 'PÄÄPALVELU',
+    body: 'Lähetät työmaakuvat ja työn faktat. Suunnittelemme, kirjoitamme ja julkaisemme 12 sisältöä Instagramiin ja Facebookiin 30 päivän aikana.',
     outputs: ['12 alkuperäistä sisältöä / 30 päivää', 'Instagram ja Facebook', 'Yksi korjauskierros ja kuukausiraportti'],
     meta: 'SOME 12 · 490 € + ALV / 30 päivää',
     href: '/some-sisallontuotanto',
     link: 'Katso Social-paketti',
   },
   {
+    index: '02',
+    title: 'VERKKOSIVUT',
+    kind: 'LISÄPALVELU',
+    body: 'Kun tarvitset myös selkeän kotipesän työllesi, rakennamme sivuston, josta asiakas löytää palvelut ja yhteydenoton.',
+    outputs: ['Palvelu- ja toimialarakenne', 'Mobiilitoteutus ja yhteydenotto', 'Tekninen SEO ja julkaisu'],
+    meta: 'Tarjous toteutuksen laajuuden perusteella',
+    href: '/verkkosivut-yritykselle',
+    link: 'Katso verkkosivutoteutus',
+  },
+  {
     index: '03',
     title: 'SEO',
+    kind: 'LISÄPALVELU',
     body: 'Hakukone ja asiakas ymmärtävät, mitä palveluita tarjoatte ja millä alueella. Toteutuksen tarkka rajaus määritellään nykytilan perusteella.',
     outputs: ['Palvelu- ja toimialasivujen rakenne', 'Otsikot, kuvaukset ja sisältö', 'Sisäinen linkitys'],
     meta: 'Sisältö ja hinta sovitaan tarjouksessa',
@@ -37,10 +40,10 @@ const services = [
 ] as const;
 
 const steps = [
-  ['Tilanne', 'Käymme läpi nykyisen sivuston, sisällöt ja sen, mitä asiakkaiden pitäisi löytää.'],
-  ['Ehdotus', 'Rajaamme tarvittavat palvelut, toimitukset ja etenemisjärjestyksen selkeäksi ehdotukseksi.'],
-  ['Toteutus', 'Rakennamme sovitun verkkosivu-, sisältö- tai näkyvyyskokonaisuuden käytettävissä olevasta materiaalista.'],
-  ['Julkaisu & kehitys', 'Tarkistamme toteutuksen, julkaisemme hyväksytyn työn ja sovimme mahdollisista jatkotoimista.'],
+  ['Lähetä kuvat', 'Toimitat omat työmaakuvat, työn faktat ja tarvittavat julkaisuluvat.'],
+  ['Sisällöt', 'Suunnittelemme ja kirjoitamme 12 sisältöä materiaaleistasi.'],
+  ['Hyväksyntä', 'Tarkistat sisällöt; palveluun kuuluu yksi koottu korjauskierros.'],
+  ['Julkaisu', 'Julkaisemme hyväksytyt sisällöt Instagramissa ja Facebookissa sekä toimitamme kevyen raportin.'],
 ] as const;
 
 const editorialRoutes = [
@@ -50,9 +53,8 @@ const editorialRoutes = [
 ] as const;
 
 const guides = [
-  ['01 / HINTA', 'Mistä verkkosivujen hinta muodostuu?', 'Rakenne, sisällöt ja toteutuksen laajuus.', '/verkkosivut/hinta'],
-  ['02 / OPAS', 'Verkkosivut itse vai ammattilaiselta?', 'Tarkistuslista oikean toteutustavan valintaan.', '/oppaat/verkkosivut-itse-vai-ammattilaiselta'],
-  ['03 / OPAS', 'Työmaakuvat sosiaaliseen mediaan', 'Mitä kuvata, jotta omasta työstä syntyy julkaistavaa sisältöä.', '/oppaat/tyomaakuvat-sosiaaliseen-mediaan'],
+  ['01 / HINTA', 'Mitä 12 some-sisältöä maksaa?', 'Social-paketin sisältö ja 490 € + ALV / 30 päivän hinta.', '/some-sisallontuotanto/hinta'],
+  ['02 / OPAS', 'Työmaakuvat sosiaaliseen mediaan', 'Mitä kuvata, jotta omasta työstä syntyy julkaistavaa sisältöä.', '/oppaat/tyomaakuvat-sosiaaliseen-mediaan'],
 ] as const;
 
 function Brand() {
@@ -90,12 +92,12 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
           <nav className="ghDesktopNav" aria-label="Päänavigaatio">
             {siteNavigation.map(({ href, label }) => <a key={href} href={href}>{label}</a>)}
           </nav>
-          <a className="ghButton ghHeaderCta" href="#yhteys">Pyydä ehdotus <span aria-hidden="true">↗</span></a>
+          <a className="ghButton ghHeaderCta" href="/?intent=photos#yhteys">Pyydä 2 sisältöesimerkkiä <span aria-hidden="true">↗</span></a>
           <details className="mobileNav ghMobileNav">
             <summary aria-label="Avaa valikko">Valikko <span aria-hidden="true">+</span></summary>
             <nav aria-label="Mobiilinavigaatio">
               {siteNavigation.map(({ href, label }) => <a key={href} href={href}>{label}</a>)}
-              <a href="#yhteys">Pyydä ehdotus</a>
+              <a href="/?intent=photos#yhteys">Pyydä 2 sisältöesimerkkiä</a>
             </nav>
           </details>
         </div>
@@ -106,19 +108,20 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
           <div className="ghArtGrain" aria-hidden="true" />
           <div className="ghShell ghArtHeroMeta" aria-hidden="true">
             <span>GH / 001 &nbsp; — &nbsp; HELSINKI</span>
-            <span>EDITORIAL STUDIO / WEB · SOCIAL · SEO</span>
+            <span>SOCIAL / TYÖMAAKUVISTA JULKAISUIKSI</span>
           </div>
           <div className="ghShell ghArtHeroLayout">
             <div className="ghArtHeroCopy">
-              <p className="ghEyebrow ghArtHeroEyebrow"><span aria-hidden="true">✳</span> NÄKYVYYTTÄ OIKEALLE TYÖLLE</p>
-              <h1 id="hero-title"><span>HYVÄ TYÖ</span><span>PITÄÄ NÄKYÄ.</span></h1>
+              <p className="ghEyebrow ghArtHeroEyebrow"><span aria-hidden="true">✳</span> REMONTTI- JA LVI-YRITYKSILLE UUDELLAMAALLA</p>
+              <h1 id="hero-title"><span>TYÖMAAKUVAT</span><span>SISÄÄN.</span><span>VALMIS SOME</span><span>ULOS.</span></h1>
               <div className="ghArtHeroBottom">
-                <p className="ghLead">Verkkosivut, sisältö ja hakukonenäkyvyys suomalaisille palveluyrityksille. Selkeä toteutus, joka näyttää tekemisen.</p>
+                <p className="ghLead">Muutamme omat työmaakuvanne valmiiksi Instagram- ja Facebook-sisällöiksi. Suunnittelu, tekstit ja julkaisu hoituvat puolestanne.</p>
+                <p className="ghHeroOffer">12 sisältöä / 30 pv / 490 € + ALV. Ei jatkosopimusta. Jos sisällöt eivät valmistu, teemme ne ilmaiseksi.</p>
                 <div className="ghArtHeroAction">
                   <div className="ghHeroActions">
-                    <a className="ghButton" href="#yhteys">Pyydä ehdotus <span aria-hidden="true">↗</span></a>
+                    <a className="ghButton" href="/?intent=photos#yhteys">Pyydä 2 sisältöesimerkkiä <span aria-hidden="true">↗</span></a>
                   </div>
-                  <p className="ghHeroFootnote">Kerro tilanteenne. Ehdotamme seuraavaa askelta.</p>
+                  <p className="ghHeroFootnote">Maksuton esimerkki omasta materiaalistanne. Sovimme kuvien toimitustavan vastausviestissä.</p>
                 </div>
               </div>
             </div>
@@ -146,17 +149,38 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
           <div className="ghShell">
             <div className="ghSectionIntro ghServicesIntro">
               <p className="ghEyebrow">01 / Palvelut</p>
-              <h2 id="services-title">IDEASTA<br />NÄKYVÄKSI.</h2>
-              <p>Aloitamme olennaisesta. Verkkosivut, jatkuva sisältö ja löydettävyys voidaan toteuttaa erikseen tai yhdessä.</p>
+              <h2 id="services-title">SOME ENSIN.<br />LISÄÄ TARPEEN MUKAAN.</h2>
+              <p>Social on pääpalvelumme remontti- ja LVI-yrityksille. Verkkosivut ja SEO ovat erikseen sovittavia lisäpalveluita.</p>
             </div>
             <div className="ghServiceList">
               {services.map((service) => (
                 <article key={service.index} className="ghServiceCard">
                   <span className="ghServiceIndex">{service.index} / 03</span>
-                  <div className="ghServiceDetail"><h3>{service.title}</h3><p>{service.body}</p><ul className="ghServiceOutputs" aria-label={`${service.title} – toimituksen osat`}>{service.outputs.map((output) => <li key={output}>{output}</li>)}</ul><p className="ghServiceMeta">{service.meta}</p></div>
-                  <a className="ghTextLink" href={service.href}>{service.link} <span aria-hidden="true">↗</span></a>
+                  <div className="ghServiceDetail"><span className="ghServiceKind">{service.kind}</span><h3>{service.title}</h3><p>{service.body}</p><ul className="ghServiceOutputs" aria-label={`${service.title} – toimituksen osat`}>{service.outputs.map((output) => <li key={output}>{output}</li>)}</ul><p className="ghServiceMeta">{service.meta}</p></div>
+                  <a className="ghButton ghServiceCta" href={service.href}>{service.link} <span aria-hidden="true">↗</span></a>
                 </article>
               ))}
+            </div>
+            <div className="ghSectionCta"><a className="ghButton" href="/?intent=photos#yhteys">Pyydä 2 sisältöesimerkkiä <span aria-hidden="true">↗</span></a></div>
+          </div>
+        </section>
+
+        <section className="ghConcepts ghSection" id="konseptit" aria-labelledby="concepts-title">
+          <div className="ghShell">
+            <div className="ghSectionIntro"><p className="ghEyebrow">Sisältökonseptit</p><h2 id="concepts-title">NÄIN TYÖSTÄ<br />TULEE SISÄLTÖÄ.</h2><p>Kolme havainnollistavaa julkaisuideaa. Kuvissa ei ole GhoulHousen asiakastöitä eikä niihin liity tulosväitteitä.</p></div>
+            <div className="ghConceptGrid">
+              <article className="ghConceptCard">
+                <div className="ghConceptImage"><Image src="/proof-before.webp" alt="Havainnekuva keskeneräisestä remonttitilasta" width={420} height={560} sizes="(max-width: 767px) 100vw, 33vw" /><span className="ghConceptStamp">KONSEPTIESIMERKKI — EI ASIAKASTYÖ</span></div>
+                <div className="ghConceptCopy"><span>01 / TYÖN VAIHE</span><h3>Ennen valmista pintaa näkyy varsinainen työ.</h3><p>Esimerkkijulkaisu kertoo, mitä työvaiheessa tehdään ja miksi sillä on merkitystä.</p></div>
+              </article>
+              <article className="ghConceptCard">
+                <div className="ghConceptImage"><Image src="/bathroom-concept-v2.webp" alt="Havainnekuva kylpyhuoneesta, ei toteutettu asiakaskohde" width={1122} height={1402} sizes="(max-width: 767px) 100vw, 33vw" /><span className="ghConceptStamp">KONSEPTIESIMERKKI — EI ASIAKASTYÖ</span></div>
+                <div className="ghConceptCopy"><span>02 / VALMIS KOHDE</span><h3>Valmis tila, selkeä kuvaus tehdystä työstä.</h3><p>Esimerkkijulkaisu yhdistää kohdekuvan ja asiakkaalle ymmärrettävän kuvatekstin.</p></div>
+              </article>
+              <article className="ghConceptCard">
+                <div className="ghConceptImage ghConceptGraphic"><span className="ghConceptGraphicMark" aria-hidden="true">✳</span><span className="ghConceptGraphicType">TYÖMAA<br />→ JULKAISU</span><span className="ghConceptGraphicRule">KUVAT · FAKTAT · TEKSTI</span><span className="ghConceptStamp">KONSEPTIESIMERKKI — EI ASIAKASTYÖ</span></div>
+                <div className="ghConceptCopy"><span>03 / SISÄLTÖGRAFIIKKA</span><h3>Työkuvasta valmis somejulkaisu.</h3><p>Esimerkki näyttää, miten kuva, otsikko ja tarkentava teksti kootaan julkaistavaan muotoon.</p></div>
+              </article>
             </div>
           </div>
         </section>
@@ -168,7 +192,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
               <h2 id="selected-title">TYÖ PUHUU.<br /><em>NÄYTÄ SE.</em></h2>
               <p>Oma julkaistu verkkosivutoteutuksemme on ensimmäinen dokumentoitu työnäyte. Lisäämme asiakastöitä vasta julkaisuluvan ja todennettavan aineiston perusteella.</p>
               <a className="ghTextLink" href="/referenssit">Katso toteutukset ja työnäytteet <span aria-hidden="true">↗</span></a>
-              <a className="ghSelectedInquiry" href="/verkkosivut-yritykselle#yhteys">Pyydä oma verkkosivuarvio <span aria-hidden="true">↗</span></a>
+              <a className="ghButton ghSelectedInquiry" href="/?intent=photos#yhteys">Pyydä 2 sisältöesimerkkiä <span aria-hidden="true">↗</span></a>
             </div>
             <a className="ghSelectedCase" href="/tyot/ghoulhouse-verkkosivut" aria-label="Tutustu GhoulHousen oman verkkosivuston toteutusesittelyyn">
               <div className="ghSelectedCaseTop"><span>GH / OMA TOTEUTUS</span><span>AVAA TOTEUTUSESITTELY ↗</span></div>
@@ -182,11 +206,11 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
 
         <section className="ghProcess ghSection" id="toiminta" aria-labelledby="process-title">
           <div className="ghShell">
-            <div className="ghSectionIntro"><p className="ghEyebrow">Yhteistyömalli</p><h2 id="process-title">SELKEÄ PROSESSI.<br />ALUSTA LOPPUUN.</h2></div>
+            <div className="ghSectionIntro"><p className="ghEyebrow">Social / toimitus</p><h2 id="process-title">KUVISTA<br />JULKAISUIHIN.</h2></div>
             <ol className="ghSteps">
               {steps.map(([title, copy], i) => <li key={title}><div className="ghStepTop"><span>{String(i + 1).padStart(2, '0')}</span>{i < 3 && <span aria-hidden="true">→</span>}</div><h3>{title}</h3><p>{copy}</p></li>)}
             </ol>
-            <div className="ghProcessInquiry"><span>Kun tiedät, mitä haluat kehittää, seuraava askel on rajattu ehdotus.</span><a href="#yhteys">Pyydä ehdotus <span aria-hidden="true">↗</span></a></div>
+            <div className="ghProcessInquiry"><span>Katso, miltä kaksi sisältöä näyttäisi omista työkuvistanne.</span><a className="ghButton" href="/?intent=photos#yhteys">Pyydä 2 sisältöesimerkkiä <span aria-hidden="true">↗</span></a></div>
           </div>
         </section>
 
@@ -213,7 +237,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
 
         <section className="ghResources ghSection" id="resurssit" aria-labelledby="resources-title">
           <div className="ghShell">
-            <div className="ghSectionIntro"><p className="ghEyebrow">Resurssit / asiantuntijuus</p><h2 id="resources-title">Tietoa ennen päätöstä.</h2><p>Kaksi käytännön opasta ostopäätöksen tueksi. Lisää sisältöä löytyy resurssisivulta.</p></div>
+            <div className="ghSectionIntro"><p className="ghEyebrow">Resurssit / asiantuntijuus</p><h2 id="resources-title">Tietoa ennen päätöstä.</h2><p>Socialin hinta ja käytännön opas työmaakuvien hyödyntämiseen. Lisää sisältöä löytyy resurssisivulta.</p></div>
             <div className="ghGuideList">
               {guides.slice(0, 2).map(([label, title, copy, href]) => <a className="ghGuideRow" href={href} key={href}><span className="ghEyebrow">{label}</span><span><strong>{title}</strong><small>{copy}</small></span><span className="ghGuideArrow" aria-hidden="true">↗</span></a>)}
             </div>
@@ -230,7 +254,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
 
         <section className="ghContact ghSection" id="yhteys" aria-labelledby="contact-title">
           <div className="ghShell ghContactGrid">
-            <div className="ghSectionIntro"><p className="ghEyebrow">05 / Yhteys</p><h2 id="contact-title">ON AIKA<br />NÄKYÄ.</h2><p>Kerro yrityksestäsi ja siitä, mitä haluat parantaa. Palaamme asiaan ehdotuksella sopivasta seuraavasta askeleesta.</p><p className="ghContactNote">Ei sitoumusta yhteydenotosta.</p></div>
+            <div className="ghSectionIntro"><p className="ghEyebrow">05 / Yhteys</p><h2 id="contact-title">ON AIKA<br />NÄKYÄ.</h2><p>{params.intent === 'photos' ? 'Pyydä kaksi maksutonta sisältöesimerkkiä. Käymme materiaalinne läpi ja sovimme kahden työkuvan toimitustavan vastausviestissä.' : 'Kerro yrityksestäsi ja siitä, mitä haluat parantaa. Palaamme asiaan ehdotuksella sopivasta seuraavasta askeleesta.'}</p><p className="ghContactNote">Ei sitoumusta yhteydenotosta.</p></div>
             <div className="ghForm">{leadError && <div className="ghServerFormError" role="alert" aria-live="assertive"><strong>Lomaketta ei lähetetty.</strong><p>{leadError}</p></div>}<LeadForm compact mode={params.intent === 'photos' ? 'social' : 'proposal'} defaultService={selectedService} /></div>
           </div>
         </section>

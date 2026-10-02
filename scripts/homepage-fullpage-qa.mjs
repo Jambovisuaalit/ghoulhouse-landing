@@ -106,7 +106,7 @@ async function auditViewport() {
   }
   // Only test fully visible links. An element passing behind a sticky header
   // while scrolling is expected; it must be targetable after scrollIntoView.
-  const selectors=['#top .ghHeroActions a.ghButton','.ghServiceCard a.ghTextLink','.ghSelectedCase','.ghArtRoute','.ghGuideRow','.ghSectionLink','#yhteys button[type="submit"]'];
+  const selectors=['#top .ghHeroActions a.ghButton','.ghServiceCard a.ghServiceCta','.ghSelectedCase','.ghArtRoute','.ghGuideRow','.ghSectionLink','#yhteys button[type="submit"]'];
   const targets=selectors.flatMap(s=>[...document.querySelectorAll(s)]);
   let scrollSteps=0, midPageRootMax=rootWidth;
   for(let y=0;y<document.documentElement.scrollHeight;y+=Math.max(180,Math.floor(innerHeight*.68))){
@@ -132,9 +132,8 @@ async function auditViewport() {
     if(!clickable)errors.push('Cannot use CTA after scrolling into view: '+JSON.stringify(centered.at(-1)));
   }
   // On-page #yhteys must remain below the sticky navigation when activated.
-  const heroLink=document.querySelector('#top .ghHeroActions a');
   document.documentElement.style.scrollBehavior='auto';
-  heroLink?.click();await sleep(180);
+  location.hash='#yhteys';await sleep(180);
   const target=document.querySelector('#yhteys'),targetR=rect(target);
   const headingR=rect(target?.querySelector('h2'));
   const anchor={hash:location.hash,sectionTop:targetR?.top,headingTop:headingR?.top,headerBottom:rect(header)?.bottom};
