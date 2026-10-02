@@ -19,9 +19,28 @@ const socialLinks = [
 export default function LiquidGlassFooter({ home = false }: Props) {
   const contactHref = home ? '/?intent=photos#yhteys' : '/#yhteys';
   const topHref = home ? '#top' : '/#top';
+  const invite = (
+    <div className="ghLiquidFooterInvite">
+      <div className="ghLiquidFooterStatement">
+        <p className="ghLiquidFooterEyebrow">SEURAAVA ASKEL / YHTEISTYÖ</p>
+        <h2>TEHDÄÄN TYÖSTÄ<br /><span>NÄKYVÄÄ.</span></h2>
+        <p>{home ? 'Työmaakuvat valmiiksi some-sisällöiksi remontti- ja LVI-yrityksille Uudellamaalla. Verkkosivut ja SEO ovat lisäpalveluita.' : 'Social, verkkosivut ja SEO palveluyrityksille. Kerro tilanteestanne — ehdotamme sopivaa seuraavaa askelta.'}</p>
+      </div>
+      <div className="ghLiquidFooterInviteActions">
+        <a href={contactHref} className="ghLiquidFooterButton">
+          <span>{home ? 'Pyydä 2 sisältöesimerkkiä' : 'Pyydä ehdotus'}</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+        <a href="mailto:hello@ghoulhouse.fi" className="ghLiquidFooterMail">
+          Tai lähetä sähköpostia <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </div>
+  );
 
   return (
     <footer className={home ? 'ghFooter ghLiquidFooter' : 'ghGlobalFooter ghLiquidFooter'}>
+      {!home && <div className="ghGlobalFinalCta"><div className="ghLiquidFooterShell">{invite}</div></div>}
       <div className="ghLiquidFooterAmbient" aria-hidden="true" />
       <div className="ghLiquidFooterShell">
         <div className="ghLiquidFooterRim">
@@ -31,22 +50,7 @@ export default function LiquidGlassFooter({ home = false }: Props) {
               <span>HELSINKI, FINLAND</span>
             </div>
 
-            <div className="ghLiquidFooterInvite">
-              <div className="ghLiquidFooterStatement">
-                <p className="ghLiquidFooterEyebrow">SEURAAVA ASKEL / YHTEISTYÖ</p>
-                <h2>TEHDÄÄN TYÖSTÄ<br /><span>NÄKYVÄÄ.</span></h2>
-                <p>{home ? 'Työmaakuvat valmiiksi some-sisällöiksi remontti- ja LVI-yrityksille Uudellamaalla. Verkkosivut ja SEO ovat lisäpalveluita.' : 'Social, verkkosivut ja SEO palveluyrityksille. Kerro tilanteestanne — ehdotamme sopivaa seuraavaa askelta.'}</p>
-              </div>
-              <div className="ghLiquidFooterInviteActions">
-                <a href={contactHref} className="ghLiquidFooterButton">
-                  <span>{home ? 'Pyydä 2 sisältöesimerkkiä' : 'Pyydä ehdotus'}</span>
-                  <span aria-hidden="true">↗</span>
-                </a>
-                <a href="mailto:hello@ghoulhouse.fi" className="ghLiquidFooterMail">
-                  Tai lähetä sähköpostia <span aria-hidden="true">↗</span>
-                </a>
-              </div>
-            </div>
+            {home && invite}
 
             <div className="ghLiquidFooterLinks">
               <div className="ghLiquidFooterBrandBlock">
