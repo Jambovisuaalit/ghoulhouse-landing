@@ -9,7 +9,7 @@ test('lead route no longer relies on per-instance in-memory rate buckets', () =>
   assert.match(source, /x-forwarded-for/);
   assert.doesNotMatch(source, /x-vercel-forwarded-for/);
   assert.match(source, /createHash\('sha256'\)/);
-  assert.match(source, /storeLead\(validation\.data, getClientRateKey\(request\)\)/);
+  assert.match(source, /storeLead\([\s\S]*getClientRateKey\(request\)[\s\S]*x-vercel-oidc-token/);
 });
 
 test('trusted edge ingest verifies Vercel workload identity before v4 RPC', () => {
