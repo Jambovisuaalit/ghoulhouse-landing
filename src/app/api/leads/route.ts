@@ -174,9 +174,11 @@ export async function POST(request: NextRequest) {
           code:
             error.code === 'not_configured'
               ? 'delivery_unavailable'
-              : 'delivery_failed',
+              : error.code === 'storage_timeout'
+                ? 'delivery_timeout'
+                : 'delivery_failed',
         },
-        error.code === 'not_configured' ? 503 : 502
+        error.code === 'not_configured' ? 503 : error.code === 'storage_timeout' ? 504 : 502
       );
     }
 
