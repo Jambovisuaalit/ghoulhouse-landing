@@ -4,9 +4,11 @@ const DEFAULT_SUPABASE_URL = 'https://qkmyzbqhepapiowrttpz.supabase.co';
 const DEFAULT_SUPABASE_PUBLISHABLE_KEY =
   'sb_publishable_b4zwfIhyyo-wdnqcxXRCgA_TxMl3puZ';
 
+const LEAD_STORAGE_TIMEOUT_MS = 5_000;
+
 export class LeadStorageError extends Error {
   constructor(
-    public readonly code: 'not_configured' | 'rate_limited' | 'storage_failed',
+    public readonly code: 'not_configured' | 'rate_limited' | 'storage_timeout' | 'storage_failed',
     message: string
   ) {
     super(message);
@@ -40,28 +42,39 @@ function getSupabaseConfig() {
 export async function storeLead(lead: LeadInput) {
   const { url, publishableKey } = getSupabaseConfig();
 
-  const response = await fetch(`${url}/rest/v1/rpc/submit_ghoulhouse_lead_v3`, {
-    method: 'POST',
-    headers: {
-      apikey: publishableKey,
-      accept: 'application/json',
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({
-      p_intent: lead.intent,
-      p_company: lead.company,
-      p_name: lead.name,
-      p_email: lead.email || null,
-      p_profile: lead.profile,
-      p_phone: lead.phone || null,
-      p_website: lead.website || null,
-      p_instagram: lead.instagram || null,
-      p_message: lead.message || null,
-      p_service: lead.service || (lead.intent === 'photos' ? 'social' : null),
-      p_no_profile: lead.noProfile,
-    }),
-    cache: 'no-store',
-  });
+  let response: Response;
+
+  try {
+    response = await fetch(`${url}/rest/v1/rpc/submit_ghoulhouse_lead_v3`, {
+      method: 'POST',
+      headers: {
+        apikey: publishableKey,
+        accept: 'application/json',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        p_intent: lead.intent,
+        p_company: lead.company,
+        p_name: lead.name,
+        p_email: lead.email || null,
+        p_profile: lead.profile,
+        p_phone: lead.phone || null,
+        p_website: lead.website || null,
+        p_instagram: lead.instagram || null,
+        p_message: lead.message || null,
+        p_service: lead.service || (lead.intent === 'photos' ? 'social' : null),
+        p_no_profile: lead.noProfile,
+      }),
+      cache: 'no-store',
+      signal: AbortSignal.timeout(LEAD_STORAGE_TIMEOUT_MS),
+    });
+  } catch (error) {
+    if (error instanceof Error && (error.name === 'TimeoutError' || error.name === 'AbortError')) {
+      throw new LeadStorageError('storage_timeout', 'Supabase lead storage timed out.');
+    }
+
+    throw new LeadStorageError('storage_failed', 'Supabase lead storage request failed.');
+  }
 
   if (!response.ok) {
     const detail = await response.text();
