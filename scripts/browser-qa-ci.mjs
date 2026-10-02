@@ -332,7 +332,7 @@ try {
       `${viewport.width}x${viewport.height}: shared glass footer contents/rim missing: ${JSON.stringify(metrics.glassFooter)}`);
     assert(metrics.glassFooter.unclippedHeadings,
       `${viewport.width}x${viewport.height}: footer column headings are too large or clipped.`);
-    assert(metrics.glassFooter.inquiry === '#yhteys' && metrics.glassFooter.inquiryRect?.height >= 44 &&
+    assert(metrics.glassFooter.inquiry === '/?intent=photos#yhteys' && metrics.glassFooter.inquiryRect?.height >= 44 &&
       !metrics.glassFooter.fakeNewsletter,
       `${viewport.width}x${viewport.height}: glass footer must have working inquiry CTA and no fake signup.`);
     assert(metrics.seoSelected, `${viewport.width}x${viewport.height}: hidden service routing missing.`);

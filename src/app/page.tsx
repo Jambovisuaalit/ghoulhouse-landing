@@ -170,16 +170,16 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
             <div className="ghSectionIntro"><p className="ghEyebrow">Sisältökonseptit</p><h2 id="concepts-title">NÄIN TYÖSTÄ<br />TULEE SISÄLTÖÄ.</h2><p>Kolme havainnollistavaa julkaisuideaa. Kuvissa ei ole GhoulHousen asiakastöitä eikä niihin liity tulosväitteitä.</p></div>
             <div className="ghConceptGrid">
               <article className="ghConceptCard">
-                <div className="ghConceptImage"><Image src="/proof-before.webp" alt="Havainnekuva keskeneräisestä remonttitilasta" width={420} height={560} sizes="(max-width: 767px) 100vw, 33vw" /></div>
-                <div className="ghConceptCopy"><p className="ghConceptLabel">KONSEPTIESIMERKKI — EI ASIAKASTYÖ</p><span>01 / TYÖN VAIHE</span><h3>Ennen valmista pintaa näkyy varsinainen työ.</h3><p>Esimerkkijulkaisu kertoo, mitä työvaiheessa tehdään ja miksi sillä on merkitystä.</p></div>
+                <div className="ghConceptImage"><Image src="/proof-before.webp" alt="Havainnekuva keskeneräisestä remonttitilasta" width={420} height={560} sizes="(max-width: 767px) 100vw, 33vw" /><span className="ghConceptStamp">KONSEPTIESIMERKKI — EI ASIAKASTYÖ</span></div>
+                <div className="ghConceptCopy"><span>01 / TYÖN VAIHE</span><h3>Ennen valmista pintaa näkyy varsinainen työ.</h3><p>Esimerkkijulkaisu kertoo, mitä työvaiheessa tehdään ja miksi sillä on merkitystä.</p></div>
               </article>
               <article className="ghConceptCard">
-                <div className="ghConceptImage"><Image src="/bathroom-concept-v2.webp" alt="Havainnekuva kylpyhuoneesta, ei toteutettu asiakaskohde" width={1122} height={1402} sizes="(max-width: 767px) 100vw, 33vw" /></div>
-                <div className="ghConceptCopy"><p className="ghConceptLabel">KONSEPTIESIMERKKI — EI ASIAKASTYÖ</p><span>02 / VALMIS KOHDE</span><h3>Valmis tila, selkeä kuvaus tehdystä työstä.</h3><p>Esimerkkijulkaisu yhdistää kohdekuvan ja asiakkaalle ymmärrettävän kuvatekstin.</p></div>
+                <div className="ghConceptImage"><Image src="/bathroom-concept-v2.webp" alt="Havainnekuva kylpyhuoneesta, ei toteutettu asiakaskohde" width={1122} height={1402} sizes="(max-width: 767px) 100vw, 33vw" /><span className="ghConceptStamp">KONSEPTIESIMERKKI — EI ASIAKASTYÖ</span></div>
+                <div className="ghConceptCopy"><span>02 / VALMIS KOHDE</span><h3>Valmis tila, selkeä kuvaus tehdystä työstä.</h3><p>Esimerkkijulkaisu yhdistää kohdekuvan ja asiakkaalle ymmärrettävän kuvatekstin.</p></div>
               </article>
               <article className="ghConceptCard">
-                <div className="ghConceptImage"><Image src="/proof-after.webp" alt="Havainnollistava sisältögrafiikka kylpyhuoneesta, ei asiakastyö" width={420} height={560} sizes="(max-width: 767px) 100vw, 33vw" /></div>
-                <div className="ghConceptCopy"><p className="ghConceptLabel">KONSEPTIESIMERKKI — EI ASIAKASTYÖ</p><span>03 / SISÄLTÖGRAFIIKKA</span><h3>Työkuvasta valmis somejulkaisu.</h3><p>Esimerkki näyttää, miten kuva, otsikko ja tarkentava teksti kootaan julkaistavaan muotoon.</p></div>
+                <div className="ghConceptImage ghConceptGraphic"><span className="ghConceptGraphicMark" aria-hidden="true">✳</span><span className="ghConceptGraphicType">TYÖMAA<br />→ JULKAISU</span><span className="ghConceptGraphicRule">KUVAT · FAKTAT · TEKSTI</span><span className="ghConceptStamp">KONSEPTIESIMERKKI — EI ASIAKASTYÖ</span></div>
+                <div className="ghConceptCopy"><span>03 / SISÄLTÖGRAFIIKKA</span><h3>Työkuvasta valmis somejulkaisu.</h3><p>Esimerkki näyttää, miten kuva, otsikko ja tarkentava teksti kootaan julkaistavaan muotoon.</p></div>
               </article>
             </div>
           </div>

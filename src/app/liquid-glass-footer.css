@@ -165,28 +165,17 @@
   min-height: 64px;
   padding: 16px 19px 16px 22px;
   overflow: hidden;
-  border: 1px solid rgba(247,244,239,.73);
-  border-radius: 15px;
-  background:
-    linear-gradient(123deg, rgba(247,244,239,.32), rgba(247,244,239,.10) 46%, rgba(247,244,239,.27));
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.44), 0 10px 30px rgba(0,0,0,.17);
+  border: 1px solid #c9282d;
+  border-radius: 0;
+  background: #c9282d;
+  box-shadow: none;
   color: #fff;
   font-size: 14px;
   font-weight: 800;
   letter-spacing: .035em;
   text-transform: uppercase;
 }
-.ghLiquidFooterButton::after {
-  content: '';
-  position: absolute;
-  inset: 1px;
-  z-index: -1;
-  border-radius: inherit;
-  background: linear-gradient(100deg, transparent 20%, rgba(255,255,255,.14), transparent 70%);
-  pointer-events: none;
-}
+.ghLiquidFooterButton::after { content: none; }
 .ghLiquidFooterButton span:last-child { font-size: 24px; font-weight: 400; line-height: 1; }
 .ghLiquidFooterMail {
   display: inline-flex;
@@ -362,10 +351,9 @@
     transition: transform .22s ease, border-color .22s ease, background .22s ease, box-shadow .22s ease;
   }
   .ghLiquidFooterButton:hover {
-    transform: translateY(-3px);
-    border-color: #fff;
-    background: linear-gradient(123deg, rgba(247,244,239,.36), rgba(247,244,239,.16) 46%, rgba(247,244,239,.33));
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 15px 38px rgba(0,0,0,.26);
+    border-color: #f7f4ef;
+    background: #a81f25;
+    box-shadow: none;
   }
   .ghLiquidFooterSocial>a:hover {
     transform: translateY(-3px);
