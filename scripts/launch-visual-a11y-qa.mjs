@@ -141,7 +141,7 @@ try {
   const formA11y = await evaluate(client, `(() => {
     const form = document.querySelector('#yhteys form');
     if (!form) return { exists: false };
-    const named = ['name','company','email','phone','profile','service','message'];
+    const named = ['name','company','contact','profile'];
     return {
       exists: true,
       labelsPresent: named.every((name) => {
