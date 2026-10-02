@@ -112,9 +112,9 @@ The approved Hanna Nyholm founder portrait is stored as a local site asset. Repl
 
 ## Lead delivery
 
-`POST /api/leads` validates the request and calls the restricted Supabase RPC `submit_ghoulhouse_lead_v3` using the public Supabase publishable key. Row-level security prevents anonymous table reads or edits.
+`POST /api/leads` validates the request, derives a SHA-256 rate key from Vercel's trusted client-IP header, and calls the `ghoulhouse-lead-ingest` Supabase Edge Function with Vercel's signed OIDC workload token. The Edge Function verifies the Vercel team/project/environment identity before calling backend-only RPC `submit_ghoulhouse_lead_v4`.
 
-The `v3` RPC is the only intentional anonymous **ingest-only** boundary. Obsolete `submit_ghoulhouse_lead` and `submit_ghoulhouse_lead_v2` RPCs have anonymous execution revoked. `anon` has no direct `SELECT`/`INSERT` access to `public.leads`, no access to the private rate-limit table, and cannot use the `private` schema. The RPC validates all input lengths, rejects unsafe line breaks in identity fields, uses an empty `search_path`, and applies a database transaction advisory lock plus a 5 submissions / 10 minutes per-IP rate limit so concurrent requests cannot race around the limiter.
+`v4` is the trusted backend ingest boundary and is executable only by the backend role. `anon` has no direct `SELECT`/`INSERT` access to `public.leads` or the private distributed rate-limit bucket. The database applies a transaction advisory lock plus a 5 submissions / 10 minutes rate limit keyed by the server-derived client hash, so separate Vercel instances share one authoritative limiter and concurrent requests cannot race around it. Legacy public RPCs are retired after the OIDC cutover is verified.
 
 The database stores the lead and sends the notification through Resend with a restricted Resend API key stored in Supabase Vault. Production does not require a Supabase service-role key, database password, JWT secret or Resend API key in the browser bundle.
 
@@ -123,7 +123,8 @@ Production flow:
 ```text
 Browser
 → POST /api/leads
-→ Supabase RPC submit_ghoulhouse_lead_v3
+→ Vercel OIDC-authenticated Supabase Edge Function
+→ backend-only RPC submit_ghoulhouse_lead_v4
 → public.leads
 → database notification trigger
 → Resend
