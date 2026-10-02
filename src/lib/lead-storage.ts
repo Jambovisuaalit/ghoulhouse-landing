@@ -1,93 +1,139 @@
 import type { LeadInput } from './lead';
 
 const DEFAULT_SUPABASE_URL = 'https://qkmyzbqhepapiowrttpz.supabase.co';
-const DEFAULT_SUPABASE_PUBLISHABLE_KEY =
-  'sb_publishable_b4zwfIhyyo-wdnqcxXRCgA_TxMl3puZ';
-
-const LEAD_STORAGE_TIMEOUT_MS = 5_000;
+const LEAD_STORAGE_TIMEOUT_MS = 6_000;
 
 export class LeadStorageError extends Error {
   readonly code: 'not_configured' | 'rate_limited' | 'storage_timeout' | 'storage_failed';
+  readonly retryAfterSeconds?: number;
 
   constructor(
     code: 'not_configured' | 'rate_limited' | 'storage_timeout' | 'storage_failed',
-    message: string
+    message: string,
+    retryAfterSeconds?: number
   ) {
     super(message);
     this.name = 'LeadStorageError';
     this.code = code;
+    this.retryAfterSeconds = retryAfterSeconds;
   }
 }
 
-function getSupabaseConfig() {
+function getTrustedIngestUrl() {
   const url =
     process.env.SUPABASE_URL ||
     process.env.NEXT_PUBLIC_SUPABASE_URL ||
     DEFAULT_SUPABASE_URL;
-  const publishableKey =
-    process.env.SUPABASE_PUBLISHABLE_KEY ||
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
-    DEFAULT_SUPABASE_PUBLISHABLE_KEY;
 
-  if (!url || !publishableKey) {
+  if (!url) {
     throw new LeadStorageError(
       'not_configured',
-      'Supabase lead storage is not configured.'
+      'Trusted lead ingest is not configured.'
     );
   }
 
-  return {
-    url: url.replace(/\/$/, ''),
-    publishableKey,
-  };
+  return url.replace(/\/$/, '');
 }
 
-export async function storeLead(lead: LeadInput) {
-  const { url, publishableKey } = getSupabaseConfig();
+function requireWorkloadToken(workloadToken: string | null | undefined) {
+  const token = workloadToken?.trim();
+
+  if (!token) {
+    throw new LeadStorageError(
+      'not_configured',
+      'Vercel workload identity is not available for this request.'
+    );
+  }
+
+  return token;
+}
+
+function retryAfterSeconds(response: Response) {
+  const value = Number(response.headers.get('retry-after') || 600);
+  return Number.isFinite(value) && value > 0 ? Math.ceil(value) : 600;
+}
+
+export async function checkLeadStorageHealth(workloadToken: string | null | undefined) {
+  const url = getTrustedIngestUrl();
+  const token = requireWorkloadToken(workloadToken);
 
   let response: Response;
 
   try {
-    response = await fetch(`${url}/rest/v1/rpc/submit_ghoulhouse_lead_v3`, {
-      method: 'POST',
+    response = await fetch(`${url}/functions/v1/ghoulhouse-lead-ingest`, {
+      method: 'GET',
       headers: {
-        apikey: publishableKey,
+        authorization: `Bearer ${token}`,
         accept: 'application/json',
-        'content-type': 'application/json',
       },
-      body: JSON.stringify({
-        p_intent: lead.intent,
-        p_company: lead.company,
-        p_name: lead.name,
-        p_email: lead.email || null,
-        p_profile: lead.profile,
-        p_phone: lead.phone || null,
-        p_website: lead.website || null,
-        p_instagram: lead.instagram || null,
-        p_message: lead.message || null,
-        p_service: lead.service || (lead.intent === 'photos' ? 'social' : null),
-        p_no_profile: lead.noProfile,
-      }),
       cache: 'no-store',
       signal: AbortSignal.timeout(LEAD_STORAGE_TIMEOUT_MS),
     });
   } catch (error) {
     if (error instanceof Error && (error.name === 'TimeoutError' || error.name === 'AbortError')) {
-      throw new LeadStorageError('storage_timeout', 'Supabase lead storage timed out.');
+      throw new LeadStorageError('storage_timeout', 'Trusted lead ingest health check timed out.');
     }
 
-    throw new LeadStorageError('storage_failed', 'Supabase lead storage request failed.');
+    throw new LeadStorageError('storage_failed', 'Trusted lead ingest health check failed.');
   }
 
   if (!response.ok) {
-    const detail = await response.text();
+    throw new LeadStorageError('storage_failed', 'Trusted lead ingest health check was rejected.');
+  }
+}
 
-    if (detail.includes('rate_limited')) {
-      throw new LeadStorageError('rate_limited', 'Lead rate limit exceeded.');
-    }
+export async function storeLead(
+  lead: LeadInput,
+  clientRateKey: string,
+  workloadToken: string | null | undefined
+) {
+  const url = getTrustedIngestUrl();
+  const token = requireWorkloadToken(workloadToken);
 
-    throw new LeadStorageError('storage_failed', 'Supabase lead storage failed.');
+  if (!/^[0-9a-f]{64}$/.test(clientRateKey)) {
+    throw new LeadStorageError('storage_failed', 'Trusted lead ingest client key is invalid.');
   }
 
-  return (await response.json()) as string | null;
+  let response: Response;
+
+  try {
+    response = await fetch(`${url}/functions/v1/ghoulhouse-lead-ingest`, {
+      method: 'POST',
+      headers: {
+        authorization: `Bearer ${token}`,
+        accept: 'application/json',
+        'content-type': 'application/json',
+        'x-gh-client-key': clientRateKey,
+      },
+      body: JSON.stringify(lead),
+      cache: 'no-store',
+      signal: AbortSignal.timeout(LEAD_STORAGE_TIMEOUT_MS),
+    });
+  } catch (error) {
+    if (error instanceof Error && (error.name === 'TimeoutError' || error.name === 'AbortError')) {
+      throw new LeadStorageError('storage_timeout', 'Trusted lead ingest timed out.');
+    }
+
+    throw new LeadStorageError('storage_failed', 'Trusted lead ingest request failed.');
+  }
+
+  if (response.status === 429) {
+    throw new LeadStorageError(
+      'rate_limited',
+      'Lead rate limit exceeded.',
+      retryAfterSeconds(response)
+    );
+  }
+
+  if (!response.ok) {
+    throw new LeadStorageError('storage_failed', 'Trusted lead ingest failed.');
+  }
+
+  const payload = (await response.json()) as { ok?: boolean; id?: string };
+
+  if (!payload.ok || !payload.id) {
+    throw new LeadStorageError('storage_failed', 'Trusted lead ingest returned an invalid response.');
+  }
+
+  return payload.id;
 }
