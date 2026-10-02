@@ -1,6 +1,6 @@
 import FunnelAnalytics from '@/components/analytics/FunnelAnalytics';
 import type { Metadata, Viewport } from 'next';
-import { Anton, Montserrat } from 'next/font/google';
+import { Montserrat } from 'next/font/google';
 import { siteConfig } from '@/config/site';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import AnalyticsConsent from '@/components/analytics/AnalyticsConsent';
@@ -14,12 +14,6 @@ import './official-brand.css';
 import './social-editorial.css';
 import './editorial-system.css';
 
-const anton = Anton({
-  weight: '400',
-  subsets: ['latin-ext'],
-  variable: '--font-display',
-  display: 'swap',
-});
 const montserrat = Montserrat({
   weight: ['400', '500', '600', '700', '800', '900'],
   subsets: ['latin-ext'],
@@ -122,7 +116,7 @@ const structuredData = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fi">
-      <body className={anton.variable + ' ' + montserrat.variable}>
+      <body className={montserrat.variable}>
         <GoogleAnalytics />
         <FunnelAnalytics />
         <ResponsiveNavState />

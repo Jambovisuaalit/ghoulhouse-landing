@@ -1,5 +1,7 @@
 'use client';
 
+import ArrowUpRight from '@/components/ArrowUpRight';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -35,7 +37,7 @@ export default function SiteChrome({ children }: { children: ReactNode }) {
               <Link key={href} href={href} aria-current={active(href) ? 'page' : undefined}>{label}</Link>
             ))}
           </nav>
-          <Link className="ghGlobalInquiry" href="/#yhteys">Pyydä ehdotus <span aria-hidden="true">↗</span></Link>
+          <Link className="ghGlobalInquiry" href="/#yhteys">Pyydä ehdotus <span aria-hidden="true"><ArrowUpRight /></span></Link>
           <details className="mobileNav ghGlobalMobileNav">
             <summary aria-label="Avaa valikko">VALIKKO <span aria-hidden="true">+</span></summary>
             <nav aria-label="Mobiilinavigaatio">

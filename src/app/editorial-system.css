@@ -11,7 +11,8 @@
   --gh-ed-white: #fffcf8;
   --gh-ed-red: #b80f1a;
   --gh-ed-rule: rgba(23,21,19,.27);
-  --gh-ed-label: 'Courier New', Courier, monospace;
+  --gh-ed-label: var(--font-body), Arial, sans-serif;
+  --font-display: Georgia, 'Times New Roman', serif;
   --gh-ed-serif: Georgia, 'Times New Roman', serif;
   --gh-ed-sans: var(--font-body), Arial, sans-serif;
   --gh-ed-shell: min(calc(100% - 96px), 1440px);
@@ -204,3 +205,32 @@ body .ghLiquidFooter .ghLiquidFooterStatement h2 {
   body .ghLiquidFooter .ghLiquidFooterStatement h2 { font-size: clamp(36px,8.3vw,55px); }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+/* Quiet shared UI: one body face, one heading face, flat contact surface. */
+.ghArrowIcon { display: inline-block; flex: 0 0 20px; vertical-align: middle; }
+body .ghLiquidFooter .ghLiquidFooterRim,
+body .ghLiquidFooter .ghLiquidFooterSurface {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+body .ghLiquidFooter .ghLiquidFooterRim::before,
+body .ghLiquidFooter .ghLiquidFooterSurface::before { content: none; }
+body .ghLiquidFooter .ghLiquidFooterInvite { padding-top: 0; }
+body .ghLiquidFooter .ghLiquidFooterButton {
+  min-height: 54px;
+  border-radius: 0;
+  background: var(--gh-ed-red);
+  border-color: var(--gh-ed-red);
+  font-family: var(--gh-ed-sans);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  box-shadow: none;
+}
+body .ghLiquidFooter .ghLiquidFooterButton:hover { background: #97101a; }
+body .ghLiquidFooter .ghLiquidFooterMail { font-size: 14px; font-weight: 500; }

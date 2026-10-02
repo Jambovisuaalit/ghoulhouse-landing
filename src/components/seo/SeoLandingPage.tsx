@@ -1,3 +1,4 @@
+import ArrowUpRight from '@/components/ArrowUpRight';
 import Link from 'next/link';
 import LeadForm from '@/components/LeadForm';
 import type { SeoClusterPage } from '@/data/seo-cluster';
@@ -62,7 +63,7 @@ export default function SeoLandingPage({ page }: { page: SeoClusterPage }) {
             <Link key={item.href} href={item.href}>
               <strong>{item.label}</strong>
               <span>{item.description}</span>
-              <span className="seoRelatedArrow" aria-hidden="true">↗</span>
+              <span className="seoRelatedArrow" aria-hidden="true"><ArrowUpRight /></span>
             </Link>
           ))}
         </nav>
