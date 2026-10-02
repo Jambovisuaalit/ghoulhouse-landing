@@ -145,14 +145,13 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
             </div>
             <div className="ghServiceList">
               {services.map((service) => (
-                <article key={service.index} className="ghServiceCard">
-                  <span className="ghServiceIndex">{service.index} / 03</span>
-                  <div className="ghServiceDetail"><span className="ghServiceKind">{service.kind}</span><h3>{service.title}</h3><p>{service.body}</p><ul className="ghServiceOutputs" aria-label={`${service.title} – toimituksen osat`}>{service.outputs.map((output) => <li key={output}>{output}</li>)}</ul><p className="ghServiceMeta">{service.meta}</p></div>
-                  <a className="ghButton ghServiceCta" href={service.href}>{service.link} <span aria-hidden="true"><ArrowUpRight /></span></a>
+                <article key={service.index} className={`ghServiceCard${service.index === '01' ? '' : ' ghServiceCardSecondary'}`}>
+
+                  <div className="ghServiceDetail"><span className="ghServiceKind">{service.kind}</span><h3>{service.title}</h3><p>{service.body}</p>{service.index === '01' && <ul className="ghServiceOutputs" aria-label={`${service.title} – toimituksen osat`}>{service.outputs.map((output) => <li key={output}>{output}</li>)}</ul>}{service.index === '01' && <p className="ghServiceMeta">{service.meta}</p>}</div>
+                  <a className={service.index === '01' ? 'ghButton ghServiceCta' : 'ghTextLink ghServiceCta'} href={service.href}>{service.link} <span aria-hidden="true"><ArrowUpRight /></span></a>
                 </article>
               ))}
             </div>
-            <div className="ghSectionCta"><a className="ghButton" href="/?intent=photos#yhteys">Pyydä 2 sisältöesimerkkiä <span aria-hidden="true"><ArrowUpRight /></span></a></div>
           </div>
         </section>
 
@@ -183,7 +182,6 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
               <h2 id="selected-title">TYÖ PUHUU.<br /><em>NÄYTÄ SE.</em></h2>
               <p>Oma julkaistu verkkosivutoteutuksemme on ensimmäinen dokumentoitu työnäyte. Lisäämme asiakastöitä vasta julkaisuluvan ja todennettavan aineiston perusteella.</p>
               <a className="ghTextLink" href="/referenssit">Katso toteutukset ja työnäytteet <span aria-hidden="true"><ArrowUpRight /></span></a>
-              <a className="ghButton ghSelectedInquiry" href="/?intent=photos#yhteys">Pyydä 2 sisältöesimerkkiä <span aria-hidden="true"><ArrowUpRight /></span></a>
             </div>
             <a className="ghSelectedCase" href="/tyot/ghoulhouse-verkkosivut" aria-label="Tutustu GhoulHousen oman verkkosivuston toteutusesittelyyn">
               <div className="ghSelectedCaseTop"><span>GH / OMA TOTEUTUS</span><span>AVAA TOTEUTUSESITTELY <ArrowUpRight /></span></div>
@@ -201,7 +199,6 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
             <ol className="ghSteps">
               {steps.map(([title, copy], i) => <li key={title}><div className="ghStepTop"><span>{String(i + 1).padStart(2, '0')}</span>{i < 3 && <span aria-hidden="true">→</span>}</div><h3>{title}</h3><p>{copy}</p></li>)}
             </ol>
-            <div className="ghProcessInquiry"><span>Katso, miltä kaksi sisältöä näyttäisi omista työkuvistanne.</span><a className="ghButton" href="/?intent=photos#yhteys">Pyydä 2 sisältöesimerkkiä <span aria-hidden="true"><ArrowUpRight /></span></a></div>
           </div>
         </section>
 
