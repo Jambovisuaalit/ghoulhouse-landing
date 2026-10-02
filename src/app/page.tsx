@@ -235,7 +235,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
 
         <section className="ghFounder ghSection" id="yritys" aria-labelledby="founder-title">
           <div className="ghShell ghFounderGrid">
-            <div className="ghFounderIdentity"><Image src="/ghoulhouse-mark.svg" alt="" width={176} height={176} /><p>GhoulHouse Oy<br /><span>Helsinki · suora yhteys Hannaan</span></p></div>
+            <div className="ghFounderIdentity"><Image className="ghFounderPortrait" src="/hanna-nyholm-portrait.webp" alt="Hanna Nyholm, GhoulHouse Oy:n yrittäjä" width={960} height={1200} sizes="(max-width: 767px) 90vw, 420px" /><p>GhoulHouse Oy<br /><span>Helsinki · suora yhteys Hannaan</span></p></div>
             <div className="ghSectionIntro"><p className="ghEyebrow">04 / GhoulHouse</p><h2 id="founder-title">HANNA NYHOLM.<br />GHOULHOUSE.</h2><p>Hanna Nyholm on GhoulHouse Oy:n yrittäjä ja yhteyshenkilö. Hän vastaa projektin aloituksesta ja työn etenemisen yhteensovittamisesta. Sovimme tehtävät, materiaalit ja hyväksynnät ennen toteutusta.</p><a className="ghTextLink" href="mailto:hanna@ghoulhouse.fi">hanna@ghoulhouse.fi <span aria-hidden="true"><ArrowUpRight /></span></a></div>
           </div>
         </section>
