@@ -1,3 +1,4 @@
+import ArrowUpRight from '@/components/ArrowUpRight';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -51,7 +52,7 @@ export default function Page() {
               <div><dt>Tila</dt><dd>Oma työnäyte — ei asiakasreferenssi</dd></div>
             </dl>
             <div className="heroActions">
-              <Link className="button button--signal" href="/tyot/ghoulhouse-verkkosivut">LUE TOTEUTUSESITTELY ↗</Link>
+              <Link className="button button--signal" href="/tyot/ghoulhouse-verkkosivut">LUE TOTEUTUSESITTELY <ArrowUpRight /></Link>
               <Link className="textLink" href="/verkkosivut-yritykselle">Miten toteutamme verkkosivut →</Link>
             </div>
           </div>
