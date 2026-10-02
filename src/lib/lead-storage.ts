@@ -7,12 +7,15 @@ const DEFAULT_SUPABASE_PUBLISHABLE_KEY =
 const LEAD_STORAGE_TIMEOUT_MS = 5_000;
 
 export class LeadStorageError extends Error {
+  readonly code: 'not_configured' | 'rate_limited' | 'storage_timeout' | 'storage_failed';
+
   constructor(
-    public readonly code: 'not_configured' | 'rate_limited' | 'storage_timeout' | 'storage_failed',
+    code: 'not_configured' | 'rate_limited' | 'storage_timeout' | 'storage_failed',
     message: string
   ) {
     super(message);
     this.name = 'LeadStorageError';
+    this.code = code;
   }
 }
 
