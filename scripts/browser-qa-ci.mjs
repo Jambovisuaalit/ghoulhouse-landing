@@ -323,7 +323,7 @@ try {
       `${viewport.width}x${viewport.height}: mobile header must use the official compact mark + vector wordmark.`);
     assert(metrics.brandLayout.header?.left >= -1 && metrics.brandLayout.header?.right <= metrics.innerWidth + 1 &&
       metrics.brandLayout.footer === '/ghoulhouse-logo-reverse.svg' &&
-      metrics.brandLayout.giantWordmark === '/ghoulhouse-wordmark-white.svg' &&
+      !metrics.brandLayout.giantWordmark &&
       metrics.brandLayout.mark === '/ghoulhouse-mark.svg' &&
       metrics.brandLayout.markFilter === 'none',
       `${viewport.width}x${viewport.height}: official logo contrast, load or clipping failed: ${JSON.stringify(metrics.brandLayout)}`);
@@ -332,9 +332,9 @@ try {
       `${viewport.width}x${viewport.height}: shared footer contents or flat surface incorrect: ${JSON.stringify(metrics.glassFooter)}`);
     assert(metrics.glassFooter.unclippedHeadings,
       `${viewport.width}x${viewport.height}: footer column headings are too large or clipped.`);
-    assert(metrics.glassFooter.inquiry === '/?intent=photos#yhteys' && metrics.glassFooter.inquiryRect?.height >= 44 &&
+    assert(!metrics.glassFooter.inquiry && metrics.formExists &&
       !metrics.glassFooter.fakeNewsletter,
-      `${viewport.width}x${viewport.height}: glass footer must have working inquiry CTA and no fake signup.`);
+      `${viewport.width}x${viewport.height}: homepage must use its existing form without a duplicate footer CTA.`);
     assert(metrics.seoSelected, `${viewport.width}x${viewport.height}: hidden service routing missing.`);
     assert(metrics.disclosure, `${viewport.width}x${viewport.height}: honest own-work disclosure missing.`);
     assert(!metrics.schemaTypes.includes('some-12-service') && !metrics.schemaTypes.includes('some-12-offer'), `${viewport.width}x${viewport.height}: product-specific schema remains on homepage.`);
