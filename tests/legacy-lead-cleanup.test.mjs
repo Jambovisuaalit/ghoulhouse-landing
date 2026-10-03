@@ -90,3 +90,31 @@ test('unexpected legacy overload rolls back the exact-signature drops', async ()
     await assertLegacyIntact(db);
   } finally { await db.close(); }
 });
+
+test('production smoke script rolls back leads, buckets and notification queue entries', async () => {
+  const db = await fixture();
+  try {
+    await db.exec(migration);
+    // Model pg_net's transactional queue; no network service is involved.
+    await db.exec(`
+      create schema net;
+      create table net.http_request_queue(id bigint generated always as identity);
+      alter table public.leads add column resend_request_id bigint;
+      alter table public.leads add column delivery_status text;
+      create function private.queue_fixture() returns trigger language plpgsql as $$
+      declare request_id bigint;
+      begin
+        insert into net.http_request_queue default values returning id into request_id;
+        update public.leads set resend_request_id=request_id,delivery_status='pending' where id=new.id;
+        return new;
+      end $$;
+      create trigger queue_fixture after insert on public.leads
+        for each row execute function private.queue_fixture();
+    `);
+    await db.exec(readFileSync(new URL('../supabase/tests/legacy_lead_cleanup_smoke.sql', import.meta.url), 'utf8'));
+    const { rows } = await db.query(`select (select count(*)::int from public.leads) as leads,
+      (select count(*)::int from private.lead_rate_buckets) as buckets,
+      (select count(*)::int from net.http_request_queue) as queued`);
+    assert.deepEqual(rows[0], { leads: 1, buckets: 0, queued: 0 });
+  } finally { await db.close(); }
+});
