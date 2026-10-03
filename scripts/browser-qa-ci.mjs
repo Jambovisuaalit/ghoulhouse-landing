@@ -1,3 +1,4 @@
+import { checkOverlayMenu } from './overlay-menu-qa.mjs';
 import { execFileSync, spawn } from 'node:child_process';
 import { mkdir, rm, writeFile } from 'node:fs/promises';
 
@@ -356,6 +357,7 @@ try {
 
     const screenshot = await client.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
     await writeFile(`${SCREENSHOT_DIR}/homepage-${viewport.width}x${viewport.height}.png`, Buffer.from(screenshot.data, 'base64'));
+    await checkOverlayMenu({ client, evaluate, assert, sleep, screenshotDir: SCREENSHOT_DIR, writeFile, label: `${viewport.width}x${viewport.height}` });
     results.push({ viewport: `${viewport.width}x${viewport.height}`, status: 'PASS' });
   }
 
