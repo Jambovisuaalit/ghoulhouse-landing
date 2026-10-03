@@ -51,23 +51,26 @@ Production flow:
 ```text
 Browser
 → POST /api/leads
-→ Supabase RPC submit_ghoulhouse_lead_v3
+→ Vercel OIDC-authenticated Supabase Edge Function
+→ backend-only RPC submit_ghoulhouse_lead_v4
 → public.leads
 → database notification trigger
 → Resend
+→ signed delivery webhook
+→ lead delivery state reconciliation
 → hello@ghoulhouse.fi
 ```
 
 - [x] Supabase lead table created with RLS enabled
 - [x] anonymous clients cannot read/update/delete lead rows
-- [x] restricted public submit RPC v3 enabled
-- [x] obsolete v1/v2 anonymous RPC execution revoked
+- [x] trusted backend-only submit RPC v4 enabled
+- [x] legacy v1/v2/v3 anonymous RPC execution revoked
 - [x] lead rate limiting enabled
 - [x] restricted Resend key stored in Supabase Vault
 - [x] live production POST returns HTTP 201
 - [x] test lead stored successfully
-- [x] Resend API returned success
-- [x] production notification delivered to `hello@ghoulhouse.fi`
+- [x] Resend send response reconciled to the originating lead
+- [x] signed Resend webhook recorded `email.sent` and `email.delivered`\n- [x] production notification delivered to `hello@ghoulhouse.fi`
 - [x] QA lead rows removed after verification
 
 ## 5. Vercel and domains

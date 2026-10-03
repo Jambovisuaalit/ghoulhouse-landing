@@ -116,7 +116,7 @@ The approved Hanna Nyholm founder portrait is stored as a local site asset. Repl
 
 `v4` is the trusted backend ingest boundary and is executable only by the backend role. `anon` has no direct `SELECT`/`INSERT` access to `public.leads` or the private distributed rate-limit bucket. The database applies a transaction advisory lock plus a 5 submissions / 10 minutes rate limit keyed by the server-derived client hash, so separate Vercel instances share one authoritative limiter and concurrent requests cannot race around it. Legacy v1-v3 RPCs have anonymous execution disabled after the verified OIDC cutover.
 
-The database stores the lead and sends the notification through Resend with a restricted Resend API key stored in Supabase Vault. Production does not require a Supabase service-role key, database password, JWT secret or Resend API key in the browser bundle.
+The database stores the lead and sends the notification through Resend with a restricted Resend API key stored in Supabase Vault. Resend delivery events are verified with Svix signatures by the `ghoulhouse-resend-events` Edge Function and reconciled back to the originating lead. A scheduled database reconciliation also records the initial Resend send-response so failed or malformed sends do not remain silently pending. Production does not require a Supabase service-role key, database password, JWT secret or Resend API key in the browser bundle.
 
 Production flow:
 
@@ -128,6 +128,8 @@ Browser
 → public.leads
 → database notification trigger
 → Resend
+→ signed Resend delivery webhook
+→ lead delivery state reconciliation
 → hello@ghoulhouse.fi
 ```
 
