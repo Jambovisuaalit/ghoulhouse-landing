@@ -114,7 +114,7 @@ The approved Hanna Nyholm founder portrait is stored as a local site asset. Repl
 
 `POST /api/leads` validates the request, derives a SHA-256 rate key from Vercel's trusted client-IP header, and calls the `ghoulhouse-lead-ingest` Supabase Edge Function with Vercel's signed OIDC workload token. The Edge Function verifies the Vercel team/project/environment identity before calling backend-only RPC `submit_ghoulhouse_lead_v4`.
 
-`v4` is the trusted backend ingest boundary and is executable only by the backend role. `anon` has no direct `SELECT`/`INSERT` access to `public.leads` or the private distributed rate-limit bucket. The database applies a transaction advisory lock plus a 5 submissions / 10 minutes rate limit keyed by the server-derived client hash, so separate Vercel instances share one authoritative limiter and concurrent requests cannot race around it. Legacy public RPCs are retired after the OIDC cutover is verified.
+`v4` is the trusted backend ingest boundary and is executable only by the backend role. `anon` has no direct `SELECT`/`INSERT` access to `public.leads` or the private distributed rate-limit bucket. The database applies a transaction advisory lock plus a 5 submissions / 10 minutes rate limit keyed by the server-derived client hash, so separate Vercel instances share one authoritative limiter and concurrent requests cannot race around it. Legacy v1-v3 RPCs have anonymous execution disabled after the verified OIDC cutover.
 
 The database stores the lead and sends the notification through Resend with a restricted Resend API key stored in Supabase Vault. Production does not require a Supabase service-role key, database password, JWT secret or Resend API key in the browser bundle.
 
