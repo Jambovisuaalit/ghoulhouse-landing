@@ -1,0 +1,109 @@
+/* One quiet motion treatment, shared by homepage and inner routes. */
+.ghMenuTrigger,
+.ghMenuClose {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 48px;
+  flex: none;
+  padding: 10px 12px;
+  border: 1px solid currentColor;
+  border-radius: 0;
+  background: transparent;
+  color: #111;
+  font: 700 12px/1.3 var(--font-body), Arial, sans-serif;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.ghMenuTrigger[hidden], .ghMenuFallback[hidden] { display: none !important; }
+.ghMenuIcon { position: relative; display: block; width: 21px; height: 18px; }
+.ghMenuIcon i { position: absolute; left: 0; top: 5px; width: 21px; height: 2px; background: currentColor; }
+.ghMenuIcon i + i { top: 12px; }
+.ghMenuTrigger:hover { color: #c9282d; }
+.ghMenuTrigger:focus-visible { outline: 3px solid #c9282d; outline-offset: 4px; }
+.ghOverlayMenu {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: #111;
+  color: #f7f4ef;
+  overflow: auto;
+  overscroll-behavior: contain;
+  font-family: var(--font-body), Arial, sans-serif;
+}
+.ghOverlayMenu::backdrop { background: #111; }
+.ghOverlayMenu[open] { animation: ghMenuReveal 400ms cubic-bezier(.22, 1, .36, 1) both; }
+.ghOverlayMenu[data-closing] { animation: ghMenuExit 240ms ease-in both; }
+.ghOverlayShell {
+  width: min(calc(100% - 112px), 1280px);
+  min-height: 100%;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.ghOverlayTop { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 100px; border-bottom: 1px solid #f7f4ef33; }
+.ghOverlayBrand { display: inline-flex; flex: none; }
+.ghOverlayBrand img { width: 175px; height: 58px; object-fit: contain; }
+.ghMenuClose { color: #f7f4ef; border-color: #f7f4ef66; }
+.ghMenuClose .ghMenuIcon i { top: 8px; transform: rotate(45deg); }
+.ghMenuClose .ghMenuIcon i + i { top: 8px; transform: rotate(-45deg); }
+.ghOverlayBody { flex: 1; display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(260px, 1fr); gap: clamp(40px, 7vw, 120px); align-items: center; padding-block: 40px; }
+.ghOverlayNav { display: flex; flex-direction: column; }
+.ghOverlayNav > a { display: flex; align-items: baseline; gap: 22px; min-height: 60px; padding-block: 11px; color: #f7f4ef; text-decoration: none; text-transform: uppercase; font-size: clamp(32px, 4.3vw, 66px); font-weight: 800; letter-spacing: -.055em; line-height: 1.15; }
+.ghOverlayMenu[open] .ghOverlayNav > a { animation: ghMenuLink 320ms ease-out both; animation-delay: calc(100ms + var(--menu-index) * 25ms); }
+.ghOverlayNav > a:hover, .ghOverlayNav > a[aria-current='page'] { color: #c9282d; }
+.ghOverlayNumber { color: #c9282d; font-size: 14px; font-weight: 700; letter-spacing: 0; flex: none; }
+.ghOverlayArrow { margin-left: auto; font-size: .5em; opacity: 0; }
+.ghOverlayNav > a:is(:hover, :focus-visible) .ghOverlayArrow { opacity: 1; }
+.ghOverlayAside { align-self: end; padding-bottom: 14px; }
+.ghOverlayMenu .ghOverlayEyebrow { margin: 0 0 24px; color: #e6dfd5; font-size: 14px; font-weight: 500; line-height: 1.7; }
+.ghOverlayCta { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 104px; padding: 24px; background: #c9282d; color: #f7f4ef; text-decoration: none; font-size: clamp(17px, 1.7vw, 24px); font-weight: 700; line-height: 1.35; letter-spacing: -.025em; text-transform: uppercase; }
+.ghOverlayCta:hover { background: #a71f24; }
+.ghOverlayCta svg { width: 28px; height: 28px; }
+.ghOverlayMenu .ghOverlayNote { margin: 12px 0 32px; color: #e6dfd5; font-size: 12px; line-height: 1.6; }
+.ghOverlayEmail { display: inline-flex; align-items: center; min-height: 44px; color: #f7f4ef; font-size: 15px; text-underline-offset: 5px; }
+.ghOverlayServices { display: flex; flex-wrap: wrap; column-gap: 20px; }
+.ghOverlayServices a { display: inline-flex; align-items: center; min-height: 44px; color: #e6dfd5; font-size: 12px; }
+.ghOverlayBottom { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 65px; border-top: 1px solid #f7f4ef33; color: #e6dfd5; font-size: 12px; }
+.ghOverlayBottom a { display: inline-flex; align-items: center; min-height: 44px; color: inherit; }
+.ghOverlayMenu :is(a, button):focus-visible { outline: 2px solid #f7f4ef; outline-offset: 5px; }
+@keyframes ghMenuReveal { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0); } }
+@keyframes ghMenuExit { from { clip-path: inset(0); } to { clip-path: inset(0 0 100% 0); } }
+@keyframes ghMenuLink { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+/* Reserve space for the additional menu control before the header gets crowded. */
+@media (min-width: 768px) {
+  .homePage .ghHeaderInner, .ghGlobalHeaderInner { gap: 20px; }
+}
+@media (min-width: 768px) and (max-width: 1199px) {
+  .homePage .ghHeaderCta, .ghGlobalInquiry { display: none; }
+  .homePage .ghDesktopNav, .ghGlobalDesktopNav { margin-left: auto; }
+}
+@media (max-width: 767px) {
+  .ghMenuTrigger { margin-left: auto; min-height: 44px; gap: 10px; font-size: 11px; padding-inline: 10px; }
+  .ghOverlayShell { width: calc(100% - 40px); }
+  .ghOverlayTop { min-height: 80px; }
+  .ghOverlayBrand img { width: 145px; height: 48px; }
+  .ghMenuClose { min-height: 44px; font-size: 11px; padding-inline: 10px; }
+  .ghOverlayBody { grid-template-columns: minmax(0, 1fr); gap: 28px; padding-block: 24px 32px; }
+  .ghOverlayNav > a { font-size: clamp(28px, 7.7vw, 52px); gap: 16px; min-height: 52px; padding-block: 9px; }
+  .ghOverlayNumber { font-size: 12px; }
+  .ghOverlayArrow { opacity: 1; }
+  .ghOverlayAside { padding-bottom: 0; }
+  .ghOverlayMenu .ghOverlayEyebrow { display: none; }
+  .ghOverlayCta { min-height: 84px; padding: 18px; font-size: 18px; }
+  .ghOverlayMenu .ghOverlayNote { margin-bottom: 16px; }
+  .ghOverlayBottom { font-size: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ghOverlayMenu[open], .ghOverlayMenu[data-closing], .ghOverlayMenu[open] .ghOverlayNav > a { animation: none; }
+}

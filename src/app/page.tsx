@@ -1,3 +1,4 @@
+import MotionOverlayMenu from '@/components/MotionOverlayMenu';
 import ArrowUpRight from '@/components/ArrowUpRight';
 import Image from 'next/image';
 import LeadForm from '@/components/LeadForm';
@@ -94,13 +95,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
             {siteNavigation.map(({ href, label }) => <a key={href} href={href}>{label}</a>)}
           </nav>
           <a className="ghButton ghHeaderCta" href="/?intent=photos#yhteys">Pyydä 2 sisältöesimerkkiä <span aria-hidden="true"><ArrowUpRight /></span></a>
-          <details className="mobileNav ghMobileNav">
-            <summary aria-label="Avaa valikko">Valikko <span aria-hidden="true">+</span></summary>
-            <nav aria-label="Mobiilinavigaatio">
-              {siteNavigation.map(({ href, label }) => <a key={href} href={href}>{label}</a>)}
-              <a href="/?intent=photos#yhteys">Pyydä 2 sisältöesimerkkiä</a>
-            </nav>
-          </details>
+          <MotionOverlayMenu home />
         </div>
       </header>
 

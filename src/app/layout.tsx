@@ -5,7 +5,6 @@ import { siteConfig } from '@/config/site';
 import { isIndexingEnabled, isProductionDeployment } from '@/lib/seo';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import AnalyticsConsent from '@/components/analytics/AnalyticsConsent';
-import ResponsiveNavState from '@/components/ResponsiveNavState';
 import SiteChrome from '@/components/SiteChrome';
 import './site.css';
 import './global-chrome.css';
@@ -14,6 +13,7 @@ import './analytics-consent.css';
 import './official-brand.css';
 import './social-editorial.css';
 import './editorial-system.css';
+import './motion-overlay-menu.css';
 
 const montserrat = Montserrat({
   weight: ['400', '500', '600', '700', '800', '900'],
@@ -120,7 +120,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={montserrat.variable}>
         <GoogleAnalytics />
         <FunnelAnalytics />
-        <ResponsiveNavState />
         <SiteChrome>{children}</SiteChrome>
         <AnalyticsConsent />
         <script
