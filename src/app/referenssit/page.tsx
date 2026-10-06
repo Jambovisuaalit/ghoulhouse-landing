@@ -1,5 +1,6 @@
 import ArrowUpRight from '@/components/ArrowUpRight';
 import type { Metadata } from 'next';
+import { indexableRobots } from '@/lib/seo';
 import Image from 'next/image';
 import Link from 'next/link';
 import '../proof.css';
@@ -15,9 +16,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [{ url: '/opengraph-image', width: 1200, height: 630 }],
   },
-  robots: process.env.VERCEL_ENV === 'production'
-    ? { index: true, follow: true }
-    : { index: false, follow: false, nocache: true },
+  robots: indexableRobots(),
 };
 
 export default function Page() {

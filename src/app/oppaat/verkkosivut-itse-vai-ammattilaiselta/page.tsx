@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { indexableRobots } from '@/lib/seo';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
     url: '/oppaat/verkkosivut-itse-vai-ammattilaiselta',
     type: 'article',
   },
-  robots: process.env.VERCEL_ENV === 'production' ? { index: true, follow: true } : { index: false, follow: false, nocache: true },
+  robots: indexableRobots(),
 };
 
 const checks = [

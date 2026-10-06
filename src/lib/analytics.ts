@@ -15,7 +15,12 @@ export function trackEvent(event: FunnelEvent, properties: AnalyticsProperties =
   const data = form ? new FormData(form) : null;
   const intent = data?.get('intent') === 'photos' ? 'photos' : 'booking';
   const service = String(data?.get('service') || (intent === 'photos' ? 'social' : 'unspecified'));
-  properties = { service, intent, ...properties };
+  properties = {
+    page_path: window.location.pathname,
+    service,
+    intent,
+    ...properties,
+  };
   const target = window as AnalyticsWindow;
   const consent = window.localStorage.getItem('ghoulhouse_analytics_consent') === 'accepted';
 
