@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { indexableRobots } from '@/lib/seo';
 import Link from 'next/link';
 import { websiteResources } from '@/data/website';
 
@@ -7,7 +8,7 @@ export const metadata: Metadata = {
   description: 'Käytännön oppaat yrityksen verkkosivuihin, some-sisältöihin ja digitaaliseen näkyvyyteen. Katso hinnat, ohjeet ja toimialakohtaiset resurssit.',
   alternates: { canonical: '/resurssit' },
   openGraph: { title: 'Yrityksen verkkosivut, some ja SEO – oppaat | GhoulHouse', description: 'Käytännön oppaat yrityksen verkkosivuihin, some-sisältöihin ja digitaaliseen näkyvyyteen.', url: '/resurssit', type: 'website', images: [{ url: '/opengraph-image', width: 1200, height: 630 }] },
-  robots: process.env.VERCEL_ENV === 'production' ? { index: true, follow: true } : { index: false, follow: false, nocache: true },
+  robots: indexableRobots(),
 };
 
 export default function Page() {

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { indexableRobots } from '@/lib/seo';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
@@ -6,7 +7,7 @@ export const metadata: Metadata = {
   description: 'Käytännön kuvausohje: miten työmaalta otetaan kuvia, joista voidaan rakentaa some- ja referenssisisältöä.',
   alternates: { canonical: '/oppaat/tyomaakuvat-sosiaaliseen-mediaan' },
   openGraph: { title: 'Työmaakuvat sosiaaliseen mediaan | GhoulHouse', description: 'Käytännön kuvausohje työmaakuvien hyödyntämiseen somessa.', url: '/oppaat/tyomaakuvat-sosiaaliseen-mediaan', type: 'article', images: [{ url: '/opengraph-image', width: 1200, height: 630 }] },
-  robots: process.env.VERCEL_ENV === 'production' ? { index: true, follow: true } : { index: false, follow: false, nocache: true },
+  robots: indexableRobots(),
 };
 
 export default function Page() {

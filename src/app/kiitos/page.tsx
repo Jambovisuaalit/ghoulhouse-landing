@@ -14,16 +14,16 @@ type ConfirmationQuery = { intent?: string; service?: string };
 
 const proposals = {
   websites: {
-    heading: 'VERKKOSIVUT.',
-    copy: 'Verkkosivuja koskeva ehdotuspyyntösi on vastaanotettu. Käymme läpi yrityksesi tiedot ja mahdollisen nykyisen sivuston sekä otamme yhteyttä sopiaksemme seuraavasta askeleesta.',
+    heading: 'VERKKOSIVUARVIO.',
+    copy: 'Verkkosivuarviopyyntösi on vastaanotettu. Käymme läpi yrityksesi tiedot ja mahdollisen nykyisen sivuston sekä palaamme rajatulla ehdotuksella seuraavasta askeleesta.',
   },
   social: {
-    heading: 'SOME-EHDOTUS.',
-    copy: 'Some-sisällöntuotantoa koskeva ehdotuspyyntösi on vastaanotettu. Käymme läpi yrityksesi tiedot ja otamme yhteyttä sopiaksemme seuraavasta askeleesta.',
+    heading: 'SOME 12.',
+    copy: 'SOME 12 -aloituspyyntösi on vastaanotettu. Käymme läpi yrityksesi tiedot ja palaamme aloituksen seuraavalla askeleella.',
   },
   seo: {
-    heading: 'HAKUNÄKYVYYS.',
-    copy: 'Hakukonenäkyvyyttä koskeva ehdotuspyyntösi on vastaanotettu. Käymme läpi yrityksesi tiedot ja otamme yhteyttä sopiaksemme seuraavasta askeleesta.',
+    heading: 'SEO-ARVIO.',
+    copy: 'SEO-arviopyyntösi on vastaanotettu. Käymme läpi nykyisen verkkosivun lähtötilanteen ja palaamme rajatulla ehdotuksella seuraavasta askeleesta.',
   },
 } as const;
 
