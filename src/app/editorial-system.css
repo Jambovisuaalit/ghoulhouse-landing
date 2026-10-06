@@ -194,8 +194,13 @@ body { background: var(--gh-ed-paper); }
   font-size: 15px;
   line-height: 1.5;
 }
-.ghGlobalContent .seoFaq summary .seoFaqToggle { justify-self: end; }
-.ghGlobalContent .seoFaq details[open] .seoFaqToggle { transform: rotate(45deg); }
+.ghGlobalContent .seoFaq summary .seoFaqToggle {
+  justify-self: end;
+  font-size: 0;
+  line-height: 1;
+}
+.ghGlobalContent .seoFaq .seoFaqToggle::before { content: '+'; font-size: 20px; }
+.ghGlobalContent .seoFaq details[open] .seoFaqToggle::before { content: '−'; }
 @media(min-width: 768px) {
   .ghGlobalContent .seoPage :is(.seoTwoCol,.seoClusterNav) {
     grid-template-columns: minmax(0,.8fr) minmax(0,1.2fr);
