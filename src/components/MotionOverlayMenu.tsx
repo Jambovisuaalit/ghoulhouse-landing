@@ -115,7 +115,8 @@ export default function MotionOverlayMenu({ home = false }: { home?: boolean }) 
               <p className="ghOverlayNote">Maksuttomat esimerkit omista kuvistanne.</p>
               <a className="ghOverlayEmail" href="mailto:hanna@ghoulhouse.fi">hanna@ghoulhouse.fi</a>
               <div className="ghOverlayServices" aria-label="Palvelut">
-                {siteNavigation.slice(0, 3).map(({ href, label }) => <a key={href} href={href}>{label}</a>)}
+                {siteNavigation.slice(0, 2).map(({ href, label }) => <a key={href} href={href}>{label}</a>)}
+                <a href="/?service=seo#yhteys">SEO-ehdotus</a>
               </div>
             </div>
           </div>

@@ -2,7 +2,7 @@
 export const siteNavigation = [
   { href: '/some-sisallontuotanto', label: 'Social' },
   { href: '/verkkosivut-yritykselle', label: 'Verkkosivut' },
-  { href: '/resurssit', label: 'SEO & resurssit' },
+  { href: '/resurssit', label: 'Oppaat' },
   { href: '/referenssit', label: 'Työt' },
 ] as const;
 
