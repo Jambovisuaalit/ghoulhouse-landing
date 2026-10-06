@@ -368,12 +368,15 @@ try {
     await waitForDocument(client);
     await evaluate(client, 'document.querySelector("#esimerkit")?.scrollIntoView({behavior:"instant",block:"start"})');
     const proofImageLoaded = await evaluate(client, `new Promise((resolve) => {
-      const img = document.querySelector('.ghSelectedScreenshot');
-      if (!img) return resolve(false);
-      if (img.complete) return resolve(img.naturalWidth > 100);
-      img.addEventListener('load', () => resolve(img.naturalWidth > 100), { once:true });
-      img.addEventListener('error', () => resolve(false), { once:true });
-      setTimeout(() => resolve(false), 10000);
+      const deadline = Date.now() + 15000;
+      const check = () => {
+        const img = document.querySelector('.ghSelectedScreenshot');
+        if (!img) return resolve(false);
+        if (img.naturalWidth > 100) return resolve(true);
+        if (Date.now() >= deadline) return resolve(false);
+        requestAnimationFrame(check);
+      };
+      check();
     })`);
     assert(proofImageLoaded, `${viewport.width}x${viewport.height}: published-site proof image failed after scrolling into view.`);
     await sleep(180);
