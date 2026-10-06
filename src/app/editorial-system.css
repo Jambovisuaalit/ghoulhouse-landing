@@ -180,6 +180,12 @@ body { background: var(--gh-ed-paper); }
 .ghGlobalContent .seoPage .seoCards {
   grid-template-columns: minmax(0,1fr) !important;
 }
+.ghGlobalContent .seoPage .seoCards article { align-content: start; gap: 16px; }
+.ghGlobalContent .seoPage .seoCards article h3 {
+  font-size: clamp(24px,2.2vw,32px);
+  text-transform: none;
+  letter-spacing: -.035em;
+}
 .ghGlobalContent .seoFaq summary {
   display: grid;
   grid-template-columns: minmax(0,1fr) 20px;
