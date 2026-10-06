@@ -29,9 +29,13 @@ export async function checkOverlayMenu({ client, evaluate, assert, sleep, screen
   const image = await client.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
   await writeFile(`${screenshotDir}/overlay-${label}.png`, Buffer.from(image.data, 'base64'));
   await client.send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
-  await sleep(300);
-  assert(await evaluate(client, `!document.querySelector('.ghOverlayMenu').open && document.body.style.position !== 'fixed' && document.activeElement === document.querySelector('.ghMenuTrigger')`),
-    `${label}: Escape did not restore background/focus.`);
+  let escapeRestored = false;
+  for (let attempt = 0; attempt < 20; attempt++) {
+    escapeRestored = await evaluate(client, `!document.querySelector('.ghOverlayMenu').open && document.body.style.position !== 'fixed' && document.activeElement === document.querySelector('.ghMenuTrigger')`);
+    if (escapeRestored) break;
+    await sleep(100);
+  }
+  assert(escapeRestored, `${label}: Escape did not restore background/focus.`);
   await client.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
   await evaluate(client, `document.querySelector('.ghMenuTrigger').click()`);
   assert(await evaluate(client, `getComputedStyle(document.querySelector('.ghOverlayMenu')).animationName === 'none'`), `${label}: reduced motion ignored.`);
