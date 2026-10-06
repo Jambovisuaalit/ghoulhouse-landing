@@ -50,7 +50,7 @@ export default function SeoLandingPage({ page }: { page: SeoClusterPage }) {
       </div></section>
       <section className="seoSection seoSection--soft"><div className="contentShell seoTwoCol">
         <div><p className="kicker">UKK</p><h2>{headings?.faq ?? 'ENNEN KUIN ALOITAT.'}</h2></div>
-        <div className="seoFaq">{page.faq.map(([question, answer]) => <details key={question}><summary>{question}<span>+</span></summary><p>{answer}</p></details>)}</div>
+        <div className="seoFaq">{page.faq.map(([question, answer]) => <details key={question}><summary><span className="seoFaqQuestion">{question}</span><span className="seoFaqToggle" aria-hidden="true">+</span></summary><p>{answer}</p></details>)}</div>
       </div></section>
       <section className="seoSection"><div className="contentShell seoClusterNav">
         <div>

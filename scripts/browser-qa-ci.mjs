@@ -429,15 +429,19 @@ try {
   await evaluate(client, 'localStorage.setItem("ghoulhouse_analytics_consent","rejected")');
   for (const path of [
     '/some-sisallontuotanto', '/some-12', '/rakennusyrityksille',
-    '/lvi-yrityksille', '/instagram-sisallontuotanto',
+    '/lvi-yrityksille', '/instagram-sisallontuotanto', '/saneerausyrityksille',
+    '/some-sisallontuotanto/hinta',
   ]) {
-    for (const width of [320, 390, 768, 1440]) {
+    for (const width of [320, 390, 414, 768, 1440]) {
       const height = width < 768 ? 844 : 900;
       await client.send('Emulation.setDeviceMetricsOverride', {
         width, height, deviceScaleFactor: 1, mobile: width < 768,
       });
       await client.send('Page.navigate', {url: BASE_URL + path});
       await waitForDocument(client);
+      await evaluate(client, `document.fonts.ready.then(() => {
+        document.querySelectorAll('main.seoPage .seoFaq details').forEach(x => { x.open = true; });
+      })`);
       const layout = await evaluate(client, `(() => {
         const hero = document.querySelector('main.seoPage .seoHeroCopy');
         const h1 = hero?.querySelector('h1');
@@ -448,6 +452,24 @@ try {
           const b = el.getBoundingClientRect();
           return { left:b.left, right:b.right, top:b.top, bottom:b.bottom };
         };
+        const contentOverflow = [];
+        for (const el of document.querySelectorAll('main.seoPage h2, main.seoPage h3, main.seoPage p, main.seoPage summary')) {
+          const box = r(el);
+          if (!box || el.getClientRects().length === 0) continue;
+          const range = document.createRange();
+          range.selectNodeContents(el);
+          const lines = [...range.getClientRects()].filter(x => x.width > 0 && x.height > 0);
+          if (box.left < -2 || box.right > innerWidth + 2 ||
+              el.scrollWidth > el.clientWidth + 2 ||
+              lines.some(x => x.left < box.left - 2 || x.right > box.right + 2)) {
+            contentOverflow.push({tag:el.tagName,text:el.textContent?.trim().slice(0,100),box});
+          }
+        }
+        const cards = [...document.querySelectorAll('main.seoPage .seoCards article')];
+        const overlappingCards = cards.flatMap((a,i) => cards.slice(i+1).filter(b => {
+          const x=r(a), y=r(b);
+          return x.left < y.right - 2 && x.right > y.left + 2 && x.top < y.bottom - 2 && x.bottom > y.top + 2;
+        }).map(b => [a.querySelector('h3')?.textContent,b.querySelector('h3')?.textContent]));
         return {
           viewport: innerWidth,
           documentWidth: document.documentElement.scrollWidth,
@@ -460,6 +482,9 @@ try {
           brandSpans: [...(brand?.querySelectorAll('span') || [])].map(r),
           h2Count: h2.length,
           overflowHeadings: h2.filter(x => x.scrollWidth > x.clientWidth + 1).map(x => x.textContent?.trim()),
+          contentOverflow, overlappingCards,
+          openFaqCount: document.querySelectorAll('main.seoPage .seoFaq details[open]').length,
+          mobileCardsStacked: innerWidth >= 768 || cards.every(x => Math.abs(r(x).left-r(cards[0]).left) <= 1),
         };
       })()`);
       assert(layout.viewport === width && layout.h1 && layout.brand &&
@@ -475,9 +500,13 @@ try {
         layout.brand.bottom < layout.h1.top - 4;
       assert(disjoint && layout.overflowHeadings.length === 0 && layout.h2Count >= 5,
         `${path} ${width}px: Social H1/illustration overlap or H2 clipping: ${JSON.stringify(layout)}`);
+      assert(layout.contentOverflow.length === 0 && layout.overlappingCards.length === 0 &&
+        layout.mobileCardsStacked && layout.openFaqCount >= 1,
+        `${path} ${width}px: Social cards or open FAQ clipped/overlapping: ${JSON.stringify(layout)}`);
       if (width === 390 || width === 768) {
         const name = path.split('/').pop();
-        const image = await client.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
+        const image = await client.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: true,
+          clip: {x:0,y:0,width,height:await evaluate(client,'document.documentElement.scrollHeight'),scale:1} });
         await writeFile(`${SCREENSHOT_DIR}/social-${name}-${width}.png`, Buffer.from(image.data, 'base64'));
       }
       socialLayoutResults.push({ path, width, status: 'PASS' });
