@@ -108,7 +108,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
               <h1 id="hero-title"><span>TYÖMAAKUVAT</span><span>SISÄÄN.</span><span>VALMIS SOME</span><span>ULOS.</span></h1>
               <div className="ghArtHeroBottom">
                 <p className="ghLead">Muutamme omat työmaakuvanne valmiiksi Instagram- ja Facebook-sisällöiksi. Suunnittelu, tekstit ja julkaisu hoituvat puolestanne.</p>
-                <p className="ghHeroOffer">12 sisältöä / 30 pv / 490 € + ALV. Ei jatkosopimusta. Jos sisällöt eivät valmistu, teemme ne ilmaiseksi.</p>
+                <p className="ghHeroOffer">12 sisältöä / 30 pv / 490 € + ALV. Jatkosta sovitaan erikseen.</p>
                 <div className="ghArtHeroAction">
                   <div className="ghHeroActions">
                     <a className="ghButton" href="/?intent=photos#yhteys">Pyydä 2 sisältöesimerkkiä <span aria-hidden="true"><ArrowUpRight /></span></a>

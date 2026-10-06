@@ -485,7 +485,7 @@ try {
   }
 
   // Consent is an accessible branded in-flow strip on the homepage,
-  // but a compact fixed notice on inner pages. Verify both at realistic widths.
+  // and inner pages. Verify it never overlays a CTA at realistic widths.
   const innerConsentResults = [];
   for (const vp of [{ width: 320, height: 568 }, { width: 390, height: 844 }, { width: 1440, height: 900 }]) {
     await client.send('Emulation.setDeviceMetricsOverride', {
@@ -522,9 +522,11 @@ try {
         privacy: Boolean(el.querySelector('a[href="/tietosuoja"]')),
         genericStyles: Boolean(el.querySelector('.button,.kicker')),
         prematureGA: Boolean(document.querySelector('#google-analytics-src')),
+        inFlowSlot: el.parentElement?.id === 'gh-consent-inflow',
+        contentBelow: document.querySelector('#site-content').getBoundingClientRect().top >= box.bottom - 1,
       };
     })()`);
-    assert(styled.position === 'fixed' && styled.background === 'rgb(247, 244, 239)' &&
+    assert(styled.position === 'static' && styled.inFlowSlot && styled.contentBelow && styled.background === 'rgb(247, 244, 239)' &&
       styled.accent === 'rgb(201, 40, 45)' && styled.borderRadius === '0px',
       `${vp.width}x${vp.height}: inner consent still inherits a default popup skin: ${JSON.stringify(styled)}`);
     assert(styled.headingVisible && styled.brandedControls && styled.privacy && !styled.genericStyles &&
@@ -559,6 +561,21 @@ try {
       })`);
       assert(accepted.saved === 'accepted' && accepted.dismissed && accepted.settings,
         'Inner page: acceptance was not saved or the settings control disappeared.');
+      // Next Link navigation keeps the root consent component mounted while
+      // replacing SiteChrome's slot. Settings must reattach to the new slot.
+      await evaluate(client, 'document.querySelector(".ghGlobalBrand").click()');
+      let homeSettings = false;
+      for (let i = 0; i < 40; i++) {
+        homeSettings = await evaluate(client, 'location.pathname === "/" && !!document.querySelector("#gh-consent-inflow .analyticsSettings")');
+        if (homeSettings) break;
+        await sleep(120);
+      }
+      assert(homeSettings, 'Client navigation lost the consent settings on the homepage.');
+      await evaluate(client, 'document.querySelector(".analyticsSettings").click()');
+      await sleep(100);
+      assert(await evaluate(client, '!!document.querySelector("#gh-consent-inflow .analyticsConsent")'),
+        'Consent cannot be reopened after client navigation.');
+      await evaluate(client, 'document.querySelector(".analyticsConsent__reject").click()');
     }
     innerConsentResults.push({viewport:vp.width+'x'+vp.height,status:'PASS'});
   }

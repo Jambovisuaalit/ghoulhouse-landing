@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { usePathname } from 'next/navigation';
 
 const CONSENT_KEY = 'ghoulhouse_analytics_consent';
 
@@ -14,6 +15,7 @@ function readConsent(): ConsentState {
 }
 
 export default function AnalyticsConsent() {
+  const pathname = usePathname();
   const [consent, setConsent] = useState<ConsentState>(null);
   const [open, setOpen] = useState(false);
   const [ready, setReady] = useState(false);
@@ -22,12 +24,12 @@ export default function AnalyticsConsent() {
   useEffect(() => {
     setConsent(readConsent());
     setReady(true);
-    // On the homepage, keep consent in the document flow so it cannot cover CTA links.
+    // Rebind after client navigation: the old page's slot is removed from the DOM.
     setHomepageSlot(document.getElementById('gh-consent-inflow'));
     const handleOpen = () => setOpen(true);
     window.addEventListener('ghoulhouse:analytics-settings', handleOpen);
     return () => window.removeEventListener('ghoulhouse:analytics-settings', handleOpen);
-  }, []);
+  }, [pathname]);
 
   const save = (value: Exclude<ConsentState, null>) => {
     window.localStorage.setItem(CONSENT_KEY, value);

@@ -43,6 +43,7 @@ export default function SiteChrome({ children }: { children: ReactNode }) {
           <MotionOverlayMenu />
         </div>
       </header>
+      <div id="gh-consent-inflow" className="ghConsentSlot ghGlobalShell" />
       <div id="site-content" className="ghGlobalContent" tabIndex={-1}>{children}</div>
       <LiquidGlassFooter />
     </>
