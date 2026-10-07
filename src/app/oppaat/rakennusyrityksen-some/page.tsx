@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { indexableRobots } from '@/lib/seo';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
@@ -6,7 +7,7 @@ export const metadata: Metadata = {
   description: 'Opas rakennusyritykselle: miten työmaa-, valmis kohde- ja prosessikuvista rakennetaan jatkuvaa some-sisältöä.',
   alternates: { canonical: '/oppaat/rakennusyrityksen-some' },
   openGraph: { title: 'Rakennusyrityksen some | GhoulHouse', description: 'Miten työmaakuvista rakennetaan jatkuvaa some-sisältöä.', url: '/oppaat/rakennusyrityksen-some', type: 'article', images: [{ url: '/opengraph-image', width: 1200, height: 630 }] },
-  robots: process.env.VERCEL_ENV === 'production' ? { index: true, follow: true } : { index: false, follow: false, nocache: true },
+  robots: indexableRobots(),
 };
 
 export default function Page() {

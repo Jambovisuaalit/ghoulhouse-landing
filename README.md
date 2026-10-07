@@ -116,7 +116,11 @@ The approved Hanna Nyholm founder portrait is stored as a local site asset. Repl
 
 `v4` is the trusted backend ingest boundary and is executable only by the backend role. `anon` has no direct `SELECT`/`INSERT` access to `public.leads` or the private distributed rate-limit bucket. The database applies a transaction advisory lock plus a 5 submissions / 10 minutes rate limit keyed by the server-derived client hash, so separate Vercel instances share one authoritative limiter and concurrent requests cannot race around it. The legacy cleanup migration removes v1-v3 RPCs and their obsolete `private.lead_rate_limits` table after checking dependencies and recent activity. The active `private.lead_rate_buckets` table and stored leads are retained. See [legacy cleanup verification](docs/LEGACY_LEAD_CLEANUP.md).
 
-The database stores the lead and sends the notification through Resend with a restricted Resend API key stored in Supabase Vault. Resend delivery events are verified with Svix signatures by the `ghoulhouse-resend-events` Edge Function and reconciled back to the originating lead. A scheduled database reconciliation also records the initial Resend send-response so failed or malformed sends do not remain silently pending. Production does not require a Supabase service-role key, database password, JWT secret or Resend API key in the browser bundle.
+The database stores the lead and queues an immutable notification in `private.lead_notification_outbox`. The existing minutely reconciliation job sends through Resend with a restricted API key in Vault. New sends use a stable idempotency key and at most four total attempts, with exponential backoff for 429, 5xx and transport failures. Retries stop before the 24-hour idempotency window expires. Permanent failures are recorded in `private.lead_notification_alerts`; pre-cutover leads are never re-enqueued. Resend delivery events are verified with Svix signatures by the `ghoulhouse-resend-events` Edge Function and reconciled back to the originating lead. Production does not require a Supabase service-role key, database password, JWT secret or Resend API key in the browser bundle.
+
+`/api/health/lead-storage` now calls a backend-only read-only readiness RPC. It checks the lead tables, ingest function permission, notification trigger, Vault configuration, active cron, unresolved notification failures and stalled queue items. The `Production lead health` GitHub workflow checks the canonical production URL every 15 minutes and fails after three unsuccessful probes. Configure GitHub Actions notifications for the responsible maintainer. GitHub schedules may run late; this is operational monitoring, not an uptime SLA.
+
+On a notification failure, inspect the private outbox and alert, then correct configuration or payload before manually retrying. Do not re-enqueue an accepted email or retry an uncertain send after its idempotency window. A verified `sent`/`delivered` webhook resolves the corresponding alert automatically.
 
 Production flow:
 
@@ -136,6 +140,8 @@ Browser
 ## Google Analytics 4
 
 The site uses the approved public GA4 Measurement ID `G-43VQ8505YL` through the Google tag. Funnel events are routed through `src/lib/analytics.ts`; user-entered lead fields are not passed as analytics event properties.
+
+The tag loads only after consent. Withdrawal updates Google consent and immediately sets the property-specific `ga-disable` flag, including if the external script is still loading. Storage failures keep measurement disabled. Pricing and content-example visibility use explicit `data-analytics-section` targets and begin only once analytics is ready with consent.
 
 The runtime CSP allows only the Google Tag Manager script origin and the Google Analytics collection origins required by this integration. Plausible and Vercel Analytics are not part of the runtime stack.
 

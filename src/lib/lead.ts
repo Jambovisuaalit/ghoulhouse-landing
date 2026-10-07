@@ -94,13 +94,11 @@ function classifyProfile(value: string) {
 }
 
 export function validateLead(input: unknown): LeadValidationResult {
-  if (!input || typeof input !== 'object') {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) {
     return { ok: false, errors: { form: 'Virheellinen lomakedata.' } };
   }
 
   const source = input as Record<string, unknown>;
-  // Both the checkbox and the existing datalist choice express an explicit
-  // no-profile state. A checked box takes precedence over stale URL input.
   const explicitNoProfile =
     source.noProfile === true || source.noProfile === 'true' || source.noProfile === 'on';
   const rawProfile = clean(source.profile, limits.profile);
@@ -115,11 +113,12 @@ export function validateLead(input: unknown): LeadValidationResult {
   const contact = clean(source.contact, limits.email);
   const contactIsEmail = Boolean(contact && isValidEmail(contact));
   const contactIsPhone = Boolean(contact && isValidPhone(contact));
+  const service = ['websites', 'social', 'seo'].includes(String(source.service))
+    ? (source.service as 'websites' | 'social' | 'seo')
+    : undefined;
   const data: LeadInput = {
     intent: source.intent === 'photos' ? 'photos' : 'booking',
-    service: ['websites', 'social', 'seo'].includes(String(source.service))
-      ? (source.service as 'websites' | 'social' | 'seo')
-      : undefined,
+    service,
     company: clean(source.company, limits.company),
     name: clean(source.name, limits.name),
     email: (contact ? (contactIsEmail ? contact : '') : clean(source.email, limits.email)).toLowerCase(),
@@ -135,6 +134,12 @@ export function validateLead(input: unknown): LeadValidationResult {
 
   if (!data.company) errors.company = 'Yritys on pakollinen.';
   if (!data.name) errors.name = 'Nimi on pakollinen.';
+  if (typeof source.company === 'string' && /[\r\n]/.test(source.company)) {
+    errors.company = 'Anna yrityksen nimi yhdellä rivillä.';
+  }
+  if (typeof source.name === 'string' && /[\r\n]/.test(source.name)) {
+    errors.name = 'Anna nimi yhdellä rivillä.';
+  }
   if (contact && !contactIsEmail && !contactIsPhone) {
     errors.contact = 'Anna toimiva sähköpostiosoite tai puhelinnumero.';
   } else if (!contact && !data.email && !data.phone) {
@@ -145,7 +150,11 @@ export function validateLead(input: unknown): LeadValidationResult {
     errors.phone = 'Tarkista puhelinnumero.';
   }
 
-  if (!noProfile && !classifiedProfile) {
+  if (service === 'seo' && !data.website) {
+    errors.profile = 'SEO-arviota varten anna nykyinen verkkosivu.';
+  } else if (service === 'websites' && !noProfile && !data.website) {
+    errors.profile = 'Anna nykyinen verkkosivu (esim. yritys.fi) tai jätä kenttä tyhjäksi.';
+  } else if (!noProfile && !classifiedProfile) {
     errors.profile = 'Anna verkkosivu (esim. yritys.fi) tai Instagram (@yritys).';
   }
 

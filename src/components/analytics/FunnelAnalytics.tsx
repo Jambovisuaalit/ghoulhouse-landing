@@ -4,20 +4,21 @@ import { ctaContext } from '@/lib/cta-context';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import { trackEvent, type FunnelEvent } from '@/lib/analytics';
+import { canTrackAnalytics } from '@/lib/analytics-consent';
 
 const observedSections: Array<{
-  id: string;
+  section: string;
   event: FunnelEvent;
 }> = [
-  { id: 'hinta', event: 'pricing_view' },
-  { id: 'esimerkit', event: 'content_example_view' },
+  { section: 'pricing', event: 'pricing_view' },
+  { section: 'content-examples', event: 'content_example_view' },
 ];
 
 export default function FunnelAnalytics() {
   const pathname = usePathname();
   useEffect(() => {
     const handleAnalyticsReady = () => trackEvent('page_view');
-    if (window.localStorage.getItem('ghoulhouse_analytics_consent') === 'accepted') {
+    if (canTrackAnalytics()) {
       trackEvent('page_view');
     }
     window.addEventListener('ghoulhouse:analytics-ready', handleAnalyticsReady);
@@ -52,15 +53,15 @@ export default function FunnelAnalytics() {
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (!entry.isIntersecting || entry.intersectionRatio < 0.35) continue;
+          if (!canTrackAnalytics() || !entry.isIntersecting || entry.intersectionRatio < 0.35) continue;
 
           const match = observedSections.find(
-            (section) => section.id === entry.target.id
+            (section) => section.section === entry.target.getAttribute('data-analytics-section')
           );
 
-          if (!match || seen.has(match.id)) continue;
+          if (!match || seen.has(match.section)) continue;
 
-          seen.add(match.id);
+          seen.add(match.section);
           trackEvent(match.event);
           observer.unobserve(entry.target);
         }
@@ -68,14 +69,27 @@ export default function FunnelAnalytics() {
       { threshold: [0.35] }
     );
 
-    for (const section of observedSections) {
-      const element = document.getElementById(section.id);
-      if (element) observer.observe(element);
-    }
+    const syncObserver = () => {
+      observer.disconnect();
+      if (!canTrackAnalytics()) return;
+      for (const section of observedSections) {
+        if (seen.has(section.section)) continue;
+        for (const element of document.querySelectorAll(`[data-analytics-section="${section.section}"]`)) {
+          observer.observe(element);
+        }
+      }
+    };
+    syncObserver();
+    window.addEventListener('ghoulhouse:analytics-ready', syncObserver);
+    window.addEventListener('ghoulhouse:analytics-consent', syncObserver);
+    window.addEventListener('storage', syncObserver);
 
     return () => {
       window.removeEventListener('ghoulhouse:analytics-ready', handleAnalyticsReady);
       document.removeEventListener('click', handleClick);
+      window.removeEventListener('ghoulhouse:analytics-ready', syncObserver);
+      window.removeEventListener('ghoulhouse:analytics-consent', syncObserver);
+      window.removeEventListener('storage', syncObserver);
       observer.disconnect();
     };
   }, [pathname]);

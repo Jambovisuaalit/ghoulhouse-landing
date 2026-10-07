@@ -1,11 +1,10 @@
 import FunnelAnalytics from '@/components/analytics/FunnelAnalytics';
 import type { Metadata, Viewport } from 'next';
-import { Montserrat } from 'next/font/google';
+import localFont from 'next/font/local';
 import { siteConfig } from '@/config/site';
 import { isIndexingEnabled, isProductionDeployment } from '@/lib/seo';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import AnalyticsConsent from '@/components/analytics/AnalyticsConsent';
-import ResponsiveNavState from '@/components/ResponsiveNavState';
 import SiteChrome from '@/components/SiteChrome';
 import './site.css';
 import './global-chrome.css';
@@ -14,10 +13,12 @@ import './analytics-consent.css';
 import './official-brand.css';
 import './social-editorial.css';
 import './editorial-system.css';
+import './motion-overlay-menu.css';
 
-const montserrat = Montserrat({
-  weight: ['400', '500', '600', '700', '800', '900'],
-  subsets: ['latin-ext'],
+const montserrat = localFont({
+  src: './fonts/Montserrat-Variable.woff2',
+  weight: '400 900',
+  style: 'normal',
   variable: '--font-body',
   display: 'swap',
 });
@@ -70,10 +71,14 @@ export const viewport: Viewport = {
   colorScheme: 'light',
 };
 
-const socialProfiles = [
+const organizationProfiles = [
   process.env.NEXT_PUBLIC_LINKEDIN_URL?.trim(),
   process.env.NEXT_PUBLIC_INSTAGRAM_URL?.trim(),
 ].filter((value): value is string => Boolean(value));
+
+const founderProfiles = [
+  'https://fi.linkedin.com/in/hanna-nyholm-1b5213434',
+];
 
 const structuredData = {
   '@context': 'https://schema.org',
@@ -102,14 +107,32 @@ const structuredData = {
         '@id': 'https://ghoulhouse.fi/#logo',
         url: 'https://ghoulhouse.fi/ghoulhouse-logo.svg',
       },
-      sameAs: socialProfiles,
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: siteConfig.company.postalAddress.street,
+        postalCode: siteConfig.company.postalAddress.postalCode,
+        addressLocality: siteConfig.company.postalAddress.city,
+        addressCountry: 'FI',
+      },
+      contactPoint: {
+        '@type': 'ContactPoint',
+        contactType: 'sales',
+        email: 'hello@ghoulhouse.fi',
+        areaServed: 'FI',
+        availableLanguage: ['fi', 'en'],
+      },
+      areaServed: {
+        '@type': 'AdministrativeArea',
+        name: 'Uusimaa',
+      },
+      sameAs: organizationProfiles,
     },
     {
       '@type': 'Person',
       '@id': 'https://ghoulhouse.fi/#hanna-nyholm',
       name: siteConfig.company.founder,
       worksFor: { '@id': 'https://ghoulhouse.fi/#organization' },
-      sameAs: socialProfiles,
+      sameAs: founderProfiles,
     },
   ],
 };
@@ -120,7 +143,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={montserrat.variable}>
         <GoogleAnalytics />
         <FunnelAnalytics />
-        <ResponsiveNavState />
         <SiteChrome>{children}</SiteChrome>
         <AnalyticsConsent />
         <script

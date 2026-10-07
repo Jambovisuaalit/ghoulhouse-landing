@@ -2,38 +2,29 @@
 
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-
-const CONSENT_KEY = 'ghoulhouse_analytics_consent';
-
-type ConsentState = 'accepted' | 'rejected' | null;
-
-function readConsent(): ConsentState {
-  if (typeof window === 'undefined') return null;
-  const value = window.localStorage.getItem(CONSENT_KEY);
-  return value === 'accepted' || value === 'rejected' ? value : null;
-}
+import { usePathname } from 'next/navigation';
+import { readAnalyticsConsent, saveAnalyticsConsent, type ConsentState } from '@/lib/analytics-consent';
 
 export default function AnalyticsConsent() {
+  const pathname = usePathname();
   const [consent, setConsent] = useState<ConsentState>(null);
   const [open, setOpen] = useState(false);
   const [ready, setReady] = useState(false);
   const [homepageSlot, setHomepageSlot] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
-    setConsent(readConsent());
+    setConsent(readAnalyticsConsent());
     setReady(true);
-    // On the homepage, keep consent in the document flow so it cannot cover CTA links.
+    // Rebind after client navigation: the old page's slot is removed from the DOM.
     setHomepageSlot(document.getElementById('gh-consent-inflow'));
     const handleOpen = () => setOpen(true);
     window.addEventListener('ghoulhouse:analytics-settings', handleOpen);
     return () => window.removeEventListener('ghoulhouse:analytics-settings', handleOpen);
-  }, []);
+  }, [pathname]);
 
   const save = (value: Exclude<ConsentState, null>) => {
-    window.localStorage.setItem(CONSENT_KEY, value);
-    setConsent(value);
+    setConsent(saveAnalyticsConsent(value));
     setOpen(false);
-    window.dispatchEvent(new CustomEvent('ghoulhouse:analytics-consent'));
   };
 
   // Consent controls require JavaScript; never obstruct the native no-JS page.

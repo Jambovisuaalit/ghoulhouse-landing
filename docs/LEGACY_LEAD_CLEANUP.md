@@ -25,8 +25,8 @@ drops are atomic, including when an unexpected overload or view blocks cleanup.
    its generated timestamp may differ from the local CLI filename.
 4. Run `supabase/tests/legacy_lead_cleanup_smoke.sql` as the database administrator.
    The test checks v4 inserts, notification queueing, rate limits and phone-only
-   contact, then rolls back every synthetic row and queued HTTP request. Sequence
-   values may advance. It does not test fresh external email delivery.
+   contact, then rolls back every synthetic row and outbox entry. It never invokes
+   the notification worker and does not test fresh external email delivery.
 5. Verify `https://ghoulhouse.fi/api/health/lead-storage` returns 200, function
    definitions/permissions are unchanged, the cron succeeds, and Security Advisor
    no longer identifies the removed table. Existing signed delivery events prove

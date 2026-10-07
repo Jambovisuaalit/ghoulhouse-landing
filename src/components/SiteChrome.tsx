@@ -1,5 +1,7 @@
 'use client';
 
+import MotionOverlayMenu from '@/components/MotionOverlayMenu';
+
 import ArrowUpRight from '@/components/ArrowUpRight';
 
 import Image from 'next/image';
@@ -38,17 +40,10 @@ export default function SiteChrome({ children }: { children: ReactNode }) {
             ))}
           </nav>
           <Link className="ghGlobalInquiry" href="/#yhteys">Pyydä ehdotus <span aria-hidden="true"><ArrowUpRight /></span></Link>
-          <details className="mobileNav ghGlobalMobileNav">
-            <summary aria-label="Avaa valikko">VALIKKO <span aria-hidden="true">+</span></summary>
-            <nav aria-label="Mobiilinavigaatio">
-              {siteNavigation.map(({ href, label }) => (
-                <Link key={href} href={href} aria-current={active(href) ? 'page' : undefined}>{label}</Link>
-              ))}
-              <Link href="/#yhteys">Pyydä ehdotus</Link>
-            </nav>
-          </details>
+          <MotionOverlayMenu />
         </div>
       </header>
+      <div id="gh-consent-inflow" className="ghConsentSlot ghGlobalShell" />
       <div id="site-content" className="ghGlobalContent" tabIndex={-1}>{children}</div>
       <LiquidGlassFooter />
     </>

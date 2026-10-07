@@ -1,3 +1,4 @@
+import { checkOverlayMenu } from './overlay-menu-qa.mjs';
 import { execFileSync, spawn } from 'node:child_process';
 import { mkdir, rm, writeFile } from 'node:fs/promises';
 
@@ -356,6 +357,7 @@ try {
 
     const screenshot = await client.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
     await writeFile(`${SCREENSHOT_DIR}/homepage-${viewport.width}x${viewport.height}.png`, Buffer.from(screenshot.data, 'base64'));
+    await checkOverlayMenu({ client, evaluate, assert, sleep, screenshotDir: SCREENSHOT_DIR, writeFile, label: `${viewport.width}x${viewport.height}` });
     results.push({ viewport: `${viewport.width}x${viewport.height}`, status: 'PASS' });
   }
 
@@ -366,12 +368,15 @@ try {
     await waitForDocument(client);
     await evaluate(client, 'document.querySelector("#esimerkit")?.scrollIntoView({behavior:"instant",block:"start"})');
     const proofImageLoaded = await evaluate(client, `new Promise((resolve) => {
-      const img = document.querySelector('.ghSelectedScreenshot');
-      if (!img) return resolve(false);
-      if (img.complete) return resolve(img.naturalWidth > 100);
-      img.addEventListener('load', () => resolve(img.naturalWidth > 100), { once:true });
-      img.addEventListener('error', () => resolve(false), { once:true });
-      setTimeout(() => resolve(false), 10000);
+      const deadline = Date.now() + 15000;
+      const check = () => {
+        const img = document.querySelector('.ghSelectedScreenshot');
+        if (!img) return resolve(false);
+        if (img.naturalWidth > 100) return resolve(true);
+        if (Date.now() >= deadline) return resolve(false);
+        requestAnimationFrame(check);
+      };
+      check();
     })`);
     assert(proofImageLoaded, `${viewport.width}x${viewport.height}: published-site proof image failed after scrolling into view.`);
     await sleep(180);
@@ -427,15 +432,19 @@ try {
   await evaluate(client, 'localStorage.setItem("ghoulhouse_analytics_consent","rejected")');
   for (const path of [
     '/some-sisallontuotanto', '/some-12', '/rakennusyrityksille',
-    '/lvi-yrityksille', '/instagram-sisallontuotanto',
+    '/lvi-yrityksille', '/instagram-sisallontuotanto', '/saneerausyrityksille',
+    '/some-sisallontuotanto/hinta',
   ]) {
-    for (const width of [320, 390, 768, 1440]) {
+    for (const width of [320, 390, 414, 768, 1024, 1280, 1440]) {
       const height = width < 768 ? 844 : 900;
       await client.send('Emulation.setDeviceMetricsOverride', {
         width, height, deviceScaleFactor: 1, mobile: width < 768,
       });
       await client.send('Page.navigate', {url: BASE_URL + path});
       await waitForDocument(client);
+      await evaluate(client, `document.fonts.ready.then(() => {
+        document.querySelectorAll('main.seoPage .seoFaq details').forEach(x => { x.open = true; });
+      })`);
       const layout = await evaluate(client, `(() => {
         const hero = document.querySelector('main.seoPage .seoHeroCopy');
         const h1 = hero?.querySelector('h1');
@@ -446,6 +455,27 @@ try {
           const b = el.getBoundingClientRect();
           return { left:b.left, right:b.right, top:b.top, bottom:b.bottom };
         };
+        const contentOverflow = [];
+        for (const el of document.querySelectorAll('main.seoPage h2, main.seoPage h3, main.seoPage p, main.seoPage summary')) {
+          const box = r(el);
+          if (!box || el.getClientRects().length === 0) continue;
+          const range = document.createRange();
+          range.selectNodeContents(el);
+          const lines = [...range.getClientRects()].filter(x => x.width > 0 && x.height > 0);
+          const container = r(el.closest('.seoCards article, .seoFaq details'));
+          if (box.left < -2 || box.right > innerWidth + 2 ||
+              el.scrollWidth > el.clientWidth + 2 ||
+              (container && (box.left < container.left - 2 || box.right > container.right + 2 ||
+                lines.some(x => x.left < container.left - 2 || x.right > container.right + 2))) ||
+              lines.some(x => x.left < box.left - 2 || x.right > box.right + 2)) {
+            contentOverflow.push({tag:el.tagName,text:el.textContent?.trim().slice(0,100),box});
+          }
+        }
+        const cards = [...document.querySelectorAll('main.seoPage .seoCards article')];
+        const overlappingCards = cards.flatMap((a,i) => cards.slice(i+1).filter(b => {
+          const x=r(a), y=r(b);
+          return x.left < y.right - 2 && x.right > y.left + 2 && x.top < y.bottom - 2 && x.bottom > y.top + 2;
+        }).map(b => [a.querySelector('h3')?.textContent,b.querySelector('h3')?.textContent]));
         return {
           viewport: innerWidth,
           documentWidth: document.documentElement.scrollWidth,
@@ -458,6 +488,9 @@ try {
           brandSpans: [...(brand?.querySelectorAll('span') || [])].map(r),
           h2Count: h2.length,
           overflowHeadings: h2.filter(x => x.scrollWidth > x.clientWidth + 1).map(x => x.textContent?.trim()),
+          contentOverflow, overlappingCards,
+          openFaqCount: document.querySelectorAll('main.seoPage .seoFaq details[open]').length,
+          mobileCardsStacked: innerWidth >= 768 || cards.every(x => Math.abs(r(x).left-r(cards[0]).left) <= 1),
         };
       })()`);
       assert(layout.viewport === width && layout.h1 && layout.brand &&
@@ -473,9 +506,13 @@ try {
         layout.brand.bottom < layout.h1.top - 4;
       assert(disjoint && layout.overflowHeadings.length === 0 && layout.h2Count >= 5,
         `${path} ${width}px: Social H1/illustration overlap or H2 clipping: ${JSON.stringify(layout)}`);
-      if (width === 390 || width === 768) {
+      assert(layout.contentOverflow.length === 0 && layout.overlappingCards.length === 0 &&
+        layout.mobileCardsStacked && layout.openFaqCount >= 1,
+        `${path} ${width}px: Social cards or open FAQ clipped/overlapping: ${JSON.stringify(layout)}`);
+      if (width === 390 || width === 768 || width === 1280 || width === 1440) {
         const name = path.split('/').pop();
-        const image = await client.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
+        const image = await client.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: true,
+          clip: {x:0,y:0,width,height:await evaluate(client,'document.documentElement.scrollHeight'),scale:1} });
         await writeFile(`${SCREENSHOT_DIR}/social-${name}-${width}.png`, Buffer.from(image.data, 'base64'));
       }
       socialLayoutResults.push({ path, width, status: 'PASS' });
@@ -483,7 +520,7 @@ try {
   }
 
   // Consent is an accessible branded in-flow strip on the homepage,
-  // but a compact fixed notice on inner pages. Verify both at realistic widths.
+  // and inner pages. Verify it never overlays a CTA at realistic widths.
   const innerConsentResults = [];
   for (const vp of [{ width: 320, height: 568 }, { width: 390, height: 844 }, { width: 1440, height: 900 }]) {
     await client.send('Emulation.setDeviceMetricsOverride', {
@@ -520,9 +557,11 @@ try {
         privacy: Boolean(el.querySelector('a[href="/tietosuoja"]')),
         genericStyles: Boolean(el.querySelector('.button,.kicker')),
         prematureGA: Boolean(document.querySelector('#google-analytics-src')),
+        inFlowSlot: el.parentElement?.id === 'gh-consent-inflow',
+        contentBelow: document.querySelector('#site-content').getBoundingClientRect().top >= box.bottom - 1,
       };
     })()`);
-    assert(styled.position === 'fixed' && styled.background === 'rgb(247, 244, 239)' &&
+    assert(styled.position === 'static' && styled.inFlowSlot && styled.contentBelow && styled.background === 'rgb(247, 244, 239)' &&
       styled.accent === 'rgb(201, 40, 45)' && styled.borderRadius === '0px',
       `${vp.width}x${vp.height}: inner consent still inherits a default popup skin: ${JSON.stringify(styled)}`);
     assert(styled.headingVisible && styled.brandedControls && styled.privacy && !styled.genericStyles &&
@@ -557,6 +596,21 @@ try {
       })`);
       assert(accepted.saved === 'accepted' && accepted.dismissed && accepted.settings,
         'Inner page: acceptance was not saved or the settings control disappeared.');
+      // Next Link navigation keeps the root consent component mounted while
+      // replacing SiteChrome's slot. Settings must reattach to the new slot.
+      await evaluate(client, 'document.querySelector(".ghGlobalBrand").click()');
+      let homeSettings = false;
+      for (let i = 0; i < 40; i++) {
+        homeSettings = await evaluate(client, 'location.pathname === "/" && !!document.querySelector("#gh-consent-inflow .analyticsSettings")');
+        if (homeSettings) break;
+        await sleep(120);
+      }
+      assert(homeSettings, 'Client navigation lost the consent settings on the homepage.');
+      await evaluate(client, 'document.querySelector(".analyticsSettings").click()');
+      await sleep(100);
+      assert(await evaluate(client, '!!document.querySelector("#gh-consent-inflow .analyticsConsent")'),
+        'Consent cannot be reopened after client navigation.');
+      await evaluate(client, 'document.querySelector(".analyticsConsent__reject").click()');
     }
     innerConsentResults.push({viewport:vp.width+'x'+vp.height,status:'PASS'});
   }

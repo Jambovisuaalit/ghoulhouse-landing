@@ -25,7 +25,7 @@ export default function SeoLandingPage({ page }: { page: SeoClusterPage }) {
               </Link>
             </div>
             <div className="offerLine">
-              <strong>{overviewPage ? 'SISÄLLÖNTUOTANTO YRITYKSEN OMASTA MATERIAALISTA' : '490 € + ALV / 30 PÄIVÄÄ'}</strong>
+              <strong data-analytics-section={overviewPage ? undefined : 'pricing'}>{overviewPage ? 'SISÄLLÖNTUOTANTO YRITYKSEN OMASTA MATERIAALISTA' : '490 € + ALV / 30 PÄIVÄÄ'}</strong>
               <span>{overviewPage
                 ? 'Suunnittelu · materiaalit · hyväksyntä · julkaisu — tutustu erikseen kiinteään SOME 12 -pakettiin'
                 : '12 sisältöä · Instagram + Facebook · jatkosta sovitaan erikseen'}</span>
@@ -41,8 +41,8 @@ export default function SeoLandingPage({ page }: { page: SeoClusterPage }) {
         <ul className="seoList">{page.painPoints.map((item) => <li key={item}>{item}</li>)}</ul>
       </div></section>
       <section className="seoSection seoSection--dark"><div className="contentShell">
-        <div className="sectionIntro"><p className="kicker kicker--inverse">SISÄLTÖESIMERKIT</p><div><h2>{headings?.examples ?? 'MITÄ TYÖSTÄ VOI JULKAISTA?'}</h2></div></div>
-        <div className="seoCards">{page.examples.map((item, index) => <article key={item}><span>{String(index + 1).padStart(2, '0')}</span><h3>{item.split(':')[0]}</h3><p>{item.includes(':') ? item.split(':').slice(1).join(':').trim() : item}</p></article>)}</div>
+        <div className="sectionIntro"><p className="kicker kicker--inverse">SISÄLTÖESIMERKIT</p><div><h2 data-analytics-section="content-examples">{headings?.examples ?? 'MITÄ TYÖSTÄ VOI JULKAISTA?'}</h2></div></div>
+        <div className="seoCards">{page.examples.map((item, index) => <article key={item}><span>{String(index + 1).padStart(2, '0')}</span><h3>{page.exampleTitles?.[index] ?? item.split(':')[0]}</h3><p>{item.includes(':') ? item.split(':').slice(1).join(':').trim() : item}</p></article>)}</div>
       </div></section>
       <section className="seoSection"><div className="contentShell seoTwoCol">
         <div><p className="kicker">TUOTANTO</p><h2>{headings?.process ?? 'NELJÄ VAIHETTA. YKSI KOONTI.'}</h2></div>
@@ -50,7 +50,7 @@ export default function SeoLandingPage({ page }: { page: SeoClusterPage }) {
       </div></section>
       <section className="seoSection seoSection--soft"><div className="contentShell seoTwoCol">
         <div><p className="kicker">UKK</p><h2>{headings?.faq ?? 'ENNEN KUIN ALOITAT.'}</h2></div>
-        <div className="seoFaq">{page.faq.map(([question, answer]) => <details key={question}><summary>{question}<span>+</span></summary><p>{answer}</p></details>)}</div>
+        <div className="seoFaq">{page.faq.map(([question, answer]) => <details key={question}><summary><span className="seoFaqQuestion">{question}</span><span className="seoFaqToggle" aria-hidden="true">+</span></summary><p>{answer}</p></details>)}</div>
       </div></section>
       <section className="seoSection"><div className="contentShell seoClusterNav">
         <div>

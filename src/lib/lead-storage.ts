@@ -4,11 +4,11 @@ const DEFAULT_SUPABASE_URL = 'https://qkmyzbqhepapiowrttpz.supabase.co';
 const LEAD_STORAGE_TIMEOUT_MS = 6_000;
 
 export class LeadStorageError extends Error {
-  readonly code: 'not_configured' | 'rate_limited' | 'storage_timeout' | 'storage_failed';
+  readonly code: 'not_configured' | 'rate_limited' | 'storage_timeout' | 'storage_failed' | 'invalid_payload';
   readonly retryAfterSeconds?: number;
 
   constructor(
-    code: 'not_configured' | 'rate_limited' | 'storage_timeout' | 'storage_failed',
+    code: 'not_configured' | 'rate_limited' | 'storage_timeout' | 'storage_failed' | 'invalid_payload',
     message: string,
     retryAfterSeconds?: number
   ) {
@@ -80,6 +80,10 @@ export async function checkLeadStorageHealth(workloadToken: string | null | unde
   if (!response.ok) {
     throw new LeadStorageError('storage_failed', 'Trusted lead ingest health check was rejected.');
   }
+  const payload = (await response.json()) as { ok?: boolean; storage?: { ready?: boolean }; notifications?: { ready?: boolean } };
+  if (payload.ok !== true || payload.storage?.ready !== true || payload.notifications?.ready !== true) {
+    throw new LeadStorageError('storage_failed', 'Trusted lead ingest is not ready.');
+  }
 }
 
 export async function storeLead(
@@ -115,6 +119,10 @@ export async function storeLead(
     }
 
     throw new LeadStorageError('storage_failed', 'Trusted lead ingest request failed.');
+  }
+
+  if (response.status === 400) {
+    throw new LeadStorageError('invalid_payload', 'Trusted lead ingest rejected the form data.');
   }
 
   if (response.status === 429) {
