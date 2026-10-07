@@ -4,6 +4,17 @@ import { validateLead } from '../src/lib/lead.ts';
 
 const base = { intent: 'photos', service: 'social', company: 'QA', name: 'QA' };
 
+test('company and name reject LF and CR before database storage', () => {
+  for (const field of ['company', 'name']) {
+    for (const separator of ['\n', '\r']) {
+      const result = validateLead({ ...base, contact: 'qa@example.com', [field]: `QA${separator}Oy` });
+      assert.equal(result.ok, false);
+      assert.ok(result.errors[field]);
+    }
+  }
+  assert.equal(validateLead([]).ok, false);
+});
+
 test('short form accepts either email or phone with optional Instagram or website', () => {
   const email = validateLead({ ...base, contact: 'qa@example.com' });
   assert.equal(email.ok, true);

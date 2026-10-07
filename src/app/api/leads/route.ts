@@ -53,9 +53,13 @@ async function readBody(request: NextRequest) {
   const contentType = request.headers.get('content-type') || '';
 
   if (contentType.includes('application/json')) {
+    const body: unknown = await request.json();
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      throw new Error('invalid_payload');
+    }
     return {
       htmlForm: false,
-      body: (await request.json()) as Record<string, unknown>,
+      body: body as Record<string, unknown>,
     };
   }
 
@@ -124,6 +128,12 @@ export async function POST(request: NextRequest) {
     return json({ ok: true }, 201);
   } catch (error) {
     if (error instanceof LeadStorageError) {
+      if (error.code === 'invalid_payload') {
+        if (parsed.htmlForm) {
+          return leadFailureRedirect(request, 'validation', parsed.body.intent, parsed.body.service);
+        }
+        return json({ ok: false, code: 'validation_error', errors: { form: 'Tarkista lomakkeen tiedot.' } }, 400);
+      }
       if (error.code === 'rate_limited') {
         if (parsed.htmlForm) {
           return leadFailureRedirect(request, 'rate_limited', parsed.body.intent, parsed.body.service);

@@ -79,14 +79,27 @@ Deno.serve(async (req: Request) => {
   }
 
   if (req.method === "GET") {
-    return json(
-      {
-        ok: true,
-        environment: workload.environment,
-        project: workload.project,
-      },
-      200
-    );
+    const supabaseUrl = (Deno.env.get("SUPABASE_URL") || "").replace(/\/$/, "");
+    const secretKey = getSecretKey();
+    if (!supabaseUrl || !secretKey) {
+      return json({ ok: false, code: "storage_unavailable" }, 503);
+    }
+    try {
+      const response = await fetch(`${supabaseUrl}/rest/v1/rpc/check_ghoulhouse_lead_readiness`, {
+        method: "POST",
+        headers: { apikey: secretKey, accept: "application/json", "content-type": "application/json" },
+        body: "{}",
+        signal: AbortSignal.timeout(5_000),
+      });
+      if (!response.ok) return json({ ok: false, code: "storage_unavailable" }, 503);
+      const status = await response.json();
+      if (status?.ok !== true || status?.storage?.ready !== true || status?.notifications?.ready !== true) {
+        return json({ ok: false, code: "lead_pipeline_unavailable" }, 503);
+      }
+      return json({ ok: true, storage: { ready: true }, notifications: { ready: true } }, 200);
+    } catch {
+      return json({ ok: false, code: "storage_unavailable" }, 503);
+    }
   }
 
   if (req.method !== "POST") {

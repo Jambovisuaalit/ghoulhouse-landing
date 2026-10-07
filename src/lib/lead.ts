@@ -94,7 +94,7 @@ function classifyProfile(value: string) {
 }
 
 export function validateLead(input: unknown): LeadValidationResult {
-  if (!input || typeof input !== 'object') {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) {
     return { ok: false, errors: { form: 'Virheellinen lomakedata.' } };
   }
 
@@ -134,6 +134,12 @@ export function validateLead(input: unknown): LeadValidationResult {
 
   if (!data.company) errors.company = 'Yritys on pakollinen.';
   if (!data.name) errors.name = 'Nimi on pakollinen.';
+  if (typeof source.company === 'string' && /[\r\n]/.test(source.company)) {
+    errors.company = 'Anna yrityksen nimi yhdellä rivillä.';
+  }
+  if (typeof source.name === 'string' && /[\r\n]/.test(source.name)) {
+    errors.name = 'Anna nimi yhdellä rivillä.';
+  }
   if (contact && !contactIsEmail && !contactIsPhone) {
     errors.contact = 'Anna toimiva sähköpostiosoite tai puhelinnumero.';
   } else if (!contact && !data.email && !data.phone) {

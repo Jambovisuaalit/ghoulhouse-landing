@@ -25,7 +25,7 @@ export default function Page() {
       >
       <section className="websitePrice" aria-labelledby="website-price-title">
         <div className="contentShell websitePriceGrid">
-          <div><p className="kicker">HINTA</p><h2 id="website-price-title">HINTA RAKENTUU TYÖSTÄ, EI SIVUMÄÄRÄSTÄ.</h2></div>
+          <div><p className="kicker">HINTA</p><h2 id="website-price-title" data-analytics-section="pricing">HINTA RAKENTUU TYÖSTÄ, EI SIVUMÄÄRÄSTÄ.</h2></div>
           <div className="websitePriceCopy">
             <p>Verkkosivuprojektin hinta riippuu ennen kaikkea rakenteen laajuudesta, sisällön määrästä, integraatioista ja siitä, kuinka paljon olemassa olevaa materiaalia voidaan hyödyntää.</p>
             <ul><li>Perusrakenne ja suunnittelu</li><li>Palvelu- ja referenssisisällöt</li><li>Tekninen toteutus ja responsiivisuus</li><li>SEO-perusta ja julkaisu</li></ul>
