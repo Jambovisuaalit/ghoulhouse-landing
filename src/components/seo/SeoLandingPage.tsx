@@ -25,7 +25,7 @@ export default function SeoLandingPage({ page }: { page: SeoClusterPage }) {
               </Link>
             </div>
             <div className="offerLine">
-              <strong>{overviewPage ? 'SISÄLLÖNTUOTANTO YRITYKSEN OMASTA MATERIAALISTA' : '490 € + ALV / 30 PÄIVÄÄ'}</strong>
+              <strong data-analytics-section={overviewPage ? undefined : 'pricing'}>{overviewPage ? 'SISÄLLÖNTUOTANTO YRITYKSEN OMASTA MATERIAALISTA' : '490 € + ALV / 30 PÄIVÄÄ'}</strong>
               <span>{overviewPage
                 ? 'Suunnittelu · materiaalit · hyväksyntä · julkaisu — tutustu erikseen kiinteään SOME 12 -pakettiin'
                 : '12 sisältöä · Instagram + Facebook · jatkosta sovitaan erikseen'}</span>
@@ -41,7 +41,7 @@ export default function SeoLandingPage({ page }: { page: SeoClusterPage }) {
         <ul className="seoList">{page.painPoints.map((item) => <li key={item}>{item}</li>)}</ul>
       </div></section>
       <section className="seoSection seoSection--dark"><div className="contentShell">
-        <div className="sectionIntro"><p className="kicker kicker--inverse">SISÄLTÖESIMERKIT</p><div><h2>{headings?.examples ?? 'MITÄ TYÖSTÄ VOI JULKAISTA?'}</h2></div></div>
+        <div className="sectionIntro"><p className="kicker kicker--inverse">SISÄLTÖESIMERKIT</p><div><h2 data-analytics-section="content-examples">{headings?.examples ?? 'MITÄ TYÖSTÄ VOI JULKAISTA?'}</h2></div></div>
         <div className="seoCards">{page.examples.map((item, index) => <article key={item}><span>{String(index + 1).padStart(2, '0')}</span><h3>{page.exampleTitles?.[index] ?? item.split(':')[0]}</h3><p>{item.includes(':') ? item.split(':').slice(1).join(':').trim() : item}</p></article>)}</div>
       </div></section>
       <section className="seoSection"><div className="contentShell seoTwoCol">

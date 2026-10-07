@@ -3,16 +3,7 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { usePathname } from 'next/navigation';
-
-const CONSENT_KEY = 'ghoulhouse_analytics_consent';
-
-type ConsentState = 'accepted' | 'rejected' | null;
-
-function readConsent(): ConsentState {
-  if (typeof window === 'undefined') return null;
-  const value = window.localStorage.getItem(CONSENT_KEY);
-  return value === 'accepted' || value === 'rejected' ? value : null;
-}
+import { readAnalyticsConsent, saveAnalyticsConsent, type ConsentState } from '@/lib/analytics-consent';
 
 export default function AnalyticsConsent() {
   const pathname = usePathname();
@@ -22,7 +13,7 @@ export default function AnalyticsConsent() {
   const [homepageSlot, setHomepageSlot] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
-    setConsent(readConsent());
+    setConsent(readAnalyticsConsent());
     setReady(true);
     // Rebind after client navigation: the old page's slot is removed from the DOM.
     setHomepageSlot(document.getElementById('gh-consent-inflow'));
@@ -32,10 +23,8 @@ export default function AnalyticsConsent() {
   }, [pathname]);
 
   const save = (value: Exclude<ConsentState, null>) => {
-    window.localStorage.setItem(CONSENT_KEY, value);
-    setConsent(value);
+    setConsent(saveAnalyticsConsent(value));
     setOpen(false);
-    window.dispatchEvent(new CustomEvent('ghoulhouse:analytics-consent'));
   };
 
   // Consent controls require JavaScript; never obstruct the native no-JS page.

@@ -96,7 +96,7 @@ test('health check uses the same request-scoped OIDC-authenticated edge boundary
 
   globalThis.fetch = async (_url, init) => {
     method = init.method;
-    return new Response(JSON.stringify({ ok: true }), { status: 200 });
+    return new Response(JSON.stringify({ ok: true, storage: { ready: true }, notifications: { ready: true } }), { status: 200 });
   };
 
   try {
@@ -105,4 +105,19 @@ test('health check uses the same request-scoped OIDC-authenticated edge boundary
   } finally {
     globalThis.fetch = originalFetch;
   }
+});
+
+test('health fails closed on a superficial or degraded success response', async () => {
+  const originalFetch = globalThis.fetch;
+  try {
+    for (const body of [{ ok: true }, { ok: true, storage: { ready: false } },
+      { ok: true, storage: { ready: true }, notifications: { ready: false } }]) {
+      globalThis.fetch = async () => Response.json(body);
+      await assert.rejects(() => checkLeadStorageHealth(workloadToken),
+        error => error instanceof LeadStorageError && error.code === 'storage_failed');
+    }
+    globalThis.fetch = async () => Response.json({ code: 'invalid_payload' }, { status: 400 });
+    await assert.rejects(() => storeLead(lead, 'a'.repeat(64), workloadToken),
+      error => error instanceof LeadStorageError && error.code === 'invalid_payload');
+  } finally { globalThis.fetch = originalFetch; }
 });

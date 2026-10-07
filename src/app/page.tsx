@@ -109,7 +109,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
               <h1 id="hero-title"><span>TYÖMAAKUVAT</span><span>SISÄÄN.</span><span>VALMIS SOME</span><span>ULOS.</span></h1>
               <div className="ghArtHeroBottom">
                 <p className="ghLead">Muutamme omat työmaakuvanne valmiiksi Instagram- ja Facebook-sisällöiksi. Suunnittelu, tekstit ja julkaisu hoituvat puolestanne.</p>
-                <p className="ghHeroOffer">12 sisältöä / 30 pv / 490 € + ALV. Jatkosta sovitaan erikseen.</p>
+                <p className="ghHeroOffer" data-analytics-section="pricing">12 sisältöä / 30 pv / 490 € + ALV. Jatkosta sovitaan erikseen.</p>
                 <div className="ghArtHeroAction">
                   <div className="ghHeroActions">
                     <a className="ghButton" href="/?intent=photos#yhteys">Pyydä 2 sisältöesimerkkiä <span aria-hidden="true"><ArrowUpRight /></span></a>
@@ -155,7 +155,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
 
         <section className="ghConcepts ghSection" id="konseptit" aria-labelledby="concepts-title">
           <div className="ghShell">
-            <div className="ghSectionIntro"><p className="ghEyebrow">Sisältöesimerkit</p><h2 id="concepts-title">NÄIN TYÖSTÄ<br />TULEE SISÄLTÖÄ.</h2><p>Kahdessa esimerkissä sama kuva näkyy lähtömateriaalina ja julkaisuksi taitettuna. Kolmas näyttää tekstigrafiikan. Havainnekuvat eivät ole asiakastöitä tai remontin ennen–jälkeen-vertailuja.</p></div>
+            <div className="ghSectionIntro"><p className="ghEyebrow">Sisältöesimerkit</p><h2 id="concepts-title" data-analytics-section="content-examples">NÄIN TYÖSTÄ<br />TULEE SISÄLTÖÄ.</h2><p>Kahdessa esimerkissä sama kuva näkyy lähtömateriaalina ja julkaisuksi taitettuna. Kolmas näyttää tekstigrafiikan. Havainnekuvat eivät ole asiakastöitä tai remontin ennen–jälkeen-vertailuja.</p></div>
             <div className="ghConceptGrid">
               <article className="ghConceptCard">
                 <SocialConceptPreview image="/worksite-concept-v3.webp" alt="Havainnekuva remonttitilasta, sama kuva kuin lähtökuvassa" headline="Työ alkaa pinnan alta." />
