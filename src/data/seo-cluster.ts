@@ -1,6 +1,7 @@
 export type SeoClusterPage = {
   slug: string; title: string; description: string; h1: string; eyebrow: string; intro: string;
   painPoints: string[]; examples: string[]; process: string[]; faq: Array<[string, string]>;
+  exampleTitles?: string[];
   headings?: { challenge: string; examples: string; process: string; faq: string; related: string; contact: string };
 };
 
@@ -55,6 +56,7 @@ export const seoClusterPages: Record<string, SeoClusterPage> = {
       contact: 'ALOITETAAN YRITYKSEN OMISTA KUVISTA.',
     },
     painPoints: ['Sisällöntuotanto on epäsäännöllistä, vaikka materiaalia syntyy.', 'Yrittäjä joutuu itse miettimään mitä julkaistaan ja milloin.', 'Ulkoistaminen tuntuu raskaalta, jos jokainen julkaisu vaatii uuden briiffin.'],
+    exampleTitles: ['Työmaapäivitykset', 'Prosessi ja materiaalit', 'Usein kysytyt', 'Yhteydenotto'],
     examples: ['Työmaapäivitykset, referenssit ja valmiit kohteet.', 'Prosessi- ja materiaalisisällöt, jotka näyttävät miten työ tehdään.', 'Usein kysytyt kysymykset muutettuna lyhyiksi julkaisuiksi.', 'CTA-sisällöt, jotka ohjaavat kiinnostuneen yhteydenottoon.'],
     process: ['Sovitaan lähtömateriaali ja kuukauden olennaiset projektit.', 'GhoulHouse suunnittelee, kirjoittaa, käsittelee ja kokoaa sisällöt.', 'Asiakas tarkistaa yhden koontierän.', 'Sisällöt julkaistaan sovituissa kanavissa.'],
     faq: [['Mitä some-sisällöntuotanto sisältää?', 'SOME 12 sisältää 12 alkuperäistä sisältöä 30 päivässä, Instagramin ja Facebookin, suunnittelun, kuvankäsittelyn, copyt, ajastuksen, yhden korjauskierroksen ja kevyen kuukausiraportin.'], ['Tarvitaanko jatkuva sopimus?', 'Ei. Ensimmäiset 30 päivää ovat 490 € + ALV, eikä jatko synny automaattisesti.'], ['Kuka tekee sisällöt?', 'Hanna Nyholm vastaa GhoulHousen asiakastyöstä, sisältösuunnittelusta ja tuotannosta.']]
@@ -73,6 +75,7 @@ export const seoClusterPages: Record<string, SeoClusterPage> = {
       contact: 'SUUNNITELLAAN INSTAGRAM-SISÄLLÖT.',
     },
     painPoints: ['Instagram-profiili ei päivity työn tahdissa.', 'Hyvät kuvat eivät muodosta tunnistettavaa kokonaisuutta.', 'Postauksen kirjoittaminen jää aina viimeiseksi tehtäväksi.'],
+    exampleTitles: ['Kuvakaruselli', 'Referenssikuva', 'Tekijät ja prosessi', 'Usein kysytyt'],
     examples: ['Carousel: lähtötilanne → työvaihe → valmis kohde.', 'Yksittäinen referenssikuva vahvalla projektifaktalla.', 'Tekijä- ja prosessisisältö, joka näyttää yrityksen osaamista.', 'FAQ-postaus, joka vastaa asiakkaan ennen ostoa esittämään kysymykseen.'],
     process: ['Valitsemme Instagramiin sopivat kuvat ja aiheet.', 'Rakennamme julkaisujen copyt, rakenteen ja CTA:t.', 'Koko 12 sisällön erä tarkistetaan yhtenä kokonaisuutena.', 'Hyväksytyt julkaisut ajastetaan Instagramiin ja tarvittaessa Facebookiin.'],
     faq: [['Tehdäänkö Reelsejä?', 'Reelsejä voidaan tehdä, kun käytettävissä on sopivaa materiaalia. SOME 12:n ydin on 12 valmista sisältöä kuukaudessa.'], ['Voiko Instagram-sisältö käyttää olemassa olevia kuvia?', 'Kyllä. Palvelu on rakennettu yrityksen omien työmaa- ja referenssikuvien ympärille.'], ['Miten sisältöjen tyyli päätetään?', 'Visuaalinen ja tekstillinen linja rakennetaan yrityksen työn, materiaalin ja kohderyhmän perusteella.']]
@@ -123,6 +126,7 @@ export const seoClusterPages: Record<string, SeoClusterPage> = {
       contact: 'SOVITAAN ENSIMMÄISET 30 PÄIVÄÄ.',
     },
     painPoints: ['12 alkuperäistä julkaisua Instagramiin ja Facebookiin 30 päivän erässä.', 'Suunnittelu, kuvankäsittely, tekstit, ajastus ja yksi koottu korjauskierros kuuluvat 490 € + ALV -hintaan.', 'Asiakas toimittaa omat kuvat ja kohteiden olennaiset faktat; jatko sovitaan erikseen.'],
+    exampleTitles: ['4 sisältöroolia', '12 julkaisua / 30 päivää', 'Instagram + Facebook', 'Yksi korjauskierros'],
     examples: ['4 sisältöroolia: työmaa, valmis kohde, prosessi ja hyödyllinen tieto.', '12 julkaisua, jotka muodostavat yhden kuukauden rytmin.', 'Instagram + Facebook ilman erillistä kanavakohtaista tuotantoprojektia.', 'Yksi koottu korjauskierros ennen ajastusta.'],
     process: ['Sovitaan 30 päivän aloitus ja pyydämme yrityksen työmaa- ja referenssikuvat sekä keskeiset projektifaktat.', 'Suunnittelemme 12 julkaisun kokonaisuuden: kuva, teksti, julkaisumuoto ja toimintakehotus.', 'Asiakas tarkistaa faktat ja hyväksyy yhden kootun korjauskierroksen.', 'Hyväksytyt sisällöt ajastetaan ja julkaistaan, minkä jälkeen toimitetaan kevyt kuukausiraportti.'],
     faq: [['Mitä SOME 12 maksaa?', '490 € + ALV / 30 päivää.'], ['Mitä hintaan sisältyy?', '12 alkuperäistä sisältöä, Instagram + Facebook, suunnittelu, kuvankäsittely, copyt, CTA:t, ajastus, julkaiseminen, yksi korjauskierros ja kevyt kuukausiraportti.'], ['Jatkuuko palvelu automaattisesti?', 'Ei. Ensimmäiset 30 päivää ovat oma pilottinsa ja jatkosta päätetään erikseen.']]

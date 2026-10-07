@@ -1,6 +1,6 @@
 import FunnelAnalytics from '@/components/analytics/FunnelAnalytics';
 import type { Metadata, Viewport } from 'next';
-import { Montserrat } from 'next/font/google';
+import localFont from 'next/font/local';
 import { siteConfig } from '@/config/site';
 import { isIndexingEnabled, isProductionDeployment } from '@/lib/seo';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
@@ -15,9 +15,10 @@ import './social-editorial.css';
 import './editorial-system.css';
 import './motion-overlay-menu.css';
 
-const montserrat = Montserrat({
-  weight: ['400', '500', '600', '700', '800', '900'],
-  subsets: ['latin-ext'],
+const montserrat = localFont({
+  src: './fonts/Montserrat-Variable.woff2',
+  weight: '400 900',
+  style: 'normal',
   variable: '--font-body',
   display: 'swap',
 });

@@ -9,7 +9,7 @@
   --gh-ed-ink: #171513;
   --gh-ed-paper: #f6f4ef;
   --gh-ed-white: #fffcf8;
-  --gh-ed-red: #b80f1a;
+  --gh-ed-red: #C9282D;
   --gh-ed-rule: rgba(23,21,19,.27);
   --gh-ed-label: var(--font-body), Arial, sans-serif;
   --font-display: Georgia, 'Times New Roman', serif;
@@ -119,6 +119,8 @@ body { background: var(--gh-ed-paper); }
   font-size: clamp(24px,2.6vw,40px);
   letter-spacing: -.048em;
   line-height: 1.15;
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 .ghGlobalContent :is(.websiteCards,.seoCards) article p { font-size: 15px; line-height: 1.65; color: #dfd9d2; }
 .ghGlobalContent :is(.websiteCards,.seoCards) article span,
@@ -161,6 +163,65 @@ body { background: var(--gh-ed-paper); }
   overflow-wrap: anywhere;
   word-break: normal;
   hyphens: auto;
+}
+/* Long Finnish text must shrink inside grid tracks, including open FAQ answers. */
+.ghGlobalContent .seoPage :is(.seoTwoCol,.seoClusterNav,.contactGrid) {
+  grid-template-columns: minmax(0,1fr);
+}
+.ghGlobalContent .seoPage :is(.seoTwoCol,.seoCards,.seoClusterNav,.contactGrid)>*,
+.ghGlobalContent .seoPage .sectionIntro>*,
+.ghGlobalContent .seoPage .seoCards article>* {
+  min-width: 0;
+}
+.ghGlobalContent .seoPage :is(h2,h3,.seoFaq p,.seoFaq summary) {
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+.ghGlobalContent .seoPage .seoCards {
+  grid-template-columns: minmax(0,1fr) !important;
+}
+.ghGlobalContent .seoPage .seoCards article { align-content: start; gap: 16px; }
+.ghGlobalContent .seoPage .seoCards article h3 {
+  font-size: clamp(24px,2.2vw,32px);
+  text-transform: none;
+  letter-spacing: -.035em;
+}
+.ghGlobalContent .seoFaq summary {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) 20px;
+  gap: 16px;
+  padding-block: 18px;
+  list-style: none;
+}
+.ghGlobalContent .seoFaq summary::-webkit-details-marker { display: none; }
+.ghGlobalContent .seoFaq summary .seoFaqQuestion {
+  min-width: 0;
+  color: inherit;
+  font-size: 15px;
+  line-height: 1.5;
+}
+.ghGlobalContent .seoFaq summary .seoFaqToggle {
+  justify-self: end;
+  font-size: 0;
+  line-height: 1;
+}
+.ghGlobalContent .seoFaq .seoFaqToggle::before { content: '+'; font-size: 20px; }
+.ghGlobalContent .seoFaq details[open] .seoFaqToggle::before { content: '−'; }
+@media(min-width: 768px) {
+  .ghGlobalContent .seoPage :is(.seoTwoCol,.seoClusterNav) {
+    grid-template-columns: minmax(0,.8fr) minmax(0,1.2fr);
+  }
+  .ghGlobalContent .seoPage .contactGrid {
+    grid-template-columns: minmax(0,.92fr) minmax(0,1.08fr);
+  }
+  .ghGlobalContent .seoPage .seoCards {
+    grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  }
+}
+@media(min-width: 1280px) {
+  .ghGlobalContent .seoPage .seoCards {
+    grid-template-columns: repeat(4,minmax(0,1fr)) !important;
+  }
 }
 .ghGlobalContent .proofDetailHero h1 { font-family: var(--gh-ed-serif); line-height: 1.1; }
 /* Preserve the previous glass-footer structure while giving it an editorial

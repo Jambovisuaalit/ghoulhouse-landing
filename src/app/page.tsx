@@ -4,6 +4,7 @@ import Image from 'next/image';
 import LeadForm from '@/components/LeadForm';
 import { siteNavigation } from '@/data/site-navigation';
 import LiquidGlassFooter from '@/components/LiquidGlassFooter';
+import SocialConceptPreview from '@/components/SocialConceptPreview';
 import './homepage.css';
 import './homepage-swiss.css';
 import './editorial-home.css';
@@ -119,9 +120,11 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
             </div>
             <figure className="ghArtHeroVisual">
               <div className="ghArtHeroImage">
-                <Image src="/bathroom-concept-v2.webp"
-                  alt="Havainnekuva keskeneräisestä kylpyhuoneremontista. Ei asiakkaan työmaa."
+                <Image src="/worksite-concept-v3.webp"
+                  alt="Havainnekuva puretusta remonttitilasta julkaisun taittoesimerkissä. Ei asiakkaan työmaa."
                   fill sizes="(max-width:767px) 100vw, (max-width:1023px) 54vw, 42vw" priority />
+                <div className="ghHeroPostLabel">TYÖMAAKUVA → JULKAISU</div>
+                <div className="ghHeroPostCaption"><span>ESIMERKKI JULKAISUN TAITOSTA</span><p>Työ alkaa<br />pinnan alta.</p></div>
               </div>
               <figcaption>VISUAALINEN KONSEPTI / EI ASIAKASTYÖ</figcaption>
             </figure>
@@ -152,29 +155,38 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
 
         <section className="ghConcepts ghSection" id="konseptit" aria-labelledby="concepts-title">
           <div className="ghShell">
-            <div className="ghSectionIntro"><p className="ghEyebrow">Sisältökonseptit</p><h2 id="concepts-title">NÄIN TYÖSTÄ<br />TULEE SISÄLTÖÄ.</h2><p>Kolme havainnollistavaa julkaisuideaa. Kuvissa ei ole GhoulHousen asiakastöitä eikä niihin liity tulosväitteitä.</p></div>
+            <div className="ghSectionIntro"><p className="ghEyebrow">Sisältöesimerkit</p><h2 id="concepts-title">NÄIN TYÖSTÄ<br />TULEE SISÄLTÖÄ.</h2><p>Kahdessa esimerkissä sama kuva näkyy lähtömateriaalina ja julkaisuksi taitettuna. Kolmas näyttää tekstigrafiikan. Havainnekuvat eivät ole asiakastöitä tai remontin ennen–jälkeen-vertailuja.</p></div>
             <div className="ghConceptGrid">
               <article className="ghConceptCard">
-                <div className="ghConceptImage"><Image src="/proof-before.webp" alt="Havainnekuva keskeneräisestä remonttitilasta" width={420} height={560} sizes="(max-width: 767px) 100vw, 33vw" /><span className="ghConceptStamp">KONSEPTIESIMERKKI — EI ASIAKASTYÖ</span></div>
-                <div className="ghConceptCopy"><span>01 / TYÖN VAIHE</span><h3>Ennen valmista pintaa näkyy varsinainen työ.</h3><p>Esimerkkijulkaisu kertoo, mitä työvaiheessa tehdään ja miksi sillä on merkitystä.</p></div>
+                <SocialConceptPreview image="/worksite-concept-v3.webp" alt="Havainnekuva remonttitilasta, sama kuva kuin lähtökuvassa" headline="Työ alkaa pinnan alta." />
+                <div className="ghConceptCopy"><span>01 / TYÖN VAIHE</span><h3>Työkuvasta julkaisu.</h3><p>Sama kuva saa rajauksen ja otsikon. Kuvateksti kertoo asiakkaan vahvistamat työvaiheet ja niiden merkityksen.</p></div>
               </article>
               <article className="ghConceptCard">
-                <div className="ghConceptImage"><Image src="/bathroom-concept-v2.webp" alt="Havainnekuva kylpyhuoneesta, ei toteutettu asiakaskohde" width={1122} height={1402} sizes="(max-width: 767px) 100vw, 33vw" /><span className="ghConceptStamp">KONSEPTIESIMERKKI — EI ASIAKASTYÖ</span></div>
-                <div className="ghConceptCopy"><span>02 / VALMIS KOHDE</span><h3>Valmis tila, selkeä kuvaus tehdystä työstä.</h3><p>Esimerkkijulkaisu yhdistää kohdekuvan ja asiakkaalle ymmärrettävän kuvatekstin.</p></div>
+                <SocialConceptPreview image="/bathroom-concept-v2.webp" alt="Havainnekuva kylpyhuoneesta, sama kuva kuin lähtökuvassa" headline="Työn jälki näkyy yksityiskohdissa." />
+                <div className="ghConceptCopy"><span>02 / VALMIS KOHDE</span><h3>Kohdekuvasta työnäyttö.</h3><p>Kuva ja otsikko nostavat työn esiin. Julkaisun tarkempi kuvaus perustuu asiakkaan toimittamiin kohdefaktoihin.</p></div>
               </article>
               <article className="ghConceptCard">
-                <div className="ghConceptImage ghConceptGraphic"><span className="ghConceptGraphicType">TYÖMAA<br />→ JULKAISU</span><span className="ghConceptGraphicRule">KUVAT · FAKTAT · TEKSTI</span><span className="ghConceptStamp">KONSEPTIESIMERKKI — EI ASIAKASTYÖ</span></div>
-                <div className="ghConceptCopy"><span>03 / SISÄLTÖGRAFIIKKA</span><h3>Työkuvasta valmis somejulkaisu.</h3><p>Esimerkki näyttää, miten kuva, otsikko ja tarkentava teksti kootaan julkaistavaan muotoon.</p></div>
+                <div className="ghConceptPreview ghConceptPreviewGraphic">
+                  <div className="ghConceptSource"><div><span>LÄHTÖMATERIAALI</span><p>Työn faktat. Selkeä viesti.</p></div><span aria-hidden="true">↓</span></div>
+                  <div className="ghConceptPost">
+                    <div className="ghConceptPostHeader"><Image src="/ghoulhouse-mark.svg" alt="" width={24} height={24} /><span>JULKAISUN TAITTOESIMERKKI</span></div>
+                    <div className="ghConceptGraphic"><span className="ghConceptGraphicType">TYÖMAA<br />→ JULKAISU</span><span className="ghConceptGraphicRule">KUVAT · FAKTAT · TEKSTI</span></div>
+                    <p className="ghConceptPostHeadline">Osaaminen näkyväksi.</p>
+                  </div>
+                  <p className="ghConceptDisclosure">KONSEPTIESIMERKKI — EI ASIAKASTYÖ</p>
+                </div>
+                <div className="ghConceptCopy"><span>03 / SISÄLTÖGRAFIIKKA</span><h3>Faktoista selkeä viesti.</h3><p>Tekstigrafiikka kokoaa yhden asian helposti luettavaan muotoon. Sisältö perustuu yrityksen omaan tietoon.</p></div>
               </article>
             </div>
+            <div className="ghSectionCta"><a className="ghButton" href="/?intent=photos#yhteys">Pyydä 2 sisältöesimerkkiä <span aria-hidden="true"><ArrowUpRight /></span></a></div>
           </div>
         </section>
 
         <section className="ghSelected ghSection" id="esimerkit" aria-labelledby="selected-title">
           <div className="ghShell ghSelectedGrid">
             <div className="ghSectionIntro">
-              <p className="ghEyebrow">02 / Valitut työt</p>
-              <h2 id="selected-title">TYÖ PUHUU.<br /><em>NÄYTÄ SE.</em></h2>
+              <p className="ghEyebrow">02 / Verkkosivujen työnäyte</p>
+              <h2 id="selected-title">Oma sivusto.<br />Oma työnäyte.</h2>
               <p>Oma julkaistu verkkosivutoteutuksemme on ensimmäinen dokumentoitu työnäyte. Lisäämme asiakastöitä vasta julkaisuluvan ja todennettavan aineiston perusteella.</p>
               <a className="ghTextLink" href="/referenssit">Katso toteutukset ja työnäytteet <span aria-hidden="true"><ArrowUpRight /></span></a>
             </div>
@@ -190,7 +202,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
 
         <section className="ghProcess ghSection" id="toiminta" aria-labelledby="process-title">
           <div className="ghShell">
-            <div className="ghSectionIntro"><p className="ghEyebrow">Social / toimitus</p><h2 id="process-title">KUVISTA<br />JULKAISUIHIN.</h2></div>
+            <div className="ghSectionIntro"><p className="ghEyebrow">Social / toimitus</p><h2 id="process-title">Kuvista julkaisuihin.</h2></div>
             <ol className="ghSteps">
               {steps.map(([title, copy], i) => <li key={title}><div className="ghStepTop"><span>{String(i + 1).padStart(2, '0')}</span>{i < 3 && <span aria-hidden="true">→</span>}</div><h3>{title}</h3><p>{copy}</p></li>)}
             </ol>
@@ -202,7 +214,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
           <div className="ghShell ghArtRoutesLayout">
             <div className="ghSectionIntro">
               <p className="ghEyebrow">03 / TOIMIALAT JA KANAVAT</p>
-              <h2 id="proof-grid-title">JOKAISELLA<br /><em>TYÖLLÄ ON</em><br />TARINANSA.</h2>
+              <h2 id="proof-grid-title">Jokaisella työllä<br />on tarinansa.</h2>
               <p>Rakennusalan ja LVI-yritysten työstä syntyy sisältöä. Näin näytämme osaamisen eri palveluissa ja kanavissa — ilman keksittyjä asiakastuloksia.</p>
               <a className="ghTextLink ghSectionLink" href="/referenssit">Omat työt ja toteutusesimerkit <span aria-hidden="true"><ArrowUpRight /></span></a>
             </div>
