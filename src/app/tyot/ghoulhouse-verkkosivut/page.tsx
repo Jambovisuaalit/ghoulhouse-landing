@@ -1,5 +1,6 @@
 import ArrowUpRight from '@/components/ArrowUpRight';
 import type { Metadata } from 'next';
+import { indexableRobots } from '@/lib/seo';
 import Image from 'next/image';
 import Link from 'next/link';
 import '../../proof.css';
@@ -14,9 +15,7 @@ export const metadata: Metadata = {
     url: '/tyot/ghoulhouse-verkkosivut',
     type: 'article',
   },
-  robots: process.env.VERCEL_ENV === 'production'
-    ? { index: true, follow: true }
-    : { index: false, follow: false, nocache: true },
+  robots: indexableRobots(),
 };
 
 const delivered = [

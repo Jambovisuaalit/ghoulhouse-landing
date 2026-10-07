@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { siteConfig } from '@/config/site';
 
 export const SITE_URL = siteConfig.company.domain;
@@ -23,6 +24,16 @@ export function isProductionDeployment() {
  */
 export function isIndexingEnabled() {
   return process.env.SITE_INDEXABLE?.trim().toLowerCase() !== 'false';
+}
+
+/**
+ * Use the same indexing decision in page metadata as in root metadata,
+ * robots.txt and the X-Robots-Tag middleware.
+ */
+export function indexableRobots(): Metadata['robots'] {
+  return isProductionDeployment() && isIndexingEnabled()
+    ? { index: true, follow: true }
+    : { index: false, follow: false, nocache: true };
 }
 
 export function isCanonicalHost(value: string | null | undefined) {

@@ -368,12 +368,15 @@ try {
     await waitForDocument(client);
     await evaluate(client, 'document.querySelector("#esimerkit")?.scrollIntoView({behavior:"instant",block:"start"})');
     const proofImageLoaded = await evaluate(client, `new Promise((resolve) => {
-      const img = document.querySelector('.ghSelectedScreenshot');
-      if (!img) return resolve(false);
-      if (img.complete) return resolve(img.naturalWidth > 100);
-      img.addEventListener('load', () => resolve(img.naturalWidth > 100), { once:true });
-      img.addEventListener('error', () => resolve(false), { once:true });
-      setTimeout(() => resolve(false), 10000);
+      const deadline = Date.now() + 15000;
+      const check = () => {
+        const img = document.querySelector('.ghSelectedScreenshot');
+        if (!img) return resolve(false);
+        if (img.naturalWidth > 100) return resolve(true);
+        if (Date.now() >= deadline) return resolve(false);
+        requestAnimationFrame(check);
+      };
+      check();
     })`);
     assert(proofImageLoaded, `${viewport.width}x${viewport.height}: published-site proof image failed after scrolling into view.`);
     await sleep(180);
@@ -432,7 +435,7 @@ try {
     '/lvi-yrityksille', '/instagram-sisallontuotanto', '/saneerausyrityksille',
     '/some-sisallontuotanto/hinta',
   ]) {
-    for (const width of [320, 390, 414, 768, 1440]) {
+    for (const width of [320, 390, 414, 768, 1024, 1280, 1440]) {
       const height = width < 768 ? 844 : 900;
       await client.send('Emulation.setDeviceMetricsOverride', {
         width, height, deviceScaleFactor: 1, mobile: width < 768,
@@ -459,8 +462,11 @@ try {
           const range = document.createRange();
           range.selectNodeContents(el);
           const lines = [...range.getClientRects()].filter(x => x.width > 0 && x.height > 0);
+          const container = r(el.closest('.seoCards article, .seoFaq details'));
           if (box.left < -2 || box.right > innerWidth + 2 ||
               el.scrollWidth > el.clientWidth + 2 ||
+              (container && (box.left < container.left - 2 || box.right > container.right + 2 ||
+                lines.some(x => x.left < container.left - 2 || x.right > container.right + 2))) ||
               lines.some(x => x.left < box.left - 2 || x.right > box.right + 2)) {
             contentOverflow.push({tag:el.tagName,text:el.textContent?.trim().slice(0,100),box});
           }
@@ -503,7 +509,7 @@ try {
       assert(layout.contentOverflow.length === 0 && layout.overlappingCards.length === 0 &&
         layout.mobileCardsStacked && layout.openFaqCount >= 1,
         `${path} ${width}px: Social cards or open FAQ clipped/overlapping: ${JSON.stringify(layout)}`);
-      if (width === 390 || width === 768) {
+      if (width === 390 || width === 768 || width === 1280 || width === 1440) {
         const name = path.split('/').pop();
         const image = await client.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: true,
           clip: {x:0,y:0,width,height:await evaluate(client,'document.documentElement.scrollHeight'),scale:1} });

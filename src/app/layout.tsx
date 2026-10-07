@@ -71,10 +71,14 @@ export const viewport: Viewport = {
   colorScheme: 'light',
 };
 
-const socialProfiles = [
+const organizationProfiles = [
   process.env.NEXT_PUBLIC_LINKEDIN_URL?.trim(),
   process.env.NEXT_PUBLIC_INSTAGRAM_URL?.trim(),
 ].filter((value): value is string => Boolean(value));
+
+const founderProfiles = [
+  'https://fi.linkedin.com/in/hanna-nyholm-1b5213434',
+];
 
 const structuredData = {
   '@context': 'https://schema.org',
@@ -103,14 +107,32 @@ const structuredData = {
         '@id': 'https://ghoulhouse.fi/#logo',
         url: 'https://ghoulhouse.fi/ghoulhouse-logo.svg',
       },
-      sameAs: socialProfiles,
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: siteConfig.company.postalAddress.street,
+        postalCode: siteConfig.company.postalAddress.postalCode,
+        addressLocality: siteConfig.company.postalAddress.city,
+        addressCountry: 'FI',
+      },
+      contactPoint: {
+        '@type': 'ContactPoint',
+        contactType: 'sales',
+        email: 'hello@ghoulhouse.fi',
+        areaServed: 'FI',
+        availableLanguage: ['fi', 'en'],
+      },
+      areaServed: {
+        '@type': 'AdministrativeArea',
+        name: 'Uusimaa',
+      },
+      sameAs: organizationProfiles,
     },
     {
       '@type': 'Person',
       '@id': 'https://ghoulhouse.fi/#hanna-nyholm',
       name: siteConfig.company.founder,
       worksFor: { '@id': 'https://ghoulhouse.fi/#organization' },
-      sameAs: socialProfiles,
+      sameAs: founderProfiles,
     },
   ],
 };
