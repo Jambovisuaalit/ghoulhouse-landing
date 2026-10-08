@@ -8,7 +8,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
-import { siteNavigation } from '@/data/site-navigation';
+import { getInquiryCta, siteNavigation } from '@/data/site-navigation';
 import LiquidGlassFooter from '@/components/LiquidGlassFooter';
 
 /** One common navigation and footer on every inner route.
@@ -17,6 +17,7 @@ import LiquidGlassFooter from '@/components/LiquidGlassFooter';
 export default function SiteChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   if (!pathname || pathname === '/') return <>{children}</>;
+  const inquiryCta = getInquiryCta(pathname);
   const active = (href: string) => pathname === href
     || (href === '/resurssit' && pathname.startsWith('/oppaat/'))
     || (href === '/referenssit' && pathname.startsWith('/tyot/'))
@@ -39,7 +40,7 @@ export default function SiteChrome({ children }: { children: ReactNode }) {
               <Link key={href} href={href} aria-current={active(href) ? 'page' : undefined}>{label}</Link>
             ))}
           </nav>
-          <Link className="ghGlobalInquiry" href="/#yhteys">Pyydä ehdotus <span aria-hidden="true"><ArrowUpRight /></span></Link>
+          <Link className="ghGlobalInquiry" href={inquiryCta.href}>{inquiryCta.label} <span aria-hidden="true"><ArrowUpRight /></span></Link>
           <MotionOverlayMenu />
         </div>
       </header>
