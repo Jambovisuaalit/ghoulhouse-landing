@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { siteNavigation } from '@/data/site-navigation';
 
-type Props = { home?: boolean };
+type Props = { home?: boolean; inquiryHref?: string; inquiryLabel?: string };
 
 // Show only configured, valid external profiles. Never render placeholder links.
 const socialLinks = [
@@ -14,8 +14,8 @@ const socialLinks = [
 );
 
 /** Shared contact section and site navigation. */
-export default function LiquidGlassFooter({ home = false }: Props) {
-  const contactHref = home ? '/?intent=photos#yhteys' : '/#yhteys';
+export default function LiquidGlassFooter({ home = false, inquiryHref, inquiryLabel }: Props) {
+  const contactHref = home ? '/?intent=photos#yhteys' : (inquiryHref || '/?intent=photos#yhteys');
   const topHref = home ? '#top' : '/#top';
 
   return (
@@ -32,7 +32,7 @@ export default function LiquidGlassFooter({ home = false }: Props) {
               </div>
               <div className="ghLiquidFooterInviteActions">
                 <a href={contactHref} className="ghLiquidFooterButton">
-                  <span>{home ? 'Pyydä 2 sisältöesimerkkiä' : 'Pyydä ehdotus'}</span>
+                  <span>{inquiryLabel || 'Pyydä 2 sisältöesimerkkiä'}</span>
                   <span aria-hidden="true"><ArrowUpRight /></span>
                 </a>
                 <a href="mailto:hello@ghoulhouse.fi" className="ghLiquidFooterMail">

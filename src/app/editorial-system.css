@@ -5,11 +5,11 @@
  * lead processing, consent behaviour or SEO page copy.
  */
 :root {
-  --gh-ed-black: #0b0b0b;
-  --gh-ed-ink: #171513;
-  --gh-ed-paper: #f6f4ef;
-  --gh-ed-white: #fffcf8;
-  --gh-ed-red: #C9282D;
+  --gh-ed-black: #0b0b0b; /* Original editorial hero surface; distinct from brand Ink */
+  --gh-ed-ink: var(--brand-ink);
+  --gh-ed-paper: var(--brand-ghost);
+  --gh-ed-white: #FFFFFF;
+  --gh-ed-red: var(--brand-signal);
   --gh-ed-rule: rgba(23,21,19,.27);
   --gh-ed-label: var(--font-body), Arial, sans-serif;
   --font-display: Georgia, 'Times New Roman', serif;
@@ -295,3 +295,26 @@ body .ghLiquidFooter .ghLiquidFooterButton {
 }
 body .ghLiquidFooter .ghLiquidFooterButton:hover { background: #97101a; }
 body .ghLiquidFooter .ghLiquidFooterMail { font-size: 14px; font-weight: 500; }
+
+/* UI-kit finish: same select geometry, contrast and keyboard focus as text inputs. */
+.leadForm select {
+  width: 100%;
+  min-height: 50px;
+  border: 1px solid rgba(17,17,17,.42);
+  border-radius: 0;
+  background: var(--white);
+  padding: 12px 13px;
+  color: var(--ink);
+  font-family: var(--font-body), Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.4;
+}
+.leadForm select:focus-visible {
+  outline: 3px solid var(--brand-signal);
+  outline-offset: 2px;
+  border-color: var(--brand-signal);
+}
+.homePage .ghContact .ghForm select option {
+  background: #FFFFFF;
+  color: var(--brand-ink);
+}

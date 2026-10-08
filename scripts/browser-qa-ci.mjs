@@ -188,11 +188,13 @@ try {
         formMethod: form?.getAttribute('method')?.toLowerCase() || '',
         formAction: form?.getAttribute('action') || '',
         submitRect: rect(submit),
-        profileChoice: Boolean(form?.querySelector('input[name="profile"]:not([required])')) && !form?.querySelector('select, input[name="noProfile"]'),
+        profileChoice: Boolean(form?.querySelector('input[name="profile"]:not([required])')) &&
+          !form?.querySelector('select[name="profile"], input[name="noProfile"]') &&
+          Boolean(form?.querySelector('select[name="service"][required]')),
         requiredFields: ['company','name','contact'].every((name) => Boolean(form?.querySelector('[name="' + name + '"][required]'))),
         proofExists: Boolean(proof),
         proofImageLoaded: document.querySelector('.ghSelectedScreenshot')?.naturalWidth > 100,
-        seoSelected: form?.querySelector('input[name="service"]') !== null,
+        seoSelected: Boolean(form?.querySelector('input[name="service"], select[name="service"][required]')),
         serviceLinks: ['/verkkosivut-yritykselle','/some-sisallontuotanto','/?service=seo#yhteys'].every((href) => document.querySelector('.ghServiceCard a[href="' + href + '"]')),
         serviceCards: document.querySelectorAll('.ghServiceCard').length,
         editorialRoutes: [...document.querySelectorAll('.ghArtRouteList .ghArtRoute')].map((a) => a.getAttribute('href')),

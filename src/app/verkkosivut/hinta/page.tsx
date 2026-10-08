@@ -27,8 +27,8 @@ export default function Page() {
         <div className="contentShell websitePriceGrid">
           <div><p className="kicker">HINTA</p><h2 id="website-price-title" data-analytics-section="pricing">HINTA RAKENTUU TYÖSTÄ, EI SIVUMÄÄRÄSTÄ.</h2></div>
           <div className="websitePriceCopy">
-            <p>Verkkosivuprojektin hinta riippuu ennen kaikkea rakenteen laajuudesta, sisällön määrästä, integraatioista ja siitä, kuinka paljon olemassa olevaa materiaalia voidaan hyödyntää.</p>
-            <ul><li>Perusrakenne ja suunnittelu</li><li>Palvelu- ja referenssisisällöt</li><li>Tekninen toteutus ja responsiivisuus</li><li>SEO-perusta ja julkaisu</li></ul>
+            <p>Verkkosivuprojektin hinta riippuu rakenteen laajuudesta, tarvittavasta tekstityöstä, integraatioista ja siitä, kuinka paljon nykyisiä kuvia ja sisältöä voidaan hyödyntää. Siksi emme esitä yhtä kaikille sopivaa alkaen-hintaa ilman määriteltyä toimitussisältöä.</p>
+            <ul><li>Sivut ja sisältö: montako palvelua, kohdetta ja tekstisisältöä toteutetaan?</li><li>Materiaalit: mitä kuvia, tekstejä ja hyväksyntöjä asiakas toimittaa?</li><li>Toiminnot: lomakkeet, analytiikka ja mahdolliset integraatiot.</li><li>Julkaisu ja jatko: mitä sisältyy käyttöönottoon ja mitä ylläpito maksaa erikseen?</li></ul><p>Tarjouksessa erittelemme sovitun toimitussisällön ja mahdolliset jatkuvat kulut ennen toteutuspäätöstä.</p>
             <Link className="button button--signal" href="#yhteys">PYYDÄ ARVIO →</Link>
           </div>
         </div>
