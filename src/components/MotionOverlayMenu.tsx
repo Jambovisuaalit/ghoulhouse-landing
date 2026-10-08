@@ -4,11 +4,12 @@ import Image from 'next/image';
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { usePathname } from 'next/navigation';
 import ArrowUpRight from '@/components/ArrowUpRight';
-import { overlayNavigation, siteNavigation } from '@/data/site-navigation';
+import { getInquiryCta, overlayNavigation, siteNavigation } from '@/data/site-navigation';
 
 /** Native modal supplies background inertness; the details menu also works without JS. */
 export default function MotionOverlayMenu({ home = false }: { home?: boolean }) {
   const pathname = usePathname();
+  const inquiryCta = getInquiryCta(home ? '/' : pathname);
   const [ready, setReady] = useState(false);
   const [open, setOpen] = useState(false);
   const [closing, setClosing] = useState(false);
@@ -72,7 +73,7 @@ export default function MotionOverlayMenu({ home = false }: { home?: boolean }) 
         <summary aria-label="Avaa valikko">Valikko <span aria-hidden="true">+</span></summary>
         <nav aria-label="Mobiilinavigaatio">
           {siteNavigation.map(({ href, label }) => <a key={href} href={href}>{label}</a>)}
-          <a href="/?intent=photos#yhteys">Pyydä 2 sisältöesimerkkiä</a>
+          <a href={inquiryCta.href}>{inquiryCta.label}</a>
         </nav>
       </details>
       <button hidden={!ready} ref={triggerRef} type="button" className="ghMenuTrigger" aria-expanded={open} aria-controls="gh-overlay-menu" aria-haspopup="dialog" onClick={showMenu}>
@@ -111,7 +112,7 @@ export default function MotionOverlayMenu({ home = false }: { home?: boolean }) 
             </nav>
             <div className="ghOverlayAside">
               <p className="ghOverlayEyebrow">Työmaakuvat sisään.<br />Valmis some ulos.</p>
-              <a className="ghOverlayCta" href="/?intent=photos#yhteys">Pyydä 2<br />sisältöesimerkkiä <span aria-hidden="true"><ArrowUpRight /></span></a>
+              <a className="ghOverlayCta" href={inquiryCta.href}>{inquiryCta.label === 'Pyydä 2 sisältöesimerkkiä' ? <>Pyydä 2<br />sisältöesimerkkiä</> : inquiryCta.label} <span aria-hidden="true"><ArrowUpRight /></span></a>
               <p className="ghOverlayNote">Maksuttomat esimerkit omista kuvistanne.</p>
               <a className="ghOverlayEmail" href="mailto:hanna@ghoulhouse.fi">hanna@ghoulhouse.fi</a>
               <div className="ghOverlayServices" aria-label="Palvelut">
