@@ -8,8 +8,8 @@ type FieldErrors = Record<string, string>;
 
 export default function LeadForm({ mode = 'social', defaultService }: { mode?: 'social' | 'proposal'; defaultService?: LeadService }) {
   const proposal = mode === 'proposal';
-  const service = defaultService ?? (proposal ? undefined : 'social');
-  const serviceValue = service ?? '';
+  const [service, setService] = useState<LeadService | ''>(defaultService ?? (proposal ? '' : 'social'));
+  const serviceValue = service;
   const profileRequired = service === 'seo';
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -60,6 +60,12 @@ export default function LeadForm({ mode = 'social', defaultService }: { mode?: '
     const form = event.currentTarget;
     setError('');
     setFieldErrors({});
+    if (proposal && !service) {
+      setFieldErrors({ service: 'Valitse palvelu, jotta osaamme käsitellä pyyntösi.' });
+      setError('Valitse palvelu ennen lähettämistä.');
+      (form.elements.namedItem('service') as HTMLElement | null)?.focus();
+      return;
+    }
     setSubmitting(true);
     trackEvent('lead_form_submit');
 
@@ -93,7 +99,27 @@ export default function LeadForm({ mode = 'social', defaultService }: { mode?: '
   return (
     <form ref={formRef} action="/api/leads" method="POST" className="leadForm" onSubmit={submit} onChange={markStarted} noValidate>
       <input type="hidden" name="intent" value={proposal ? 'booking' : 'photos'} />
-      <input type="hidden" name="service" value={serviceValue} />
+      {(!proposal || defaultService) && <input type="hidden" name="service" value={serviceValue} />}
+      {proposal && !defaultService && (
+        <div className="fieldGroup">
+          <label htmlFor="lead-service">Palvelu <span aria-hidden="true">*</span></label>
+          <select
+            id="lead-service"
+            name="service"
+            value={service}
+            onChange={(event) => setService(event.target.value as LeadService | '')}
+            required
+            aria-invalid={Boolean(fieldErrors.service)}
+            aria-describedby={fieldErrors.service ? 'lead-service-error' : undefined}
+          >
+            <option value="">Valitse palvelu</option>
+            <option value="social">Social – some-sisällöntuotanto</option>
+            <option value="websites">Verkkosivut</option>
+            <option value="seo">SEO</option>
+          </select>
+          {fieldErrors.service && <span className="fieldError" id="lead-service-error">{fieldErrors.service}</span>}
+        </div>
+      )}
       <div className="fieldGroup">
         <label htmlFor="lead-name">Nimi <span aria-hidden="true">*</span></label>
         <input id="lead-name" name="name" required maxLength={120} autoComplete="name" aria-invalid={Boolean(fieldErrors.name)} aria-describedby={fieldErrors.name ? 'lead-name-error' : undefined} />
@@ -122,6 +148,22 @@ export default function LeadForm({ mode = 'social', defaultService }: { mode?: '
         />
         {fieldErrors.profile && <span className="fieldError" id="lead-profile-error">{fieldErrors.profile}</span>}
       </div>
+      {proposal && (
+        <div className="fieldGroup">
+          <label htmlFor="lead-message">Mitä haluaisit toteuttaa? (valinnainen)</label>
+          <textarea
+            id="lead-message"
+            name="message"
+            rows={3}
+            maxLength={1200}
+            placeholder={service === 'websites'
+              ? 'Uusi sivusto vai nykyisen sivun uudistus? Palvelut ja toiveet lyhyesti.'
+              : service === 'seo'
+                ? 'Mitä verkkosivun näkyvyydessä haluat parantaa?'
+                : 'Kerro lyhyesti yrityksesi tilanteesta ja tavoitteesta.'}
+          />
+        </div>
+      )}
       <input className="trap" name="fax" tabIndex={-1} autoComplete="off" aria-hidden="true" />
       {error && <p className="fieldError" role="alert">{error}</p>}
       <button className="button button--signal formSubmit" type="submit" disabled={submitting}>
