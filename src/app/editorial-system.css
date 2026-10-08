@@ -5,7 +5,7 @@
  * lead processing, consent behaviour or SEO page copy.
  */
 :root {
-  --gh-ed-black: var(--brand-ink);
+  --gh-ed-black: #0b0b0b; /* Original editorial hero surface; distinct from brand Ink */
   --gh-ed-ink: var(--brand-ink);
   --gh-ed-paper: var(--brand-ghost);
   --gh-ed-white: #FFFFFF;
