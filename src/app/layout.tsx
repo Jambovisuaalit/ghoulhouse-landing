@@ -72,8 +72,8 @@ export const viewport: Viewport = {
 };
 
 const organizationProfiles = [
-  process.env.NEXT_PUBLIC_LINKEDIN_URL?.trim(),
-  process.env.NEXT_PUBLIC_INSTAGRAM_URL?.trim(),
+  'https://www.instagram.com/ghoulhouse.fi/',
+  'https://share.google/1LDmIXRgEryPBneud',
 ].filter((value): value is string => Boolean(value));
 
 const founderProfiles = [
