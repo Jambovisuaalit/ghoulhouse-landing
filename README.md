@@ -9,12 +9,12 @@ Official GhoulHouse website source.
 - Canonical host: `https://ghoulhouse.fi`
 - Active Vercel project: `ghoulhouse-home`
 - Node.js: `24.x`
-- Canonical message: **TYÖMAAKUVAT SISÄÄN. VALMIS SOME ULOS.**
-- Offer: **490 € + ALV / 30 päivää. Ei sitoumusta jatkosta.**
+- Homepage priority: **Verkkosivut → Social → SEO.**
+- Social offer: **490 € + ALV / 30 päivää. Ei sitoumusta jatkosta.** Website pricing is project-specific.
 
 Do not treat old previews, archived projects or previous GhoulHouse brand variants as source code.
 
-> Production provenance note: the live `ghoulhouse-home` Vercel project has historically carried a Git integration to the private `vido-social/ghoulhouse-home` clone. That clone is **not** the source of truth. Production releases must use this repository/`main` until the Vercel Git integration itself has been relinked to `Jambovisuaalit/ghoulhouse-landing`. Do not trigger a Git-based redeploy from the old clone, because it can restore stale UI/code.
+> Production provenance: Vercel Git integration verified on 14.10.2026: `ghoulhouse-home` links to `Jambovisuaalit/ghoulhouse-landing`. Use this repository; archived clones are not release sources.
 
 ## Stack
 
@@ -22,7 +22,7 @@ Do not treat old previews, archived projects or previous GhoulHouse brand varian
 - React 18
 - TypeScript
 - Tailwind CSS + `src/app/globals.css`
-- Anton + Montserrat through `next/font`
+- Georgia for display typography + locally hosted Montserrat through `next/font/local`
 - Vercel
 - Supabase Postgres / RPC for lead storage
 - Resend for lead notification email
@@ -78,16 +78,17 @@ src/
 Homepage composition:
 
 ```text
-Hero
-→ RAW / VALMIS mechanism
-→ Problem / Solution
-→ Process
-→ Content Examples
-→ Pricing
-→ Founder
-→ FAQ
-→ Final CTA
+Website-first Hero
+→ Services (Websites / Social / SEO)
+→ Website process
+→ Own website proof (explicitly not a client reference)
+→ Social concept examples (explicitly not client work)
+→ Industry routes / Resources / Founder
+→ Website evaluation form
 ```
+
+Shared service context in `src/data/site-navigation.ts` supplies inquiry CTA,
+menu supporting copy and pricing destination. Social routes retain the social funnel.
 
 ## Brand system
 
@@ -95,16 +96,16 @@ Hero
 - Signal Red `#C9282D`
 - Ghost `#F7F4EF`
 - Bone `#E6DFD5`
-- Anton for display typography
+- Georgia for display typography
 - Montserrat for body/UI typography
 
-Official logo SVG artwork lives in `public/logo-horizontal.svg` and `public/logo-horizontal-white.svg`. Both wordmarks are path-only and must not depend on runtime fonts.
+Official logo artwork: `public/ghoulhouse-logo.svg`, `public/ghoulhouse-logo-reverse.svg`, `public/ghoulhouse-wordmark-black.svg` and `public/favicon.svg`. Preserve these approved assets.
 
 ## Proof policy
 
 Never present stock, generated or unverified material as customer work.
 
-Until verified customer RAW → FINAL material is available, `Mechanism.tsx` must remain explicitly labelled:
+Until verified customer RAW → FINAL material is available, all public concept examples must remain explicitly labelled:
 
 `KONSEPTIESIMERKKI — EI ASIAKASTYÖ`
 
@@ -173,4 +174,4 @@ Verified on the active `ghoulhouse-home` Vercel project:
 - responsive/browser QA passes from 320px mobile through 1920px desktop, including 1366×768 and 1440×900 laptop viewports
 - lead RPC hardening verified with an `anon` execution smoke test and Resend `delivered` status
 
-Remaining non-blocking launch assets: verified Hanna Nyholm founder portrait, verified real customer RAW → FINAL material, and permanent Vercel Git relinking from the stale private clone to this canonical repository.
+Remaining non-blocking launch assets: verified Hanna Nyholm founder portrait, verified real customer RAW → FINAL material, and additional approved client cases. Git relinking was verified complete on 14.10.2026.

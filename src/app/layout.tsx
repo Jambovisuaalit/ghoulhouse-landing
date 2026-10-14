@@ -23,9 +23,9 @@ const montserrat = localFont({
   display: 'swap',
 });
 
-const title = 'GhoulHouse | Social remontti- ja LVI-yrityksille Uudellamaalla';
+const title = 'GhoulHouse | Verkkosivut pienille palveluyrityksille';
 const description =
-  'Työmaakuvat sisään, valmis some ulos. 12 sisältöä Instagramiin ja Facebookiin 30 päivässä, 490 € + ALV. Verkkosivut ja SEO lisäpalveluina.';
+  'Verkkosivut pienille palveluyrityksille: selkeät palvelut, työnäytteet ja yhteydenotto. Social ja SEO tukevat näkyvyyttä. Pyydä verkkosivuarvio.';
 const indexable = isProductionDeployment() && isIndexingEnabled();
 
 export const metadata: Metadata = {

@@ -13,9 +13,9 @@ test('rendered homepage marks the price and Social examples rather than the webs
     '@/components/SocialConceptPreview': () => null,
   });
   const html = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({}) }));
-  assert.match(html, /data-analytics-section="pricing"[^>]*>12 sisältöä \/ 30 pv \/ 490/);
+  assert.match(html, /data-analytics-section="pricing"[^>]*>[^<]*490/);
   assert.match(html, /id="concepts-title" data-analytics-section="content-examples"/);
-  const proof = html.slice(html.indexOf('id="esimerkit"'), html.indexOf('id="toiminta"'));
+  const proof = html.slice(html.indexOf('id="esimerkit"'), html.indexOf('id="konseptit"'));
   assert.doesNotMatch(proof, /data-analytics-section="content-examples"/);
 });
 

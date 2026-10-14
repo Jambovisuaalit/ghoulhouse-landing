@@ -158,7 +158,7 @@ try {
       const hero = document.querySelector('#top');
       const h1 = hero?.querySelector('h1');
       const brandHeadline = h1;
-      const heroCta = hero?.querySelector('a.ghButton[href="/?intent=photos#yhteys"]');
+      const heroCta = hero?.querySelector('a.ghButton[href="/?service=websites#yhteys"]');
       const price = [...(hero?.querySelectorAll('*') || [])].find((el) => visible(el) && el.children.length === 0 && el.textContent?.includes('490 €'));
       const brandLink = document.querySelector('header a.ghBrand');
       const form = document.querySelector('#yhteys form[action="/api/leads"]');
@@ -270,7 +270,7 @@ try {
           return {
             imageLoaded: Boolean(image?.complete && image.naturalWidth > 100),
             imageBox: rect(imageBox),
-            imageDisclosure: Boolean(hero?.querySelector('figcaption')?.textContent?.includes('EI ASIAKASTYÖ')),
+            imageDisclosure: Boolean(hero?.querySelector('figcaption')?.textContent?.includes('EI ASIAKASREFERENSSI')),
             grain: noise ? getComputedStyle(noise).backgroundImage : '',
             background: hero ? getComputedStyle(hero).backgroundColor : '',
             headingFont: h1 ? getComputedStyle(h1).fontFamily : '',
@@ -292,19 +292,19 @@ try {
       metrics.artDirection.imageLoaded && metrics.artDirection.imageDisclosure,
       `${viewport.width}x${viewport.height}: editorial hero missing: ${JSON.stringify(metrics.artDirection)}`);
     assert(metrics.h1Count === 1, `${viewport.width}x${viewport.height}: expected exactly one H1.`);
-    assert(metrics.brandHeadlineText.includes('TYÖMAAKUVAT') && metrics.brandHeadlineText.includes('VALMIS SOME'), `${viewport.width}x${viewport.height}: Social headline missing.`);
-    assert(metrics.h1Text.includes('TYÖMAAKUVAT') && metrics.h1Text.includes('VALMIS SOME'), `${viewport.width}x${viewport.height}: H1 copy changed unexpectedly.`);
+    assert(metrics.brandHeadlineText.includes('VERKKOSIVUT') && metrics.brandHeadlineText.includes('YHTEYDENOTTO'), `${viewport.width}x${viewport.height}: Social headline missing.`);
+    assert(metrics.h1Text.includes('VERKKOSIVUT') && metrics.h1Text.includes('YHTEYDENOTTO'), `${viewport.width}x${viewport.height}: H1 copy changed unexpectedly.`);
     const heroLines = metrics.heroLineMetrics;
     assert(heroLines.lines.length === 4 &&
-      heroLines.lines[0].text === 'TYÖMAAKUVAT' && heroLines.lines[2].text === 'VALMIS SOME' &&
+      heroLines.lines[0].text === 'VERKKOSIVUT.' && heroLines.lines[2].text === 'YHTEYDENOTTO' &&
       heroLines.lines.every((line) => line.display === 'block'),
       `${viewport.width}x${viewport.height}: Finnish hero must render as four separate blocks: ${JSON.stringify(heroLines)}`);
     assert(heroLines.lineHeight / heroLines.fontSize >= 1.10 &&
       heroLines.lines[0].rect.bottom <= heroLines.lines[1].rect.top + 1 &&
       heroLines.lines[1].rect.top - heroLines.lines[0].rect.top >= heroLines.fontSize * 1.10 - 1,
       `${viewport.width}x${viewport.height}: hero Ä/Ö accents risk overlapping due to line spacing: ${JSON.stringify(heroLines)}`);
-    assert(metrics.heroCtaHref === '/?intent=photos#yhteys', `${viewport.width}x${viewport.height}: primary CTA must target photo-intent form.`);
-    assert(/pyydä 2 sisältöesimerkkiä/i.test(metrics.heroCtaText), `${viewport.width}x${viewport.height}: primary CTA missing.`);
+    assert(metrics.heroCtaHref === '/?service=websites#yhteys', `${viewport.width}x${viewport.height}: primary CTA must target photo-intent form.`);
+    assert(/pyydä verkkosivuarvio/i.test(metrics.heroCtaText), `${viewport.width}x${viewport.height}: primary CTA missing.`);
     assert(metrics.serviceLinks && metrics.serviceCards === 3, `${viewport.width}x${viewport.height}: three service links missing.`);
     assert(metrics.editorialRoutes.length === 3 &&
       ['/rakennusyrityksille','/lvi-yrityksille','/instagram-sisallontuotanto']
@@ -354,7 +354,7 @@ try {
 
     if (viewport.firstView) {
       assert(metrics.heroCtaRect.bottom <= metrics.innerHeight, `${viewport.width}x${viewport.height}: primary CTA below first viewport.`);
-      assert(metrics.h1Text.includes('TYÖMAAKUVAT'), `${viewport.width}x${viewport.height}: Social H1 missing.`);
+      assert(metrics.h1Text.includes('VERKKOSIVUT'), `${viewport.width}x${viewport.height}: Social H1 missing.`);
     }
 
     const screenshot = await client.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
@@ -394,7 +394,7 @@ try {
   await client.send('Page.navigate', { url: BASE_URL });
   await waitForDocument(client);
   const interaction = await evaluate(client, `(() => {
-    const cta = document.querySelector('#top a.ghButton[href="/?intent=photos#yhteys"]');
+    const cta = document.querySelector('#top a.ghButton[href="/?service=websites#yhteys"]');
     cta?.focus();
     const focused = document.activeElement === cta;
     cta?.click();
@@ -408,11 +408,11 @@ try {
         const form = document.querySelector('#yhteys form[action="/api/leads"]');
         return { hash: location.hash, intent: location.search, ready: document.readyState === 'complete', formExists: Boolean(form), submitTabIndex: form?.querySelector('button[type="submit"]')?.tabIndex ?? -1 };
       })()`);
-      if (ctaDestination.hash === '#yhteys' && ctaDestination.intent === '?intent=photos' && ctaDestination.ready) break;
+      if (ctaDestination.hash === '#yhteys' && ctaDestination.intent === '?service=websites' && ctaDestination.ready) break;
     } catch { /* The navigation can replace the evaluation context. */ }
     await sleep(100);
   }
-  assert(ctaDestination.hash === '#yhteys' && ctaDestination.intent === '?intent=photos', 'Primary CTA did not navigate to photo-intent form.');
+  assert(ctaDestination.hash === '#yhteys' && ctaDestination.intent === '?service=websites', 'Primary CTA did not navigate to photo-intent form.');
   assert(ctaDestination.formExists && ctaDestination.submitTabIndex >= 0, 'Lead form or submit keyboard access missing.');
 
   // Instagram is optional, with no extra selector or checkbox.
