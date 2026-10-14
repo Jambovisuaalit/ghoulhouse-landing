@@ -62,7 +62,8 @@ export default function FunnelAnalytics() {
           if (!match || seen.has(match.section)) continue;
 
           seen.add(match.section);
-          trackEvent(match.event);
+          const service = entry.target.getAttribute('data-analytics-service');
+          trackEvent(match.event, service === 'social' ? { service, intent: 'photos' } : {});
           observer.unobserve(entry.target);
         }
       },

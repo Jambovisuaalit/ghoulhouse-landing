@@ -102,8 +102,8 @@ export default function MotionOverlayMenu({ home = false }: { home?: boolean }) 
           </div>
           <div className="ghOverlayBody">
             <nav className="ghOverlayNav" aria-label="Päävalikko">
-              {overlayNavigation.map(({ href, label }, index) => (
-                <a key={href} href={href} aria-current={!href.includes('#') && pathname === href ? 'page' : undefined} style={{ '--menu-index': index } as CSSProperties}>
+              {overlayNavigation.map(({ href: destination, label }, index) => (
+                <a key={destination} href={label === 'Hinnat' ? inquiryCta.pricingHref : destination} aria-current={!destination.includes('#') && pathname === destination ? 'page' : undefined} style={{ '--menu-index': index } as CSSProperties}>
                   <span className="ghOverlayNumber" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
                   <span>{label}</span>
                   <span className="ghOverlayArrow" aria-hidden="true"><ArrowUpRight /></span>
@@ -111,9 +111,9 @@ export default function MotionOverlayMenu({ home = false }: { home?: boolean }) 
               ))}
             </nav>
             <div className="ghOverlayAside">
-              <p className="ghOverlayEyebrow">Työmaakuvat sisään.<br />Valmis some ulos.</p>
+              <p className="ghOverlayEyebrow">{inquiryCta.eyebrow}</p>
               <a className="ghOverlayCta" href={inquiryCta.href}>{inquiryCta.label === 'Pyydä 2 sisältöesimerkkiä' ? <>Pyydä 2<br />sisältöesimerkkiä</> : inquiryCta.label} <span aria-hidden="true"><ArrowUpRight /></span></a>
-              <p className="ghOverlayNote">Maksuttomat esimerkit omista kuvistanne.</p>
+              <p className="ghOverlayNote">{inquiryCta.note}</p>
               <a className="ghOverlayEmail" href="mailto:hanna@ghoulhouse.fi">hanna@ghoulhouse.fi</a>
               <div className="ghOverlayServices" aria-label="Palvelut">
                 {siteNavigation.slice(0, 2).map(({ href, label }) => <a key={href} href={href}>{label}</a>)}

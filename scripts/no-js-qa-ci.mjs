@@ -30,7 +30,7 @@ const html = execFileSync(
 );
 
 assert(/<h1\b[^>]*>[\s\S]*?<\/h1>/i.test(html), 'No-JS QA: H1 is missing.');
-assert(html.includes('TYÖMAAKUVAT') && html.includes('VALMIS SOME'), 'No-JS QA: Social headline is missing.');
+assert(html.includes('VERKKOSIVUT') && html.includes('YHTEYDENOTTO'), 'No-JS QA: Social headline is missing.');
 assert(html.includes('490 €'), 'No-JS QA: Social card pricing is missing.');
 for (const href of ['/verkkosivut-yritykselle','/some-sisallontuotanto','/resurssit','/referenssit']) {
   assert(html.includes('href="' + href + '"'), 'No-JS QA: required company navigation missing: ' + href);
@@ -59,7 +59,7 @@ assert((html.match(/class="ghArtRoute"/g) || []).length === 3,
 for (const route of ['/rakennusyrityksille','/lvi-yrityksille','/instagram-sisallontuotanto']) {
   assert(html.includes('href="' + route + '"'), 'No-JS QA: editorial industry route missing: ' + route);
 }
-assert(html.includes('VISUAALINEN KONSEPTI / EI ASIAKASTYÖ'),
+assert(html.includes('OMA SIVUSTO / AIEMPI VERSIO / EI ASIAKASREFERENSSI'),
   'No-JS QA: photographic hero must disclose its concept nature.');
 assert(html.includes('href="/tyot/ghoulhouse-verkkosivut"'), 'No-JS QA: own-site case detail link missing.');
 assert(!html.includes('Kuva luotu tekoälyllä'), 'No-JS QA: AI concept still dominates company homepage.');
@@ -69,11 +69,11 @@ for (const route of ['/referenssit','/resurssit','/verkkosivut/hinta']) {
   const inner = await fetch(BASE_URL + route, { cache: 'no-store' }).then((res) => res.text());
   assert(inner.includes('class="ghGlobalHeader"') && inner.includes('class="ghGlobalFooter ghLiquidFooter"'),
     'No-JS QA: shared navigation/liquid-glass footer missing on ' + route);
-  assert(inner.includes('class="ghLiquidFooterButton"') && inner.includes('href="/#yhteys"'),
+  assert(inner.includes('class="ghLiquidFooterButton"') && inner.includes(route === '/verkkosivut/hinta' ? 'href="#yhteys"' : 'href="/?service=websites#yhteys"'),
     'No-JS QA: footer inquiry must reach homepage proposal form on ' + route);
   assert(inner.includes('href="/tietosuoja"') && !inner.includes('action="#"'),
     'No-JS QA: real privacy link missing or dummy signup present on ' + route);
-  assert(inner.includes('href="/#yhteys"'), 'No-JS QA: inquiry link missing on ' + route);
+  assert(inner.includes(route === '/verkkosivut/hinta' ? 'href="#yhteys"' : 'href="/?service=websites#yhteys"'), 'No-JS QA: inquiry link missing on ' + route);
 }
 const ownCaseResponse = await fetch(BASE_URL + '/tyot/ghoulhouse-verkkosivut', { cache:'no-store' });
 assert(ownCaseResponse.status === 200, 'No-JS QA: dedicated own-site case page not found.');

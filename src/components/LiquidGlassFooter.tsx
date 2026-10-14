@@ -15,7 +15,7 @@ const socialLinks = [
 
 /** Shared contact section and site navigation. */
 export default function LiquidGlassFooter({ home = false, inquiryHref, inquiryLabel }: Props) {
-  const contactHref = home ? '/?intent=photos#yhteys' : (inquiryHref || '/?intent=photos#yhteys');
+  const contactHref = home ? '/?service=websites#yhteys' : (inquiryHref || '/?service=websites#yhteys');
   const topHref = home ? '#top' : '/#top';
 
   return (
