@@ -190,7 +190,7 @@ try {
         submitRect: rect(submit),
         profileChoice: Boolean(form?.querySelector('input[name="profile"]:not([required])')) &&
           !form?.querySelector('select[name="profile"], input[name="noProfile"]') &&
-          Boolean(form?.querySelector('select[name="service"][required]')),
+          form?.querySelector('input[name="service"]')?.value === 'websites',
         requiredFields: ['company','name','contact'].every((name) => Boolean(form?.querySelector('[name="' + name + '"][required]'))),
         proofExists: Boolean(proof),
         proofImageLoaded: document.querySelector('.ghSelectedScreenshot')?.naturalWidth > 100,
