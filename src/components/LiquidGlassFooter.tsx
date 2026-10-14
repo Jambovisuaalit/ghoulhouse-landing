@@ -5,13 +5,12 @@ import { siteNavigation } from '@/data/site-navigation';
 
 type Props = { home?: boolean; inquiryHref?: string; inquiryLabel?: string };
 
-// Show only configured, valid external profiles. Never render placeholder links.
+// Confirmed public profiles and review destination supplied by GhoulHouse.
 const socialLinks = [
-  { name: 'Instagram', symbol: 'IG', url: process.env.NEXT_PUBLIC_INSTAGRAM_URL?.trim() },
-  { name: 'LinkedIn', symbol: 'IN', url: process.env.NEXT_PUBLIC_LINKEDIN_URL?.trim() },
-].filter((item): item is { name: string; symbol: string; url: string } =>
-  Boolean(item.url && /^https:\/\//i.test(item.url)),
-);
+  { name: 'Instagram', symbol: 'IG', url: 'https://www.instagram.com/ghoulhouse.fi/' },
+  { name: 'Google Business', symbol: 'GO', url: 'https://share.google/1LDmIXRgEryPBneud' },
+  { name: 'Hanna Nyholm LinkedIn', symbol: 'IN', url: 'https://fi.linkedin.com/in/hanna-nyholm-1b5213434' },
+];
 
 /** Shared contact section and site navigation. */
 export default function LiquidGlassFooter({ home = false, inquiryHref, inquiryLabel }: Props) {
@@ -75,6 +74,7 @@ export default function LiquidGlassFooter({ home = false, inquiryHref, inquiryLa
               <nav className="ghLiquidFooterNav ghLiquidFooterUtility" aria-label="Muut linkit">
                 <h3>LISÄTIETOJA</h3>
                 <Link href="/#yritys">GhoulHouse / tekijä <span aria-hidden="true"><ArrowUpRight /></span></Link>
+                <a href="https://g.page/r/CS7zBJkyvEZREAE/review" target="_blank" rel="noopener noreferrer">Jätä Google-arvostelu <span aria-hidden="true"><ArrowUpRight /></span></a>
                 <Link href="/tietosuoja">Tietosuoja <span aria-hidden="true"><ArrowUpRight /></span></Link>
                 <a href={contactHref}>Yhteydenotto <span aria-hidden="true"><ArrowUpRight /></span></a>
               </nav>
