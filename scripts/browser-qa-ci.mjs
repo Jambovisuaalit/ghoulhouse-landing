@@ -1,3 +1,4 @@
+import { checkWebsiteRoutes } from './website-responsive-qa.mjs';
 import { checkOverlayMenu } from './overlay-menu-qa.mjs';
 import { execFileSync, spawn } from 'node:child_process';
 import { mkdir, rm, writeFile } from 'node:fs/promises';
@@ -635,7 +636,9 @@ try {
   assert(reducedMotion.proof && reducedMotion.form, 'Reduced motion removed critical content.');
   assert(pageExceptions.length === 0, `Page exceptions: ${pageExceptions.join(' | ')}`);
 
-  const payload = { chromePath, results, socialLayoutResults, interaction, reducedMotion };
+  const websiteBefore = await checkWebsiteRoutes({client, evaluate, assert, sleep, writeFile, screenshotDir: SCREENSHOT_DIR, base: 'https://ghoulhouse.fi', baseline: true});
+  const websiteAfter = await checkWebsiteRoutes({client, evaluate, assert, sleep, writeFile, screenshotDir: SCREENSHOT_DIR, base: BASE_URL});
+  const payload = { websiteBefore, websiteAfter, chromePath, results, socialLayoutResults, interaction, reducedMotion };
   await writeFile(`${SCREENSHOT_DIR}/results.json`, JSON.stringify(payload, null, 2));
   console.log(JSON.stringify(payload, null, 2));
 } finally {

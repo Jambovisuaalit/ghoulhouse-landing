@@ -20,10 +20,10 @@ export const overlayNavigation = [
 export function getInquiryCta(pathname: string | null | undefined) {
   const path = pathname || '/';
   if (path === '/verkkosivut-yritykselle' || path.startsWith('/verkkosivut/')) {
-    return { href: '#yhteys', label: 'Pyydä verkkosivuarvio' };
+    return { href: '#yhteys', label: 'Pyydä verkkosivuarvio', note: 'Kerro nykyisestä sivustosta tai uuden toteutuksen tarpeesta.', priceHref: '/verkkosivut/hinta' };
   }
   if (path === '/some-12') {
-    return { href: '#yhteys', label: 'Pyydä SOME 12 -aloitusta' };
+    return { href: '#yhteys', label: 'Pyydä SOME 12 -aloitusta', note: '12 sisältöä Instagramiin ja Facebookiin / 30 päivää.', priceHref: '/some-sisallontuotanto/hinta' };
   }
   if (
     path === '/some-sisallontuotanto' ||
@@ -33,7 +33,23 @@ export function getInquiryCta(pathname: string | null | undefined) {
     path === '/lvi-yrityksille' ||
     path === '/saneerausyrityksille'
   ) {
-    return { href: '#yhteys', label: 'Pyydä 2 sisältöesimerkkiä' };
+    return { href: '#yhteys', label: 'Pyydä 2 sisältöesimerkkiä', note: 'Maksuttomat esimerkit omista kuvistanne.', priceHref: '/some-sisallontuotanto/hinta' };
   }
-  return { href: '/?intent=photos#yhteys', label: 'Pyydä 2 sisältöesimerkkiä' };
+  return { href: '/?intent=photos#yhteys', label: 'Pyydä 2 sisältöesimerkkiä', note: 'Maksuttomat esimerkit omista kuvistanne.', priceHref: '/some-sisallontuotanto/hinta' };
+}
+
+/** Keep service and resource navigation selected on their child pages. */
+export function isNavigationActive(pathname: string | null, href: string) {
+  if (!pathname) return false;
+  if (pathname === href) return true;
+  if (href === '/resurssit') return pathname.startsWith('/oppaat/');
+  if (href === '/referenssit') return pathname.startsWith('/tyot/');
+  if (href === '/verkkosivut-yritykselle') return pathname.startsWith('/verkkosivut/');
+  if (href === '/some-sisallontuotanto') {
+    return pathname.startsWith('/some-sisallontuotanto/') || [
+      '/some-12', '/instagram-sisallontuotanto', '/rakennusyrityksille',
+      '/lvi-yrityksille', '/saneerausyrityksille',
+    ].includes(pathname);
+  }
+  return false;
 }

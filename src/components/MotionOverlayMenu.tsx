@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { usePathname } from 'next/navigation';
 import ArrowUpRight from '@/components/ArrowUpRight';
-import { getInquiryCta, overlayNavigation, siteNavigation } from '@/data/site-navigation';
+import { getInquiryCta, isNavigationActive, overlayNavigation, siteNavigation } from '@/data/site-navigation';
 
 /** Native modal supplies background inertness; the details menu also works without JS. */
 export default function MotionOverlayMenu({ home = false }: { home?: boolean }) {
@@ -74,7 +74,7 @@ export default function MotionOverlayMenu({ home = false }: { home?: boolean }) 
       <details hidden={ready} className={`mobileNav ghMenuFallback ${home ? 'ghMobileNav' : 'ghGlobalMobileNav'}`}>
         <summary aria-label="Avaa valikko">Valikko <span aria-hidden="true">+</span></summary>
         <nav aria-label="Mobiilinavigaatio">
-          {siteNavigation.map(({ href, label }) => <a key={href} href={href}>{label}</a>)}
+          {siteNavigation.map(({ href, label }) => <a key={href} href={href} aria-current={isNavigationActive(pathname, href) ? 'page' : undefined}>{label}</a>)}
           <a href={inquiryCta.href}>{inquiryCta.label}</a>
         </nav>
       </details>
@@ -105,7 +105,7 @@ export default function MotionOverlayMenu({ home = false }: { home?: boolean }) 
           <div className="ghOverlayBody">
             <nav className="ghOverlayNav" aria-label="Päävalikko">
               {overlayNavigation.map(({ href, label }, index) => (
-                <a key={href} href={href} aria-current={!href.includes('#') && pathname === href ? 'page' : undefined} style={{ '--menu-index': index } as CSSProperties}>
+                <a key={href} href={label === 'Hinnat' ? inquiryCta.priceHref : label === 'Yhteys' ? inquiryCta.href : href} aria-current={!href.includes('#') && pathname === href ? 'page' : undefined} style={{ '--menu-index': index } as CSSProperties}>
                   <span className="ghOverlayNumber" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
                   <span>{label}</span>
                   <span className="ghOverlayArrow" aria-hidden="true"><ArrowUpRight /></span>
@@ -115,10 +115,10 @@ export default function MotionOverlayMenu({ home = false }: { home?: boolean }) 
             <div className="ghOverlayAside">
               <p className="ghOverlayEyebrow">Työmaakuvat sisään.<br />Valmis some ulos.</p>
               <a className="ghOverlayCta" href={inquiryCta.href}>{inquiryCta.label === 'Pyydä 2 sisältöesimerkkiä' ? <>Pyydä 2<br />sisältöesimerkkiä</> : inquiryCta.label} <span aria-hidden="true"><ArrowUpRight /></span></a>
-              <p className="ghOverlayNote">Maksuttomat esimerkit omista kuvistanne.</p>
+              <p className="ghOverlayNote">{inquiryCta.note}</p>
               <a className="ghOverlayEmail" href={`mailto:${siteConfig.company.contactEmail}`}>{siteConfig.company.contactEmail}</a>
               <div className="ghOverlayServices" aria-label="Palvelut">
-                {siteNavigation.slice(0, 2).map(({ href, label }) => <a key={href} href={href}>{label}</a>)}
+                {siteNavigation.slice(0, 2).map(({ href, label }) => <a key={href} href={href} aria-current={isNavigationActive(pathname, href) ? 'page' : undefined}>{label}</a>)}
                 <a href="/?service=seo#yhteys">SEO-ehdotus</a>
               </div>
             </div>
