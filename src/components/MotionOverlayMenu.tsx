@@ -1,5 +1,7 @@
 'use client';
 
+import { siteConfig } from '@/config/site';
+
 import Image from 'next/image';
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { usePathname } from 'next/navigation';
@@ -114,7 +116,7 @@ export default function MotionOverlayMenu({ home = false }: { home?: boolean }) 
               <p className="ghOverlayEyebrow">Työmaakuvat sisään.<br />Valmis some ulos.</p>
               <a className="ghOverlayCta" href={inquiryCta.href}>{inquiryCta.label === 'Pyydä 2 sisältöesimerkkiä' ? <>Pyydä 2<br />sisältöesimerkkiä</> : inquiryCta.label} <span aria-hidden="true"><ArrowUpRight /></span></a>
               <p className="ghOverlayNote">Maksuttomat esimerkit omista kuvistanne.</p>
-              <a className="ghOverlayEmail" href="mailto:hanna@ghoulhouse.fi">hanna@ghoulhouse.fi</a>
+              <a className="ghOverlayEmail" href={`mailto:${siteConfig.company.contactEmail}`}>{siteConfig.company.contactEmail}</a>
               <div className="ghOverlayServices" aria-label="Palvelut">
                 {siteNavigation.slice(0, 2).map(({ href, label }) => <a key={href} href={href}>{label}</a>)}
                 <a href="/?service=seo#yhteys">SEO-ehdotus</a>

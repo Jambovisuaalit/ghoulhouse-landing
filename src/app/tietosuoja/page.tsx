@@ -50,7 +50,7 @@ export default function PrivacyPage() {
               <p>
                 Tässä selosteessa kuvataan, miten {company.legalName} käsittelee verkkosivun, yhteydenottojen ja asiakassuhteiden yhteydessä syntyviä henkilötietoja.
               </p>
-              <p className="type-caption text-ink">Viimeksi päivitetty 12.9.2026</p>
+              <p className="type-caption text-ink">Viimeksi päivitetty 16.10.2026</p>
             </div>
           </header>
 
@@ -69,7 +69,7 @@ export default function PrivacyPage() {
             </p>
             <p>
               Tietosuoja-asioiden yhteyshenkilö: {company.founder}.<br />
-              <a className={linkClass} href="mailto:hello@ghoulhouse.fi">hello@ghoulhouse.fi</a>
+              <a className={linkClass} href={`mailto:${siteConfig.company.contactEmail}`}>{siteConfig.company.contactEmail}</a>
             </p>
           </PrivacySection>
 
@@ -140,7 +140,7 @@ export default function PrivacyPage() {
               <li>pyytää soveltuvissa tilanteissa tietojen siirtämistä järjestelmästä toiseen</li>
             </ul>
             <p>
-              Oikeuksien käyttämiseksi ota yhteyttä osoitteeseen <a className={linkClass} href="mailto:hello@ghoulhouse.fi">hello@ghoulhouse.fi</a>.
+              Oikeuksien käyttämiseksi ota yhteyttä osoitteeseen <a className={linkClass} href={`mailto:${siteConfig.company.contactEmail}`}>{siteConfig.company.contactEmail}</a>.
             </p>
           </PrivacySection>
 
@@ -173,8 +173,8 @@ export default function PrivacyPage() {
               <p className="type-label text-signal">TIETOSUOJA-ASIA</p>
               <p className="mt-3 font-display text-3xl uppercase leading-none text-ink">OTA YHTEYTTÄ</p>
             </div>
-            <a className="btn btn-secondary mt-6 md:mt-0" href="mailto:hello@ghoulhouse.fi">
-              hello@ghoulhouse.fi
+            <a className="btn btn-secondary mt-6 md:mt-0" href={`mailto:${siteConfig.company.contactEmail}`}>
+              {siteConfig.company.contactEmail}
             </a>
           </div>
         </article>

@@ -63,3 +63,20 @@ test('section observer starts after consent/readiness, emits once, and stops on 
     cleanup(); assert.equal([...listeners.values()].flatMap(set => [...set]).length, 0);
   } finally { Object.assign(globalThis, previous); }
 });
+
+test('page_view stays owned by Google tag and is never sent by trackEvent', () => {
+  const previous = { window: globalThis.window, document: globalThis.document, CustomEvent: globalThis.CustomEvent };
+  const calls = [];
+  globalThis.window = { location: { pathname: '/' }, gtag: (...args) => calls.push(args), dispatchEvent() {} };
+  globalThis.document = { querySelector: () => null };
+  globalThis.CustomEvent = class {};
+  try {
+    const { trackEvent } = loadTs('src/lib/analytics.ts', {
+      './analytics-consent.ts': { canTrackAnalytics: () => true },
+    });
+    trackEvent('page_view');
+    assert.equal(calls.length, 0);
+    trackEvent('lead_form_success');
+    assert.equal(calls[0][1], 'lead_form_success');
+  } finally { Object.assign(globalThis, previous); }
+});
