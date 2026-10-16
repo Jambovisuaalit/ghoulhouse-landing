@@ -39,3 +39,24 @@ test('upstream validation errors remain 400 and native forms return to the corre
   assert.equal(destination.searchParams.get('intent'), 'photos');
   assert.equal(destination.searchParams.get('lead'), 'validation');
 });
+
+test('missing or invalid service is rejected for JSON and native forms before storage', async () => {
+  let calls = 0;
+  const { POST } = loadTs('src/app/api/leads/route.ts', {
+    '@/lib/lead-storage': { storeLead: async () => { calls++; }, LeadStorageError: class extends Error {} },
+  });
+  for (const service of ['', 'unsupported']) {
+    const payload = { intent: 'booking', company: 'QA', name: 'QA', contact: 'qa@example.com', service };
+    const json = await POST(new NextRequest('https://ghoulhouse.fi/api/leads', {
+      method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload),
+    }));
+    assert.equal(json.status, 400);
+    assert.ok((await json.json()).errors.service);
+    const html = await POST(new NextRequest('https://ghoulhouse.fi/api/leads', {
+      method: 'POST', body: new URLSearchParams(payload),
+    }));
+    assert.equal(html.status, 303);
+    assert.equal(new URL(html.headers.get('location')).searchParams.get('lead'), 'validation');
+  }
+  assert.equal(calls, 0);
+});

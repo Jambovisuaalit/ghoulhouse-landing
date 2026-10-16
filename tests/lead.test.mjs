@@ -103,3 +103,15 @@ test('legacy form payload stays compatible and message limit is enforced', () =>
   assert.equal(result.data.website, 'https://example.com');
   assert.equal(validateLead({ ...base, email: 'qa@example.com', message: message + 'a' }).ok, false);
 });
+
+test('server requires an explicit supported service and photos only accept Social', () => {
+  for (const service of [undefined, null, '', 'unknown', ['social']]) {
+    const result = validateLead({ ...base, service, contact: 'qa@example.com' });
+    assert.equal(result.ok, false);
+    assert.ok(result.errors.service);
+  }
+  assert.equal(validateLead({ ...base, service: 'websites', contact: 'qa@example.com' }).ok, false);
+  for (const service of ['social', 'websites', 'seo']) {
+    assert.equal(validateLead({ ...base, intent: 'booking', service, contact: 'qa@example.com', profile: 'example.com' }).ok, true);
+  }
+});

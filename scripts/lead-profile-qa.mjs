@@ -10,7 +10,7 @@ const exports = {};
 runInNewContext(javascript, { exports, URL });
 const { validateLead, NO_PROFILE_YET } = exports;
 function assert(condition, message) { if (!condition) throw Error(message); }
-const base = { intent: 'booking', company: 'Koe Oy', name: 'Testikäyttäjä', email: 'test@example.invalid' };
+const base = { intent: 'booking', service: 'social', company: 'Koe Oy', name: 'Testikäyttäjä', email: 'test@example.invalid' };
 const without = validateLead({ ...base, profile: NO_PROFILE_YET });
 assert(without.ok, 'Explicit no-profile choice must be accepted.');
 assert(without.data.profile === NO_PROFILE_YET, 'No-profile choice must be preserved for sales handoff.');
