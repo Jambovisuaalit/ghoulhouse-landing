@@ -318,3 +318,27 @@ body .ghLiquidFooter .ghLiquidFooterMail { font-size: 14px; font-weight: 500; }
   background: #FFFFFF;
   color: var(--brand-ink);
 }
+
+/* Website contact grids must shrink before long Finnish headings set track width.
+   Root overflow hiding cannot substitute for a usable form at 320px. */
+.ghGlobalContent .websitePage .contactGrid {
+  grid-template-columns: minmax(0, 1fr);
+}
+.ghGlobalContent .websitePage :is(.contactGrid > *, .leadForm, .fieldGroup, .leadForm input, .leadForm textarea, .formSubmit) {
+  min-width: 0;
+  max-width: 100%;
+}
+.ghGlobalContent .websitePage .contact h2 {
+  max-width: 17ch;
+  font-family: var(--gh-ed-serif);
+  font-size: clamp(35px, 4.9vw, 72px);
+  line-height: 1.13;
+  letter-spacing: -.05em;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+@media (min-width: 768px) {
+  .ghGlobalContent .websitePage .contactGrid {
+    grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
+  }
+}
