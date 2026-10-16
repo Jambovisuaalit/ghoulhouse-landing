@@ -50,6 +50,11 @@ export async function checkWebsiteRoutes({ client, evaluate, assert, sleep, writ
       }
       await evaluate(client, 'document.querySelector(".ghMenuClose").click()');
       await sleep(300);
+      if(path==='/verkkosivut-yritykselle') {
+        const height=await evaluate(client, 'document.documentElement.scrollHeight');
+        const shot=await client.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true,clip:{x:0,y:0,width,height:Math.min(height,16000),scale:1}});
+        await writeFile(`${screenshotDir}/${baseline?'before':'after'}-website-page-${width}.png`,Buffer.from(shot.data,'base64'));
+      }
       const entry={path,width,baseline,layout,menu,errors};results.push(entry);
       if(!baseline) assert(errors.length===0, `Website responsive QA: ${JSON.stringify(entry)}`);
     }
