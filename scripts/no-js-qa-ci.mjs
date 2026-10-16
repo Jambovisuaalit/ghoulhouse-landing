@@ -73,7 +73,9 @@ for (const [route, expectedHref, expectedLabel] of [
   const inner = await fetch(BASE_URL + route, { cache: 'no-store' }).then((res) => res.text());
   assert(inner.includes('class="ghGlobalHeader"') && inner.includes('class="ghGlobalFooter ghLiquidFooter"'),
     'No-JS QA: shared navigation/liquid-glass footer missing on ' + route);
-  const footer = inner.match(/<footer\\b[\\s\\S]*?<\\/footer>/i)?.[0] || '';
+  const footerStart = inner.indexOf('<footer');
+  const footerEnd = inner.indexOf('</footer>', footerStart);
+  const footer = footerStart >= 0 && footerEnd > footerStart ? inner.slice(footerStart, footerEnd + '</footer>'.length) : '';
   assert(footer.includes('class="ghLiquidFooterButton"') && footer.includes('href="' + expectedHref + '"') && footer.includes(expectedLabel),
     'No-JS QA: footer inquiry must retain the correct service and destination on ' + route);
   assert(inner.includes('href="/tietosuoja"') && !inner.includes('action="#"'),
