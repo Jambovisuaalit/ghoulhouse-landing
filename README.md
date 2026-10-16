@@ -134,7 +134,7 @@ Browser
 → Resend
 → signed Resend delivery webhook
 → lead delivery state reconciliation
-→ hello@ghoulhouse.fi
+→ hanna@ghoulhouse.fi
 ```
 
 ## Google Analytics 4
@@ -195,3 +195,8 @@ Verify with `node --test tests/*.test.mjs`, `npm run typecheck`, `npm run lint`,
 checks retries, changed content, expiry, rollback, permissions and notification counts;
 its embedded connection queues calls, so a real multi-connection production smoke
 test remains a release check.
+
+Notification recipient updated to user-confirmed `hanna@ghoulhouse.fi` by migration
+`20261016185140_lead_notification_recipient.sql`. Existing outbox payloads retain
+their original recipients. Tablet/mobile WhatsApp uses its accessible icon button
+to avoid covering the center of service CTAs.

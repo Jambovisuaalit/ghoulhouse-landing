@@ -31,6 +31,7 @@ test('notification recovery executes the migration against isolated PostgreSQL',
   `);
   await db.exec(readFileSync(new URL('../supabase/migrations/20261002224042_trusted_ghoulhouse_lead_ingest_v4.sql', import.meta.url), 'utf8'));
   await db.exec(readFileSync(new URL('../supabase/migrations/20261007004821_lead_notification_recovery_and_readiness.sql', import.meta.url), 'utf8'));
+  await db.exec(readFileSync(new URL('../supabase/migrations/20261016185140_lead_notification_recipient.sql', import.meta.url), 'utf8'));
   await db.exec(`create trigger trg_notify_ghoulhouse_lead after insert on public.leads
     for each row execute function private.notify_ghoulhouse_lead();`);
   const insert = async () => (await query(`insert into public.leads(intent,company,name,email,profile,service)
