@@ -65,15 +65,20 @@ assert(html.includes('href="/tyot/ghoulhouse-verkkosivut"'), 'No-JS QA: own-site
 assert(!html.includes('Kuva luotu tekoälyllä'), 'No-JS QA: AI concept still dominates company homepage.');
 assert(!html.includes('logo-horizontal.svg') && !html.includes('logo-horizontal-white.svg'), 'No-JS QA: unavailable/fabricated logo lockup referenced.');
 
-for (const route of ['/referenssit','/resurssit','/verkkosivut/hinta']) {
+for (const [route, expectedHref, expectedLabel] of [
+  ['/referenssit', '/?intent=photos#yhteys', 'Pyydä 2 sisältöesimerkkiä'],
+  ['/resurssit', '/?intent=photos#yhteys', 'Pyydä 2 sisältöesimerkkiä'],
+  ['/verkkosivut/hinta', '#yhteys', 'Pyydä verkkosivuarvio'],
+]) {
   const inner = await fetch(BASE_URL + route, { cache: 'no-store' }).then((res) => res.text());
   assert(inner.includes('class="ghGlobalHeader"') && inner.includes('class="ghGlobalFooter ghLiquidFooter"'),
     'No-JS QA: shared navigation/liquid-glass footer missing on ' + route);
-  assert(inner.includes('class="ghLiquidFooterButton"') && inner.includes('href="/#yhteys"'),
-    'No-JS QA: footer inquiry must reach homepage proposal form on ' + route);
+  const footer = inner.match(/<footer\\b[\\s\\S]*?<\\/footer>/i)?.[0] || '';
+  assert(footer.includes('class="ghLiquidFooterButton"') && footer.includes('href="' + expectedHref + '"') && footer.includes(expectedLabel),
+    'No-JS QA: footer inquiry must retain the correct service and destination on ' + route);
   assert(inner.includes('href="/tietosuoja"') && !inner.includes('action="#"'),
     'No-JS QA: real privacy link missing or dummy signup present on ' + route);
-  assert(inner.includes('href="/#yhteys"'), 'No-JS QA: inquiry link missing on ' + route);
+  assert(inner.includes('href="' + expectedHref + '"'), 'No-JS QA: service-aware inquiry link missing on ' + route);
 }
 const ownCaseResponse = await fetch(BASE_URL + '/tyot/ghoulhouse-verkkosivut', { cache:'no-store' });
 assert(ownCaseResponse.status === 200, 'No-JS QA: dedicated own-site case page not found.');
