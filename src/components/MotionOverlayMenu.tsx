@@ -104,13 +104,16 @@ export default function MotionOverlayMenu({ home = false }: { home?: boolean }) 
           </div>
           <div className="ghOverlayBody">
             <nav className="ghOverlayNav" aria-label="Päävalikko">
-              {overlayNavigation.map(({ href, label }, index) => (
-                <a key={href} href={label === 'Hinnat' ? inquiryCta.priceHref : label === 'Yhteys' ? inquiryCta.href : href} aria-current={!href.includes('#') && pathname === href ? 'page' : undefined} style={{ '--menu-index': index } as CSSProperties}>
+              {overlayNavigation.map(({ href, label }, index) => {
+                const destination = label === 'Hinnat' ? inquiryCta.priceHref : label === 'Yhteys' ? inquiryCta.href : href;
+                return (
+                <a key={href} href={destination} aria-current={!destination.includes('#') && pathname === destination ? 'page' : undefined} style={{ '--menu-index': index } as CSSProperties}>
                   <span className="ghOverlayNumber" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
                   <span>{label}</span>
                   <span className="ghOverlayArrow" aria-hidden="true"><ArrowUpRight /></span>
                 </a>
-              ))}
+                );
+              })}
             </nav>
             <div className="ghOverlayAside">
               <p className="ghOverlayEyebrow">Työmaakuvat sisään.<br />Valmis some ulos.</p>

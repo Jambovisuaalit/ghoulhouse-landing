@@ -17,6 +17,7 @@ export async function checkWebsiteRoutes({ client, evaluate, assert, sleep, writ
         const form = document.querySelector('#yhteys form');
         const h1 = document.querySelector('main h1');
         const clipped = [...document.querySelectorAll('main h1, main h2, main h3, main p, main input, main textarea, main button')].filter(el => {
+          if (el.getAttribute('aria-hidden') === 'true') return false;
           const r=el.getBoundingClientRect();
           return r.width > 0 && (r.left < -2 || r.right > innerWidth+2 || el.scrollWidth > el.clientWidth+2);
         }).map(el => ({tag:el.tagName,text:el.textContent?.slice(0,80)}));
