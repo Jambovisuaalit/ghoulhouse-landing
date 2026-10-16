@@ -368,3 +368,9 @@ body .ghLiquidFooter .ghLiquidFooterMail { font-size: 14px; font-weight: 500; }
     grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
   }
 }
+
+/* Small labels on Ink need normal-text contrast, not the large-title threshold. */
+.ghGlobalContent .websitePage .websiteFactGrid strong,
+.ghGlobalContent .websitePage .websitePrice .kicker {
+  color: var(--brand-bone);
+}
