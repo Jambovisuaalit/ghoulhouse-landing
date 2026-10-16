@@ -342,3 +342,29 @@ body .ghLiquidFooter .ghLiquidFooterMail { font-size: 14px; font-weight: 500; }
     grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
   }
 }
+
+/* Apply the same intrinsic-size protection to website hero and pricing content. */
+.ghGlobalContent .websitePage :is(.websiteHeroGrid, .websiteHeroCopy, .websiteTwoCol, .websitePriceGrid, .websitePriceCopy) {
+  grid-template-columns: minmax(0, 1fr);
+}
+.ghGlobalContent .websitePage :is(.websiteHeroGrid, .websiteHeroCopy, .websiteTwoCol, .websitePriceGrid, .websitePriceCopy) > * {
+  min-width: 0;
+}
+.ghGlobalContent .websitePage :is(.websiteHeroCopy h1, .websitePrice h2) {
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+.ghGlobalContent .websitePage .websitePrice h2 {
+  font-family: var(--gh-ed-serif);
+  font-size: clamp(35px, 4.9vw, 72px);
+  line-height: 1.13;
+  letter-spacing: -.05em;
+}
+@media (min-width: 768px) {
+  .ghGlobalContent .websitePage .websiteHeroGrid {
+    grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr);
+  }
+  .ghGlobalContent .websitePage :is(.websiteTwoCol, .websitePriceGrid) {
+    grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+  }
+}
