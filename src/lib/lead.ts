@@ -113,7 +113,7 @@ export function validateLead(input: unknown): LeadValidationResult {
   const contact = clean(source.contact, limits.email);
   const contactIsEmail = Boolean(contact && isValidEmail(contact));
   const contactIsPhone = Boolean(contact && isValidPhone(contact));
-  const service = ['websites', 'social', 'seo'].includes(String(source.service))
+  const service = typeof source.service === 'string' && ['websites', 'social', 'seo'].includes(source.service)
     ? (source.service as 'websites' | 'social' | 'seo')
     : undefined;
   const data: LeadInput = {
@@ -131,6 +131,12 @@ export function validateLead(input: unknown): LeadValidationResult {
   };
 
   const errors: Record<string, string> = {};
+
+  if (!service) {
+    errors.service = 'Valitse palvelu, jotta osaamme käsitellä pyyntösi.';
+  } else if (data.intent === 'photos' && service !== 'social') {
+    errors.service = 'Sisältöesimerkit kuuluvat Social-palveluun.';
+  }
 
   if (!data.company) errors.company = 'Yritys on pakollinen.';
   if (!data.name) errors.name = 'Nimi on pakollinen.';

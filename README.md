@@ -134,7 +134,7 @@ Browser
 → Resend
 → signed Resend delivery webhook
 → lead delivery state reconciliation
-→ hello@ghoulhouse.fi
+→ hanna@ghoulhouse.fi
 ```
 
 ## Google Analytics 4
@@ -174,3 +174,29 @@ Verified on the active `ghoulhouse-home` Vercel project:
 - lead RPC hardening verified with an `anon` execution smoke test and Resend `delivered` status
 
 Remaining non-blocking launch assets: verified Hanna Nyholm founder portrait, verified real customer RAW → FINAL material, and permanent Vercel Git relinking from the stale private clone to this canonical repository.
+
+## Lead retry protection
+
+The backend requires an explicit supported service; photo examples accept only Social.
+Migration `20261016184511_lead_validation_deduplication.sql` updates the existing v4
+RPC without changing its signature or the Edge Function. Apply it before releasing
+the frontend validation change. Identical normalized lead payloads return the original
+lead ID for 24 hours, independent of client IP. A transaction advisory lock serializes
+matching submissions; the fingerprint, lead and notification trigger commit together.
+Duplicates do not consume another rate-limit slot or queue another notification.
+Changing any normalized business field creates a new inquiry. Expired fingerprints
+are removed on subsequent successful new submissions; original leads are retained.
+The private table stores a SHA-256 fingerprint, lead ID and expiry, with RLS enabled
+and no direct access for browser or backend API roles. The existing backend-only
+SECURITY DEFINER RPC owns the write boundary. No historical leads are backfilled.
+
+Verify with `node --test tests/*.test.mjs`, `npm run typecheck`, `npm run lint`,
+`node scripts/lead-profile-qa.mjs` and `npm run build`. The isolated database test
+checks retries, changed content, expiry, rollback, permissions and notification counts;
+its embedded connection queues calls, so a real multi-connection production smoke
+test remains a release check.
+
+Notification recipient updated to user-confirmed `hanna@ghoulhouse.fi` by migration
+`20261016185140_lead_notification_recipient.sql`. Existing outbox payloads retain
+their original recipients. Tablet/mobile WhatsApp uses its accessible icon button
+to avoid covering the center of service CTAs.

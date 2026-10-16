@@ -114,3 +114,6 @@
 .ghWhatsAppContact svg{flex:none}
 @media(max-width:767px){.ghWhatsAppContact{right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));min-height:48px;padding:11px 13px;font-size:13px}}
 @media(prefers-reduced-motion:reduce){.ghWhatsAppContact{transition:none}}
+
+/* Keep the floating contact control clear of tablet service actions. */
+@media(max-width:1023px){.ghWhatsAppContact{width:48px;height:48px;min-height:48px;padding:0;gap:0}.ghWhatsAppContact span{display:none}}
