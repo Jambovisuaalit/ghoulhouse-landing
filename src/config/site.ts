@@ -18,6 +18,7 @@ export const siteConfig = {
       city: 'Helsinki',
     },
     founder: 'Hanna Nyholm',
+    contactEmail: 'hanna@ghoulhouse.fi',
     founderImage,
     domain: canonicalSiteUrl,
   },

@@ -60,3 +60,39 @@ test('missing or invalid service is rejected for JSON and native forms before st
   }
   assert.equal(calls, 0);
 });
+
+test('body limit counts actual bytes for JSON, native forms and chunked bodies', async () => {
+  let calls = 0;
+  const { POST } = loadTs('src/app/api/leads/route.ts', {
+    '@/lib/lead-storage': { storeLead: async () => { calls++; }, LeadStorageError: class extends Error {} },
+  });
+  for (const [type, body] of [
+    ['application/json', JSON.stringify({ padding: 'x'.repeat(50000) })],
+    ['application/json', JSON.stringify({ padding: '€'.repeat(17000) })],
+    ['application/x-www-form-urlencoded', 'fax=bot&padding=' + 'x'.repeat(50000)],
+    ['multipart/form-data; boundary=test', '--test\r\n' + 'x'.repeat(50000)],
+  ]) {
+    const req = new NextRequest('https://ghoulhouse.fi/api/leads', {
+      method: 'POST', headers: { 'content-type': type }, body,
+    });
+    assert.equal(req.headers.get('content-length'), null);
+    assert.equal((await POST(req)).status, 413);
+  }
+  let cancelled = false;
+  const stream = new ReadableStream({ pull(controller) { controller.enqueue(new Uint8Array(10001)); }, cancel() { cancelled = true; } });
+  const response = await POST(new NextRequest('https://ghoulhouse.fi/api/leads', {
+    method: 'POST', headers: { 'content-type': 'application/json' }, body: stream, duplex: 'half',
+  }));
+  assert.equal(response.status, 413);
+  assert.equal(cancelled, true);
+  const exactBody = JSON.stringify({ fax: 'bot', padding: '' });
+  for (const size of [50000, 50001]) {
+    const body = JSON.stringify({ fax: 'bot', padding: 'x'.repeat(size - exactBody.length) });
+    assert.equal(Buffer.byteLength(body), size);
+    const response = await POST(new NextRequest('https://ghoulhouse.fi/api/leads', {
+      method: 'POST', headers: { 'content-type': 'application/json' }, body,
+    }));
+    assert.equal(response.status, size === 50000 ? 201 : 413);
+  }
+  assert.equal(calls, 0);
+});

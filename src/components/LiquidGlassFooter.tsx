@@ -1,3 +1,5 @@
+import { siteConfig } from '@/config/site';
+
 import ArrowUpRight from '@/components/ArrowUpRight';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -34,7 +36,7 @@ export default function LiquidGlassFooter({ home = false, inquiryHref, inquiryLa
                   <span>{inquiryLabel || 'Pyydä 2 sisältöesimerkkiä'}</span>
                   <span aria-hidden="true"><ArrowUpRight /></span>
                 </a>
-                <a href="mailto:hello@ghoulhouse.fi" className="ghLiquidFooterMail">
+                <a href={`mailto:${siteConfig.company.contactEmail}`} className="ghLiquidFooterMail">
                   Tai lähetä sähköpostia <span aria-hidden="true"><ArrowUpRight /></span>
                 </a>
               </div>
@@ -66,8 +68,8 @@ export default function LiquidGlassFooter({ home = false, inquiryHref, inquiryLa
               <div className="ghLiquidFooterContact">
                 <h3>YHTEYSTIEDOT</h3>
                 <p>GhoulHouse Oy<br />Helsinki, Suomi</p>
-                <a href="mailto:hanna@ghoulhouse.fi">Hanna Nyholm <span aria-hidden="true"><ArrowUpRight /></span></a>
-                <a href="mailto:hello@ghoulhouse.fi">hello@ghoulhouse.fi</a>
+                <a href={`mailto:${siteConfig.company.contactEmail}`}>Hanna Nyholm <span aria-hidden="true"><ArrowUpRight /></span></a>
+                <a href={`mailto:${siteConfig.company.contactEmail}`}>{siteConfig.company.contactEmail}</a>
                 <span className="ghLiquidFooterBusinessId">Y-TUNNUS 3651127-5</span>
               </div>
 

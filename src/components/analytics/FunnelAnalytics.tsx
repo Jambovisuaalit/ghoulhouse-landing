@@ -17,11 +17,7 @@ const observedSections: Array<{
 export default function FunnelAnalytics() {
   const pathname = usePathname();
   useEffect(() => {
-    const handleAnalyticsReady = () => trackEvent('page_view');
-    if (canTrackAnalytics()) {
-      trackEvent('page_view');
-    }
-    window.addEventListener('ghoulhouse:analytics-ready', handleAnalyticsReady);
+    // Page views belong to Google tag; this component tracks funnel events only.
 
     const handleClick = (event: MouseEvent) => {
       const target = event.target;
@@ -44,8 +40,7 @@ export default function FunnelAnalytics() {
 
     if (!('IntersectionObserver' in window)) {
       return () => {
-        window.removeEventListener('ghoulhouse:analytics-ready', handleAnalyticsReady);
-        document.removeEventListener('click', handleClick);
+          document.removeEventListener('click', handleClick);
       };
     }
 
@@ -85,7 +80,6 @@ export default function FunnelAnalytics() {
     window.addEventListener('storage', syncObserver);
 
     return () => {
-      window.removeEventListener('ghoulhouse:analytics-ready', handleAnalyticsReady);
       document.removeEventListener('click', handleClick);
       window.removeEventListener('ghoulhouse:analytics-ready', syncObserver);
       window.removeEventListener('ghoulhouse:analytics-consent', syncObserver);

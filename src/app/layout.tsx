@@ -117,7 +117,7 @@ const structuredData = {
       contactPoint: {
         '@type': 'ContactPoint',
         contactType: 'sales',
-        email: 'hello@ghoulhouse.fi',
+        email: siteConfig.company.contactEmail,
         areaServed: 'FI',
         availableLanguage: ['fi', 'en'],
       },

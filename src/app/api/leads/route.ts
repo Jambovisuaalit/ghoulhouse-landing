@@ -49,11 +49,38 @@ function isCrossSiteRequest(request: NextRequest) {
   return Boolean(site && !['same-origin', 'same-site', 'none'].includes(site));
 }
 
+const MAX_BODY_BYTES = 50_000;
+class PayloadTooLargeError extends Error {}
+
 async function readBody(request: NextRequest) {
+  const reader = request.body?.getReader();
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  if (reader) {
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        size += value.byteLength;
+        if (size > MAX_BODY_BYTES) {
+          await reader.cancel();
+          throw new PayloadTooLargeError();
+        }
+        chunks.push(value);
+      }
+    } finally {
+      reader.releaseLock();
+    }
+  }
+  const boundedRequest = new Request(request.url, {
+    method: 'POST',
+    headers: { 'content-type': request.headers.get('content-type') || '' },
+    body: Buffer.concat(chunks),
+  });
   const contentType = request.headers.get('content-type') || '';
 
   if (contentType.includes('application/json')) {
-    const body: unknown = await request.json();
+    const body: unknown = await boundedRequest.json();
     if (!body || typeof body !== 'object' || Array.isArray(body)) {
       throw new Error('invalid_payload');
     }
@@ -63,7 +90,7 @@ async function readBody(request: NextRequest) {
     };
   }
 
-  const formData = await request.formData();
+  const formData = await boundedRequest.formData();
   return {
     htmlForm: true,
     body: Object.fromEntries(formData.entries()),
@@ -77,7 +104,7 @@ export async function POST(request: NextRequest) {
 
   const contentLength = Number(request.headers.get('content-length') || 0);
 
-  if (contentLength > 50_000) {
+  if (contentLength > MAX_BODY_BYTES) {
     return json({ ok: false, code: 'payload_too_large' }, 413);
   }
 
@@ -88,7 +115,10 @@ export async function POST(request: NextRequest) {
 
   try {
     parsed = await readBody(request);
-  } catch {
+  } catch (error) {
+    if (error instanceof PayloadTooLargeError) {
+      return json({ ok: false, code: 'payload_too_large' }, 413);
+    }
     if (htmlForm) return leadFailureRedirect(request, 'invalid');
     return json({ ok: false, code: 'invalid_payload' }, 400);
   }

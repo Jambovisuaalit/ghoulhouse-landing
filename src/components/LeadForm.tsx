@@ -1,5 +1,7 @@
 'use client';
 
+import { siteConfig } from '@/config/site';
+
 import { FormEvent, useRef, useState } from 'react';
 import { trackEvent } from '@/lib/analytics';
 import { confirmationPath, type LeadService } from '@/lib/lead-confirmation';
@@ -86,7 +88,7 @@ export default function LeadForm({ mode = 'social', defaultService }: { mode?: '
       setFieldErrors(errors);
       const first = Object.keys(errors)[0];
       if (first) (form.elements.namedItem(first) as HTMLElement | null)?.focus();
-      setError(first ? errors[first] : 'Lähetys ei onnistunut. Yritä uudelleen tai kirjoita osoitteeseen hanna@ghoulhouse.fi.');
+      setError(first ? errors[first] : `Lähetys ei onnistunut. Yritä uudelleen tai kirjoita osoitteeseen ${siteConfig.company.contactEmail}.`);
       trackEvent('lead_form_error');
     } catch {
       setError('Yhteys katkesi. Yritä uudelleen.');

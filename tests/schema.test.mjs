@@ -7,7 +7,7 @@ const layout = readFileSync(new URL('../src/app/layout.tsx', import.meta.url), '
 test('organization schema exposes address, contact point and service area', () => {
   assert.match(layout, /'@type': 'PostalAddress'/);
   assert.match(layout, /streetAddress: siteConfig\.company\.postalAddress\.street/);
-  assert.match(layout, /email: 'hello@ghoulhouse\.fi'/);
+  assert.match(layout, /email: siteConfig\.company\.contactEmail/);
   assert.match(layout, /contactType: 'sales'/);
   assert.match(layout, /name: 'Uusimaa'/);
 });
