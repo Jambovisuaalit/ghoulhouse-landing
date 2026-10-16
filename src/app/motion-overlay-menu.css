@@ -62,7 +62,7 @@
 .ghOverlayNav > a { display: flex; align-items: baseline; gap: 22px; min-height: 60px; padding-block: 11px; color: #f7f4ef; text-decoration: none; text-transform: uppercase; font-size: clamp(32px, 4.3vw, 66px); font-weight: 800; letter-spacing: -.055em; line-height: 1.15; }
 .ghOverlayMenu[open] .ghOverlayNav > a { animation: ghMenuLink 320ms ease-out both; animation-delay: calc(100ms + var(--menu-index) * 25ms); }
 .ghOverlayNav > a:hover, .ghOverlayNav > a[aria-current='page'] { color: #c9282d; }
-.ghOverlayNumber { color: #c9282d; font-size: 14px; font-weight: 700; letter-spacing: 0; flex: none; }
+.ghOverlayNumber { color: #e6dfd5; font-size: 14px; font-weight: 700; letter-spacing: 0; flex: none; }
 .ghOverlayArrow { margin-left: auto; font-size: .5em; opacity: 0; }
 .ghOverlayNav > a:is(:hover, :focus-visible) .ghOverlayArrow { opacity: 1; }
 .ghOverlayAside { align-self: end; padding-bottom: 14px; }

@@ -17,6 +17,7 @@ export default function LeadForm({ mode = 'social', defaultService }: { mode?: '
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const hasStarted = useRef(false);
+  const inFlight = useRef(false);
   const formRef = useRef<HTMLFormElement>(null);
 
   const profileLabel = service === 'websites'
@@ -59,6 +60,7 @@ export default function LeadForm({ mode = 'social', defaultService }: { mode?: '
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (inFlight.current) return;
     const form = event.currentTarget;
     setError('');
     setFieldErrors({});
@@ -68,6 +70,7 @@ export default function LeadForm({ mode = 'social', defaultService }: { mode?: '
       (form.elements.namedItem('service') as HTMLElement | null)?.focus();
       return;
     }
+    inFlight.current = true;
     setSubmitting(true);
     trackEvent('lead_form_submit');
 
@@ -94,12 +97,13 @@ export default function LeadForm({ mode = 'social', defaultService }: { mode?: '
       setError('Yhteys katkesi. Yritä uudelleen.');
       trackEvent('lead_form_error');
     } finally {
+      inFlight.current = false;
       setSubmitting(false);
     }
   }
 
   return (
-    <form ref={formRef} action="/api/leads" method="POST" className="leadForm" onSubmit={submit} onChange={markStarted} noValidate>
+    <form ref={formRef} action="/api/leads" method="POST" className="leadForm" onSubmit={submit} onChange={markStarted} aria-busy={submitting} noValidate>
       <input type="hidden" name="intent" value={proposal ? 'booking' : 'photos'} />
       {(!proposal || defaultService) && <input type="hidden" name="service" value={serviceValue} />}
       {proposal && !defaultService && (
