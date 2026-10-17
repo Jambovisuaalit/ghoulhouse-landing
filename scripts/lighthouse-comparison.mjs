@@ -10,10 +10,10 @@ const summary = [];
 const readAudit = (report, id) => report.audits[id] ?? null;
 const elementDetails = (report) => {
   const audit = readAudit(report, 'largest-contentful-paint-element');
-  const item = audit?.details?.items?.[0] ?? {};
-  const node = item.node ?? {};
+  const tables = audit?.details?.items ?? [];
+  const node = tables[0]?.items?.[0]?.node ?? {};
   return { selector: node.selector ?? null, snippet: node.snippet ?? null,
-    resourceUrl: item.url ?? item.resource?.url ?? null };
+    phases: tables[1]?.items?.map(({ phase, timing, percent }) => ({ phase, timing, percent })) ?? [] };
 };
 const diagnostics = (report) => {
   const metric = id => readAudit(report, id)?.numericValue ?? null;
@@ -23,7 +23,12 @@ const diagnostics = (report) => {
       items: (audit.details?.items ?? []).slice(0, 5).map(item => ({
         type: item.type ?? null, phase: item.phase ?? null,
         timing: item.timing ?? null, duration: item.duration ?? null,
-        node: item.node?.snippet ?? item.node?.selector ?? null,
+        node: item.type === 'node' ? item.selector ?? item.snippet ?? null : null,
+        timings: item.type === 'table' ? item.items?.map(row => ({
+          label: row.label ?? row.phase ?? row.subpart ?? null,
+          duration: row.duration ?? row.timing ?? null,
+        })) : null,
+        checklist: item.type === 'checklist' ? item.items : null,
         url: item.url ?? item.resource?.url ?? null,
       })) } : null;
   };
@@ -42,13 +47,24 @@ for (const [version, base] of [['before', 'https://ghoulhouse.fi'], ['after', ca
     // Baseline is only a live reference; there is no automatic LCP pass claim.
     for (let attempt = 1; attempt <= (version === 'after' ? 3 : 1); attempt++) {
       const prefix = `${output}/${version}-${name}-${attempt}`;
-      execFileSync('npx', ['--yes', '--package=lighthouse@12.8.2', 'lighthouse', base + path,
-        '--only-categories=performance,accessibility', '--output=json', '--output=html',
-        '--output-path=' + prefix,
-        '--chrome-flags=--headless --no-sandbox --disable-dev-shm-usage',
-        '--quiet'], { stdio: 'inherit', timeout: 180000 });
-      const report = JSON.parse(readFileSync(prefix + '.report.json', 'utf8'));
-      if (report.runtimeError) throw Error(JSON.stringify(report.runtimeError));
+      // Lighthouse can occasionally lose the navigation trace (NO_NAVSTART).
+      // Retry only transient recording failures; never turn missing audit data into PASS.
+      let report;
+      for (let retry = 0; retry < 3; retry++) {
+        try {
+          execFileSync('npx', ['--yes', '--package=lighthouse@12.8.2', 'lighthouse', base + path,
+            '--only-categories=performance,accessibility', '--output=json', '--output=html',
+            '--output-path=' + prefix,
+            '--chrome-flags=--headless --no-sandbox --disable-dev-shm-usage',
+            '--quiet'], { stdio: 'inherit', timeout: 180000 });
+          report = JSON.parse(readFileSync(prefix + '.report.json', 'utf8'));
+          if (report.runtimeError) throw Error(JSON.stringify(report.runtimeError));
+          break;
+        } catch (error) {
+          if (retry === 2) throw error;
+          console.warn('Lighthouse transient failure; retry ' + (retry + 1) + ': ' + error.message);
+        }
+      }
       const metric = id => report.audits[id]?.numericValue ?? null;
       const entry = { version, page: name, attempt, url: report.finalDisplayedUrl,
         fetchTime: report.fetchTime, lighthouseVersion: report.lighthouseVersion,
@@ -59,6 +75,7 @@ for (const [version, base] of [['before', 'https://ghoulhouse.fi'], ['after', ca
         cls: metric('cumulative-layout-shift'),
         totalBlockingTimeMs: metric('total-blocking-time'),
         transferBytes: metric('total-byte-weight'),
+        resources: report.audits['resource-summary']?.details?.items ?? [],
         diagnostics: diagnostics(report),
         conditions: report.configSettings };
       summary.push(entry);
