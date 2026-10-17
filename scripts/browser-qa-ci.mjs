@@ -561,10 +561,10 @@ try {
         genericStyles: Boolean(el.querySelector('.button,.kicker')),
         prematureGA: Boolean(document.querySelector('#google-analytics-src')),
         inFlowSlot: el.parentElement?.id === 'gh-consent-inflow',
-        contentBelow: document.querySelector('#site-content').getBoundingClientRect().top >= box.bottom - 1,
+        contentBefore: document.querySelector('#site-content').getBoundingClientRect().bottom <= box.top + 1,
       };
     })()`);
-    assert(styled.position === 'static' && styled.inFlowSlot && styled.contentBelow && styled.background === 'rgb(247, 244, 239)' &&
+    assert(styled.position === 'static' && styled.inFlowSlot && styled.contentBefore && styled.background === 'rgb(247, 244, 239)' &&
       styled.accent === 'rgb(201, 40, 45)' && styled.borderRadius === '0px',
       `${vp.width}x${vp.height}: inner consent still inherits a default popup skin: ${JSON.stringify(styled)}`);
     assert(styled.headingVisible && styled.brandedControls && styled.privacy && !styled.genericStyles &&

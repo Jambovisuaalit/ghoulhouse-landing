@@ -21,9 +21,15 @@ The attached business brief confirms the 490 € + VAT / 30-day Social offer and
 | P2 | Service navigation | Social sibling/child pages lack selected state while website/resources/cases have partial selected states. | Share selected-route logic for desktop, no-JS fallback and service links in overlay. | Service family, resources and case routing tests. |
 | QA gap | Homepage and website routes | Existing fullpage homepage suite omitted 1024 and 1920; website menu context lacked browser assertions. | Add both homepage widths; add 30 website route/width combinations against baseline and candidate. | CI captures JSON and screenshots; do not interpret suite code as a passed execution. |
 
+## Performance follow-up
+
+The first Lighthouse comparison found website Preview CLS 0.2932 and Performance 77 (production baseline 0 / 96). The raw layout-shifts audit attributes this to `#site-content` being pushed down by the consent portal inserted after hydration. Move the inner-page consent slot after main content and before footer, retaining in-flow controls, both equal opt-in/opt-out buttons and the existing consent gate. Homepage placement is unchanged. Exact final measurement is required; do not treat the initial 77 score as a passing release.
+
+The no-JS audit had an obsolete generic `/#yhteys` footer expectation. Update it to inspect the actual footer button and assert local website inquiry vs photo-example inquiry as appropriate.
+
 ## Scope and unchanged behavior
 
-No rewrite, new design system, component library, image generation, logo changes, fabricated testimonials or customer work. No changes to service prices, API contract, Supabase schema, Resend recipients, analytics event ownership, canonical routing or consent choices. Existing form labels, error messages, modal focus trap, Escape behavior, body scroll locking and reduced-motion support are retained.
+No rewrite, new design system, component library, image generation, logo changes, fabricated testimonials or customer work. No changes to service prices, API contract, Supabase schema, Resend recipients, analytics event ownership, canonical routing or consent choices. Inner-page consent placement is moved as described above to prevent layout shifts. Existing form labels, error messages, modal focus trap, Escape behavior, body scroll locking and reduced-motion support are retained.
 
 ## QA and evidence
 
