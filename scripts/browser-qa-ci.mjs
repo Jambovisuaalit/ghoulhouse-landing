@@ -1,3 +1,4 @@
+import { checkWebsiteRoutes } from './website-responsive-qa.mjs';
 import { checkOverlayMenu } from './overlay-menu-qa.mjs';
 import { execFileSync, spawn } from 'node:child_process';
 import { mkdir, rm, writeFile } from 'node:fs/promises';
@@ -560,10 +561,10 @@ try {
         genericStyles: Boolean(el.querySelector('.button,.kicker')),
         prematureGA: Boolean(document.querySelector('#google-analytics-src')),
         inFlowSlot: el.parentElement?.id === 'gh-consent-inflow',
-        contentBelow: document.querySelector('#site-content').getBoundingClientRect().top >= box.bottom - 1,
+        contentBefore: document.querySelector('#site-content').getBoundingClientRect().bottom <= box.top + 1,
       };
     })()`);
-    assert(styled.position === 'static' && styled.inFlowSlot && styled.contentBelow && styled.background === 'rgb(247, 244, 239)' &&
+    assert(styled.position === 'static' && styled.inFlowSlot && styled.contentBefore && styled.background === 'rgb(247, 244, 239)' &&
       styled.accent === 'rgb(201, 40, 45)' && styled.borderRadius === '0px',
       `${vp.width}x${vp.height}: inner consent still inherits a default popup skin: ${JSON.stringify(styled)}`);
     assert(styled.headingVisible && styled.brandedControls && styled.privacy && !styled.genericStyles &&
@@ -635,7 +636,9 @@ try {
   assert(reducedMotion.proof && reducedMotion.form, 'Reduced motion removed critical content.');
   assert(pageExceptions.length === 0, `Page exceptions: ${pageExceptions.join(' | ')}`);
 
-  const payload = { chromePath, results, socialLayoutResults, interaction, reducedMotion };
+  const websiteBefore = await checkWebsiteRoutes({client, evaluate, assert, sleep, writeFile, screenshotDir: SCREENSHOT_DIR, base: 'https://ghoulhouse.fi', baseline: true});
+  const websiteAfter = await checkWebsiteRoutes({client, evaluate, assert, sleep, writeFile, screenshotDir: SCREENSHOT_DIR, base: BASE_URL});
+  const payload = { websiteBefore, websiteAfter, chromePath, results, socialLayoutResults, interaction, reducedMotion };
   await writeFile(`${SCREENSHOT_DIR}/results.json`, JSON.stringify(payload, null, 2));
   console.log(JSON.stringify(payload, null, 2));
 } finally {

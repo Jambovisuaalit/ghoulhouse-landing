@@ -259,6 +259,12 @@ jobs:
           QA_PR_NUMBER: ${{ github.event.pull_request.number }}
         run: node scripts/resolve-preview.mjs
 
+      - name: Lighthouse production and exact Preview comparison
+        if: github.event_name == 'pull_request'
+        env:
+          QA_BASE_URL: ${{ steps.preview.outputs.url }}
+        run: node scripts/lighthouse-comparison.mjs
+
       - name: Trusted lead ingest health QA
         if: github.event_name == 'pull_request'
         shell: bash

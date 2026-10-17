@@ -17,7 +17,7 @@ export async function checkOverlayMenu({ client, evaluate, assert, sleep, screen
   })()`);
   assert(state.modal && state.focused && state.locked && state.unclipped && state.expanded === 'true',
     `${label}: overlay state incorrect: ${JSON.stringify(state)}`);
-  assert(JSON.stringify(state.links) === JSON.stringify(['/#palvelut', '/#toiminta', '/referenssit', '/some-sisallontuotanto/hinta', '/resurssit', '/#yhteys']),
+  assert(JSON.stringify(state.links) === JSON.stringify(['/#palvelut', '/#toiminta', '/referenssit', '/some-sisallontuotanto/hinta', '/resurssit', '/?intent=photos#yhteys']),
     `${label}: overlay destinations changed.`);
   assert(state.cta === '/?intent=photos#yhteys', `${label}: overlay CTA lost photo intent.`);
   await evaluate(client, `document.querySelector('.ghOverlayBottom a').focus()`);

@@ -8,7 +8,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
-import { getInquiryCta, siteNavigation } from '@/data/site-navigation';
+import { getInquiryCta, isNavigationActive, siteNavigation } from '@/data/site-navigation';
 import LiquidGlassFooter from '@/components/LiquidGlassFooter';
 
 /** One common navigation and footer on every inner route.
@@ -18,10 +18,7 @@ export default function SiteChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   if (!pathname || pathname === '/') return <>{children}</>;
   const inquiryCta = getInquiryCta(pathname);
-  const active = (href: string) => pathname === href
-    || (href === '/resurssit' && pathname.startsWith('/oppaat/'))
-    || (href === '/referenssit' && pathname.startsWith('/tyot/'))
-    || (href === '/verkkosivut-yritykselle' && pathname.startsWith('/verkkosivut/'));
+
 
   return (
     <>
@@ -37,15 +34,15 @@ export default function SiteChrome({ children }: { children: ReactNode }) {
           </Link>
           <nav className="ghGlobalDesktopNav" aria-label="Päänavigaatio">
             {siteNavigation.map(({ href, label }) => (
-              <Link key={href} href={href} aria-current={active(href) ? 'page' : undefined}>{label}</Link>
+              <Link key={href} href={href} aria-current={isNavigationActive(pathname, href) ? 'page' : undefined}>{label}</Link>
             ))}
           </nav>
           <Link className="ghGlobalInquiry" href={inquiryCta.href}>{inquiryCta.label} <span aria-hidden="true"><ArrowUpRight /></span></Link>
           <MotionOverlayMenu />
         </div>
       </header>
-      <div id="gh-consent-inflow" className="ghConsentSlot ghGlobalShell" />
       <div id="site-content" className="ghGlobalContent" tabIndex={-1}>{children}</div>
+      <div id="gh-consent-inflow" className="ghConsentSlot ghInnerConsentSlot ghGlobalShell" />
       <LiquidGlassFooter inquiryHref={inquiryCta.href} inquiryLabel={inquiryCta.label} />
     </>
   );
