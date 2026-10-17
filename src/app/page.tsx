@@ -64,10 +64,10 @@ const guides = [
 function Brand() {
   return (
     <a className="ghBrand" href="/" aria-label="GhoulHouse — etusivu">
-      <Image className="ghOfficialHeaderLogo" src="/ghoulhouse-logo.svg" alt="" width={175} height={58} priority />
+      <Image className="ghOfficialHeaderLogo" src="/ghoulhouse-logo.svg" alt="" width={175} height={58} loading="eager" />
       <span className="ghOfficialMobileLockup" aria-hidden="true">
-        <Image className="ghOfficialMobileMark" src="/favicon.svg" alt="" width={35} height={35} priority />
-        <Image className="ghOfficialMobileWordmark" src="/ghoulhouse-wordmark-black.svg" alt="" width={148} height={30} priority />
+        <Image className="ghOfficialMobileMark" src="/favicon.svg" alt="" width={35} height={35} loading="eager" />
+        <Image className="ghOfficialMobileWordmark" src="/ghoulhouse-wordmark-black.svg" alt="" width={148} height={30} loading="eager" />
       </span>
     </a>
   );
@@ -123,7 +123,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ l
               <div className="ghArtHeroImage">
                 <Image src="/worksite-concept-v3.webp"
                   alt="Havainnekuva puretusta remonttitilasta julkaisun taittoesimerkissä. Ei asiakkaan työmaa."
-                  fill sizes="(max-width:767px) 100vw, (max-width:1023px) 54vw, 42vw" priority />
+                  fill sizes="(max-width:767px) 100vw, (max-width:1023px) 54vw, 42vw" priority fetchPriority="high" />
                 <div className="ghHeroPostLabel">TYÖMAAKUVA → JULKAISU</div>
                 <div className="ghHeroPostCaption"><span>ESIMERKKI JULKAISUN TAITOSTA</span><p>Työ alkaa<br />pinnan alta.</p></div>
               </div>
