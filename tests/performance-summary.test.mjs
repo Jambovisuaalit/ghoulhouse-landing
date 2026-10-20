@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {median,summarize,assess} from '../scripts/lib/performance-summary.mjs';
+import {median,summarize,assess,traceTrial} from '../scripts/lib/performance-summary.mjs';
 
 const rows = () => ['before','after'].flatMap(version=>['home','websites'].flatMap(page=>
   [0,1,2,3,4].map(run=>({version,page,sha:version==='before'?'a':'b',performance:93,
@@ -32,4 +32,18 @@ test('one unusually fast run does not hide a median regression',()=>{
   const input=rows();const after=input.filter(r=>r.version==='after');
   after.forEach(r=>r.lcpMs+=400);after[0].lcpMs=1000;
   assert.equal(assess(summarize(input)).safetyGatePassed,false);
+});
+test('trace retry is bounded and never discards a valid slow run',()=>{
+  const invalid=[];
+  const value=traceTrial(attempt=>{
+    if(attempt<3)throw Object.assign(Error('trace'),{code:'NO_NAVSTART'});
+    return {lcpMs:9000};
+  },x=>invalid.push(x));
+  assert.deepEqual(value,{lcpMs:9000});assert.equal(invalid.length,2);
+  let attempts=0;
+  assert.throws(()=>traceTrial(()=>{attempts++;throw Object.assign(Error('trace'),{code:'NO_NAVSTART'});}),/trace/);
+  assert.equal(attempts,3);
+  attempts=0;
+  assert.throws(()=>traceTrial(()=>{attempts++;throw Error('navigation failed');}),/navigation/);
+  assert.equal(attempts,1);
 });

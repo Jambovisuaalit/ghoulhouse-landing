@@ -1,6 +1,6 @@
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { summarize, assess } from './lib/performance-summary.mjs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { summarize, assess, traceTrial } from './lib/performance-summary.mjs';
 
 const candidate=process.env.QA_BASE_URL;
 const candidateSha=process.env.QA_HEAD_SHA;
@@ -23,19 +23,32 @@ async function verify(base,sha,environment){
 }
 await verify(candidate,candidateSha,'preview');
 const output='qa-artifacts/performance';mkdirSync(output,{recursive:true});
-const results=[];const warmups=[];
+const results=[];const warmups=[];const invalidAttempts=[];
 const count=5;
 const versions={before:{base:baseline,sha:baselineSha,environment:'production'},after:{base:candidate,sha:candidateSha,environment:'preview'}};
 const pages=[['home','/'],['websites','/verkkosivut-yritykselle']];
 function run(version,page,path,round,warmup=false){
   const target=versions[version];
-  const prefix=`${output}/${warmup?'warmup':`run-${round+1}`}-${version}-${page}`;
-  execFileSync('npx',['--yes','--package=lighthouse@12.8.2','lighthouse',target.base+path,
-    '--only-categories=performance,accessibility','--output=json','--output=html',
-    '--save-assets','--output-path='+prefix,
-    '--chrome-flags=--headless --no-sandbox --disable-dev-shm-usage','--quiet'],
-    {stdio:'inherit',timeout:180000});
-  const report=JSON.parse(readFileSync(prefix+'.report.json','utf8'));
+  const report=traceTrial(attempt=>{
+    const prefix=`${output}/${warmup?'warmup':`run-${round+1}`}-${version}-${page}-attempt-${attempt}`;
+    let commandError;
+    try{
+      execFileSync('npx',['--yes','--package=lighthouse@12.8.2','lighthouse',target.base+path,
+        '--only-categories=performance,accessibility','--output=json','--output=html',
+        '--save-assets','--output-path='+prefix,
+        '--chrome-flags=--headless --no-sandbox --disable-dev-shm-usage','--quiet'],
+        {stdio:'inherit',timeout:180000});
+    }catch(error){commandError=error;}
+    const value=existsSync(prefix+'.report.json')?JSON.parse(readFileSync(prefix+'.report.json','utf8')):null;
+    if(value?.runtimeError)throw Object.assign(Error(value.runtimeError.message),{code:value.runtimeError.code});
+    if(commandError)throw commandError;
+    if(!value)throw Error('Missing Lighthouse report');
+    return value;
+  },failure=>{
+    invalidAttempts.push({version,page,round,warmup,...failure});
+    writeFileSync(output+'/incomplete.json',JSON.stringify({results,warmups,invalidAttempts},null,2));
+    console.log('Invalid trace excluded: '+JSON.stringify(invalidAttempts.at(-1)));
+  });
   if(report.runtimeError || report.finalDisplayedUrl!==target.base+path)throw Error('Lighthouse navigation/measurement failure');
   const metric=id=>report.audits[id]?.numericValue ?? null;
   const row={version,page,round,warmup,sha:target.sha,url:report.finalDisplayedUrl,fetchTime:report.fetchTime,
@@ -46,6 +59,7 @@ function run(version,page,path,round,warmup=false){
     resources:report.audits['resource-summary']?.details?.items,conditions:report.configSettings,
     lcpBreakdown:report.audits['lcp-breakdown-insight']?.details};
   (warmup?warmups:results).push(row);
+  writeFileSync(output+'/incomplete.json',JSON.stringify({results,warmups,invalidAttempts},null,2));
   console.log(JSON.stringify({version,page,round,warmup,lcpMs:row.lcpMs,performance:row.performance}));
 }
 // Warm server/CDN paths once per page/version. Measured trials still use fresh
@@ -65,7 +79,7 @@ for(const target of Object.values(versions))await verify(target.base,target.sha,
 const aggregates=summarize(results,count);const decision=assess(aggregates);
 const summary={method:'Five fresh-browser mobile simulated-throttling runs per page/version; interleaved AB/BA order, one excluded CDN warmup per page/version, immutable SHA-bound URLs; raw Lighthouse trace/devtoolslog/report retained.',
   limitations:'Different Production and Preview deployments still have infrastructure variance, including Preview instrumentation. This is lab data, not field p75 or INP. TBT is not INP. Accessibility score is automated coverage, not WCAG certification. A safety PASS is not an LCP-target PASS.',
-  versions,aggregates,decision,warmups,results};
+  versions,aggregates,decision,warmups,invalidAttempts,results};
 writeFileSync(output+'/summary.json',JSON.stringify(summary,null,2));
 console.log(JSON.stringify({aggregates,decision},null,2));
 if(!decision.safetyGatePassed)throw Error('Performance safety gate failed; inspect medians, ranges and traces before release');

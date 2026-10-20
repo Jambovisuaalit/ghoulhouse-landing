@@ -5,6 +5,18 @@ export function median(values) {
   return sorted.length % 2 ? sorted[middle] : (sorted[middle-1] + sorted[middle]) / 2;
 }
 
+// Retry collection failures only. A valid slow measurement is always retained.
+export function traceTrial(measure, onInvalid = () => {}) {
+  for (let attempt=1; attempt<=3; attempt++) {
+    try { return measure(attempt); }
+    catch (error) {
+      if (error.code !== 'NO_NAVSTART') throw error;
+      onInvalid({attempt,code:error.code});
+      if (attempt===3) throw error;
+    }
+  }
+}
+
 export function summarize(results, minimumRuns = 5) {
   const groups = new Map();
   for (const row of results) {

@@ -46,6 +46,10 @@ The ≤2500 ms LCP target is reported separately: safety PASS does not mean targ
 The report distinguishes ≥200 ms median LCP improvement, ≥100,000-byte savings on
 both pages without a demonstrated LCP improvement, and no demonstrated benefit.
 Missing/invalid samples and mixed SHAs fail closed. Unit tests cover these decisions.
+Only the identified NO_NAVSTART trace-collection error may retry, at most three
+attempts per required trial. Invalid attempts retain their own raw report and are
+listed separately; valid slow runs never retry. A still-incomplete experiment fails.
+Partial measurements are checkpointed before final aggregation.
 
 This remains laboratory data from distinct deployments; Preview instrumentation and
 infrastructure can differ from Production. No field p75/INP or conversion uplift is
