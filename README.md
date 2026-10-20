@@ -1,114 +1,79 @@
-# GhoulHouse Landing Page
+# GhoulHouse website
 
-Official GhoulHouse website source.
+## Start here
 
-## Source of truth
+The current implementation and resource decisions are indexed in [docs/README.md](docs/README.md).
+Read [the website baseline](docs/WEBSITE_BASELINE.md) before changing content or UI and
+[the resource register](docs/RESOURCE_REGISTER.md) before selecting or replacing media.
+Historical documents live in docs/archive; they are not current implementation instructions.
 
-- Repository: `Jambovisuaalit/ghoulhouse-landing`
-- Production branch: `main`
-- Canonical host: `https://ghoulhouse.fi`
-- Active Vercel project: `ghoulhouse-home`
-- Node.js: `24.x`
-- Canonical message: **TYÖMAAKUVAT SISÄÄN. VALMIS SOME ULOS.**
-- Offer: **490 € + ALV / 30 päivää. Ei sitoumusta jatkosta.**
+- Source: Jambovisuaalit/ghoulhouse-landing, main.
+- Canonical production: https://ghoulhouse.fi, Vercel project ghoulhouse-home.
+- Stack: Next.js 15 App Router, React 18, TypeScript, Node.js 24.x, Tailwind and local CSS.
+- Typography: locally bundled Montserrat (SIL OFL); Georgia/Times New Roman display headings.
+- Brand: Ink #111111, Signal Red #C9282D, Ghost #F7F4EF, Bone #E6DFD5.
+- Message: TYÖMAAKUVAT SISÄÄN. VALMIS SOME ULOS.
+- Offer: 12 contents / 30 days / 490 € + ALV; continuation agreed separately.
 
-Do not treat old previews, archived projects or previous GhoulHouse brand variants as source code.
-
-> Production provenance note: the live `ghoulhouse-home` Vercel project has historically carried a Git integration to the private `vido-social/ghoulhouse-home` clone. That clone is **not** the source of truth. Production releases must use this repository/`main` until the Vercel Git integration itself has been relinked to `Jambovisuaalit/ghoulhouse-landing`. Do not trigger a Git-based redeploy from the old clone, because it can restore stale UI/code.
-
-## Stack
-
-- Next.js 15 / App Router
-- React 18
-- TypeScript
-- Tailwind CSS + `src/app/globals.css`
-- Anton + Montserrat through `next/font`
-- Vercel
-- Supabase Postgres / RPC for lead storage
-- Resend for lead notification email
-- Google Analytics 4 via Google tag (`G-43VQ8505YL`)
-
-## Local development
+## Development and validation
 
 ```bash
 npm ci
 npm run dev
 ```
 
-Validation:
+Before release:
 
 ```bash
+npm run qa:resources
+node --test tests/*.test.mjs
 npm run typecheck
 npm run lint
 npm run build
-npm run qa:browser
 ```
 
-CI additionally runs launch visual/accessibility and no-JavaScript QA.
+CI also checks the production build in a browser, accessibility, no-JavaScript behavior
+and the matching Vercel Preview SHA. npm run qa:browser / qa:no-js require a running
+server; see the scripts and CI workflow for environment requirements.
 
-## Application structure
+## Runtime structure
 
-```text
-src/
-  app/
-    api/leads/route.ts
-    globals.css
-    layout.tsx
-    page.tsx
-    robots.ts
-    sitemap.ts
-    opengraph-image.tsx
-    tietosuoja/page.tsx
-  components/
-    analytics/
-    contact/
-    layout/
-    sections/
-    ui/
-  config/site.ts
-  data/landing.ts
-  lib/
-    analytics.ts
-    lead.ts
-    lead-storage.ts
-    seo.ts
-  middleware.ts
-```
+- src/app/page.tsx: current homepage, own header, services, concepts, own-work proof,
+  process, industry/guide links, Hanna and contact.
+- src/app/layout.tsx: local font, metadata/schema, SiteChrome, consent/analytics and WhatsApp.
+- src/components/SiteChrome.tsx: shared inner-page header/footer.
+- src/components/LeadForm.tsx: Social/photo examples and service-specific proposals.
+- src/components/seo/SeoLandingPage.tsx + src/data/seo-cluster.ts: Social/SEO content pages.
+- src/components/website/WebsiteLandingPage.tsx + src/data/website.ts: website service pages.
+- src/data/site-navigation.ts: shared navigation and inquiry destinations.
+- src/config/site.ts: company facts, offer and legal paths.
+- src/lib: validation, storage, CTA context, analytics and SEO.
+- public: registered media; docs/resources.json records every asset and font.
+- supabase: ordered migrations, two Edge Functions and an isolated SQL smoke test.
 
-Homepage composition:
+CSS: layout imports eight shared files; the homepage adds homepage.css,
+homepage-swiss.css and editorial-home.css. proof.css styles the own-work pages.
+See the baseline for the authoritative file list. Preserve cascade order.
 
-```text
-Hero
-→ RAW / VALMIS mechanism
-→ Problem / Solution
-→ Process
-→ Content Examples
-→ Pricing
-→ Founder
-→ FAQ
-→ Final CTA
-```
+## Media and proof policy
 
-## Brand system
+Current header/footer logos: public/ghoulhouse-logo.svg and ghoulhouse-logo-reverse.svg.
+Mobile lockup: favicon.svg + ghoulhouse-wordmark-black.svg. Font licensing is in
+src/app/fonts/OFL.txt. No logo asset depends on an external runtime font.
 
-- Ink `#111111`
-- Signal Red `#C9282D`
-- Ghost `#F7F4EF`
-- Bone `#E6DFD5`
-- Anton for display typography
-- Montserrat for body/UI typography
+worksite-concept-v3.webp and bathroom-concept-v2.webp are visual concepts, not customer
+work. Keep their disclosures. ghoulhouse-site-proof.png documents an earlier version
+of our own website, not a customer case or current screenshot. The Hanna portrait is
+used on the homepage; its separate rights/approval evidence remains unverified in
+the resource register. Do not infer reuse permission from a file being in production.
 
-Official logo SVG artwork lives in `public/logo-horizontal.svg` and `public/logo-horizontal-white.svg`. Both wordmarks are path-only and must not depend on runtime fonts.
+## Deployment provenance
 
-## Proof policy
-
-Never present stock, generated or unverified material as customer work.
-
-Until verified customer RAW → FINAL material is available, `Mechanism.tsx` must remain explicitly labelled:
-
-`KONSEPTIESIMERKKI — EI ASIAKASTYÖ`
-
-The approved Hanna Nyholm founder portrait is stored as a local site asset. Replace it only with another explicitly approved portrait.
+The 20 October 2026 inventory verified production b59341e and deployment
+dpl_6yqbdSkgA8WFCJDyoqK2UdVVFJ1M as READY with ghoulhouse.fi aliases and this repository's
+metadata. This is a dated observation, not a claim about future releases. Historical
+notes mention a stale private clone; verify the project Git connection and exact SHA
+on every release. Never deploy from a similarly named old repository.
 
 ## Lead delivery
 
@@ -153,27 +118,6 @@ The runtime CSP allows only the Google Tag Manager script origin and the Google 
 - Vercel Production serves canonical metadata as `index, follow`.
 - `robots.txt` allows production crawling and `sitemap.xml` exposes approved canonical URLs.
 - `/tietosuoja` remains explicitly `noindex` in page metadata.
-
-## Production status — 10.9.2026
-
-Verified on the active `ghoulhouse-home` Vercel project:
-
-- production deployment READY
-- `ghoulhouse.fi` attached and returns 200
-- `www.ghoulhouse.fi` resolves to canonical apex
-- production CSP enforced
-- canonical metadata is index/follow
-- robots allows crawling
-- sitemap is live
-- privacy page is live and contains current company master data
-- production lead POST returns 201
-- lead is stored in Supabase
-- Resend notification reaches `hello@ghoulhouse.fi`
-- no Vercel runtime errors observed after launch smoke tests
-- responsive/browser QA passes from 320px mobile through 1920px desktop, including 1366×768 and 1440×900 laptop viewports
-- lead RPC hardening verified with an `anon` execution smoke test and Resend `delivered` status
-
-Remaining non-blocking launch assets: verified Hanna Nyholm founder portrait, verified real customer RAW → FINAL material, and permanent Vercel Git relinking from the stale private clone to this canonical repository.
 
 ## Lead retry protection
 

@@ -35,6 +35,9 @@ jobs:
       - name: Audit production dependencies
         run: npm audit --omit=dev --audit-level=high
 
+      - name: Resource registry and documentation integrity
+        run: npm run qa:resources
+
       - name: Lead regression tests
         run: node --test tests/*.test.mjs
 

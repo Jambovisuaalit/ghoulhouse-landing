@@ -1,3 +1,6 @@
+> HISTORICAL — superseded by [the current website baseline](../WEBSITE_BASELINE.md).
+> Describes an earlier design/release decision; not current runtime or release authorization.
+
 # GhoulHouse Homepage v2 — company-level editorial layout
 
 Status: company-level Homepage v2 merged via PR #71. Further proof and form corrections are reviewed separately in draft PR #72. No production deployment from PR #72 until owner approves.

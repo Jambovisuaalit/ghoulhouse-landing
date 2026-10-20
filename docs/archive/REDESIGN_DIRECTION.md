@@ -1,3 +1,6 @@
+> HISTORICAL — superseded by [the current website baseline](../WEBSITE_BASELINE.md).
+> Describes an earlier design/release decision; not current runtime or release authorization.
+
 # GhoulHouse Homepage v2 — company-level editorial direction
 
 Status: PR #71 remains a draft until visual approval. Production must not change before approval.
