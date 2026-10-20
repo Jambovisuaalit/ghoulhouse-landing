@@ -1,3 +1,7 @@
+> HISTORICAL CHECKLIST — records earlier launch checks, not a current release sign-off.
+> Current status and next release gates: [docs/WEBSITE_BASELINE.md](docs/WEBSITE_BASELINE.md).
+> Prior contact/recipient statements below describe that launch, not current routing.
+
 # GhoulHouse Launch Checklist
 
 **Canonical:** `https://ghoulhouse.fi`  

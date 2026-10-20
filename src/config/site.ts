@@ -1,7 +1,6 @@
 const canonicalSiteUrl = 'https://ghoulhouse.fi';
 const privacyPath = process.env.NEXT_PUBLIC_PRIVACY_PATH?.trim() || null;
 const termsPath = process.env.NEXT_PUBLIC_TERMS_PATH?.trim() || null;
-const founderImage = process.env.NEXT_PUBLIC_FOUNDER_IMAGE?.trim() || null;
 
 export const siteConfig = {
   company: {
@@ -19,7 +18,6 @@ export const siteConfig = {
     },
     founder: 'Hanna Nyholm',
     contactEmail: 'hanna@ghoulhouse.fi',
-    founderImage,
     domain: canonicalSiteUrl,
   },
   cta: {
