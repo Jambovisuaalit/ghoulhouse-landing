@@ -38,6 +38,13 @@ jobs:
       - name: Resource registry and documentation integrity
         run: npm run qa:resources
 
+      - name: Reproducible font coverage and outline QA
+        run: |
+          git fetch --depth=1 origin 66eb5db74efd989c0c00f8f6daa8eaeaab6496d3
+          python -m venv "$RUNNER_TEMP/ghoulhouse-font-qa"
+          "$RUNNER_TEMP/ghoulhouse-font-qa/bin/pip" install 'fonttools[woff]==4.61.1' 'brotli==1.2.0'
+          "$RUNNER_TEMP/ghoulhouse-font-qa/bin/python" scripts/build-latin-font.py --check
+
       - name: Lead regression tests
         run: node --test tests/*.test.mjs
 
@@ -266,6 +273,8 @@ jobs:
         if: github.event_name == 'pull_request'
         env:
           QA_BASE_URL: ${{ steps.preview.outputs.url }}
+          QA_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          QA_BASELINE_SHA: ${{ github.event.pull_request.base.sha }}
         run: node scripts/lighthouse-comparison.mjs
 
       - name: Trusted lead ingest health QA

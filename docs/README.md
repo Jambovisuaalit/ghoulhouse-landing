@@ -12,6 +12,7 @@ sources for the website; similarly named old master packs do not override them.
 | Search intent ownership (dated baseline) | [SEO_INTENT_MAP.md](SEO_INTENT_MAP.md) |
 | Lead migration/recovery history | [LEGACY_LEAD_CLEANUP.md](LEGACY_LEAD_CLEANUP.md) |
 | Cleanup decisions and remaining work | [RESOURCE_CLEANUP_2026-10-20.md](RESOURCE_CLEANUP_2026-10-20.md) |
+| Font delivery experiment and repeated LCP method | [PERFORMANCE_2026-10-20.md](PERFORMANCE_2026-10-20.md) |
 
 ## Evidence, not current operating instructions
 

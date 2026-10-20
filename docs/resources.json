@@ -226,16 +226,18 @@
     },
     {
       "path": "src/app/fonts/Montserrat-Variable.woff2",
-      "sha256": "927cc51086ea02223ffe0c78312ab104f29bf4618213d1edaa58720b8fe62767",
-      "bytes": 216236,
+      "sha256": "12caefc1103ff614bdb06841d1a40ca7ac4adc6c2e4c37ef19c80cb3a1391e55",
+      "bytes": 82356,
       "kind": "font",
       "status": "current",
-      "source": "https://github.com/google/fonts/tree/main/ofl/montserrat",
+      "source": "Git 66eb5db74efd989c0c00f8f6daa8eaeaab6496d3:src/app/fonts/Montserrat-Variable.woff2",
       "rightsEvidence": "src/app/fonts/OFL.txt",
       "approvalEvidence": null,
       "rightsStatus": "license-documented",
-      "usageConstraint": "Do not reuse outside existing site until rights evidence is recorded",
-      "ownerRole": "GhoulHouse content owner (confirm assignee)"
+      "usageConstraint": "SIL OFL 1.1; retain copyright/license. Check glyph coverage before adding another site language.",
+      "ownerRole": "GhoulHouse content owner (confirm assignee)",
+      "reproduction": "scripts/build-latin-font.py",
+      "coverage": "European Latin, combining marks, punctuation, currency, arrows; see src/app/fonts/README.md"
     }
   ]
 }
