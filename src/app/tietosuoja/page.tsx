@@ -168,6 +168,53 @@ export default function PrivacyPage() {
             </p>
           </PrivacySection>
 
+          <PrivacySection number="11" title="Yritysprospektit ja B2B-markkinointi">
+            <p>
+              GhoulHouse voi käsitellä yritysten julkisia yhteystietoja ja niihin liittyviä
+              työroolitietoja arvioidakseen, soveltuuko yritys palveluidemme asiakkaaksi,
+              ottaakseen yhteyttä asianmukaisen oikeusperusteen ja sähköistä
+              suoramarkkinointia koskevien sääntöjen mukaisesti sekä käsitelläkseen
+              vastaukset ja markkinointikiellot.
+            </p>
+            <p>
+              Tiedot voivat olla peräisin yrityksen omilta verkkosivuilta,
+              julkisista yritystietolähteistä tai aiemmasta asioinnista. Käsiteltäviä
+              tietoja ovat esimerkiksi yrityksen nimi, toimiala, verkkosivu, yleinen
+              yrityssähköposti, mahdollinen työhön liittyvä nimi ja tehtävä,
+              julkisen tiedon lähde, yhteydenottohistoria sekä markkinointikiellot.
+              Arkaluonteisia henkilötietoja ei kerätä myyntiprospektien arviointiin.
+            </p>
+            <p>
+              Henkilötietojen mahdollinen käsittely voi perustua GhoulHousen
+              oikeutettuun etuun tehdä yrityksille rajattua, niiden toimintaan
+              liittyvää markkinointia vain silloin, kun käsittelyn edellytykset on
+              arvioitu ja rekisteröidyn oikeudet otettu huomioon. Tämä ei yksin
+              oikeuta lähettämään sähköpostimarkkinointia: yhteisöille ja
+              luonnollisille henkilöille lähetettävien viestien edellytykset
+              arvioidaan erikseen sovellettavan sähköisen viestinnän lain mukaan.
+            </p>
+            <p>
+              Prospektien tietojen hallinnassa käytetään Googlen työvälineitä,
+              kuten Sheets-laskentataulukoita ja Gmail-sähköpostia, rajatuilla
+              käyttöoikeuksilla. Tarpeettomat ja vanhentuneet tiedot poistetaan
+              niiden käyttötarkoituksen päätyttyä. Markkinoinnin kieltoa koskeva
+              välttämätön tieto voidaan säilyttää estolistalla, jotta kieltoa
+              noudatetaan myös jatkossa.
+            </p>
+            <p>
+              Rekisteröidyllä on oikeus vastustaa henkilötietojensa käyttämistä
+              suoramarkkinointiin milloin tahansa. Vastustamisen jälkeen tietoja
+              ei enää käytetä suoramarkkinointiin. Kiellon voi tehdä maksutta
+              vastaamalla viestiin tai kirjoittamalla osoitteeseen{' '}
+              <a className={linkClass} href={'mailto:' + company.contactEmail}>
+                {company.contactEmail}
+              </a>.
+              Jos tiedot on saatu muualta kuin henkilöltä itseltään, tästä
+              käsittelystä ja tietojen lähteestä kerrotaan soveltuvien
+              informointivelvoitteiden mukaisesti.
+            </p>
+          </PrivacySection>
+
           <div className="mt-10 border-2 border-ink bg-white p-6 md:flex md:items-end md:justify-between md:gap-10 md:p-8">
             <div>
               <p className="type-label text-signal">TIETOSUOJA-ASIA</p>
