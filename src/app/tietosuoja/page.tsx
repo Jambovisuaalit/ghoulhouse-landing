@@ -48,9 +48,9 @@ export default function PrivacyPage() {
             </h1>
             <div className="mt-7 grid gap-4 border-l-4 border-signal pl-5 text-sm leading-6 text-muted md:max-w-2xl">
               <p>
-                Tässä selosteessa kuvataan, miten {company.legalName} käsittelee verkkosivun, yhteydenottojen ja asiakassuhteiden yhteydessä syntyviä henkilötietoja.
+                Tässä selosteessa kuvataan, miten {company.legalName} käsittelee verkkosivun, yhteydenottojen, asiakassuhteiden sekä yritysten julkisista lähteistä kerättyjä mahdollisia henkilötietoja.
               </p>
-              <p className="type-caption text-ink">Viimeksi päivitetty 16.10.2026</p>
+              <p className="type-caption text-ink">Viimeksi päivitetty 23.10.2026</p>
             </div>
           </header>
 
