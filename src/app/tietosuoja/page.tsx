@@ -202,10 +202,14 @@ export default function PrivacyPage() {
               Mahdollisten prospektitietojen tallentamiseen ja hallintaan
               käytetään rajattujen käyttöoikeuksien Google Sheets-
               ja Google Drive -työvälineitä sekä sähköpostiviestintään
-              Gmailia. Tiedot voivat olla saatavilla näiden palvelujen
-              sopimuksenmukaisille palveluntarjoajille teknisen käsittelyn
-              toteuttamiseksi. Mahdolliset kansainväliset tiedonsiirrot
-              kuvataan kohdassa 07.
+              Gmailia. Lisäksi Hunter-palvelua käytetään yrityskontaktien
+              sähköpostiosoitteiden tarkistamiseen, prospektitietojen
+              hallintaan ja lähettämättömien myyntiviestiluonnosten
+              valmisteluun. Hunterissa voidaan käsitellä yrityksen nimeä,
+              työyhteystietoja, roolia sekä viestinnän tilatietoja.
+              Tietoja voivat käsitellä näiden palveluiden sopimuksenmukaiset
+              käsittelijät ja alihankkijat palvelun tuottamiseksi.
+              Mahdolliset kansainväliset tiedonsiirrot kuvataan kohdassa 07.
             </p>
             <p>
               Tietoja säilytetään vain yritysyhteydenoton valmistelun,
