@@ -48,9 +48,9 @@ export default function PrivacyPage() {
             </h1>
             <div className="mt-7 grid gap-4 border-l-4 border-signal pl-5 text-sm leading-6 text-muted md:max-w-2xl">
               <p>
-                Tässä selosteessa kuvataan, miten {company.legalName} käsittelee verkkosivun, yhteydenottojen ja asiakassuhteiden yhteydessä syntyviä henkilötietoja.
+                Tässä selosteessa kuvataan, miten {company.legalName} käsittelee verkkosivun, yhteydenottojen, asiakassuhteiden sekä yritysten julkisista lähteistä kerättyjä mahdollisia henkilötietoja.
               </p>
-              <p className="type-caption text-ink">Viimeksi päivitetty 16.10.2026</p>
+              <p className="type-caption text-ink">Viimeksi päivitetty 23.10.2026</p>
             </div>
           </header>
 
@@ -165,6 +165,80 @@ export default function PrivacyPage() {
             </p>
             <p>
               Jos katsot henkilötietojesi käsittelyn olevan tietosuojasääntelyn vastaista, sinulla on oikeus saattaa asia toimivaltaisen tietosuojaviranomaisen käsiteltäväksi.
+            </p>
+          </PrivacySection>
+
+          <PrivacySection number="11" title="Yritysyhteystiedot ja B2B-markkinointi">
+            <p>
+              Voimme käsitellä yritysten julkisia yhteystietoja, jotta voimme
+              arvioida palveluidemme soveltuvuutta yritykselle, tehdä harkittuja
+              yrityskohtaisia yhteydenottoja sekä käsitellä vastaukset,
+              asiakassuhteen syntymisen ja markkinointikiellot.
+              Yhteydenottojen tulee täyttää sähköistä suoramarkkinointia
+              koskevan lainsäädännön vaatimukset.
+            </p>
+            <p>
+              Tietolähteitä ovat yrityksen omat verkkosivut, julkiset
+              yritysrekisterit ja yrityksen kanssa käyty aiempi asiointi.
+              Tietoja voivat olla yrityksen nimi ja toimiala, Y-tunnus,
+              verkkosivu, julkaistu yleinen yrityssähköpostiosoite,
+              työtehtävään liittyvä nimi ja rooli silloin kun ne ovat
+              tarpeellisia, yhteystiedon lähde, yhteydenottojen sisältö
+              ja ajankohta, vastaukset sekä markkinointikiellot.
+            </p>
+            <p>
+              Silloin kun käsittelemme tässä tarkoituksessa henkilötietoja,
+              käsittelyn arvioitu peruste on GDPR 6 artiklan 1 kohdan f
+              alakohdan mukainen oikeutettu etu. Tavoitteenamme on tarjota
+              yrityksen toimintaan liittyviä palveluita rajatusti ja ilman
+              tarpeetonta henkilötietojen keräämistä. Arvioimme käsittelyn
+              tarpeellisuuden sekä rekisteröidyn odotukset ja oikeudet.
+              Oikeutettu etu ei korvaa sähköpostisuoramarkkinoinnin
+              erillisiä suostumus- ja kielto-oikeutta koskevia vaatimuksia.
+              Henkilökohtaisiin sähköpostiosoitteisiin ei kohdisteta
+              markkinointia pelkästään siksi, että osoite on julkinen.
+            </p>
+            <p>
+              Mahdollisten prospektitietojen tallentamiseen ja hallintaan
+              käytetään rajattujen käyttöoikeuksien Google Sheets-
+              ja Google Drive -työvälineitä sekä sähköpostiviestintään
+              Gmailia. Tiedot voivat olla saatavilla näiden palvelujen
+              sopimuksenmukaisille palveluntarjoajille teknisen käsittelyn
+              toteuttamiseksi. Mahdolliset kansainväliset tiedonsiirrot
+              kuvataan kohdassa 07.
+            </p>
+            <p>
+              Tietoja säilytetään vain yritysyhteydenoton valmistelun,
+              toteutuksen, mahdollisen jatkokeskustelun ja velvollisuuksien
+              hoitamisen kannalta tarpeellisen ajan. Säilytystarvetta
+              arvioidaan kontaktin tilanteen, tietojen ajantasaisuuden,
+              mahdollisen vastauksen ja kiellon perusteella. Kun peruste
+              päättyy, tarpeettomat prospektitiedot poistetaan.
+              Markkinointikieltojen noudattamiseksi voidaan säilyttää
+              rajatut tiedot yrityksestä tai osoitteesta ja kiellon
+              olemassaolosta estolistalla.
+            </p>
+            <p>
+              Kun henkilötietoja on saatu muualta kuin rekisteröidyltä
+              itseltään, annamme soveltuvan GDPR 14 artiklan mukaisen
+              informaation säädetyssä määräajassa ja viimeistään
+              ensimmäisen yhteydenoton yhteydessä. Tarvittaessa kerromme,
+              mistä julkisesta lähteestä kyseinen yhteystieto on saatu.
+              Rekisteröidyllä on oikeus pyytää tietojaan ja oikaisua sekä
+              käyttää muita kohdassa 08 kuvattuja oikeuksia.
+            </p>
+            <p>
+              <strong className="text-ink">Suoramarkkinoinnin vastustaminen:</strong>{' '}
+              Jos henkilötietojasi käsitellään suoramarkkinointia varten,
+              voit vastustaa sitä milloin tahansa maksutta. Kiellon jälkeen
+              tietoja ei käytetä kyseiseen markkinointiin. Voit vastata
+              suoraan saamaasi sähköpostiin sanalla &quot;ei kiitos&quot;
+              tai kirjoittaa osoitteeseen{' '}
+              <a className={linkClass} href="mailto:hello@ghoulhouse.fi">
+                hello@ghoulhouse.fi
+              </a>.
+              Myös yhteisö voi kieltää sähköisen suoramarkkinoinnin
+              näillä tavoilla.
             </p>
           </PrivacySection>
 

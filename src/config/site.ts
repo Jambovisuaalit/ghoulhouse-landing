@@ -12,7 +12,7 @@ export const siteConfig = {
     registrationStatus: 'Kaupparekisterissä 3.9.2026 alkaen',
     postalAddress: {
       careOf: 'c/o Hanna Nyholm',
-      street: 'Maasälväntie 2 A 3',
+      street: 'Maasälväntie 2 A 33',
       postalCode: '00710',
       city: 'Helsinki',
     },
