@@ -168,50 +168,77 @@ export default function PrivacyPage() {
             </p>
           </PrivacySection>
 
-          <PrivacySection number="11" title="Yritysprospektit ja B2B-markkinointi">
+          <PrivacySection number="11" title="Yritysyhteystiedot ja B2B-markkinointi">
             <p>
-              GhoulHouse voi käsitellä yritysten julkisia yhteystietoja ja niihin liittyviä
-              työroolitietoja arvioidakseen, soveltuuko yritys palveluidemme asiakkaaksi,
-              ottaakseen yhteyttä asianmukaisen oikeusperusteen ja sähköistä
-              suoramarkkinointia koskevien sääntöjen mukaisesti sekä käsitelläkseen
-              vastaukset ja markkinointikiellot.
+              Voimme käsitellä yritysten julkisia yhteystietoja, jotta voimme
+              arvioida palveluidemme soveltuvuutta yritykselle, tehdä harkittuja
+              yrityskohtaisia yhteydenottoja sekä käsitellä vastaukset,
+              asiakassuhteen syntymisen ja markkinointikiellot.
+              Yhteydenottojen tulee täyttää sähköistä suoramarkkinointia
+              koskevan lainsäädännön vaatimukset.
             </p>
             <p>
-              Tiedot voivat olla peräisin yrityksen omilta verkkosivuilta,
-              julkisista yritystietolähteistä tai aiemmasta asioinnista. Käsiteltäviä
-              tietoja ovat esimerkiksi yrityksen nimi, toimiala, verkkosivu, yleinen
-              yrityssähköposti, mahdollinen työhön liittyvä nimi ja tehtävä,
-              julkisen tiedon lähde, yhteydenottohistoria sekä markkinointikiellot.
-              Arkaluonteisia henkilötietoja ei kerätä myyntiprospektien arviointiin.
+              Tietolähteitä ovat yrityksen omat verkkosivut, julkiset
+              yritysrekisterit ja yrityksen kanssa käyty aiempi asiointi.
+              Tietoja voivat olla yrityksen nimi ja toimiala, Y-tunnus,
+              verkkosivu, julkaistu yleinen yrityssähköpostiosoite,
+              työtehtävään liittyvä nimi ja rooli silloin kun ne ovat
+              tarpeellisia, yhteystiedon lähde, yhteydenottojen sisältö
+              ja ajankohta, vastaukset sekä markkinointikiellot.
             </p>
             <p>
-              Henkilötietojen mahdollinen käsittely voi perustua GhoulHousen
-              oikeutettuun etuun tehdä yrityksille rajattua, niiden toimintaan
-              liittyvää markkinointia vain silloin, kun käsittelyn edellytykset on
-              arvioitu ja rekisteröidyn oikeudet otettu huomioon. Tämä ei yksin
-              oikeuta lähettämään sähköpostimarkkinointia: yhteisöille ja
-              luonnollisille henkilöille lähetettävien viestien edellytykset
-              arvioidaan erikseen sovellettavan sähköisen viestinnän lain mukaan.
+              Silloin kun käsittelemme tässä tarkoituksessa henkilötietoja,
+              käsittelyn arvioitu peruste on GDPR 6 artiklan 1 kohdan f
+              alakohdan mukainen oikeutettu etu. Tavoitteenamme on tarjota
+              yrityksen toimintaan liittyviä palveluita rajatusti ja ilman
+              tarpeetonta henkilötietojen keräämistä. Arvioimme käsittelyn
+              tarpeellisuuden sekä rekisteröidyn odotukset ja oikeudet.
+              Oikeutettu etu ei korvaa sähköpostisuoramarkkinoinnin
+              erillisiä suostumus- ja kielto-oikeutta koskevia vaatimuksia.
+              Henkilökohtaisiin sähköpostiosoitteisiin ei kohdisteta
+              markkinointia pelkästään siksi, että osoite on julkinen.
             </p>
             <p>
-              Prospektien tietojen hallinnassa käytetään Googlen työvälineitä,
-              kuten Sheets-laskentataulukoita ja Gmail-sähköpostia, rajatuilla
-              käyttöoikeuksilla. Tarpeettomat ja vanhentuneet tiedot poistetaan
-              niiden käyttötarkoituksen päätyttyä. Markkinoinnin kieltoa koskeva
-              välttämätön tieto voidaan säilyttää estolistalla, jotta kieltoa
-              noudatetaan myös jatkossa.
+              Mahdollisten prospektitietojen tallentamiseen ja hallintaan
+              käytetään rajattujen käyttöoikeuksien Google Sheets-
+              ja Google Drive -työvälineitä sekä sähköpostiviestintään
+              Gmailia. Tiedot voivat olla saatavilla näiden palvelujen
+              sopimuksenmukaisille palveluntarjoajille teknisen käsittelyn
+              toteuttamiseksi. Mahdolliset kansainväliset tiedonsiirrot
+              kuvataan kohdassa 07.
             </p>
             <p>
-              Rekisteröidyllä on oikeus vastustaa henkilötietojensa käyttämistä
-              suoramarkkinointiin milloin tahansa. Vastustamisen jälkeen tietoja
-              ei enää käytetä suoramarkkinointiin. Kiellon voi tehdä maksutta
-              vastaamalla viestiin tai kirjoittamalla osoitteeseen{' '}
-              <a className={linkClass} href={'mailto:' + company.contactEmail}>
-                {company.contactEmail}
+              Tietoja säilytetään vain yritysyhteydenoton valmistelun,
+              toteutuksen, mahdollisen jatkokeskustelun ja velvollisuuksien
+              hoitamisen kannalta tarpeellisen ajan. Säilytystarvetta
+              arvioidaan kontaktin tilanteen, tietojen ajantasaisuuden,
+              mahdollisen vastauksen ja kiellon perusteella. Kun peruste
+              päättyy, tarpeettomat prospektitiedot poistetaan.
+              Markkinointikieltojen noudattamiseksi voidaan säilyttää
+              rajatut tiedot yrityksestä tai osoitteesta ja kiellon
+              olemassaolosta estolistalla.
+            </p>
+            <p>
+              Kun henkilötietoja on saatu muualta kuin rekisteröidyltä
+              itseltään, annamme soveltuvan GDPR 14 artiklan mukaisen
+              informaation säädetyssä määräajassa ja viimeistään
+              ensimmäisen yhteydenoton yhteydessä. Tarvittaessa kerromme,
+              mistä julkisesta lähteestä kyseinen yhteystieto on saatu.
+              Rekisteröidyllä on oikeus pyytää tietojaan ja oikaisua sekä
+              käyttää muita kohdassa 08 kuvattuja oikeuksia.
+            </p>
+            <p>
+              <strong className="text-ink">Suoramarkkinoinnin vastustaminen:</strong>{' '}
+              Jos henkilötietojasi käsitellään suoramarkkinointia varten,
+              voit vastustaa sitä milloin tahansa maksutta. Kiellon jälkeen
+              tietoja ei käytetä kyseiseen markkinointiin. Voit vastata
+              suoraan saamaasi sähköpostiin sanalla &quot;ei kiitos&quot;
+              tai kirjoittaa osoitteeseen{' '}
+              <a className={linkClass} href="mailto:hello@ghoulhouse.fi">
+                hello@ghoulhouse.fi
               </a>.
-              Jos tiedot on saatu muualta kuin henkilöltä itseltään, tästä
-              käsittelystä ja tietojen lähteestä kerrotaan soveltuvien
-              informointivelvoitteiden mukaisesti.
+              Myös yhteisö voi kieltää sähköisen suoramarkkinoinnin
+              näillä tavoilla.
             </p>
           </PrivacySection>
 
